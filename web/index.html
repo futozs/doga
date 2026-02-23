@@ -38,8 +38,13 @@
           <div class="editor-tabs">
             <button id="tab-html" type="button" class="editor-tab active">HTML</button>
             <button id="tab-css" type="button" class="editor-tab">CSS</button>
+            <span class="tab-sep">│</span>
+            <button id="btn-w3schools" type="button" class="editor-tab ref-tab" title="W3Schools">W3S</button>
+            <button id="btn-html-validator" type="button" class="editor-tab ref-tab" title="HTML Validator">HTML✓</button>
+            <button id="tab-css-validator" type="button" class="editor-tab ref-tab" title="CSS Validator">CSS✓</button>
           </div>
           <div class="actions">
+            <button id="btn-wrap" type="button" title="Kijelölés becsomagolása tag-be">Wrap</button>
             <button id="btn-starter" type="button" disabled title="Kiindulás betöltése">⟲ Kiindulás</button>
             <button id="btn-reset" type="button" title="Törlés">🗑</button>
             <button id="btn-blocks" type="button" class="is-active" title="Blokk nézet">Blokk</button>
@@ -53,6 +58,9 @@
           </div>
           <div id="css-editor-wrapper" class="editor-pane">
             <div id="css-editor" class="editor" aria-label="CSS editor"></div>
+          </div>
+          <div id="css-validator-wrapper" class="editor-pane external-pane">
+            <iframe id="css-validator-frame" src="https://jigsaw.w3.org/css-validator/#validate_by_input" title="CSS Validator"></iframe>
           </div>
         </div>
 
@@ -83,7 +91,7 @@
     </main>
 
     <footer class="footer">
-      <kbd>Ctrl+Shift+W</kbd> Wrap | <kbd>Tab</kbd> Emmet | Automatikus mentés
+      <kbd>Tab</kbd> Emmet | Automatikus mentés
     </footer>
 
     <!-- Tanuló adatai modal -->

@@ -26,10 +26,15 @@ const studentInfo = document.getElementById("student-info");
 const btnLogout = document.getElementById("btn-logout");
 const tabHtml = document.getElementById("tab-html");
 const tabCss = document.getElementById("tab-css");
+const tabCssValidator = document.getElementById("tab-css-validator");
+const btnW3schools = document.getElementById("btn-w3schools");
+const btnHtmlValidator = document.getElementById("btn-html-validator");
 const htmlEditorWrapper = document.getElementById("html-editor-wrapper");
 const cssEditorWrapper = document.getElementById("css-editor-wrapper");
+const cssValidatorWrapper = document.getElementById("css-validator-wrapper");
 const tasksSection = document.getElementById("tasks-section");
 const btnToggleTasks = document.getElementById("btn-toggle-tasks");
+const btnWrap = document.getElementById("btn-wrap");
 
 // Időzítő változók
 let timerSeconds = 60 * 60; // 60 perc
@@ -1083,44 +1088,96 @@ function setupAutoCloseTag(editor, monaco) {
   });
 }
 
+// Tag parse helper: div.class#id -> { tag, id, className }
+function parseTagAbbr(abbr) {
+  const tagMatch = abbr.match(/^([a-zA-Z][\w-]*)/);
+  const classMatch = abbr.match(/\.([a-zA-Z0-9_-]+)/g);
+  const idMatch = abbr.match(/#([a-zA-Z0-9_-]+)/);
+
+  let tag = tagMatch ? tagMatch[1] : 'div';
+  let id = idMatch ? idMatch[1] : '';
+  let className = classMatch ? classMatch.map(c => c.substring(1)).join(' ') : '';
+
+  return { tag, id, className };
+}
+
+// Tag nyitó/záró generálás
+function buildTag(parsed, content, indent = '') {
+  let openTag = `<${parsed.tag}`;
+  if (parsed.id) openTag += ` id="${parsed.id}"`;
+  if (parsed.className) openTag += ` class="${parsed.className}"`;
+  openTag += '>';
+
+  const closeTag = `</${parsed.tag}>`;
+
+  if (content.includes('\n')) {
+    return `${openTag}\n${indent}  ${content.split('\n').join('\n' + indent + '  ')}\n${indent}${closeTag}`;
+  }
+  return `${openTag}${content}${closeTag}`;
+}
+
 // Wrap with Abbreviation funkció
 function wrapWithAbbreviation(editor, monaco) {
+  // FONTOS: Először mentjük a kijelölést MIELŐTT a prompt megnyílna!
   const selection = editor.getSelection();
-  if (!selection || selection.isEmpty()) {
+  const model = editor.getModel();
+
+  // Kijelölt szöveg lekérése ELŐRE
+  const selectedText = selection && !selection.isEmpty() ? model.getValueInRange(selection) : '';
+
+  if (!selectedText) {
     alert('Jelölj ki szöveget a becsomagoláshoz!');
     return;
   }
 
-  const abbreviation = prompt('Add meg az Emmet rövidítést (pl. div, ul>li, .container):', 'div');
+  const abbreviation = prompt('Add meg az Emmet rövidítést (pl. div, ul>li*, ol>li*, .container):', 'div');
   if (!abbreviation) return;
+  const lines = selectedText.split('\n').filter(line => line.trim() !== '');
 
-  const model = editor.getModel();
-  const selectedText = model.getValueInRange(selection);
+  let wrappedText;
 
-  // Egyszerű tag becsomagolás
-  let tagName = abbreviation;
-  let className = '';
-  let id = '';
+  // ul>li* vagy ol>li* minta: minden sor külön elembe (külső wrapper-rel)
+  const wrapEachMatch = abbreviation.match(/^([a-zA-Z][\w.-]*(?:#[a-zA-Z0-9_-]+)?(?:\.[a-zA-Z0-9_-]+)*)>([a-zA-Z][\w.-]*(?:#[a-zA-Z0-9_-]+)?(?:\.[a-zA-Z0-9_-]+)*)\*$/);
 
-  // Parse abbreviation: div.class#id formátum
-  const classMatch = abbreviation.match(/\.([a-zA-Z0-9_-]+)/g);
-  const idMatch = abbreviation.match(/#([a-zA-Z0-9_-]+)/);
-  const tagMatch = abbreviation.match(/^([a-zA-Z][\w-]*)/);
+  // p* vagy div* minta: minden sor külön elembe (wrapper NÉLKÜL)
+  const wrapEachSimpleMatch = abbreviation.match(/^([a-zA-Z][\w.-]*(?:#[a-zA-Z0-9_-]+)?(?:\.[a-zA-Z0-9_-]+)*)\*$/);
 
-  if (tagMatch) tagName = tagMatch[1];
-  if (classMatch) className = classMatch.map(c => c.substring(1)).join(' ');
-  if (idMatch) id = idMatch[1];
+  if (wrapEachMatch) {
+    // pl. ul>li* vagy ol.list>li.item*
+    const outerParsed = parseTagAbbr(wrapEachMatch[1]);
+    const innerParsed = parseTagAbbr(wrapEachMatch[2]);
 
-  // Ha csak class vagy id van, div-et használunk
-  if (!tagMatch && (classMatch || idMatch)) tagName = 'div';
+    const innerItems = lines.map(line => {
+      return `  ${buildTag(innerParsed, line.trim())}`;
+    }).join('\n');
 
-  let openTag = `<${tagName}`;
-  if (id) openTag += ` id="${id}"`;
-  if (className) openTag += ` class="${className}"`;
-  openTag += '>';
+    wrappedText = buildTag(outerParsed, '\n' + innerItems + '\n', '');
 
-  const closeTag = `</${tagName}>`;
-  const wrappedText = `${openTag}\n  ${selectedText.split('\n').join('\n  ')}\n${closeTag}`;
+  } else if (wrapEachSimpleMatch) {
+    // pl. p* vagy div.item* - minden sor külön elembe, wrapper NÉLKÜL
+    const parsed = parseTagAbbr(wrapEachSimpleMatch[1]);
+
+    wrappedText = lines.map(line => {
+      return buildTag(parsed, line.trim());
+    }).join('\n');
+
+  } else if (abbreviation.includes('>')) {
+    // Egyszerű beágyazás: div>p - a teljes szöveg a belső elembe kerül
+    const parts = abbreviation.split('>');
+    let content = selectedText;
+
+    // Belülről kifelé építjük
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const parsed = parseTagAbbr(parts[i]);
+      content = buildTag(parsed, content, '');
+    }
+    wrappedText = content;
+
+  } else {
+    // Egyszerű wrap: div, .container, stb.
+    const parsed = parseTagAbbr(abbreviation);
+    wrappedText = buildTag(parsed, selectedText, '');
+  }
 
   editor.executeEdits('wrap-with-abbreviation', [{
     range: selection,
@@ -1129,13 +1186,15 @@ function wrapWithAbbreviation(editor, monaco) {
   }]);
 }
 
-// Billentyűkombinációk beállítása
-function setupKeyBindings(editor, monaco) {
-  // Ctrl+Shift+W - Wrap with Abbreviation
-  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyW, () => {
-    wrapWithAbbreviation(editor, monaco);
-  });
+// Wrap gomb kezelése
+function handleWrapButton() {
+  // Az aktív editort használjuk
+  const activeEditor = htmlEditorWrapper.classList.contains('active') ? htmlEditor : cssEditor;
+  if (activeEditor) {
+    wrapWithAbbreviation(activeEditor, window.monaco);
+  }
 }
+
 
 
 // Feladat választó feltöltése
@@ -1746,29 +1805,54 @@ btnInteract.addEventListener("click", () => {
   updatePreview();
 });
 
-// Tab váltás HTML/CSS között
+// Tab váltás HTML/CSS/CSS Validator között
 function switchToTab(tab) {
-  if (tab === 'html') {
-    tabHtml.classList.add('active');
-    tabCss.classList.remove('active');
-    htmlEditorWrapper.classList.add('active');
-    cssEditorWrapper.classList.remove('active');
-    setTimeout(() => {
-      if (htmlEditor) htmlEditor.layout();
-    }, 10);
-  } else {
-    tabHtml.classList.remove('active');
-    tabCss.classList.add('active');
-    htmlEditorWrapper.classList.remove('active');
-    cssEditorWrapper.classList.add('active');
-    setTimeout(() => {
-      if (cssEditor) cssEditor.layout();
-    }, 10);
+  // Editor fülek inaktív
+  tabHtml.classList.remove('active');
+  tabCss.classList.remove('active');
+
+  // CSS validator gomb inaktív
+  tabCssValidator.classList.remove('active');
+
+  // Minden wrapper elrejtése
+  htmlEditorWrapper.classList.remove('active');
+  cssEditorWrapper.classList.remove('active');
+  cssValidatorWrapper.classList.remove('active');
+
+  // Kiválasztott tab aktiválása
+  switch (tab) {
+    case 'html':
+      tabHtml.classList.add('active');
+      htmlEditorWrapper.classList.add('active');
+      setTimeout(() => {
+        if (htmlEditor) htmlEditor.layout();
+      }, 10);
+      break;
+    case 'css':
+      tabCss.classList.add('active');
+      cssEditorWrapper.classList.add('active');
+      setTimeout(() => {
+        if (cssEditor) cssEditor.layout();
+      }, 10);
+      break;
+    case 'css-validator':
+      tabCssValidator.classList.add('active');
+      cssValidatorWrapper.classList.add('active');
+      break;
   }
 }
 
 tabHtml.addEventListener('click', () => switchToTab('html'));
 tabCss.addEventListener('click', () => switchToTab('css'));
+tabCssValidator.addEventListener('click', () => switchToTab('css-validator'));
+
+// Külső linkek új lapon
+btnW3schools.addEventListener('click', () => {
+  window.open('https://www.w3schools.com/html/default.asp', '_blank');
+});
+btnHtmlValidator.addEventListener('click', () => {
+  window.open('https://validator.w3.org/#validate_by_input', '_blank');
+});
 
 // Feladatok szekció összecsukása
 btnToggleTasks.addEventListener('click', () => {
@@ -1820,10 +1904,11 @@ btnToggleTasks.addEventListener('click', () => {
 
     activateEmmet(monaco);
 
-    // Auto Close Tag és Wrap with Abbreviation beállítása
+    // Auto Close Tag beállítása
     setupAutoCloseTag(htmlEditor, monaco);
-    setupKeyBindings(htmlEditor, monaco);
-    setupKeyBindings(cssEditor, monaco);
+
+    // Wrap gomb eseménykezelő
+    btnWrap.addEventListener('click', handleWrapButton);
 
     htmlEditor.onDidChangeModelContent(scheduleUpdate);
     htmlEditor.onDidChangeCursorPosition(syncActivePreviewBlock);
