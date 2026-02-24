@@ -420,7 +420,6 @@ const availableTasks = {
       },
     ],
   },
-};
 
 humanoid: {
   id: "humanoid",
@@ -719,6 +718,7 @@ humanoid: {
     },
   ],
 },
+};
 
 let currentTask = null;
 let htmlEditor;
