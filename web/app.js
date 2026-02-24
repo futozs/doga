@@ -2,7 +2,6 @@ const preview = document.getElementById("preview");
 const statusEl = document.getElementById("status");
 const taskList = document.getElementById("task-list");
 const btnStarter = document.getElementById("btn-starter");
-const btnReset = document.getElementById("btn-reset");
 const btnBlocks = document.getElementById("btn-blocks");
 const btnInteract = document.getElementById("btn-interact");
 const taskSelector = document.getElementById("task-selector");
@@ -1899,22 +1898,6 @@ btnStarter.addEventListener("click", async () => {
     statusEl.textContent = 'Kiindulási fájlok betöltve';
     updatePreview();
   }
-});
-
-btnReset.addEventListener("click", () => {
-  if (!htmlEditor || !cssEditor) return;
-
-  const confirmed = confirm("Biztosan törlöd az összes kódot? Ez a művelet nem visszavonható!");
-  if (!confirmed) return;
-
-  htmlEditor.setValue("");
-  cssEditor.setValue("");
-
-  if (currentTask) {
-    clearLocalStorage(currentTask.id);
-  }
-
-  updatePreview();
 });
 
 btnBlocks.addEventListener("click", () => {
