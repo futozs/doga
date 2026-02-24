@@ -422,6 +422,304 @@ const availableTasks = {
   },
 };
 
+humanoid: {
+  id: "humanoid",
+  name: "Humanoid robotok",
+  description: "Weboldal kódolása - Humanoid robotok",
+  basePath: "forrasok/humanoid/",
+  htmlFile: "humanoid.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_humanoid_robotok.html",
+  previewBase: "forrasok/humanoid/",
+  sampleImage: "humanoid_robotok.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Ameca szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Táblázat sorok (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "style-link",
+      label: "2. A css/style.css hivatkozása elkészült",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "title",
+      label: "3. Böngésző címsorában megjelenő cím \"Humanoid robotok\"",
+      check: (doc) => doc.title === "Humanoid robotok",
+    },
+    {
+      id: "h1-felirat",
+      label: "4. A \"Humanoid robotok\" bekezdés 1-es szintű címsor",
+      check: (doc) => {
+        const h1 = doc.querySelector('h1');
+        return h1 && h1.textContent.includes('Humanoid');
+      },
+    },
+    {
+      id: "fejlec-img",
+      label: "5. A fejlec.jpg képet a megfelelő helyre helyezte",
+      check: (doc) => doc.querySelector('img[src*="fejlec"]') !== null,
+    },
+    {
+      id: "fejlec-alt",
+      label: "6. A képre alt és title értéke \"Humanoid robot\"",
+      check: (doc) => {
+        const img = doc.querySelector('img[src*="fejlec"]');
+        return img && img.alt === "Humanoid robot" && img.title === "Humanoid robot";
+      },
+    },
+    {
+      id: "fejlec-id",
+      label: "7. A képre alkalmazta a \"fejlec\" egyedi azonosítót",
+      check: (doc) => doc.querySelector('img#fejlec') !== null,
+    },
+    {
+      id: "nav-link",
+      label: "8. Elkészítette a menüpontot és jó oldalra hivatkozik",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('humanoid robot') &&
+          a.href.includes('netliferobotics.hu')
+        );
+      },
+    },
+    {
+      id: "nav-link-blank",
+      label: "9. A linkre kattintva a tartalom új lapon jelenik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a');
+        return Array.from(links).some(a =>
+          a.href.includes('netliferobotics.hu') && a.target === '_blank'
+        );
+      },
+    },
+    {
+      id: "asimo-italic",
+      label: "10. A zárójelben lévő angol kifejezés dőlt (i vagy em tag)",
+      check: (doc) => {
+        const italics = doc.querySelectorAll('i, em');
+        return Array.from(italics).some(i => i.textContent.includes('Advanced Step'));
+      },
+    },
+    {
+      id: "pepper-underline",
+      label: "11. A \"Fizikai felépítése:\" szöveg aláhúzott (u tag)",
+      check: (doc) => {
+        const us = doc.querySelectorAll('u');
+        return Array.from(us).some(u => u.textContent.includes('Fizikai'));
+      },
+    },
+    {
+      id: "pepper-list",
+      label: "12. Számozatlan felsorolás ul és li tagekkel",
+      check: (doc) => {
+        const ul = doc.querySelector('ul#robotikon');
+        if (!ul) return false;
+        return ul.querySelectorAll('li').length > 0;
+      },
+    },
+    {
+      id: "pepper-list-id",
+      label: "13. Az ul-re alkalmazta az id=\"robotikon\" azonosítót",
+      check: (doc) => doc.querySelector('ul#robotikon') !== null,
+    },
+    {
+      id: "ameca-h2",
+      label: "14. Az Ameca címsort kettes szintűvé alakította (h2)",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        return Array.from(h2s).some(h => h.textContent.includes('Ameca'));
+      },
+    },
+    {
+      id: "ameca-paragraphs",
+      label: "15. Az Ameca részben bekezdéseket készített (p tagek)",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        const ameca = Array.from(h2s).find(h => h.textContent.includes('Ameca'));
+        if (!ameca) return false;
+        const container = ameca.closest('div');
+        if (!container) return false;
+        return container.querySelectorAll('p:not(.card-text)').length >= 2;
+      },
+    },
+    {
+      id: "ameca-img",
+      label: "16. A kép forrása az img/ameca.jpg",
+      check: (doc) => doc.querySelector('img[src*="ameca"]') !== null,
+    },
+    {
+      id: "ameca-alt",
+      label: "17. Az Ameca képre alt és title értéke \"Ameca\"",
+      check: (doc) => {
+        const img = doc.querySelector('img[src*="ameca"]');
+        return img && img.alt === "Ameca" && img.title === "Ameca";
+      },
+    },
+    {
+      id: "bold-5places",
+      label: "18. Félkövér kiemelés legalább 5 helyen (b vagy strong)",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        return bolds.length >= 5;
+      },
+    },
+    {
+      id: "caption-classes",
+      label: "19. Képaláírásoknál text-center és fw-bold osztályok (legalább 3 helyen)",
+      check: (doc) => {
+        const captions = doc.querySelectorAll('.fw-bold.text-center, .card-text.fw-bold');
+        return captions.length >= 3;
+      },
+    },
+    {
+      id: "table-rows",
+      label: "20. Táblázat törzsébe elkészítette a hiányzó sorokat és cellákat",
+      check: (doc) => {
+        const rows = doc.querySelectorAll('tbody tr');
+        return rows.length >= 3;
+      },
+    },
+    {
+      id: "table-bordered",
+      label: "21. A táblázatra alkalmazta a table és table-bordered osztályokat",
+      check: (doc) => doc.querySelector('table.table.table-bordered') !== null,
+    },
+    {
+      id: "uncanny-col-lg-6",
+      label: "22. Az Uncanny valley részben az oszlopelrendezés col-lg-6",
+      check: (doc) => {
+        const uncanny = doc.querySelector('#uncanny');
+        if (!uncanny) return false;
+        return uncanny.querySelectorAll('.col-lg-6').length >= 2;
+      },
+    },
+    {
+      id: "uncanny-img-classes",
+      label: "23. A képnél alkalmazta a d-block és mx-auto osztályokat",
+      check: (doc) => {
+        const uncanny = doc.querySelector('#uncanny');
+        if (!uncanny) return false;
+        const img = uncanny.querySelector('img.d-block.mx-auto, img.mx-auto.d-block');
+        return img !== null;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "24. A láblécben hivatkozás a \"leiras\" azonosítóra, szövege \"Ugrás az elejére\"",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    // CSS feladatok
+    {
+      id: "css-body-font",
+      label: "25. CSS: Az oldal betűtípusa Rubik",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*rubik/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-width",
+      label: "26. CSS: A #fejlec szélessége 100%",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-smallcaps",
+      label: "27. CSS: A #felirat kiskapitális betű (font-variant: small-caps)",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*font-variant\s*:\s*small-caps/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "28. CSS: nav li - 3px pontozott cadetblue jobb szegély",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*(border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*cadetblue|border-right\s*:[^;]*3px[^;]*dotted[^;]*cadetblue)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-padding",
+      label: "29. CSS: nav li - padding: 0 15px",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-robot-bg",
+      label: "30. CSS: .robot háttérszíne azure (#f0ffff)",
+      check: (doc, html, css) => css && /\.robot\s*\{[^}]*background(-color)?\s*:\s*(azure|#f0ffff)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-link-color",
+      label: "31. CSS: .lablec a betűszíne rgb(13,202,240)",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*color\s*:\s*rgb\s*\(\s*13\s*,\s*202\s*,\s*240\s*\)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-link-bold",
+      label: "32. CSS: .lablec a félkövér (font-weight: bold)",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-link-nodecor",
+      label: "33. CSS: .lablec a - nincs aláhúzás (text-decoration: none)",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-hover",
+      label: "34. CSS: .lablec a:hover nagybetűs (text-transform: uppercase)",
+      check: (doc, html, css) => css && /\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-navbar-fontsize",
+      label: "35. CSS: .navbar font-size 1.2em",
+      check: (doc, html, css) => css && /\.navbar\s*\{[^}]*font-size\s*:\s*1\.2em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-robotikon-image",
+      label: "36. CSS: #robotikon list-style-image: url(../img/robot.jpg)",
+      check: (doc, html, css) => css && /#robotikon\s*\{[^}]*list-style-image\s*:\s*url\([^)]*robot\.jpg/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-robotikon-margin",
+      label: "37. CSS: #robotikon margin-left: 10px",
+      check: (doc, html, css) => css && /#robotikon\s*\{[^}]*margin-left\s*:\s*10px/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "38. CSS: Bekezdések sorkizártak (text-align: justify)",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "html-validated",
+      label: "39. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "40. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
+    },
+  ],
+},
+
 let currentTask = null;
 let htmlEditor;
 let cssEditor;
