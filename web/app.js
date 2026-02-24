@@ -91,9 +91,8 @@ const availableTasks = {
       {
         id: "style-link",
         label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-        check: (doc) => {
-          const links = doc.querySelectorAll('link[rel="stylesheet"]');
-          return Array.from(links).some(l => l.href.includes('style.css'));
+        check: (doc, html) => {
+          return /href=["'][^"']*style\.css["']/i.test(html);
         },
       },
       {
@@ -864,7 +863,6 @@ function buildDoc(html, css, withGuides) {
     <meta name="viewport" content="width=1200px, initial-scale=0.6" />
     <base href="${baseHref}" />
     ${bootstrapCSS}
-    <style>${css}</style>
     ${withGuides ? guideStyle : ""}
     ${interactionLock}
   </head>
@@ -873,6 +871,7 @@ function buildDoc(html, css, withGuides) {
     ${previewNavigationGuardScript}
     ${extra}
     ${bootstrapJS}
+    <style>${css}</style>
   </body>
 </html>`;
 }
