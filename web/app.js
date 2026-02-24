@@ -31,7 +31,6 @@ const btnW3schools = document.getElementById("btn-w3schools");
 const btnHtmlValidator = document.getElementById("btn-html-validator");
 const htmlEditorWrapper = document.getElementById("html-editor-wrapper");
 const cssEditorWrapper = document.getElementById("css-editor-wrapper");
-const cssValidatorWrapper = document.getElementById("css-validator-wrapper");
 const tasksSection = document.getElementById("tasks-section");
 const btnToggleTasks = document.getElementById("btn-toggle-tasks");
 const btnWrap = document.getElementById("btn-wrap");
