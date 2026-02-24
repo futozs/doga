@@ -842,7 +842,8 @@ function annotateHtmlWithSourceLines(html) {
 function buildDoc(html, css, withGuides) {
   const extra = withGuides ? guideScript : "";
   const interactionLock = lockPreviewInteractions ? `${previewLockStyle}\n${previewLockScript}` : "";
-  const htmlForPreview = annotateHtmlWithSourceLines(html);
+  const htmlNoStyleLink = html.replace(/<link[^>]+href=["'][^"']*style\.css["'][^>]*\s*\/?>/gi, '');
+  const htmlForPreview = annotateHtmlWithSourceLines(htmlNoStyleLink);
 
   // Base URL a képekhez és egyéb asset-ekhez
   const baseHref = currentTask ? currentTask.previewBase : "";
