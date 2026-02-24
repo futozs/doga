@@ -1935,14 +1935,11 @@ function switchToTab(tab) {
   // Editor fülek inaktív
   tabHtml.classList.remove('active');
   tabCss.classList.remove('active');
-
-  // CSS validator gomb inaktív
   tabCssValidator.classList.remove('active');
 
   // Minden wrapper elrejtése
   htmlEditorWrapper.classList.remove('active');
   cssEditorWrapper.classList.remove('active');
-  cssValidatorWrapper.classList.remove('active');
 
   // Kiválasztott tab aktiválása
   switch (tab) {
