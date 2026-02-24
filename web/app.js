@@ -1487,6 +1487,22 @@ function restoreTimer() {
 function saveToFile() {
   if (!currentTask || !htmlEditor || !cssEditor) return;
 
+  const nameParts = studentData.name.trim().split(/\s+/);
+  const lastName = nameParts[0] || '';
+  const firstName = nameParts.slice(1).join('_') || '';
+  const safeLast = lastName.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+  const safeFirst = firstName.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9_]/g, '');
+  const [classYear, classLetter] = studentData.class.split('.');
+  const safeEmail = studentData.email
+    .replace('@kkszki.hu', '')
+    .toLowerCase()
+    .replace(/[^a-z0-9.]/g, '');
+  const filename = `${safeLast}_${safeFirst}_${classYear}_${classLetter}_${safeEmail}_web.json`;
+
   const data = {
     studentName: studentData.name,
     studentEmail: studentData.email,
@@ -1498,16 +1514,9 @@ function saveToFile() {
     timerSeconds: timerSeconds,
     savedAt: new Date().toISOString()
   };
-
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-
-  // Fájlnév: osztály_név_feladat_dátum.json
-  const safeName = studentData.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_áéíóöőúüűÁÉÍÓÖŐÚÜŰ]/g, '');
-  const safeClass = studentData.class.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\.]/g, '');
-  const filename = `${safeClass}_${safeName}_${currentTask.id}_${new Date().toISOString().slice(0, 10)}.json`;
-
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
@@ -1515,7 +1524,6 @@ function saveToFile() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-
   statusEl.textContent = 'Munka mentve fájlba!';
 }
 
