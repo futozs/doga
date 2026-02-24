@@ -48,6 +48,14 @@ let studentData = {
   class: ''
 };
 
+// Validálás képek
+let validationImages = {
+  html: null,
+  css: null,
+  htmlFileName: null,
+  cssFileName: null,
+};
+
 // Feladatok konfigurációja
 const availableTasks = {
   bogyos: {
@@ -405,6 +413,16 @@ const availableTasks = {
         },
         cssCheck: true,
       },
+      {
+        id: "html-validated",
+        label: "39. HTML validálás képernyőképe feltöltve",
+        check: () => validationImages.html !== null,
+      },
+      {
+        id: "css-validated",
+        label: "40. CSS validálás képernyőképe feltöltve",
+        check: () => validationImages.css !== null,
+      },
     ],
   },
 };
@@ -731,6 +749,8 @@ async function selectTask(taskId) {
   btnSources.disabled = !task.sourceFiles || task.sourceFiles.length === 0;
   btnPreviewNewTab.disabled = false;
   btnSaveFile.disabled = false;
+  document.getElementById('btn-html-val-img').disabled = false;
+  document.getElementById('btn-css-val-img').disabled = false;
 
   // Ellenőrizzük, van-e mentett munka
   const saved = loadFromLocalStorage(taskId);
@@ -1335,6 +1355,8 @@ function logoutStudent() {
   btnSources.disabled = true;
   btnPreviewNewTab.disabled = true;
   btnSaveFile.disabled = true;
+  document.getElementById('btn-html-val-img').disabled = true;
+  document.getElementById('btn-css-val-img').disabled = true;
 
   // Progress bar nullázása
   updateProgressBar(0, 0);
@@ -1483,6 +1505,20 @@ function restoreTimer() {
   }
 }
 
+// Validálás képek betöltése
+function loadValidationImage(type, file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      validationImages[type] = e.target.result;
+      validationImages[`${type}FileName`] = file.name;
+      statusEl.textContent = `${type.toUpperCase()} validálás kép betöltve: ${file.name}`;
+      resolve();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 // Fájl mentés/betöltés funkciók
 function saveToFile() {
   if (!currentTask || !htmlEditor || !cssEditor) return;
@@ -1512,7 +1548,13 @@ function saveToFile() {
     html: htmlEditor.getValue(),
     css: cssEditor.getValue(),
     timerSeconds: timerSeconds,
-    savedAt: new Date().toISOString()
+    savedAt: new Date().toISOString(),
+    validationImages: {
+      html: validationImages.html,
+      htmlFileName: validationImages.htmlFileName,
+      css: validationImages.css,
+      cssFileName: validationImages.cssFileName,
+    }
   };
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -1827,6 +1869,20 @@ studentForm.addEventListener("submit", handleStudentFormSubmit);
 
 // Kijelentkezés gomb
 btnLogout.addEventListener("click", logoutStudent);
+
+// Validálás képek eseménykezelők
+document.getElementById('btn-html-val-img').addEventListener('click', () => {
+  document.getElementById('html-validation-img').click();
+});
+document.getElementById('btn-css-val-img').addEventListener('click', () => {
+  document.getElementById('css-validation-img').click();
+});
+document.getElementById('html-validation-img').addEventListener('change', async (e) => {
+  if (e.target.files[0]) await loadValidationImage('html', e.target.files[0]);
+});
+document.getElementById('css-validation-img').addEventListener('change', async (e) => {
+  if (e.target.files[0]) await loadValidationImage('css', e.target.files[0]);
+});
 
 btnStarter.addEventListener("click", async () => {
   if (!currentTask || !htmlEditor || !cssEditor) return;
