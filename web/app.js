@@ -362,7 +362,7 @@ const availableTasks = {
       },
       {
         id: "css-footer-link-color",
-        label: "33. CSS: A lablec osztályjelölő fehér színű",
+        label: "33. CSS: A lablec osztályjelölő hivatkozása fehér színű",
         check: (doc, html, css) => {
           const hasWhite = css && /\.lablec\s+a\s*\{[^}]*(color\s*:\s*(white|#fff|#ffffff))/i.test(css);
           return hasWhite;
@@ -371,7 +371,7 @@ const availableTasks = {
       },
       {
         id: "css-footer-link-style",
-        label: "34. CSS: A lablec osztályjelölő félkövér",
+        label: "34. CSS: A lablec osztályjelölő hivatkozása félkövér",
         check: (doc, html, css) => {
           const hasBold = css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css);
           return hasBold;
