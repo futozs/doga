@@ -1,0 +1,4 @@
+Ameca
+Ameca a cornwalli székhelyű startup, az Engineered Arts alkotása, és jelenleg „a világ legfejlettebb robotjaként” tartják számon.
+Ameca érdekessége, hogy számos arckifejezésre képes, beleértve a kacsintást, az ajkak összeszorítását és az orr fintorgatását - akárcsak egy valódi ember. Ennek köszönhetően a dühöt, a meglepettséget és a félelmet is képes megmutatni. Azt is tudja, hogyan rántsa meg a vállát, ha valami nem érdekli, hogyan ásítson, mutogasson, illetve integessen, ha egy ismerőst lát maga előtt. A robot az új fejlesztéseknek köszönhetően arra is képessé vált, hogy felismerje magát a tükörben. Nagyon szeret macskát rajzolni.
+Ameca több érzékelővel és kamerával is rendelkezik, amik összességében mintegy kétméteres távolságból pásztázzák a velük szemben állót. A robot az ő érzelmeit tanulmányozva próbál reagálni, illetve interakcióba lépni.
