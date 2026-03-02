@@ -520,10 +520,6 @@ async function checkScoring() {
     if (!task || !task.criteria || task.criteria.length === 0) return;
 
     const code = codeEditor.getValue().trim();
-    if (!code) {
-        alert('Nincs beírva kód!');
-        return;
-    }
 
     scoringRunning = true;
     const btn = document.getElementById('check-scoring-btn');
@@ -532,6 +528,15 @@ async function checkScoring() {
 
     const panel = document.getElementById('scoring-panel');
     panel.classList.remove('hidden');
+
+    if (!code) {
+        document.getElementById('scoring-content').innerHTML =
+            '<div class="scoring-header-row"><span class="scoring-title" style="color:#721c24">⚠️ Nincs beírva kód!</span></div>';
+        btn.disabled = false;
+        btn.textContent = '🔍 Pontozás ellenőrzése';
+        scoringRunning = false;
+        return;
+    }
 
     // Szinkron kritériumok azonnali kiértékelése
     const results = task.criteria.map(criterion => {
