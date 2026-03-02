@@ -533,7 +533,7 @@ async function checkScoring() {
         document.getElementById('scoring-content').innerHTML =
             '<div class="scoring-header-row"><span class="scoring-title" style="color:#721c24">⚠️ Nincs beírva kód!</span></div>';
         btn.disabled = false;
-        btn.textContent = '🔍 Pontozás ellenőrzése';
+        btn.textContent = '🔍 Pontozás';
         scoringRunning = false;
         return;
     }
@@ -573,7 +573,7 @@ async function checkScoring() {
     }
 
     btn.disabled = false;
-    btn.textContent = '🔍 Pontozás ellenőrzése';
+    btn.textContent = '🔍 Pontozás';
     scoringRunning = false;
 }
 
