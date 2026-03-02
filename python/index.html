@@ -305,6 +305,34 @@
             animation: pulse 1s infinite;
         }
 
+        /* Élő pontszám */
+        .live-score {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        #score-display {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .score-grade {
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
+        .score-grade.grade-1 { background: #f8d7da; color: #721c24; }
+        .score-grade.grade-2 { background: #fff3cd; color: #856404; }
+        .score-grade.grade-3 { background: #d1ecf1; color: #0c5460; }
+        .score-grade.grade-4 { background: #d4edda; color: #155724; }
+        .score-grade.grade-5 { background: #b7dfbb; color: #0a4118; }
+
 .version-badge {
             position: fixed;
             right: 10px;
@@ -750,9 +778,13 @@
         <!-- Quiz Section -->
         <div id="quiz-section" class="hidden">
 
-            <!-- Felső sáv: navigáció + időmérő -->
+            <!-- Felső sáv: navigáció + pontszám + időmérő -->
             <div class="quiz-top-bar">
                 <div class="task-navigation" id="task-navigation"></div>
+                <div class="live-score">
+                    <span id="score-display">0 / 30 pont</span>
+                    <span class="score-grade grade-1" id="score-grade">Érdemjegy: 1</span>
+                </div>
                 <div class="timer" id="global-timer">Hátralévő idő: 45:00</div>
             </div>
 
