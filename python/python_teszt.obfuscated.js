@@ -175,6 +175,7 @@ function setupEventListeners() {
     document.getElementById('confirm-submit').addEventListener('click', submitTest);
     document.getElementById('cancel-submit').addEventListener('click', hideSubmitModal);
     document.getElementById('run-code-btn').addEventListener('click', runPythonCode);
+    document.getElementById('check-scoring-btn').addEventListener('click', checkScoring);
 
     // Jobb klikk letiltása
     document.addEventListener('contextmenu', e => {
@@ -229,7 +230,9 @@ function parseTasks(text) {
     const lines = text.split('\n');
     let currentTask = null;
     let inExample = false;
+    let inCriteria = false;
     let exampleLines = [];
+    let criteriaLines = [];
 
     for (let line of lines) {
         const taskMatch = line.match(/^(\d+)\.\s*feladat/i);
@@ -237,6 +240,7 @@ function parseTasks(text) {
         if (taskMatch) {
             if (currentTask) {
                 currentTask.example = exampleLines.join('\n');
+                currentTask.criteria = parseCriteria(criteriaLines);
                 tasks.push(currentTask);
             }
 
@@ -244,10 +248,13 @@ function parseTasks(text) {
                 number: parseInt(taskMatch[1]),
                 description: '',
                 example: '',
-                points: 8  // alapértelmezett pontszám
+                points: 8,
+                criteria: []
             };
             inExample = false;
+            inCriteria = false;
             exampleLines = [];
+            criteriaLines = [];
             continue;
         }
 
@@ -258,24 +265,30 @@ function parseTasks(text) {
             continue;
         }
 
+        // Pontozás szekció
+        if (line.trim() === 'Pontozas:') {
+            inCriteria = true;
+            inExample = false;
+            continue;
+        }
+
         // Mind a ```python, mind a ``` jelölést támogatja
         if (line.trim() === '```python' || line.trim() === '```') {
-            inExample = !inExample;
+            if (!inCriteria) inExample = !inExample;
             continue;
         }
 
         if (line.match(/^Minta kód:/i)) {
-            // Ez csak egy fejléc, ne tegyük hozzá sehova
             continue;
         }
 
         if (currentTask) {
-            if (inExample) {
+            if (inCriteria) {
+                if (line.trim() !== '') criteriaLines.push(line.trim());
+            } else if (inExample) {
                 exampleLines.push(line);
             } else if (line.trim() !== '') {
-                if (currentTask.description !== '') {
-                    currentTask.description += '\n';
-                }
+                if (currentTask.description !== '') currentTask.description += '\n';
                 currentTask.description += line;
             }
         }
@@ -283,6 +296,7 @@ function parseTasks(text) {
 
     if (currentTask) {
         currentTask.example = exampleLines.join('\n');
+        currentTask.criteria = parseCriteria(criteriaLines);
         tasks.push(currentTask);
     }
 
@@ -406,6 +420,187 @@ function calculateTaskTime(task) {
     return baseTime;
 }
 
+// ─── PONTOZÓ MOTOR ────────────────────────────────────────────────────────────
+
+// Kritériumok beolvasása szöveges sorokból
+function parseCriteria(lines) {
+    return lines.map(line => {
+        const pipeIdx = line.indexOf('|');
+        if (pipeIdx === -1) return null;
+        const spec = line.substring(0, pipeIdx).trim();
+        const label = line.substring(pipeIdx + 1).trim();
+        const colonIdx = spec.indexOf(':');
+        if (colonIdx === -1) {
+            return { type: spec, args: null, label };
+        }
+        const type = spec.substring(0, colonIdx);
+        const args = spec.substring(colonIdx + 1);
+        return { type, args, label };
+    }).filter(c => c !== null);
+}
+
+// Szinkron kritérium-ellenőrzés (nem teszt típusú)
+function evaluateCriterion(code, criterion) {
+    const { type, args } = criterion;
+
+    if (['if', 'elif', 'else', 'for', 'while', 'def', 'return'].includes(type)) {
+        return new RegExp(`\\b${type}\\b`).test(code);
+    }
+
+    if (type === 'input') {
+        const n = parseInt(args) || 1;
+        return (code.match(/\binput\s*\(/g) || []).length >= n;
+    }
+
+    if (type === 'int_float') {
+        const n = parseInt(args) || 1;
+        return (code.match(/\b(int|float)\s*\(/g) || []).length >= n;
+    }
+
+    if (type === 'import') {
+        return new RegExp(`(^|\\n)\\s*import\\s+${args}\\b|(^|\\n)\\s*from\\s+${args}\\s+import`, 'i').test(code);
+    }
+
+    if (type === 'tartalmaz') {
+        return code.includes(args);
+    }
+
+    return false;
+}
+
+// Teszteset futtatása mock inputokkal
+async function runCodeWithMockInputs(code, inputs) {
+    let inputIndex = 0;
+    const mockInputFn = async (_prompt) => {
+        if (inputIndex < inputs.length) return String(inputs[inputIndex++]).trim();
+        return '';
+    };
+
+    const savedInput = globalThis.js_input;
+    globalThis.js_input = mockInputFn;
+
+    try {
+        const pyodide = await loadPyodide();
+
+        pyodide.runPython(`
+import sys
+from io import StringIO
+import builtins
+
+sys.stdout = StringIO()
+sys.stderr = StringIO()
+
+async def input(prompt=''):
+    from js import js_input
+    result = await js_input(prompt)
+    return result
+
+builtins.input = input
+`);
+
+        const wrappedCode = wrapPythonCodeForAsyncInput(code);
+        await pyodide.runPythonAsync(wrappedCode);
+
+        const stdout = pyodide.runPython('sys.stdout.getvalue()');
+        return { success: true, output: stdout || '' };
+    } catch (error) {
+        return { success: false, output: '', error: error.message };
+    } finally {
+        globalThis.js_input = savedInput;
+    }
+}
+
+// Pontozás ellenőrzése az aktuális feladatnál
+let scoringRunning = false;
+
+async function checkScoring() {
+    if (scoringRunning) return;
+
+    const task = selectedTasks[currentTaskIndex];
+    if (!task || !task.criteria || task.criteria.length === 0) return;
+
+    const code = codeEditor.getValue().trim();
+    if (!code) {
+        alert('Nincs beírva kód!');
+        return;
+    }
+
+    scoringRunning = true;
+    const btn = document.getElementById('check-scoring-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Ellenőrzés folyamatban...';
+
+    const panel = document.getElementById('scoring-panel');
+    panel.classList.remove('hidden');
+
+    // Szinkron kritériumok azonnali kiértékelése
+    const results = task.criteria.map(criterion => {
+        if (criterion.type === 'teszt') {
+            return { criterion, passed: null, pending: true };
+        }
+        return { criterion, passed: evaluateCriterion(code, criterion), pending: false };
+    });
+
+    updateScoringUI(results);
+
+    // Tesztesetek aszinkron futtatása egyenként
+    for (let i = 0; i < results.length; i++) {
+        if (!results[i].pending) continue;
+
+        const criterion = results[i].criterion;
+        const firstColon = criterion.args.indexOf(':');
+        if (firstColon === -1) {
+            results[i] = { criterion, passed: false, pending: false };
+            continue;
+        }
+
+        const inputsStr = criterion.args.substring(0, firstColon);
+        const expected = criterion.args.substring(firstColon + 1);
+        const inputs = inputsStr.split(',');
+
+        const result = await runCodeWithMockInputs(code, inputs);
+        const passed = result.success
+            ? result.output.toLowerCase().includes(expected.toLowerCase())
+            : false;
+
+        results[i] = { criterion, passed, pending: false };
+        updateScoringUI(results);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '🔍 Pontozás ellenőrzése';
+    scoringRunning = false;
+}
+
+// Pontozási eredmények megjelenítése
+function updateScoringUI(results) {
+    const content = document.getElementById('scoring-content');
+    const earned = results.filter(r => r.passed === true).length;
+    const total = results.length;
+
+    let html = `<div class="scoring-header-row">
+        <span class="scoring-title">Pontozás</span>
+        <span class="scoring-score">${earned} / ${total} pont</span>
+    </div><ul class="scoring-list">`;
+
+    for (const r of results) {
+        let icon, cls;
+        if (r.pending) {
+            icon = '⏳'; cls = 'scoring-pending';
+        } else if (r.passed) {
+            icon = '✓'; cls = 'scoring-pass';
+        } else {
+            icon = '✗'; cls = 'scoring-fail';
+        }
+        html += `<li class="${cls}"><span class="scoring-icon">${icon}</span>${r.criterion.label}</li>`;
+    }
+
+    html += '</ul>';
+    content.innerHTML = html;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Code Editor inicializálása
 function initializeCodeEditor() {
     const textarea = document.getElementById('code-editor');
@@ -481,6 +676,17 @@ function showTask(index) {
     document.getElementById('task-number').textContent = `${index + 1}. feladat (${task.points} pont)`;
     document.getElementById('task-description').textContent = task.description;
     document.getElementById('task-example').textContent = task.example;
+
+    // Pontozás gomb és panel kezelése feladatváltáskor
+    const scoringBtn = document.getElementById('check-scoring-btn');
+    const scoringPanel = document.getElementById('scoring-panel');
+    if (task.criteria && task.criteria.length > 0) {
+        scoringBtn.classList.remove('hidden');
+    } else {
+        scoringBtn.classList.add('hidden');
+    }
+    scoringPanel.classList.add('hidden');
+    document.getElementById('scoring-content').innerHTML = '';
 
     // Feladat szám mentése a tanári adatokhoz
     debugLog(`📝 Feladat betöltve: ${task.number}. feladat`);

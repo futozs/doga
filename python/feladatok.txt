@@ -12,9 +12,19 @@ A nagyobb szám: 8
 
 ```
 
+Pontozas:
+input:1|Bekéri az első számot
+int_float:1|Első számot számmá alakítja
+input:2|Bekéri a második számot is
+int_float:2|Második számot is átalakítja
+if|Elágazást használ
+teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg
+teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes
+teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli
+
 2. feladat
 
-Írj programot, ahol véletlenszám generálással játszon a gép és a játékos. 
+Írj programot, ahol véletlenszám generálással játszon a gép és a játékos.
 A játékos és a gép is dobjon a dobókockával 1-6-ig, ezt jelenítse meg a program, majd utána írja ki, hogy ki nyert.
 Ha a játékos nyert írja ki, hogy: A játékos nyert!
 Ha a gép nyert, írja ki, hogy: A gép nyert!
@@ -37,6 +47,16 @@ Döntetlen!
 
 ```
 
+Pontozas:
+import:random|Importálja a random modult
+tartalmaz:randint|Véletlenszám generálást alkalmaz (randint)
+if|Elágazást használ a győztes eldöntéséhez
+elif|Mindhárom esetet külön ággal kezeli
+tartalmaz:játékos nyert|A játékos győzelmét kezeli a kódban
+tartalmaz:gép nyert|A gép győzelmét kezeli a kódban
+tartalmaz:Döntetlen|A döntetlen esetet kezeli a kódban
+tartalmaz:dobása|A dobásokat kiírja a képernyőre
+
 3. feladat
 
 Készíts egy programot, amely bekéri a felhasználó nevét és életkorát, majd a kapott adatok alapján kiszámítja a mozijegyének árát.
@@ -58,6 +78,16 @@ Marci a jegyed ára: 1500 Ft
 
 ```
 
+Pontozas:
+input:1|Bekéri a nevet
+input:2|Bekéri az életkort is
+int_float:1|Az életkort számmá alakítja
+if|Elágazást használ
+tartalmaz:1500|A kedvezményes árat (1500 Ft) tartalmazza
+tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza
+teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva
+teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva
+
 4. feladat
 
 Készíts egy programot, amely köszön a felhasználónak a napszaknak megfelelően.
@@ -72,6 +102,16 @@ Hány óra van? 14
 Jó napot, Réka!
 
 ```
+
+Pontozas:
+input:1|Bekéri a nevet
+input:2|Bekéri az aktuális órát
+int_float:1|Az órát számmá alakítja
+if|Elágazást használ
+elif|Több napszakot kezel (elif)
+teszt:Réka,8:Jó reggelt, Réka|Reggeli köszöntés helyes
+teszt:Réka,14:Jó napot, Réka|Nappali köszöntés helyes
+teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes
 
 5. feladat
 
@@ -95,6 +135,16 @@ Kihűltél, takarózz be, igyál meleg teát.
 
 ```
 
+Pontozas:
+input:1|Bekéri a testhőmérsékletet
+int_float:1|Számmá alakítja (float)
+if|Elágazást használ
+teszt:35.5:kihűl|Kihűlés esetét felismeri és jelzi
+teszt:36.5:rendben|Normál hőmérsékletet helyesen értékeli
+teszt:37.5:pihenj|Hőemelkedést felismeri
+teszt:38.6:gyógyszer|Lázat felismeri és kezel
+teszt:39.8:orvos|Nagyon magas lázat felismeri
+
 6. feladat
 
 Készíts egy programot, amiben bekérsz egy egész számot. Ez egy torony magassága lesz, méterben meghatározva.
@@ -115,6 +165,16 @@ A torony magassága (m): 72
 A torony megfelelő magasságú.
 
 ```
+
+Pontozas:
+input:1|Bekéri a torony magasságát
+int_float:1|Számmá alakítja
+if|Elágazást használ
+elif|Több tartományt kezel (elif)
+teszt:15:alacsony|Alacsony torony esetét felismeri
+teszt:30:megfelelő|Alsó határértéket (30m) helyesen kezeli
+teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli
+teszt:120:A torony magas|Magas torony esetét felismeri
 
 7. feladat
 
@@ -141,6 +201,16 @@ A bolt nyitva van.
 Ennyi órád van még odaérni: 4
 
 ```
+
+Pontozas:
+input:1|Bekéri az aktuális órát
+int_float:1|Számmá alakítja
+if|Elágazást használ
+teszt:7:zárva|Nyitás előtti időt felismeri
+teszt:8:nyitva|Nyitáskor nyitva van
+teszt:12:Ennyi|Nyitva esetén a hátralévő időt kiírja
+teszt:16:zárva|Pontosan záráskor zárva van
+teszt:17:zárva|Zárás utáni időt felismeri
 
 8. feladat
 
@@ -170,6 +240,16 @@ Nincs ilyen hónap!
 
 ```
 
+Pontozas:
+input:1|Bekéri a hónapot
+int_float:1|Számmá alakítja
+if|Elágazást használ
+teszt:3:Tavasz|Tavaszi hónapot felismeri
+teszt:8:Nyár|Nyári hónapot felismeri
+teszt:10:Ősz|Őszi hónapot felismeri
+teszt:12:Tél|Téli hónapot felismeri
+teszt:0:Nincs|Érvénytelen hónapot jelez
+
 9. feladat
 
 Írj programot, amelyben bekéred a felhasználó életkorát, majd írd ki, hogy gyermek (0-14 év), fiatal (15-24 év), felnőtt (25-64 év) vagy idős (65+ év) kategóriába tartozik.
@@ -191,6 +271,16 @@ Idős vagy.
 
 ```
 
+Pontozas:
+input:1|Bekéri az életkort
+int_float:1|Számmá alakítja
+if|Elágazást használ
+elif|Több kategóriát kezel (elif)
+teszt:13:Gyermek|Gyermek kategóriát felismeri
+teszt:18:Fiatal|Fiatal kategóriát felismeri
+teszt:44:Felnőtt|Felnőtt kategóriát felismeri
+teszt:70:Idős|Idős kategóriát felismeri
+
 10. feladat
 
 Írj programot, amelyben bekéred a felhasználó testsúlyát kilogramm-ban és magasságát méterben, majd számítsd ki és írd ki a BMI értékét két tizedesjegyre kerekítve! A program írjon rövid választ a felhasználónak, hogy melyik kategóriába tartozik: Sovány / Normál testsúlyú / Túlsúlyos / Elhízott vagy! szöveggel.
@@ -210,12 +300,21 @@ Normál testsúlyú vagy!
 
 ```
 
+Pontozas:
+input:1|Bekéri a testsúlyt
+int_float:1|Testsúlyt számmá alakítja
+input:2|Bekéri a magasságot
+int_float:2|Magasságot is számmá alakítja
+if|Elágazást használ
+teszt:75,1.8:23.15|BMI értéket helyesen kiszámolja
+teszt:50,1.75:Sovány|Sovány kategóriát felismeri
+teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri
 
 11. feladat
 
 Írj programot, amelyben bekérsz a felhasználótól 3 érdemjegyet 1 és 5 között, majd számíts átlagot két tizedesjegyre kerekítve, valamint írd ki azt, hogy megfelelt-e.
-(Megfelelt az átlag: 2.0 és afelett)! 
-Átlag számítás: az összes szám összeadása majd elosztása a számok darabszámával pl.: (5 + 4 + 3) / 3 
+(Megfelelt az átlag: 2.0 és afelett)!
+Átlag számítás: az összes szám összeadása majd elosztása a számok darabszámával pl.: (5 + 4 + 3) / 3
 
 Minta kód:
 
@@ -233,6 +332,16 @@ Add meg a 3. jegyet! 2
 Nem felelt meg.
 
 ```
+
+Pontozas:
+input:1|Bekéri az 1. jegyet
+input:2|Bekéri a 2. jegyet
+input:3|Bekéri a 3. jegyet
+int_float:3|Mindhárom jegyet számmá alakítja
+if|Elágazást használ
+teszt:4,5,3:4.0|Az átlagot helyesen kiszámolja
+teszt:4,5,3:Megfelelt|Megfelelt esetét helyesen kezeli
+teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli
 
 12. feladat
 
@@ -258,6 +367,16 @@ Add meg a hőmérsékletet Celsius fokban! 150
 A víz halmazállapota: légnemű
 
 ```
+
+Pontozas:
+input:1|Bekéri a hőmérsékletet
+int_float:1|Számmá alakítja
+if|Elágazást használ
+teszt:-5:szilárd|0 fok alatti hőmérsékletet kezeli
+teszt:0:folyékony|0 fokon folyékony
+teszt:25:folyékony|Normál hőmérsékleten folyékony
+teszt:100:folyékony|100 fokon még folyékony
+teszt:150:légnemű|100 fok felett légnemű
 
 13. feladat
 Pont: 14
@@ -287,6 +406,22 @@ Adja meg a csekk összegét (0 a kilépés): 0
 A posta teljes bevétele a költségekből: 700 Ft
 
 ```
+
+Pontozas:
+def|Függvényt definiál (def)
+return|Függvény visszatérési értéket ad (return)
+tartalmaz:KezelesiKoltseg|KezelesiKoltseg névvel írja a függvényt
+int_float:1|A csekk összegét számmá alakítja
+while|While ciklust alkalmaz az adatbekéréshez
+if|Elágazást használ a költség meghatározásához
+tartalmaz:200|200 Ft-os díjat tartalmaz a kód
+tartalmaz:500|500 Ft-os díjat tartalmaz a kód
+teszt:2000,0:200 Ft|Kis összegnél (2000) 200 Ft díjat számol
+teszt:10000,0:500 Ft|Pontosan 10000 Ft esetén 500 Ft díjat számol
+teszt:15000,0:500 Ft|Nagy összegnél (15000) 500 Ft díjat számol
+teszt:2000,10000,0:700 Ft|Két tranzakció után összbevétel 700 Ft
+teszt:0:0 Ft|Azonnal kilépve 0 Ft bevételt jelez
+teszt:5000,10000,15000,0:1200 Ft|Három tranzakció összbevétele helyes (200+500+500)
 
 14. feladat
 Pont: 14
@@ -319,6 +454,22 @@ Hány napot késett? (-1 a kilépés): -1
 A teljes beszedett bírság: 1500 Ft
 
 ```
+
+Pontozas:
+def|Függvényt definiál (def)
+return|Függvény visszatérési értéket ad (return)
+tartalmaz:Birsag|Birsag névvel írja a függvényt
+int_float:1|Napok számát számmá alakítja
+while|While ciklust alkalmaz
+if|Elágazást használ
+tartalmaz:500|500 Ft-os bírságot tartalmaz a kód
+tartalmaz:1000|1000 Ft-os bírságot tartalmaz a kód
+tartalmaz:Hibás|Hibás adat esetét kezeli
+teszt:5,-1:0 Ft|5 napos késésnél 0 Ft bírság
+teszt:8,-1:500 Ft|6-10 napos késésnél 500 Ft bírság
+teszt:12,-1:1000 Ft|10 napnál több késésnél 1000 Ft bírság
+teszt:-2,-1:Hibás|Negatív adat esetén Hibás adatot jelez
+teszt:8,12,-1:1500 Ft|Összbírságot helyesen összesíti (500+1000=1500)
 
 15. feladat
 Pont: 14
@@ -362,6 +513,22 @@ A héten 2 napon sikerült a cél!
 
 ```
 
+Pontozas:
+def|Függvényt definiál (def)
+return|Függvény visszatérési értéket ad (return)
+tartalmaz:Aktivitas|Aktivitas névvel írja a függvényt
+int_float:1|A lépésszámot számmá alakítja
+for|For ciklust használ (pontosan 7 alkalommal)
+if|Elágazást használ a teljesítés eldöntéséhez
+tartalmaz:Teljesítve|"Teljesítve" szöveget kiírja
+tartalmaz:Nincs teljesítve|"Nincs teljesítve" szöveget kiírja
+tartalmaz:True|True értékkel tér vissza a függvény
+tartalmaz:10000|A 10000 lépéses határt tartalmazza a kód
+teszt:15000,10000,9850,4568,12000,5800,6900:Teljesítve|Sikeres napot felismer
+teszt:15000,10000,9850,4568,12000,5800,6900:Nincs teljesítve|Nem teljesített napot jelez
+teszt:15000,10000,9850,4568,12000,5800,6900:2|Sikeresen teljesített napok számát megadja
+teszt:11000,11000,11000,11000,11000,11000,11000:7|7 teljesített nap esetén 7-et ír ki
+
 16. feladat
 Pont: 14
 
@@ -400,3 +567,18 @@ A legnagyobb próbálkozás: 200 cm
 
 ```
 
+Pontozas:
+def|Függvényt definiál (def)
+return|Függvény visszatérési értéket ad (return)
+tartalmaz:Siker|Siker névvel írja a függvényt
+int_float:1|A magasságot számmá alakítja
+for|For ciklust használ (pontosan 6 alkalommal)
+if|Elágazást használ
+tartalmaz:Átment|"Átment" szöveget tartalmazza a kód
+tartalmaz:Leverte|"Leverte" szöveget tartalmazza a kód
+tartalmaz:alacsony|"túl alacsony" esetet kezeli
+tartalmaz:150|A 150 cm-es határt tartalmazza a kód
+teszt:150,50,49,178,168,200:Leverte|150 cm-nél Leverte eredmény
+teszt:150,50,49,178,168,200:Átment|178 cm-nél Átment eredmény
+teszt:150,50,49,178,168,200:alacsony|49 cm esetén túl alacsony jelzés
+teszt:150,50,49,178,168,200:200 cm|A legnagyobb próbálkozás 200 cm
