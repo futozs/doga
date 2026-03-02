@@ -875,19 +875,33 @@
             try {
                 const d = JSON.parse(saved);
                 if (!d.name || !d.class) return;
+
+                // Mezők előtöltése (rejtetten, hogy startTest() olvasni tudja)
                 const fName = document.getElementById('name');
                 const fEmail = document.getElementById('email');
                 const fClass = document.getElementById('class');
                 if (fName) fName.value = d.name;
                 if (fEmail) fEmail.value = d.email || '';
                 if (fClass) fClass.value = d.class || '';
-                // Megjelenítjük, hogy ki van bejelentkezve
-                const startSection = document.getElementById('start-section');
-                if (startSection) {
-                    const info = document.createElement('div');
-                    info.style.cssText = 'background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;padding:0.65rem 1rem;border-radius:10px;font-size:0.95rem;font-weight:600;margin-bottom:0.5rem;';
-                    info.textContent = '✓ Bejelentkezve: ' + d.name + ' – ' + d.class + ' osztály';
-                    startSection.insertBefore(info, startSection.firstChild);
+
+                // Bejelentkezési mezők elrejtése
+                [fName, fEmail, fClass].forEach(el => {
+                    if (el && el.closest('.form-group')) {
+                        el.closest('.form-group').style.display = 'none';
+                    }
+                });
+
+                // Bejelentkezési összefoglaló kártya megjelenítése a gomb előtt
+                const startBtn = document.getElementById('start-btn');
+                if (startBtn) {
+                    const card = document.createElement('div');
+                    card.style.cssText = 'background:#eff6ff;border:1px solid #93c5fd;color:#1e40af;padding:0.9rem 1.2rem;border-radius:10px;font-size:0.95rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;';
+                    card.innerHTML = '<span style="font-size:1.3rem;">✓</span>'
+                        + '<div>'
+                        + '<div style="font-weight:700;">' + d.name + '</div>'
+                        + '<div style="font-size:0.85rem;opacity:0.8;">' + (d.email || '') + ' &nbsp;|&nbsp; ' + d.class + ' osztály</div>'
+                        + '</div>';
+                    startBtn.parentNode.insertBefore(card, startBtn);
                 }
             } catch (e) {}
         })();
