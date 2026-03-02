@@ -604,7 +604,7 @@ function updateScoringUI(results) {
     content.innerHTML = html;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ──────────────────��──────────────────────────────────────────────────────────
 
 // Code Editor inicializálása
 function initializeCodeEditor() {
@@ -877,43 +877,38 @@ async function runPythonCode() {
     try {
         const pyodide = await loadPyodide();
 
-        // Python input függvény felülírása aszinkron JS függvénnyel
+        // Python input és közvetlen terminál-kimenet beállítása
         globalThis.js_input = customPythonInput;
-        pyodide.globals.set('js_input', customPythonInput);
+        globalThis.js_print = (text) => { term.write(String(text)); };
 
-        // Python kód futtatása
         pyodide.runPython(`
 import sys
 from io import StringIO
 import builtins
 
-sys.stdout = StringIO()
+# Közvetlen terminál-kimenet: print() azonnal megjelenik
+class _TermOut:
+    def write(self, text):
+        from js import js_print
+        js_print(text)
+        return len(text)
+    def flush(self):
+        pass
+
+sys.stdout = _TermOut()
 sys.stderr = StringIO()
 
-# Input függvény ami a JavaScript-ből kéri az inputot
 async def input(prompt=''):
     from js import js_input
     result = await js_input(prompt)
     return result
 
-# Felülírjuk a beépített input függvényt
 builtins.input = input
 `);
 
         // Kód futtatása aszinkron módon
         const wrappedCode = wrapPythonCodeForAsyncInput(code);
         await pyodide.runPythonAsync(wrappedCode);
-
-        // Kimenet kiolvasása
-        const stdout = pyodide.runPython('sys.stdout.getvalue()');
-        const stderr = pyodide.runPython('sys.stderr.getvalue()');
-        const output = stdout || stderr;
-
-        if (output) {
-            term.writeln(output);
-        } else {
-            term.writeln('(Nincs kimenet)');
-        }
 
         await sleep(400);
         term.writeln('\n✅  Kód sikeresen lefutott!');
