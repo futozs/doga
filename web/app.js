@@ -1581,21 +1581,22 @@ function populateTaskSelector() {
 
 // Tanuló adatok kezelése
 function loadStudentData() {
-  // Elsőként a localStorage-ből töltünk (visszatérő tanuló)
-  const saved = localStorage.getItem('vizsga_student');
-  if (saved) {
-    try {
-      studentData = JSON.parse(saved);
-      updateStudentDisplay();
-      return true;
-    } catch (e) { /* folytatjuk */ }
-  }
-  // Nyitóoldalról átadott adat (sessionStorage)
+  // Nyitóoldalról átadott adat (sessionStorage) – mindig elsőbbséget élvez,
+  // mert ez az aktuális belépés adatát tartalmazza (diák VAGY oktató)
   const session = sessionStorage.getItem('kandStudentData');
   if (session) {
     try {
       studentData = JSON.parse(session);
-      saveStudentData();
+      saveStudentData(); // frissíti a localStorage-t is
+      updateStudentDisplay();
+      return true;
+    } catch (e) { /* folytatjuk */ }
+  }
+  // Visszatérő tanuló: localStorage (csak ha nincs sessionStorage adat)
+  const saved = localStorage.getItem('vizsga_student');
+  if (saved) {
+    try {
+      studentData = JSON.parse(saved);
       updateStudentDisplay();
       return true;
     } catch (e) { /* folytatjuk */ }
