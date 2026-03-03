@@ -2356,20 +2356,16 @@ btnToggleTasks.addEventListener('click', () => {
     });
 
     const savedTheme = localStorage.getItem('vizsga_theme') || 'dark';
-    if (savedTheme === 'light') {
-      document.documentElement.classList.add('light');
-      monaco.editor.setTheme("vizsga-light");
-      const btn = document.getElementById('btn-theme-toggle');
-      if (btn) btn.textContent = '☀️';
-    } else {
-      monaco.editor.setTheme("vizsga-contrast");
-    }
+    let editorLight = savedTheme === 'light';
+    monaco.editor.setTheme(editorLight ? 'vizsga-light' : 'vizsga-contrast');
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    if (themeBtn) themeBtn.textContent = editorLight ? '☀️' : '🌙';
 
     document.getElementById('btn-theme-toggle').addEventListener('click', () => {
-      const isLight = document.documentElement.classList.toggle('light');
-      monaco.editor.setTheme(isLight ? 'vizsga-light' : 'vizsga-contrast');
-      localStorage.setItem('vizsga_theme', isLight ? 'light' : 'dark');
-      document.getElementById('btn-theme-toggle').textContent = isLight ? '☀️' : '🌙';
+      editorLight = !editorLight;
+      monaco.editor.setTheme(editorLight ? 'vizsga-light' : 'vizsga-contrast');
+      localStorage.setItem('vizsga_theme', editorLight ? 'light' : 'dark');
+      document.getElementById('btn-theme-toggle').textContent = editorLight ? '☀️' : '🌙';
     });
 
     htmlEditor = createEditor(monaco, "html-editor", "html", "");
