@@ -13,12 +13,11 @@ A nagyobb szám: 8
 ```
 
 Pontozas:
-input:1|Bekéri az első számot
+bekeres:Add meg az első számot: |Bekérés szövege: "Add meg az első számot: "
 int_float:1|Első számot számmá alakítja
-input:2|Bekéri a második számot is
+bekeres:Add meg a második számot: |Bekérés szövege: "Add meg a második számot: "
 int_float:2|Második számot is átalakítja
 if|Elágazást használ
-input_format|A bekérések szóközzel végződnek (pl. "Add meg az első számot: ")
 teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg
 teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes
 teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli
@@ -80,11 +79,10 @@ Marci a jegyed ára: 1500 Ft
 ```
 
 Pontozas:
-input:1|Bekéri a nevet
-input:2|Bekéri az életkort is
+bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "
+bekeres:Add meg a korodat: |Bekérés szövege: "Add meg a korodat: "
 int_float:1|Az életkort számmá alakítja
 if|Elágazást használ
-input_format|A bekérések szóközzel végződnek (pl. "Add meg a neved: ")
 tartalmaz:1500|A kedvezményes árat (1500 Ft) tartalmazza
 tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza
 teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva
@@ -106,12 +104,11 @@ Jó napot, Réka!
 ```
 
 Pontozas:
-input:1|Bekéri a nevet
-input:2|Bekéri az aktuális órát
+bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "
+bekeres:Hány óra van? |Bekérés szövege: "Hány óra van? "
 int_float:1|Az órát számmá alakítja
 if|Elágazást használ
 elif|Több napszakot kezel (elif)
-input_format|A bekérések szóközzel végződnek (pl. "Hány óra van? ")
 teszt:Réka,8:Jó reggelt, Réka|Reggeli köszöntés helyes
 teszt:Réka,14:Jó napot, Réka|Nappali köszöntés helyes
 teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes
@@ -139,10 +136,9 @@ Kihűltél, takarózz be, igyál meleg teát.
 ```
 
 Pontozas:
-input:1|Bekéri a testhőmérsékletet
+bekeres:Add meg a testhőmérsékleted (°C): |Bekérés szövege: "Add meg a testhőmérsékleted (°C): "
 int_float:1|Számmá alakítja (float)
 if|Elágazást használ
-input_format|A bekérés szóközzel végződik (pl. "Add meg a testhőmérsékleted (°C): ")
 teszt:35.5:kihűl|Kihűlés esetét felismeri és jelzi
 teszt:36.5:rendben|Normál hőmérsékletet helyesen értékeli
 teszt:37.5:pihenj|Hőemelkedést felismeri
@@ -171,11 +167,10 @@ A torony megfelelő magasságú.
 ```
 
 Pontozas:
-input:1|Bekéri a torony magasságát
+bekeres:A torony magassága (m): |Bekérés szövege: "A torony magassága (m): "
 int_float:1|Számmá alakítja
 if|Elágazást használ
 elif|Több tartományt kezel (elif)
-input_format|A bekérés szóközzel végződik (pl. "A torony magassága (m): ")
 teszt:15:alacsony|Alacsony torony esetét felismeri
 teszt:30:megfelelő|Alsó határértéket (30m) helyesen kezeli
 teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli
@@ -208,10 +203,9 @@ Ennyi órád van még odaérni: 4
 ```
 
 Pontozas:
-input:1|Bekéri az aktuális órát
+bekeres:Hány óra van most? |Bekérés szövege: "Hány óra van most? "
 int_float:1|Számmá alakítja
 if|Elágazást használ
-input_format|A bekérés szóközzel végződik (pl. "Hány óra van most? ")
 teszt:7:zárva|Nyitás előtti időt felismeri
 teszt:8:nyitva|Nyitáskor nyitva van
 teszt:12:Ennyi|Nyitva esetén a hátralévő időt kiírja
@@ -247,10 +241,9 @@ Nincs ilyen hónap!
 ```
 
 Pontozas:
-input:1|Bekéri a hónapot
+bekeres:Add meg milyen hónap van (1-12): |Bekérés szövege: "Add meg milyen hónap van (1-12): "
 int_float:1|Számmá alakítja
 if|Elágazást használ
-input_format|A bekérés szóközzel végződik (pl. "Add meg milyen hónap van (1-12): ")
 teszt:3:Tavasz|Tavaszi hónapot felismeri
 teszt:8:Nyár|Nyári hónapot felismeri
 teszt:10:Ősz|Őszi hónapot felismeri
@@ -279,11 +272,10 @@ Idős vagy.
 ```
 
 Pontozas:
-input:1|Bekéri az életkort
+bekeres:Add meg az életkorod! |Bekérés szövege: "Add meg az életkorod! "
 int_float:1|Számmá alakítja
 if|Elágazást használ
 elif|Több kategóriát kezel (elif)
-input_format|A bekérés szóközzel végződik (pl. "Add meg az életkorod! ")
 teszt:13:Gyermek|Gyermek kategóriát felismeri
 teszt:18:Fiatal|Fiatal kategóriát felismeri
 teszt:44:Felnőtt|Felnőtt kategóriát felismeri
@@ -309,12 +301,11 @@ Normál testsúlyú vagy!
 ```
 
 Pontozas:
-input:1|Bekéri a testsúlyt
+bekeres:Add meg a testsúlyod kg-ban! |Bekérés szövege: "Add meg a testsúlyod kg-ban! "
 int_float:1|Testsúlyt számmá alakítja
-input:2|Bekéri a magasságot
+bekeres:Add meg a magasságod méterben! |Bekérés szövege: "Add meg a magasságod méterben! "
 int_float:2|Magasságot is számmá alakítja
 if|Elágazást használ
-input_format|A bekérések szóközzel végződnek (pl. "Add meg a testsúlyod kg-ban! ")
 teszt:75,1.8:23.15|BMI értéket helyesen kiszámolja
 teszt:50,1.75:Sovány|Sovány kategóriát felismeri
 teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri
@@ -343,12 +334,11 @@ Nem felelt meg.
 ```
 
 Pontozas:
-input:1|Bekéri az 1. jegyet
-input:2|Bekéri a 2. jegyet
-input:3|Bekéri a 3. jegyet
+bekeres:Add meg az 1. jegyet! |Bekérés szövege: "Add meg az 1. jegyet! "
+bekeres:Add meg a 2. jegyet! |Bekérés szövege: "Add meg a 2. jegyet! "
+bekeres:Add meg a 3. jegyet! |Bekérés szövege: "Add meg a 3. jegyet! "
 int_float:3|Mindhárom jegyet számmá alakítja
 if|Elágazást használ
-input_format|A bekérések szóközzel végződnek (pl. "Add meg az 1. jegyet! ")
 teszt:4,5,3:4.0|Az átlagot helyesen kiszámolja
 teszt:4,5,3:Megfelelt|Megfelelt esetét helyesen kezeli
 teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli
@@ -379,10 +369,9 @@ A víz halmazállapota: légnemű
 ```
 
 Pontozas:
-input:1|Bekéri a hőmérsékletet
+bekeres:Add meg a hőmérsékletet Celsius fokban! |Bekérés szövege: "Add meg a hőmérsékletet Celsius fokban! "
 int_float:1|Számmá alakítja
 if|Elágazást használ
-input_format|A bekérés szóközzel végződik (pl. "Add meg a hőmérsékletet Celsius fokban! ")
 teszt:-5:szilárd|0 fok alatti hőmérsékletet kezeli
 teszt:0:folyékony|0 fokon folyékony
 teszt:25:folyékony|Normál hőmérsékleten folyékony
@@ -424,7 +413,7 @@ return|Függvény visszatérési értéket ad (return)
 tartalmaz:KezelesiKoltseg|KezelesiKoltseg névvel írja a függvényt
 int_float:1|A csekk összegét számmá alakítja
 while|While ciklust alkalmaz az adatbekéréshez
-input_format|A bekérés szóközzel végződik (pl. "Adja meg a csekk összegét (0 a kilépés): ")
+bekeres:Adja meg a csekk összegét (0 a kilépés): |Bekérés szövege: "Adja meg a csekk összegét (0 a kilépés): "
 if|Elágazást használ a költség meghatározásához
 tartalmaz:200|200 Ft-os díjat tartalmaz a kód
 tartalmaz:500|500 Ft-os díjat tartalmaz a kód
@@ -473,7 +462,7 @@ return|Függvény visszatérési értéket ad (return)
 tartalmaz:Birsag|Birsag névvel írja a függvényt
 int_float:1|Napok számát számmá alakítja
 while|While ciklust alkalmaz
-input_format|A bekérés szóközzel végződik (pl. "Hány napot késett? (-1 a kilépés): ")
+bekeres:Hány napot késett? (-1 a kilépés): |Bekérés szövege: "Hány napot késett? (-1 a kilépés): "
 if|Elágazást használ
 tartalmaz:500|500 Ft-os bírságot tartalmaz a kód
 tartalmaz:1000|1000 Ft-os bírságot tartalmaz a kód
@@ -532,7 +521,7 @@ return|Függvény visszatérési értéket ad (return)
 tartalmaz:Aktivitas|Aktivitas névvel írja a függvényt
 int_float:1|A lépésszámot számmá alakítja
 for|For ciklust használ (pontosan 7 alkalommal)
-input_format|A bekérés szóközzel végződik (pl. "1. nap lépésszáma: ")
+tartalmaz:nap lépésszáma: |A bekérés szövege tartalmazza: "nap lépésszáma: "
 if|Elágazást használ a teljesítés eldöntéséhez
 tartalmaz:Teljesítve|"Teljesítve" szöveget kiírja
 tartalmaz:Nincs teljesítve|"Nincs teljesítve" szöveget kiírja
@@ -587,7 +576,7 @@ return|Függvény visszatérési értéket ad (return)
 tartalmaz:Siker|Siker névvel írja a függvényt
 int_float:1|A magasságot számmá alakítja
 for|For ciklust használ (pontosan 6 alkalommal)
-input_format|A bekérés szóközzel végződik (pl. "1. ugrás magassága (cm): ")
+tartalmaz:ugrás magassága (cm): |A bekérés szövege tartalmazza: "ugrás magassága (cm): "
 if|Elágazást használ
 tartalmaz:Átment|"Átment" szöveget tartalmazza a kód
 tartalmaz:Leverte|"Leverte" szöveget tartalmazza a kód

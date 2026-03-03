@@ -834,8 +834,8 @@
         </div>
     </div>
 
-    <!-- Debug Panel -->
-    <div id="debug-panel" style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.9); color: #0f0; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; max-width: 500px; max-height: 300px; overflow-y: auto; z-index: 10000; display: block;">
+    <!-- Debug Panel (alapból rejtett) -->
+    <div id="debug-panel" style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.9); color: #0f0; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; max-width: 500px; max-height: 300px; overflow-y: auto; z-index: 10000; display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #0f0; padding-bottom: 5px;">
             <strong style="color: #0ff;">🔍 DEBUG LOG</strong>
             <button onclick="document.getElementById('debug-panel').style.display='none'" style="background: #f00; color: #fff; border: none; padding: 2px 8px; cursor: pointer; border-radius: 3px;">X</button>
@@ -863,7 +863,7 @@
         </div>
     </div>
 
-    <div class="version-badge">v1.22</div>
+    <div class="version-badge" onclick="(function(){var p=document.getElementById('debug-panel');p.style.display=p.style.display==='none'?'block':'none';})()" style="cursor:pointer;" title="Debug log megnyitása">v1.22</div>
 
     <script src="python_teszt.obfuscated.js"></script>
     <script>
