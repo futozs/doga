@@ -40,7 +40,34 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem 0;
+            padding: 0;
+        }
+
+        .page-topbar {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        }
+
+        .page-topbar img { height: 36px; width: auto; }
+
+        .page-topbar-title h1 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+        }
+
+        .page-topbar-title p {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin: 0;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
         }
 
         .container {
@@ -50,7 +77,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 900px;
             width: 90%;
-            margin: 0 auto;
+            margin: 2rem auto;
             overflow-y: visible;
         }
 
@@ -718,10 +745,14 @@
 </head>
 
 <body>
-    <div class="container">
-        <div style="text-align:center; margin-bottom: 1rem;">
-            <img src="kandologo2.png" alt="Kandó KSZKI" style="height: 64px; width: auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));">
+    <header class="page-topbar">
+        <img src="kandologo2.png" alt="Kandó KSZKI">
+        <div class="page-topbar-title">
+            <h1>Miskolci SZC Kandó Kálmán Informatikai Technikum</h1>
+            <p>Python Programozási Teszt</p>
         </div>
+    </header>
+    <div class="container">
         <h1>🐍 Python Programozási Teszt</h1>
 
         <!-- Start Section -->
