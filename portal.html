@@ -194,7 +194,9 @@
         const user = JSON.parse(stored);
         document.getElementById('user-name').textContent = user.nev || user.email;
         document.getElementById('user-role').textContent = user.szerep === 'oktato' ? 'Oktató' : 'Tanuló';
-        document.getElementById('portal-title').textContent = `Üdvözöllek, ${(user.nev || '').split(' ')[0] || 'felhasználó'}!`;
+        const nevReszek = (user.nev || '').trim().split(' ');
+        const keresztnev = nevReszek[nevReszek.length - 1] || 'felhasználó';
+        document.getElementById('portal-title').textContent = `Üdvözöllek, ${keresztnev}!`;
 
         if (user.szerep === 'oktato') {
             document.getElementById('teacher-portal').style.display = 'grid';
