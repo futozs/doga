@@ -462,6 +462,47 @@
             </div>
         </div>
 
+        <!-- Felhasználók -->
+        <div class="panel" id="users-panel" style="display:none;">
+            <h2>👥 Felhasználók kezelése</h2>
+            <div style="display:flex;gap:10px;margin-bottom:14px;">
+                <button class="btn-refresh" onclick="loadUsers()">🔄 Frissítés</button>
+            </div>
+            <div id="users-loading" class="loading" style="display:none;">Betöltés...</div>
+            <div class="table-wrapper">
+                <table class="submissions-table" id="users-table" style="min-width:600px;">
+                    <thead>
+                        <tr>
+                            <th>Név</th>
+                            <th>Email</th>
+                            <th>Szerepkör</th>
+                            <th>Osztály</th>
+                            <th>Regisztrálva</th>
+                            <th>Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr><td colspan="6" class="loading">Nincs adat</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Jelszó visszaállítás modal -->
+        <div class="modal" id="reset-pw-modal" style="display:none;">
+            <div class="modal-content" style="max-width:400px;">
+                <h3 style="color:#ffc107;margin-bottom:1rem;">🔑 Jelszó visszaállítása</h3>
+                <p id="reset-pw-email-display" style="color:#aaa;margin-bottom:1rem;font-size:0.9rem;"></p>
+                <input type="password" id="reset-pw-new" placeholder="Új jelszó (min. 6 karakter)"
+                    style="width:100%;padding:8px 12px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.95rem;margin-bottom:0.8rem;">
+                <div id="reset-pw-error" style="color:#e94560;font-size:0.85rem;margin-bottom:0.8rem;display:none;"></div>
+                <div style="display:flex;gap:10px;justify-content:center;">
+                    <button class="btn-live" onclick="confirmResetPassword()">Visszaállítás</button>
+                    <button class="btn-refresh" onclick="document.getElementById('reset-pw-modal').style.display='none'">Mégse</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Submissions -->
         <div class="panel submissions-panel">
             <h2>📋 Legutóbbi Beadások</h2>
@@ -573,9 +614,84 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
                 document.getElementById('api-url').value = RAILWAY_URL;
+                document.getElementById('users-panel').style.display = 'block';
                 loadConfig();
                 loadSubmissions();
+                loadUsers();
             }
+        }
+
+        // ── Felhasználókezelés ─────────────────────────────────────────────
+        let resetPwTargetEmail = '';
+
+        async function loadUsers() {
+            document.getElementById('users-loading').style.display = 'block';
+            try {
+                const res = await fetch(`${RAILWAY_URL}/api/users`, {
+                    headers: { 'Authorization': 'Bearer ' + authToken }
+                });
+                const users = await res.json();
+                const tbody = document.getElementById('users-tbody');
+                if (!users.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="loading">Nincs regisztrált felhasználó</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td>${u.nev || ''}</td>
+                        <td style="font-size:0.85rem;">${u.email}</td>
+                        <td><span style="color:${u.szerep==='oktato'?'#536dfe':'#2ed573'};font-weight:700;">${u.szerep==='oktato'?'Oktató':'Tanuló'}</span></td>
+                        <td>${u.osztaly || '-'}</td>
+                        <td style="font-size:0.8rem;color:#888;">${u.createdAt ? u.createdAt.substring(0,16) : '-'}</td>
+                        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <button onclick="openResetPassword('${u.email}')" style="padding:4px 10px;background:transparent;border:1px solid #ffc107;border-radius:6px;color:#ffc107;cursor:pointer;font-size:0.8rem;">🔑 Jelszó</button>
+                            <button onclick="deleteUser('${u.email}')" style="padding:4px 10px;background:transparent;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:0.8rem;">🗑️ Törlés</button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) {
+                document.getElementById('users-tbody').innerHTML = `<tr><td colspan="6" style="color:#e94560;">Hiba: ${e.message}</td></tr>`;
+            } finally {
+                document.getElementById('users-loading').style.display = 'none';
+            }
+        }
+
+        function openResetPassword(email) {
+            resetPwTargetEmail = email;
+            document.getElementById('reset-pw-email-display').textContent = 'Email: ' + email;
+            document.getElementById('reset-pw-new').value = '';
+            document.getElementById('reset-pw-error').style.display = 'none';
+            document.getElementById('reset-pw-modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('reset-pw-new').focus(), 100);
+        }
+
+        async function confirmResetPassword() {
+            const newPw = document.getElementById('reset-pw-new').value;
+            const errEl = document.getElementById('reset-pw-error');
+            if (newPw.length < 6) { errEl.textContent = 'Minimum 6 karakter!'; errEl.style.display = 'block'; return; }
+            try {
+                const res = await fetch(`${RAILWAY_URL}/api/users/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+                    body: JSON.stringify({ email: resetPwTargetEmail, newPassword: newPw })
+                });
+                if (res.ok) {
+                    document.getElementById('reset-pw-modal').style.display = 'none';
+                    alert('✅ Jelszó sikeresen visszaállítva!');
+                } else {
+                    const d = await res.json();
+                    errEl.textContent = d.error || 'Hiba történt'; errEl.style.display = 'block';
+                }
+            } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+        }
+
+        async function deleteUser(email) {
+            if (!confirm(`Biztosan törlöd ezt a felhasználót?\n${email}`)) return;
+            const res = await fetch(`${RAILWAY_URL}/api/users/${encodeURIComponent(email)}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + authToken }
+            });
+            if (res.ok) { alert('✅ Felhasználó törölve.'); loadUsers(); }
+            else alert('❌ Hiba a törlés során.');
         }
 
         function logout() {

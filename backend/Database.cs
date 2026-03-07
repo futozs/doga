@@ -260,6 +260,37 @@ public class Database
         return cmd.ExecuteNonQuery() > 0;
     }
 
+    public bool ResetUserPassword(string email, string newHash)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE users SET password_hash = $h WHERE email = $e";
+        cmd.Parameters.AddWithValue("$h", newHash);
+        cmd.Parameters.AddWithValue("$e", email.ToLower().Trim());
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public List<UserListItem> GetAllUsers()
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT vezeteknev, keresztnev, email, szerep, osztaly, csoport, created_at
+            FROM users ORDER BY created_at DESC";
+        using var r = cmd.ExecuteReader();
+        var list = new List<UserListItem>();
+        while (r.Read())
+            list.Add(new UserListItem(
+                $"{r.GetString(0)} {r.GetString(1)}",
+                r.GetString(2),
+                r.GetString(3),
+                r.IsDBNull(4) ? null : r.GetString(4),
+                r.IsDBNull(5) ? null : r.GetString(5),
+                r.IsDBNull(6) ? null : r.GetString(6)
+            ));
+        return list;
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private SqliteConnection Open()

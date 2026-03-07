@@ -189,6 +189,32 @@ app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
     });
 });
 
+// Felhasználók listája (csak admin)
+app.MapGet("/api/users", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    return Results.Ok(db.GetAllUsers());
+});
+
+// Felhasználó törlése admin által
+app.MapDelete("/api/users/{email}", (HttpContext ctx, string email, Database db) =>
+{
+    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    var deleted = db.DeleteUser(Uri.UnescapeDataString(email));
+    return deleted ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
+// Felhasználó jelszavának visszaállítása admin által
+app.MapPost("/api/users/reset-password", (HttpContext ctx, ResetPasswordRequest req, Database db) =>
+{
+    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (req.NewPassword.Length < 6)
+        return Results.BadRequest(new { error = "A jelszó legalább 6 karakter legyen!" });
+    var hash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+    var ok = db.ResetUserPassword(req.Email, hash);
+    return ok ? Results.Ok(new { success = true }) : Results.NotFound(new { error = "Felhasználó nem található" });
+});
+
 // Fiók törlése (saját magát törli, jelszó megerősítéssel)
 app.MapPost("/api/auth/delete-account", (DeleteAccountRequest req, Database db) =>
 {
@@ -223,4 +249,5 @@ namespace KandoTest
 {
     public record ChangePasswordRequest(string Username, string OldPassword, string NewPassword);
     public record DeleteAccountRequest(string Email, string Jelszo);
+    public record ResetPasswordRequest(string Email, string NewPassword);
 }

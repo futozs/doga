@@ -68,6 +68,15 @@ public record RegisterRequest(
 
 public record UserLoginRequest(string Email, string Jelszo);
 
+public record UserListItem(
+    string Nev,
+    string Email,
+    string Szerep,
+    string? Osztaly,
+    string? Csoport,
+    string? CreatedAt
+);
+
 public record UserRecord(
     int Id,
     string Vezeteknev,
