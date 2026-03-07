@@ -1,0 +1,54 @@
+namespace KandoTest;
+
+public record LoginRequest(string Username, string Password);
+
+public record ConfigRequest(string TestMode);
+
+public record SubmissionRequest(
+    string Name,
+    string Email,
+    string Osztaly,
+    string? Csoport,
+    string TaskIds,
+    string Scores,
+    string MaxScores,
+    int TotalScore,
+    int MaxTotal,
+    int Duration,
+    string Mode,
+    string? CodeSnapshot
+);
+
+public class Submission
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string Osztaly { get; set; } = "";
+    public string? Csoport { get; set; }
+    public string TaskIds { get; set; } = "";
+    public string Scores { get; set; } = "";
+    public string MaxScores { get; set; } = "";
+    public int TotalScore { get; set; }
+    public int MaxTotal { get; set; }
+    public int Duration { get; set; }
+    public string Mode { get; set; } = "";
+    public string? CodeSnapshot { get; set; }
+    public string SubmittedAt { get; set; } = "";
+}
+
+public class Stats
+{
+    public int TotalSubmissions { get; set; }
+    public int TodaySubmissions { get; set; }
+    public double AvgDuration { get; set; }
+    public double AvgScore { get; set; }
+    public List<ClassStat> ByClass { get; set; } = [];
+}
+
+public class ClassStat
+{
+    public string Osztaly { get; set; } = "";
+    public int Count { get; set; }
+    public double AvgScore { get; set; }
+}
