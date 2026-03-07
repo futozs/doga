@@ -167,22 +167,51 @@
     </div>
 
     <!-- Oktatói nézet -->
-    <div id="teacher-portal" class="options-grid" style="display:none">
-        <a class="option-card javitas" href="python/admin.html#submissions">
-            <span class="icon">✅</span>
-            <span class="label">Javítás</span>
-            <span class="desc">Beadott dolgozatok megtekintése és értékelése</span>
-        </a>
-        <a class="option-card bemutatas" href="python/index.html">
-            <span class="icon">📺</span>
-            <span class="label">Bemutatás</span>
-            <span class="desc">Feladatok bemutatása diákoknak</span>
-        </a>
-        <a class="option-card admin" href="python/admin.html">
-            <span class="icon">🔧</span>
-            <span class="label">Admin</span>
-            <span class="desc">Mód beállítása, statisztikák, jelszócsere</span>
-        </a>
+    <div id="teacher-portal" style="display:none">
+        <div class="options-grid">
+            <a class="option-card javitas" href="python/admin.html#submissions">
+                <span class="icon">✅</span>
+                <span class="label">Javítás</span>
+                <span class="desc">Beadott dolgozatok megtekintése és értékelése</span>
+            </a>
+            <a class="option-card bemutatas" href="python/index.html">
+                <span class="icon">📺</span>
+                <span class="label">Bemutatás</span>
+                <span class="desc">Feladatok bemutatása diákoknak</span>
+            </a>
+            <a class="option-card admin" href="python/admin.html">
+                <span class="icon">🔧</span>
+                <span class="label">Admin</span>
+                <span class="desc">Mód beállítása, statisztikák, jelszócsere</span>
+            </a>
+            <div class="option-card" style="border-color:#536dfe; cursor:pointer;" onclick="toggleDiakNezet()">
+                <span class="icon">👁</span>
+                <span class="label" style="color:#e0e0e0;">Diák nézet</span>
+                <span class="desc">Mit látnak a diákok belépés után?</span>
+            </div>
+        </div>
+
+        <!-- Diák előnézet (alapból rejtett) -->
+        <div id="diak-elonezet" style="display:none; margin-top:24px;">
+            <div style="text-align:center; color:#888; font-size:0.85rem; margin-bottom:16px;">── Diák tárgyválasztó előnézet ──</div>
+            <div class="options-grid">
+                <a class="option-card python" href="python/index.html">
+                    <span class="icon">🐍</span>
+                    <span class="label">Python dolgozat</span>
+                    <span class="desc">Python programozási feladatok</span>
+                </a>
+                <a class="option-card web" href="web/index.html">
+                    <span class="icon">🌐</span>
+                    <span class="label">WEB dolgozat</span>
+                    <span class="desc">HTML, CSS, JavaScript feladatok</span>
+                </a>
+                <a class="option-card cs" href="cs/index.html">
+                    <span class="icon">⚙️</span>
+                    <span class="label">C# dolgozat</span>
+                    <span class="desc">C# programozási feladatok</span>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -205,6 +234,11 @@
             document.getElementById('student-portal').style.display = 'grid';
             document.getElementById('portal-sub').textContent = 'Melyik dolgozatot szeretnéd megírni?';
         }
+    }
+
+    function toggleDiakNezet() {
+        const el = document.getElementById('diak-elonezet');
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
 
     function logout() {
