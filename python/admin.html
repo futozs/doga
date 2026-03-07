@@ -543,11 +543,8 @@
     </div>
 
     <script>
-        // API URL - Same for everyone (students and admin)
-        let API_URL = 'https://script.google.com/macros/s/AKfycbw6c00BA-N3Lf3lWFg3Jm-uVJKrOKKmoRTI9vBUxk2xRdFBrNR_ztB9EoA_Uq2Kg-Ms/exec';
-
-        // Admin password stored in session after login
-        let ADMIN_PASSWORD = sessionStorage.getItem('admin_password') || '';
+        const RAILWAY_URL = 'https://agazati.up.railway.app';
+        let authToken = sessionStorage.getItem('admin_token') || '';
 
         // Login handling
         async function handleLogin(event) {
@@ -570,25 +567,23 @@
             submitBtn.disabled = true;
 
             try {
-                // Check credentials with backend
-                const response = await fetch(`${API_URL}?action=checkAdmin&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
-                const data = await response.json();
+                const response = await fetch(`${RAILWAY_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
 
-                if (data.success && data.authenticated) {
-                    // Store admin password for subsequent requests
-                    ADMIN_PASSWORD = password;
-                    sessionStorage.setItem('admin_password', ADMIN_PASSWORD);
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.token;
+                    sessionStorage.setItem('admin_token', authToken);
                     sessionStorage.setItem('admin_authenticated', 'true');
                     sessionStorage.setItem('admin_username', username);
 
-                    // Update the API URL field
-                    document.getElementById('api-url').value = API_URL;
-
-                    // Show admin panel
+                    document.getElementById('api-url').value = RAILWAY_URL;
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('admin-content').style.display = 'block';
 
-                    // Load data
                     loadConfig();
                     loadSubmissions();
                 } else {
@@ -606,24 +601,22 @@
             return false;
         }
 
-        // Check if already logged in
         function checkAuth() {
             const isAuthenticated = sessionStorage.getItem('admin_authenticated') === 'true';
-            ADMIN_PASSWORD = sessionStorage.getItem('admin_password') || '';
+            authToken = sessionStorage.getItem('admin_token') || '';
 
-            if (isAuthenticated && ADMIN_PASSWORD) {
+            if (isAuthenticated && authToken) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
-                document.getElementById('api-url').value = API_URL;
+                document.getElementById('api-url').value = RAILWAY_URL;
                 loadConfig();
                 loadSubmissions();
             }
         }
 
-        // Logout function
         function logout() {
             sessionStorage.clear();
-            ADMIN_PASSWORD = '';
+            authToken = '';
             location.reload();
         }
 
@@ -633,24 +626,14 @@
         });
 
 
-        // Load config
         async function loadConfig() {
-            if (!API_URL) {
-                showError('Kérlek add meg először az API URL-t!');
-                return;
-            }
-
             document.getElementById('config-loading').style.display = 'block';
             document.getElementById('config-content').style.display = 'none';
             document.getElementById('config-error').style.display = 'none';
 
             try {
-                const response = await fetch(`${API_URL}?action=getConfig&admin_password=${encodeURIComponent(ADMIN_PASSWORD)}`);
+                const response = await fetch(`${RAILWAY_URL}/api/config`);
                 const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
 
                 const mode = data.test_mode || 'practice';
                 const badge = document.getElementById('current-mode-badge');
@@ -665,55 +648,46 @@
             }
         }
 
-        // Set mode
         async function setMode(mode) {
-            if (!API_URL) {
-                showError('Kérlek add meg először az API URL-t!');
-                return;
-            }
-
-            if (!confirm(`Biztosan átállítod ${mode === 'practice' ? 'gyakorló' : 'éles'} módra?`)) {
-                return;
-            }
+            if (!confirm(`Biztosan átállítod ${mode === 'practice' ? 'gyakorló' : 'éles'} módra?`)) return;
 
             try {
-                // Use GET with admin password
-                const response = await fetch(`${API_URL}?action=setConfig&test_mode=${mode}&admin_password=${encodeURIComponent(ADMIN_PASSWORD)}`);
-                const data = await response.json();
+                const response = await fetch(`${RAILWAY_URL}/api/config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ testMode: mode })
+                });
 
-                if (data.success) {
+                if (response.ok) {
                     showSuccess(`Mód sikeresen átállítva: ${mode === 'practice' ? 'Gyakorló' : 'Éles'}`);
                     loadConfig();
                 } else {
-                    throw new Error(data.error || 'Ismeretlen hiba');
+                    throw new Error('Nem sikerült átállítani a módot');
                 }
             } catch (error) {
                 showError('Hiba a mód átállításakor: ' + error.message);
             }
         }
 
-        // Load submissions
         let submissionsCache = [];
         let submissionsPage = 0;
         const submissionsPageSize = 16;
 
         async function loadSubmissions() {
-            if (!API_URL) return;
-
             document.getElementById('submissions-loading').style.display = 'block';
 
             try {
-                const response = await fetch(`${API_URL}?action=getSubmissions&admin_password=${encodeURIComponent(ADMIN_PASSWORD)}`);
+                const response = await fetch(`${RAILWAY_URL}/api/submissions`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
                 const data = await response.json();
 
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                submissionsCache = data.submissions || [];
+                submissionsCache = Array.isArray(data) ? data : [];
                 submissionsPage = 0;
                 renderSubmissionsPage();
-
                 document.getElementById('submissions-loading').style.display = 'none';
             } catch (error) {
                 document.getElementById('submissions-loading').style.display = 'none';
@@ -731,11 +705,10 @@
                 return;
             }
 
-            // Calculate stats
             const total = submissionsCache.length;
             const today = new Date().toISOString().split('T')[0];
-            const todayCount = submissionsCache.filter(s => s.timestamp.startsWith(today)).length;
-            const avgTime = Math.round(submissionsCache.reduce((sum, s) => sum + (s.test_duration || 0), 0) / total / 60);
+            const todayCount = submissionsCache.filter(s => s.submittedAt && s.submittedAt.startsWith(today)).length;
+            const avgTime = Math.round(submissionsCache.reduce((sum, s) => sum + (s.duration || 0), 0) / total / 60);
 
             document.getElementById('stat-total').textContent = total;
             document.getElementById('stat-today').textContent = todayCount;
@@ -747,23 +720,21 @@
 
             pageItems.forEach(sub => {
                 const row = document.createElement('tr');
-                const date = new Date(sub.timestamp);
-                const duration = Math.round(sub.test_duration / 60);
+                const date = new Date(sub.submittedAt);
+                const duration = Math.round((sub.duration || 0) / 60);
 
                 row.innerHTML = `
-                    <td>${sub.submission_id}</td>
+                    <td>${sub.id}</td>
                     <td>${date.toLocaleString('hu-HU')}</td>
-                    <td>${sub.student_name}</td>
-                    <td>${sub.student_email}</td>
-                    <td>${sub.student_class || ''}</td>
+                    <td>${sub.name}</td>
+                    <td>${sub.email}</td>
+                    <td>${sub.osztaly || ''}</td>
                     <td>${duration} perc</td>
-                    <td>${sub.selected_tasks}</td>
-                    <td>${sub.status || ''}</td>
+                    <td>${sub.taskIds || ''}</td>
+                    <td>${sub.totalScore}/${sub.maxTotal} pont</td>
                 `;
                 row.style.cursor = 'pointer';
-                row.addEventListener('click', () => {
-                    loadSubmissionDetails(sub.submission_id);
-                });
+                row.addEventListener('click', () => { loadSubmissionDetails(sub.id); });
                 tbody.appendChild(row);
             });
 
@@ -774,107 +745,44 @@
 
         function nextSubmissionsPage() {
             const totalPages = Math.ceil(submissionsCache.length / submissionsPageSize);
-            if (submissionsPage + 1 >= totalPages) {
-                return;
-            }
-            submissionsPage += 1;
-            renderSubmissionsPage();
+            if (submissionsPage + 1 < totalPages) { submissionsPage++; renderSubmissionsPage(); }
         }
 
         function prevSubmissionsPage() {
-            if (submissionsPage === 0) {
-                return;
-            }
-            submissionsPage -= 1;
-            renderSubmissionsPage();
+            if (submissionsPage > 0) { submissionsPage--; renderSubmissionsPage(); }
         }
 
-        // AI Grading - BACKEND VERSION (Google Apps Script handles Gemini)
         async function gradeAllSubmissions() {
-            if (!API_URL) {
-                showAIStatus('error', 'Kérlek add meg először az API URL-t!');
-                return;
-            }
-
-            if (!confirm('Biztosan elindítod az automatikus javítást? Ez időbe telhet.')) {
-                return;
-            }
-
-            // Show progress
-            document.getElementById('grading-progress').style.display = 'block';
-            document.getElementById('grading-progress-bar').style.width = '10%';
-            document.getElementById('grading-progress-text').textContent = 'Javítás folyamatban...';
-            showAIStatus('info', '🤖 AI javítás folyamatban... Kérlek várj!');
-
-            try {
-                document.getElementById('grading-progress-bar').style.width = '30%';
-
-                const response = await fetch(`${API_URL}?action=gradeWithAI&admin_password=${encodeURIComponent(ADMIN_PASSWORD)}`);
-                const text = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (parseError) {
-                    throw new Error('Nem sikerült értelmezni a választ: ' + parseError.message);
-                }
-
-                if (!response.ok || data.error) {
-                    throw new Error(data.error || `HTTP hiba: ${response.status}`);
-                }
-
-                document.getElementById('grading-progress-bar').style.width = '100%';
-
-                const gradedCount = data.graded_count || 0;
-                const errors = Array.isArray(data.errors) ? data.errors : [];
-                const message = `✅ Sikeres! ${gradedCount} feladat kijavítva.${errors.length > 0 ? ` (${errors.length} hiba)` : ''}`;
-                showAIStatus('success', message);
-                document.getElementById('grading-progress-text').textContent = message;
-
-                setTimeout(() => {
-                    document.getElementById('grading-progress').style.display = 'none';
-                }, 3000);
-
-                loadSubmissions();
-
-            } catch (error) {
-                document.getElementById('grading-progress').style.display = 'none';
-                showAIStatus('error', 'Hiba az AI javítás során: ' + error.message);
-            }
+            showAIStatus('info', 'Az AI javítás a részletes nézetből érhető el (kattints egy beadásra).');
         }
 
         async function loadSubmissionDetails(submissionId) {
-            if (!API_URL) return;
-
             try {
-                const response = await fetch(`${API_URL}?action=getSubmission&id=${encodeURIComponent(submissionId)}`);
+                const response = await fetch(`${RAILWAY_URL}/api/submissions/${submissionId}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
                 const data = await response.json();
 
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
                 const content = document.getElementById('submission-details-content');
-                const tasksHtml = (data.tasks || []).map((t, idx) => {
-                    const taskNum = t.task_number !== undefined && t.task_number !== '' ? t.task_number : '-';
-                    const timeSpent = t.time_spent !== undefined && t.time_spent !== '' ? t.time_spent : 0;
-                    const answer = t.answer ? String(t.answer) : '';
+                const duration = Math.round((data.duration || 0) / 60);
+                const taskIds = (data.taskIds || '').split(',');
+                const scores = (data.scores || '').split(',');
+                const maxScores = (data.maxScores || '').split(',');
 
-                    return `
-                        <div style="margin-top: 12px;">
-                            <div><strong>${idx + 1}. feladat:</strong> ${taskNum} (${timeSpent} mp)</div>
-                            <div style="margin-top: 6px;">
-                                <textarea readonly style="width: 100%; min-height: 120px; font-family: monospace; white-space: pre; padding: 8px; border-radius: 6px; border: 1px solid #ddd;">${answer}</textarea>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                const duration = Math.round((data.test_duration || 0) / 60);
+                const scoreHtml = taskIds.map((tid, i) =>
+                    `<div><strong>${i+1}. feladat (${tid.trim()}):</strong> ${scores[i] || 0} / ${maxScores[i] || 0} pont</div>`
+                ).join('');
 
                 content.innerHTML = `
-                    <div><strong>Név:</strong> ${data.student_name || ''}</div>
+                    <div><strong>Név:</strong> ${data.name || ''}</div>
+                    <div><strong>Email:</strong> ${data.email || ''}</div>
+                    <div><strong>Osztály:</strong> ${data.osztaly || ''}</div>
                     <div><strong>Időtartam:</strong> ${duration} perc</div>
-                    ${tasksHtml}
+                    <div><strong>Mód:</strong> ${data.mode === 'live' ? 'Éles' : 'Gyakorló'}</div>
+                    <div style="margin-top:10px"><strong>Pontok:</strong></div>
+                    ${scoreHtml}
+                    <div style="margin-top:12px"><strong>Beadott kód:</strong></div>
+                    <textarea readonly style="width:100%;min-height:200px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #ddd;white-space:pre;margin-top:6px">${escapeHtml(data.codeSnapshot || '')}</textarea>
                 `;
 
                 openSubmissionModal();
@@ -1029,9 +937,7 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
 
         // Auto-refresh submissions every 30 seconds
         setInterval(() => {
-            if (API_URL) {
-                loadSubmissions();
-            }
+            if (authToken) loadSubmissions();
         }, 30000);
     </script>
 </body>

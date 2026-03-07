@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS – GitHub Pages + helyi fejlesztés
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
     p.WithOrigins(
+        "https://sandornefr.github.io",
         "https://sandorpeteer.github.io",
         "http://localhost:5500",
         "http://127.0.0.1:5500",
