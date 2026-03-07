@@ -65,6 +65,9 @@ bool ValidateToken(HttpContext ctx)
     catch { return false; }
 }
 
+// Oktatói regisztrációs kód (env változóból)
+var teacherCode = app.Configuration["TEACHER_CODE"] ?? "kandooktato";
+
 // ── Végpontok ─────────────────────────────────────────────────────────────────
 
 // Életjelzés
@@ -124,6 +127,65 @@ app.MapGet("/api/stats", (HttpContext ctx, Database db) =>
 {
     if (!ValidateToken(ctx)) return Results.Unauthorized();
     return Results.Ok(db.GetStats());
+});
+
+// Regisztráció (tanulók + oktatók)
+app.MapPost("/api/auth/register", (RegisterRequest req, Database db) =>
+{
+    // Email normalizálás és validálás
+    var email = req.Email.ToLower().Trim();
+    // Ha csak a username részt adták meg, kiegészítjük
+    if (!email.Contains('@'))
+        email = email + "@kkszki.hu";
+    // Ha duplán írták be (@kkszki.hu@kkszki.hu)
+    email = email.Replace("@kkszki.hu@kkszki.hu", "@kkszki.hu");
+    if (!email.EndsWith("@kkszki.hu"))
+        return Results.BadRequest(new { error = "Csak @kkszki.hu email cím fogadható el!" });
+
+    if (string.IsNullOrWhiteSpace(req.Vezeteknev) || string.IsNullOrWhiteSpace(req.Keresztnev))
+        return Results.BadRequest(new { error = "Kérlek add meg a nevedet!" });
+
+    if (req.Jelszo.Length < 6)
+        return Results.BadRequest(new { error = "A jelszó legalább 6 karakter legyen!" });
+
+    if (req.Jelszo != req.JelszoMegerosites)
+        return Results.BadRequest(new { error = "A két jelszó nem egyezik!" });
+
+    if (req.Szerep == "oktato" && req.OktatoiKod != teacherCode)
+        return Results.BadRequest(new { error = "Hibás oktatói kód!" });
+
+    var hash = BCrypt.Net.BCrypt.HashPassword(req.Jelszo);
+    var normalizedReq = req with { Email = email };
+    var success = db.RegisterUser(normalizedReq, hash);
+
+    if (!success)
+        return Results.BadRequest(new { error = "Ez az email cím már regisztrálva van!" });
+
+    return Results.Ok(new { success = true, message = "Sikeres regisztráció!" });
+});
+
+// Felhasználói bejelentkezés (tanulók + oktatók)
+app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
+{
+    var email = req.Email.ToLower().Trim();
+    if (!email.Contains('@')) email += "@kkszki.hu";
+
+    var user = db.GetUserByEmail(email);
+    if (user == null || !BCrypt.Net.BCrypt.Verify(req.Jelszo, user.PasswordHash))
+        return Results.Unauthorized();
+
+    var token = CreateToken($"{email}|{user.Szerep}");
+    return Results.Ok(new
+    {
+        success  = true,
+        token,
+        szerep   = user.Szerep,
+        nev      = $"{user.Vezeteknev} {user.Keresztnev}",
+        email    = user.Email,
+        evfolyam = user.Evfolyam,
+        osztaly  = user.Osztaly,
+        csoport  = user.Csoport
+    });
 });
 
 // Admin jelszó csere

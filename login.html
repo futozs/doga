@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kandó KSZKI – Belépés</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 56px;
+            background: #16213e;
+            border-bottom: 2px solid #0f3460;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 14px;
+            z-index: 100;
+        }
+        .topbar img { height: 36px; }
+        .topbar span { color: #e0e0e0; font-size: 1.05rem; font-weight: 600; }
+
+        .card {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            margin-top: 70px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 32px;
+            background: #0f3460;
+            border-radius: 10px;
+            padding: 4px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #aaa;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: #e94560;
+            color: white;
+        }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+        .form-row .form-group { flex: 1; }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0f3460;
+            border: 1px solid #1a4a8a;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #e94560;
+        }
+        .form-group select option {
+            background: #16213e;
+        }
+
+        /* Email mező suffix */
+        .email-wrapper {
+            display: flex;
+            align-items: center;
+            background: #0f3460;
+            border: 1px solid #1a4a8a;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .email-wrapper:focus-within { border-color: #e94560; }
+        .email-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 14px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            outline: none;
+            min-width: 0;
+        }
+        .email-suffix {
+            padding: 10px 14px 10px 0;
+            color: #888;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        /* Szerep választó */
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #0f3460;
+            border-radius: 10px;
+            background: transparent;
+            color: #aaa;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .role-btn.selected {
+            border-color: #e94560;
+            color: #e94560;
+            background: rgba(233,69,96,0.1);
+        }
+
+        .student-fields { display: none; }
+        .student-fields.show { display: block; }
+
+        .teacher-code-field { display: none; }
+        .teacher-code-field.show { display: block; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #e94560;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background: #c73652; }
+        .btn-submit:disabled { background: #555; cursor: not-allowed; }
+
+        .error-msg {
+            background: rgba(233,69,96,0.15);
+            border: 1px solid #e94560;
+            color: #ff8fa3;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .success-msg {
+            background: rgba(46,213,115,0.15);
+            border: 1px solid #2ed573;
+            color: #7bed9f;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .divider {
+            text-align: center;
+            color: #555;
+            font-size: 0.85rem;
+            margin: 8px 0 16px;
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <img src="kandologo2.png" alt="Kandó KSZKI">
+    <span>Kandó Kálmán Számítástechnikai Szakgimnázium</span>
+</div>
+
+<div class="card">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Bejelentkezés</button>
+        <button class="tab-btn" onclick="switchTab('register')">Regisztráció</button>
+    </div>
+
+    <!-- BEJELENTKEZÉS -->
+    <div id="login-section" class="form-section active">
+        <div class="error-msg" id="login-error"></div>
+        <div class="success-msg" id="login-success"></div>
+
+        <div class="form-group">
+            <label>Email cím</label>
+            <div class="email-wrapper">
+                <input type="text" id="login-email" placeholder="felhasznalonev" autocomplete="username">
+                <span class="email-suffix">@kkszki.hu</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Jelszó</label>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button class="btn-submit" id="login-btn" onclick="doLogin()">Bejelentkezés</button>
+    </div>
+
+    <!-- REGISZTRÁCIÓ -->
+    <div id="register-section" class="form-section">
+        <div class="error-msg" id="register-error"></div>
+        <div class="success-msg" id="register-success"></div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Vezetéknév</label>
+                <input type="text" id="reg-vezeteknev" placeholder="Kiss">
+            </div>
+            <div class="form-group">
+                <label>Keresztnév</label>
+                <input type="text" id="reg-keresztnev" placeholder="Péter">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Email cím</label>
+            <div class="email-wrapper">
+                <input type="text" id="reg-email" placeholder="felhasznalonev" autocomplete="username">
+                <span class="email-suffix">@kkszki.hu</span>
+            </div>
+            <div class="hint">Csak az @ előtti részt írd be!</div>
+        </div>
+
+        <div class="form-group">
+            <label>Jelszó (min. 6 karakter)</label>
+            <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+            <label>Jelszó megerősítése</label>
+            <input type="password" id="reg-password2" placeholder="••••••••" autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+            <label>Ki vagy?</label>
+            <div class="role-selector">
+                <button class="role-btn selected" id="role-tanulo" onclick="selectRole('tanulo')">Tanuló</button>
+                <button class="role-btn" id="role-oktato" onclick="selectRole('oktato')">Oktató</button>
+            </div>
+        </div>
+
+        <!-- Tanulói mezők -->
+        <div class="student-fields show" id="student-fields">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Évfolyam</label>
+                    <select id="reg-evfolyam">
+                        <option value="">– válassz –</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Osztály</label>
+                    <input type="text" id="reg-osztaly" placeholder="pl. 11/A">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Csoport</label>
+                <input type="text" id="reg-csoport" placeholder="pl. 1 (opcionális)">
+            </div>
+        </div>
+
+        <!-- Oktatói kód mező -->
+        <div class="teacher-code-field" id="teacher-code-field">
+            <div class="form-group">
+                <label>Oktatói regisztrációs kód</label>
+                <input type="password" id="reg-teacher-code" placeholder="••••••••">
+                <div class="hint">Az iskolától kapott kód szükséges.</div>
+            </div>
+        </div>
+
+        <button class="btn-submit" id="register-btn" onclick="doRegister()">Regisztráció</button>
+    </div>
+</div>
+
+<script>
+    const RAILWAY_URL = 'https://agazati.up.railway.app';
+    let selectedRole = 'tanulo';
+
+    // Tab váltás
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+            b.classList.toggle('active', (i === 0) === (tab === 'login'));
+        });
+        document.getElementById('login-section').classList.toggle('active', tab === 'login');
+        document.getElementById('register-section').classList.toggle('active', tab === 'register');
+    }
+
+    // Szerep választó
+    function selectRole(role) {
+        selectedRole = role;
+        document.getElementById('role-tanulo').classList.toggle('selected', role === 'tanulo');
+        document.getElementById('role-oktato').classList.toggle('selected', role === 'oktato');
+        document.getElementById('student-fields').classList.toggle('show', role === 'tanulo');
+        document.getElementById('teacher-code-field').classList.toggle('show', role === 'oktato');
+    }
+
+    // Email normalizálás (levágja a @kkszki.hu-t ha valaki bemásolja)
+    function normalizeEmailInput(inputId) {
+        const input = document.getElementById(inputId);
+        let val = input.value.trim();
+        val = val.replace(/@kkszki\.hu.*/i, '');
+        input.value = val;
+        return val + '@kkszki.hu';
+    }
+
+    // Enter billentyű támogatás
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            if (document.getElementById('login-section').classList.contains('active')) doLogin();
+            else doRegister();
+        }
+    });
+
+    // BEJELENTKEZÉS
+    async function doLogin() {
+        const btn = document.getElementById('login-btn');
+        const errorDiv = document.getElementById('login-error');
+        const successDiv = document.getElementById('login-success');
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+
+        const email = normalizeEmailInput('login-email');
+        const jelszo = document.getElementById('login-password').value;
+
+        if (!email || !jelszo) {
+            showError('login-error', 'Kérlek töltsd ki az összes mezőt!');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Bejelentkezés...';
+
+        try {
+            const res = await fetch(`${RAILWAY_URL}/api/auth/user-login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, jelszo })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                sessionStorage.setItem('kandoUser', JSON.stringify({
+                    token:    data.token,
+                    szerep:   data.szerep,
+                    nev:      data.nev,
+                    email:    data.email,
+                    evfolyam: data.evfolyam,
+                    osztaly:  data.osztaly,
+                    csoport:  data.csoport
+                }));
+                showSuccess('login-success', `Üdv, ${data.nev}! Átirányítás...`);
+                setTimeout(() => {
+                    window.location.href = data.szerep === 'oktato' ? 'python/admin.html' : 'index.html';
+                }, 1000);
+            } else {
+                showError('login-error', 'Hibás email cím vagy jelszó!');
+            }
+        } catch (e) {
+            showError('login-error', 'Kapcsolati hiba: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Bejelentkezés';
+        }
+    }
+
+    // REGISZTRÁCIÓ
+    async function doRegister() {
+        const btn = document.getElementById('register-btn');
+        document.getElementById('register-error').style.display = 'none';
+        document.getElementById('register-success').style.display = 'none';
+
+        const vezeteknev = document.getElementById('reg-vezeteknev').value.trim();
+        const keresztnev = document.getElementById('reg-keresztnev').value.trim();
+        const email      = normalizeEmailInput('reg-email');
+        const jelszo     = document.getElementById('reg-password').value;
+        const jelszo2    = document.getElementById('reg-password2').value;
+
+        if (!vezeteknev || !keresztnev) { showError('register-error', 'Kérlek add meg a teljes nevedet!'); return; }
+        if (jelszo.length < 6)          { showError('register-error', 'A jelszó legalább 6 karakter legyen!'); return; }
+        if (jelszo !== jelszo2)         { showError('register-error', 'A két jelszó nem egyezik!'); return; }
+
+        const payload = {
+            vezeteknev,
+            keresztnev,
+            email,
+            jelszo,
+            jelszoMegerosites: jelszo2,
+            szerep: selectedRole,
+            oktatoiKod:  selectedRole === 'oktato' ? document.getElementById('reg-teacher-code').value : null,
+            evfolyam:    selectedRole === 'tanulo'  ? document.getElementById('reg-evfolyam').value || null : null,
+            osztaly:     selectedRole === 'tanulo'  ? document.getElementById('reg-osztaly').value.trim() || null : null,
+            csoport:     selectedRole === 'tanulo'  ? document.getElementById('reg-csoport').value.trim() || null : null
+        };
+
+        btn.disabled = true;
+        btn.textContent = 'Regisztráció...';
+
+        try {
+            const res = await fetch(`${RAILWAY_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                showSuccess('register-success', 'Sikeres regisztráció! Most már bejelentkezhetsz.');
+                setTimeout(() => switchTab('login'), 2000);
+            } else {
+                showError('register-error', data.error || 'Hiba a regisztráció során.');
+            }
+        } catch (e) {
+            showError('register-error', 'Kapcsolati hiba: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Regisztráció';
+        }
+    }
+
+    function showError(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+    function showSuccess(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    // Ha már be van lépve, átirányítás
+    const stored = sessionStorage.getItem('kandoUser');
+    if (stored) {
+        try {
+            const user = JSON.parse(stored);
+            if (user.token) {
+                window.location.href = user.szerep === 'oktato' ? 'python/admin.html' : 'index.html';
+            }
+        } catch {}
+    }
+</script>
+</body>
+</html>

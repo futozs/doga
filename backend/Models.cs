@@ -52,3 +52,30 @@ public class ClassStat
     public int Count { get; set; }
     public double AvgScore { get; set; }
 }
+
+public record RegisterRequest(
+    string Vezeteknev,
+    string Keresztnev,
+    string Email,
+    string Jelszo,
+    string JelszoMegerosites,
+    string Szerep,          // "tanulo" vagy "oktato"
+    string? OktatoiKod,
+    string? Evfolyam,
+    string? Osztaly,
+    string? Csoport
+);
+
+public record UserLoginRequest(string Email, string Jelszo);
+
+public record UserRecord(
+    int Id,
+    string Vezeteknev,
+    string Keresztnev,
+    string Email,
+    string PasswordHash,
+    string Szerep,
+    string? Evfolyam,
+    string? Osztaly,
+    string? Csoport
+);

@@ -15,6 +15,18 @@ public class Database
     {
         using var conn = Open();
         Exec(conn, @"
+            CREATE TABLE IF NOT EXISTS users (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                vezeteknev    TEXT NOT NULL,
+                keresztnev    TEXT NOT NULL,
+                email         TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                szerep        TEXT NOT NULL DEFAULT 'tanulo',
+                evfolyam      TEXT,
+                osztaly       TEXT,
+                csoport       TEXT,
+                created_at    TEXT DEFAULT (datetime('now', 'localtime'))
+            );
             CREATE TABLE IF NOT EXISTS submissions (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 name        TEXT NOT NULL,
@@ -194,6 +206,49 @@ public class Database
         cmd.CommandText = "SELECT password_hash FROM teachers WHERE username = $u";
         cmd.Parameters.AddWithValue("$u", username);
         return cmd.ExecuteScalar()?.ToString();
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+
+    public bool RegisterUser(RegisterRequest r, string passwordHash)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT OR IGNORE INTO users
+                (vezeteknev, keresztnev, email, password_hash, szerep, evfolyam, osztaly, csoport)
+            VALUES ($v, $k, $e, $ph, $s, $ev, $o, $cs);
+            SELECT changes();";
+        cmd.Parameters.AddWithValue("$v",  r.Vezeteknev);
+        cmd.Parameters.AddWithValue("$k",  r.Keresztnev);
+        cmd.Parameters.AddWithValue("$e",  r.Email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$ph", passwordHash);
+        cmd.Parameters.AddWithValue("$s",  r.Szerep);
+        cmd.Parameters.AddWithValue("$ev", (object?)r.Evfolyam ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$o",  (object?)r.Osztaly  ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$cs", (object?)r.Csoport  ?? DBNull.Value);
+        return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+    }
+
+    public UserRecord? GetUserByEmail(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT id, vezeteknev, keresztnev, email, password_hash,
+                   szerep, evfolyam, osztaly, csoport
+            FROM users WHERE email = $e";
+        cmd.Parameters.AddWithValue("$e", email.ToLower().Trim());
+        using var r = cmd.ExecuteReader();
+        if (!r.Read()) return null;
+        return new UserRecord(
+            r.GetInt32(0),
+            r.GetString(1), r.GetString(2), r.GetString(3), r.GetString(4),
+            r.GetString(5),
+            r.IsDBNull(6) ? null : r.GetString(6),
+            r.IsDBNull(7) ? null : r.GetString(7),
+            r.IsDBNull(8) ? null : r.GetString(8)
+        );
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
