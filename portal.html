@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kandó Ágazati – Főoldal</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 56px;
+            background: #16213e;
+            border-bottom: 2px solid #0f3460;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 14px; }
+        .topbar img { height: 36px; }
+        .topbar-title { display: flex; flex-direction: column; }
+        .topbar-title span { color: #e0e0e0; font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+        .topbar-title small { color: #888; font-size: 0.75rem; }
+        .topbar-right { display: flex; align-items: center; gap: 14px; }
+        .user-info { color: #aaa; font-size: 0.9rem; text-align: right; }
+        .user-info strong { color: #e0e0e0; display: block; }
+        .logout-btn {
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid #e94560;
+            border-radius: 8px;
+            color: #e94560;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .logout-btn:hover { background: #e94560; color: white; }
+
+        .portal {
+            margin-top: 56px;
+            width: 100%;
+            max-width: 640px;
+            padding: 40px 20px;
+        }
+
+        .portal-title {
+            text-align: center;
+            color: #e0e0e0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .portal-sub {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 36px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .option-card {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 16px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            transition: all 0.2s;
+        }
+        .option-card:hover {
+            border-color: #e94560;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(233,69,96,0.2);
+        }
+        .option-card .icon {
+            font-size: 2.8rem;
+            margin-bottom: 14px;
+            display: block;
+        }
+        .option-card .label {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .option-card .desc {
+            color: #666;
+            font-size: 0.82rem;
+        }
+
+        .option-card.python  { border-color: #3776ab; }
+        .option-card.python:hover  { border-color: #4a94d4; box-shadow: 0 8px 24px rgba(55,118,171,0.25); }
+        .option-card.web     { border-color: #e44d26; }
+        .option-card.web:hover     { border-color: #f06529; box-shadow: 0 8px 24px rgba(228,77,38,0.25); }
+        .option-card.cs      { border-color: #9b59b6; }
+        .option-card.cs:hover      { border-color: #b07cc6; box-shadow: 0 8px 24px rgba(155,89,182,0.25); }
+        .option-card.javitas { border-color: #2ed573; }
+        .option-card.javitas:hover { border-color: #7bed9f; box-shadow: 0 8px 24px rgba(46,213,115,0.25); }
+        .option-card.bemutatas { border-color: #ffa502; }
+        .option-card.bemutatas:hover { border-color: #ffd32a; box-shadow: 0 8px 24px rgba(255,165,2,0.25); }
+        .option-card.admin   { border-color: #e94560; }
+        .option-card.admin:hover   { border-color: #ff6b81; box-shadow: 0 8px 24px rgba(233,69,96,0.25); }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-left">
+        <img src="kandologo2.png" alt="Kandó">
+        <div class="topbar-title">
+            <span>Miskolci SZC Kandó Kálmán Informatikai Technikum</span>
+            <small>Digitális számonkérési rendszer</small>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <div class="user-info">
+            <strong id="user-name">–</strong>
+            <span id="user-role">–</span>
+        </div>
+        <button class="logout-btn" onclick="logout()">Kilépés</button>
+    </div>
+</div>
+
+<div class="portal">
+    <div class="portal-title" id="portal-title">Üdvözöllek!</div>
+    <div class="portal-sub" id="portal-sub">Válassz az alábbi lehetőségek közül:</div>
+
+    <!-- Tanulói nézet -->
+    <div id="student-portal" class="options-grid" style="display:none">
+        <a class="option-card python" href="python/index.html">
+            <span class="icon">🐍</span>
+            <span class="label">Python dolgozat</span>
+            <span class="desc">Python programozási feladatok</span>
+        </a>
+        <a class="option-card web" href="web/index.html">
+            <span class="icon">🌐</span>
+            <span class="label">WEB dolgozat</span>
+            <span class="desc">HTML, CSS, JavaScript feladatok</span>
+        </a>
+        <a class="option-card cs" href="cs/index.html">
+            <span class="icon">⚙️</span>
+            <span class="label">C# dolgozat</span>
+            <span class="desc">C# programozási feladatok</span>
+        </a>
+    </div>
+
+    <!-- Oktatói nézet -->
+    <div id="teacher-portal" class="options-grid" style="display:none">
+        <a class="option-card javitas" href="python/admin.html#submissions">
+            <span class="icon">✅</span>
+            <span class="label">Javítás</span>
+            <span class="desc">Beadott dolgozatok megtekintése és értékelése</span>
+        </a>
+        <a class="option-card bemutatas" href="python/index.html">
+            <span class="icon">📺</span>
+            <span class="label">Bemutatás</span>
+            <span class="desc">Feladatok bemutatása diákoknak</span>
+        </a>
+        <a class="option-card admin" href="python/admin.html">
+            <span class="icon">🔧</span>
+            <span class="label">Admin</span>
+            <span class="desc">Mód beállítása, statisztikák, jelszócsere</span>
+        </a>
+    </div>
+</div>
+
+<script>
+    const stored = sessionStorage.getItem('kandoUser');
+    if (!stored) {
+        window.location.href = 'login.html';
+    } else {
+        const user = JSON.parse(stored);
+        document.getElementById('user-name').textContent = user.nev || user.email;
+        document.getElementById('user-role').textContent = user.szerep === 'oktato' ? 'Oktató' : 'Tanuló';
+        document.getElementById('portal-title').textContent = `Üdvözöllek, ${(user.nev || '').split(' ')[0] || 'felhasználó'}!`;
+
+        if (user.szerep === 'oktato') {
+            document.getElementById('teacher-portal').style.display = 'grid';
+            document.getElementById('portal-sub').textContent = 'Mit szeretnél csinálni?';
+        } else {
+            document.getElementById('student-portal').style.display = 'grid';
+            document.getElementById('portal-sub').textContent = 'Melyik dolgozatot szeretnéd megírni?';
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('kandoUser');
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>
