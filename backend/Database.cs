@@ -251,6 +251,15 @@ public class Database
         );
     }
 
+    public bool DeleteUser(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM users WHERE email = $e";
+        cmd.Parameters.AddWithValue("$e", email.ToLower().Trim());
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private SqliteConnection Open()

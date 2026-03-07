@@ -49,6 +49,66 @@
             transition: all 0.2s;
         }
         .logout-btn:hover { background: #e94560; color: white; }
+        .delete-btn {
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: #777;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .delete-btn:hover { border-color: #e94560; color: #e94560; }
+        /* Delete modal */
+        .delete-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .delete-modal-box {
+            background: #16213e;
+            border: 2px solid #e94560;
+            border-radius: 14px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+        }
+        .delete-modal-box h3 { color: #e94560; margin-bottom: 0.8rem; }
+        .delete-modal-box p { color: #aaa; font-size: 0.9rem; margin-bottom: 1.2rem; }
+        .delete-modal-box input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: #0f3460;
+            border: 1px solid #536dfe;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        .delete-modal-btns { display: flex; gap: 0.8rem; justify-content: center; }
+        .delete-confirm-btn {
+            padding: 0.6rem 1.4rem;
+            background: #e94560;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .delete-cancel-btn {
+            padding: 0.6rem 1.4rem;
+            background: transparent;
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: #aaa;
+            cursor: pointer;
+        }
         .toggle-view-btn {
             padding: 6px 14px;
             background: transparent;
@@ -152,6 +212,7 @@
             <span id="user-role">–</span>
         </div>
         <button class="toggle-view-btn" id="toggle-view-btn" onclick="toggleView()">Tanulói nézet</button>
+        <button class="delete-btn" onclick="openDeleteModal()" title="Fiók törlése">Fiók törlése</button>
         <button class="logout-btn" onclick="logout()">Kilépés</button>
     </div>
 </div>
@@ -201,6 +262,20 @@
     </div>
 </div>
 
+<!-- Fiók törlése modal -->
+<div class="delete-modal" id="delete-modal">
+    <div class="delete-modal-box">
+        <h3>⚠️ Fiók törlése</h3>
+        <p>A fiók törlése <strong style="color:#e94560;">visszavonhatatlan!</strong><br>Add meg a jelszavadat a megerősítéshez.</p>
+        <input type="password" id="delete-password" placeholder="Jelszó" autocomplete="current-password">
+        <div id="delete-error" style="color:#e94560; font-size:0.85rem; margin-bottom:0.8rem; display:none;"></div>
+        <div class="delete-modal-btns">
+            <button class="delete-confirm-btn" onclick="confirmDelete()">Törlés</button>
+            <button class="delete-cancel-btn" onclick="closeDeleteModal()">Mégse</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const stored = sessionStorage.getItem('kandoUser');
     if (!stored) {
@@ -246,6 +321,46 @@
     function logout() {
         sessionStorage.removeItem('kandoUser');
         window.location.href = 'login.html';
+    }
+
+    function openDeleteModal() {
+        document.getElementById('delete-password').value = '';
+        document.getElementById('delete-error').style.display = 'none';
+        document.getElementById('delete-modal').style.display = 'flex';
+        setTimeout(() => document.getElementById('delete-password').focus(), 100);
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').style.display = 'none';
+    }
+
+    async function confirmDelete() {
+        const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+        const jelszo = document.getElementById('delete-password').value;
+        const errEl = document.getElementById('delete-error');
+        if (!jelszo) { errEl.textContent = 'Add meg a jelszavadat!'; errEl.style.display = 'block'; return; }
+
+        try {
+            const res = await fetch('https://agazati.up.railway.app/api/auth/delete-account', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user.email, jelszo })
+            });
+            if (res.ok) {
+                sessionStorage.removeItem('kandoUser');
+                alert('A fiókodat töröltük.');
+                window.location.href = 'login.html';
+            } else if (res.status === 401) {
+                errEl.textContent = 'Hibás jelszó!';
+                errEl.style.display = 'block';
+            } else {
+                errEl.textContent = 'Hiba történt, próbáld újra.';
+                errEl.style.display = 'block';
+            }
+        } catch {
+            errEl.textContent = 'Nem sikerült kapcsolódni a szerverhez.';
+            errEl.style.display = 'block';
+        }
     }
 </script>
 </body>

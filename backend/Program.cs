@@ -189,6 +189,20 @@ app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
     });
 });
 
+// Fiók törlése (saját magát törli, jelszó megerősítéssel)
+app.MapPost("/api/auth/delete-account", (DeleteAccountRequest req, Database db) =>
+{
+    var email = req.Email.ToLower().Trim();
+    if (!email.Contains('@')) email += "@kkszki.hu";
+
+    var user = db.GetUserByEmail(email);
+    if (user == null || !BCrypt.Net.BCrypt.Verify(req.Jelszo, user.PasswordHash))
+        return Results.Unauthorized();
+
+    var deleted = db.DeleteUser(email);
+    return deleted ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
 // Admin jelszó csere
 app.MapPost("/api/auth/change-password", (HttpContext ctx,
     ChangePasswordRequest req, Database db) =>
@@ -208,4 +222,5 @@ app.Run($"http://0.0.0.0:{port}");
 namespace KandoTest
 {
     public record ChangePasswordRequest(string Username, string OldPassword, string NewPassword);
+    public record DeleteAccountRequest(string Email, string Jelszo);
 }
