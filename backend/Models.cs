@@ -43,7 +43,7 @@ public class Stats
     public int TodaySubmissions { get; set; }
     public double AvgDuration { get; set; }
     public double AvgScore { get; set; }
-    public List<ClassStat> ByClass { get; set; } = [];
+    public List<ClassStat> ByClass { get; set; } = new List<ClassStat>();
 }
 
 public class ClassStat
