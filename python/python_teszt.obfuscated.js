@@ -284,7 +284,7 @@ function setupEventListeners() {
     document.addEventListener('paste', e => {
         if (quizSection.classList.contains('hidden') || testMode !== 'live') return;
         const text = (e.clipboardData || window.clipboardData)?.getData('text/plain') || '';
-        if (text.length >= 40) {
+        if (text.length >= 45) {
             e.preventDefault();
             e.stopPropagation();
             suspiciousJumps++;
