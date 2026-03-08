@@ -67,10 +67,26 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initializeApp() {
     logEvent('Application initialized');
     setupEventListeners();
-    loadTasksFromFile();
+    await loadTasksFromFile();
     await loadTestMode();
     startFullscreenCheck();
-    // Pyodide előbetöltése a háttérben, amíg a diák kitölti az adatokat
+
+    const isTeacher = sessionStorage.getItem('kandTeacherMode') === 'true';
+
+    if (testMode === 'practice' || isTeacher) {
+        // Gyakorló / bemutató mód: rögtön indul, nincs popup
+        const startSection = document.getElementById('start-section');
+        if (startSection) startSection.style.display = 'none';
+        startTest();
+    } else {
+        // Éles mód: megjelenítjük a szabályok popup-ot
+        const rulesDiv = document.getElementById('start-live-rules');
+        if (rulesDiv) rulesDiv.style.display = 'block';
+        const startBtn = document.getElementById('start-btn');
+        if (startBtn) startBtn.textContent = 'Elfogadom a szabályokat – Teszt indítása';
+    }
+
+    // Pyodide előbetöltése a háttérben
     getPyodide()
         .then(() => debugLog('✅ Python értelmező kész'))
         .catch(err => debugLog('⚠️ Python előbetöltési hiba: ' + err.message));
@@ -417,15 +433,30 @@ function startTest() {
     fullscreenEnforced = false;
     fullscreenGraceUntil = 0;
 
+    // Start overlay elrejtése
+    const startEl = document.getElementById('start-section');
+    if (startEl) startEl.style.display = 'none';
     startSection.classList.add('hidden');
     quizSection.classList.remove('hidden');
 
     initializeCodeEditor();
     initTerminal();
 
-    // Oktatói/bemutató módban nincs fullscreen kényszer
+    // Gyakorló módban jelzés a quiz top bar-ban
     const isTeacherMode = sessionStorage.getItem('kandTeacherMode') === 'true';
-    if (!isTeacherMode) {
+    if (testMode === 'practice' && !isTeacherMode) {
+        const topBar = document.querySelector('.quiz-top-bar');
+        if (topBar && !document.getElementById('practice-mode-pill')) {
+            const pill = document.createElement('div');
+            pill.id = 'practice-mode-pill';
+            pill.style.cssText = 'background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;';
+            pill.textContent = '🎓 GYAKORLÓ MÓD';
+            topBar.insertBefore(pill, topBar.firstChild);
+        }
+    }
+
+    // Oktatói/bemutató módban nincs fullscreen kényszer
+    if (!isTeacherMode && testMode === 'live') {
         enterFullscreen();
     }
 
@@ -1656,24 +1687,18 @@ function updateTestModeBadge() {
     badge.style.display = 'block';
 
     const isTeacher = sessionStorage.getItem('kandTeacherMode') === 'true';
-    if (isTeacher) {
-        badge.style.background = 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)';
+
+    if (testMode === 'live' && !isTeacher) {
+        badge.style.display = 'block';
+        badge.style.background = 'linear-gradient(135deg, #7a0000, #c0392b)';
         badge.style.color = 'white';
-        badge.style.border = '3px solid #4338ca';
-        text.textContent = '📽️ BEMUTATÓ MÓD – Oktatói nézet, nincsenek korlátozások, nincs beadás';
-    } else if (testMode === 'live') {
-        badge.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
-        badge.style.color = 'white';
-        badge.style.border = '3px solid #c92a2a';
-        text.textContent = '🔴 ÉLES TESZT MÓD - Az eredmények elküldésre kerülnek emailben!';
+        badge.style.border = '2px solid #e94560';
+        text.textContent = '🔴 ÉLES TESZT MÓD – Az eredmények elküldésre kerülnek!';
     } else {
-        badge.style.background = 'linear-gradient(135deg, #51cf66 0%, #37b24d 100%)';
-        badge.style.color = 'white';
-        badge.style.border = '3px solid #2b8a3e';
-        text.textContent = '🎓 GYAKORLÓ MÓD - Nincs email értesítés';
+        badge.style.display = 'none';
     }
 
-    // Időbeállítás megjelenítése: csak gyakorló módban, nem oktatónak
+    // Időbeállítás: csak gyakorló módban, nem oktatónak
     const picker = document.getElementById('practice-time-picker');
     if (picker) {
         picker.style.display = (!isTeacher && testMode === 'practice') ? 'block' : 'none';
