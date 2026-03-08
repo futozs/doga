@@ -280,16 +280,23 @@ function setupEventListeners() {
         }
     }, { passive: false });
 
-    // Paste detektálás: nagy egyszeri beilllesztés = gyanús (két monitor / bypass)
+    // Paste blokk: 40+ karakteres beilllesztés tiltott (két monitor / AI bypass)
     document.addEventListener('paste', e => {
         if (quizSection.classList.contains('hidden') || testMode !== 'live') return;
         const text = (e.clipboardData || window.clipboardData)?.getData('text/plain') || '';
         if (text.length >= 40) {
+            e.preventDefault();
+            e.stopPropagation();
             suspiciousJumps++;
-            logEvent('Suspicious paste', { chars: text.length, total: suspiciousJumps });
-            debugLog('⚠️ Gyanús beilllesztés: ' + text.length + ' karakter (összesen: ' + suspiciousJumps + ')');
+            logEvent('Paste blocked', { chars: text.length, total: suspiciousJumps });
+            debugLog('🚫 Beilllesztés blokkolás: ' + text.length + ' karakter');
+            const msg = document.createElement('div');
+            msg.textContent = '🚫 Nagy beilllesztés nem engedélyezett!';
+            msg.style.cssText = 'position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#e94560;color:white;padding:10px 22px;border-radius:8px;font-weight:700;z-index:99999;font-size:0.95rem;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 2500);
         }
-    });
+    }, true);
 
     // DevTools észlelés
     detectDevTools();
