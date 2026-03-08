@@ -1414,6 +1414,16 @@ async function submitTest() {
         endStudentName.textContent = studentData.name;
     }
 
+    // Oktatói visszajutás gomb
+    try {
+        const saved = sessionStorage.getItem('kandUser');
+        const u = saved ? JSON.parse(saved) : null;
+        const teacherBtn = document.getElementById('end-teacher-btn');
+        if (teacherBtn && u && u.szerep === 'oktato') {
+            teacherBtn.style.display = 'block';
+        }
+    } catch(e) {}
+
     if (cheatDetected) {
         if (endIcon) endIcon.textContent = '⚠️';
         endTitle.textContent = 'Csalás észlelve!';
