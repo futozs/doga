@@ -94,21 +94,34 @@ async function initializeApp() {
 
 // Teszt mód betöltése az API-ból
 async function loadTestMode() {
-    try {
-        debugLog('🔄 Teszt mód betöltése...');
-        const response = await fetch(RAILWAY_URL + '/api/config');
-        const data = await response.json();
+    const fetchWithTimeout = (url, ms) => {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), ms);
+        return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(id));
+    };
 
-        if (data.test_mode) {
-            testMode = data.test_mode;
-            logEvent('Test mode loaded', { mode: testMode });
-            debugLog('✅ Teszt mód betöltve: ' + (testMode === 'practice' ? '🎓 GYAKORLÓ' : '🔴 ÉLES'));
-        } else {
-            debugLog('⚠️ Teszt mód nem érkezett, alapértelmezett: GYAKORLÓ');
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            debugLog('🔄 Teszt mód betöltése... (' + attempt + '/3)');
+            const response = await fetchWithTimeout(RAILWAY_URL + '/api/config', 8000);
+            const data = await response.json();
+
+            if (data.test_mode) {
+                testMode = data.test_mode;
+                logEvent('Test mode loaded', { mode: testMode });
+                debugLog('✅ Teszt mód betöltve: ' + (testMode === 'practice' ? '🎓 GYAKORLÓ' : '🔴 ÉLES'));
+            } else {
+                debugLog('⚠️ Teszt mód nem érkezett, alapértelmezett: GYAKORLÓ');
+            }
+            break;
+        } catch (error) {
+            debugLog('⚠️ Betöltési kísérlet ' + attempt + '/3 sikertelen: ' + error.message);
+            if (attempt < 3) await new Promise(r => setTimeout(r, 2000));
+            else {
+                logEvent('Test mode load error', { error: error.message });
+                debugLog('❌ Teszt mód betöltése SIKERTELEN, alapértelmezett: GYAKORLÓ');
+            }
         }
-    } catch (error) {
-        logEvent('Test mode load error', { error: error.message });
-        debugLog('❌ Teszt mód betöltése SIKERTELEN, alapértelmezett: GYAKORLÓ');
     }
     updateTestModeBadge();
 }
