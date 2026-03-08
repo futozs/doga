@@ -873,8 +873,43 @@
                     })()}
                     <div style="margin-top:10px"><strong>Pontok:</strong></div>
                     ${scoreHtml}
+                    ${(() => {
+                        let snap = null;
+                        try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
+                        const logs = snap && Array.isArray(snap.eventLog) ? snap.eventLog : null;
+                        if (!logs || logs.length === 0) return '';
+                        const cheatEvents = ['Cheat warning', 'Tab hidden', 'Window lost focus', 'Fullscreen exited', 'Paste blocked', 'Suspicious code jump', 'DevTools detected', 'Cheating detected'];
+                        const rows = logs.map(e => {
+                            const isCheat = cheatEvents.some(c => e.event && e.event.startsWith(c));
+                            const time = e.timestamp ? new Date(e.timestamp).toLocaleTimeString('hu-HU') : '';
+                            const extra = Object.entries(e).filter(([k]) => !['timestamp','event'].includes(k)).map(([k,v]) => `${k}: ${v}`).join(' | ');
+                            return `<tr style="${isCheat ? 'background:rgba(233,69,96,0.12);color:#e94560;' : ''}">
+                                <td style="padding:3px 8px;font-size:0.8rem;white-space:nowrap">${time}</td>
+                                <td style="padding:3px 8px;font-size:0.8rem">${isCheat ? '⚠️ ' : ''}${escapeHtml(e.event || '')}</td>
+                                <td style="padding:3px 8px;font-size:0.8rem;color:#aaa">${escapeHtml(extra)}</td>
+                            </tr>`;
+                        }).join('');
+                        return `<div style="margin-top:12px"><strong>Eseménynapló:</strong></div>
+                        <div style="max-height:220px;overflow-y:auto;margin-top:6px;border:1px solid #333;border-radius:6px;">
+                            <table style="width:100%;border-collapse:collapse;">
+                                <thead><tr style="background:#1a1a2e;position:sticky;top:0">
+                                    <th style="padding:4px 8px;font-size:0.8rem;text-align:left;color:#aaa">Idő</th>
+                                    <th style="padding:4px 8px;font-size:0.8rem;text-align:left;color:#aaa">Esemény</th>
+                                    <th style="padding:4px 8px;font-size:0.8rem;text-align:left;color:#aaa">Részletek</th>
+                                </tr></thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>`;
+                    })()}
                     <div style="margin-top:12px"><strong>Beadott kód:</strong></div>
-                    <textarea readonly style="width:100%;min-height:200px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #ddd;white-space:pre;margin-top:6px">${escapeHtml(data.codeSnapshot || '')}</textarea>
+                    ${(() => {
+                        let snap = null;
+                        try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
+                        const tasks = snap && Array.isArray(snap.tasks) ? snap.tasks : null;
+                        if (!tasks) return `<textarea readonly style="width:100%;min-height:200px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #ddd;white-space:pre;margin-top:6px">${escapeHtml(data.codeSnapshot || '')}</textarea>`;
+                        return tasks.map(t => `<div style="margin-top:8px;font-size:0.85rem;color:#aaa">Feladat ${t.task}:</div>
+                            <textarea readonly style="width:100%;min-height:120px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #333;background:#0d0d1a;color:#e0e0e0;white-space:pre;margin-top:4px">${escapeHtml(t.code || '')}</textarea>`).join('');
+                    })()}
                 `;
 
                 openSubmissionModal();

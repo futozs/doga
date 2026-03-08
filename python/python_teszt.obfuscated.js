@@ -144,7 +144,8 @@ async function submitToBackend() {
                 task: selectedTasks[i] ? selectedTasks[i].number : i + 1,
                 code: a.answer || ''
             })),
-            suspiciousJumps: suspiciousJumps
+            suspiciousJumps: suspiciousJumps,
+            eventLog: eventLog
         });
 
         const payload = {
@@ -1694,8 +1695,6 @@ function logEvent(eventName, data = {}) {
     };
 
     eventLog.push(event);
-
-    debugLog('📝 Event: ' + eventName);
 }
 
 // Debug log
