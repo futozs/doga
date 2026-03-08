@@ -29,6 +29,7 @@ let cheatDetected = false;
 let cheatReason = '';
 let cheatWarningCount = 0;
 let cheatPenalty = false;
+let lastCheatWarningTime = 0;
 let fullscreenEnforced = false;
 let fullscreenGraceUntil = 0;
 
@@ -1482,7 +1483,6 @@ function handleWindowBlur() {
         logEvent('Window lost focus');
 
         fullscreenPrompt.style.display = 'flex';
-        showCheatWarning('Elhagytad az ablakot (Alt+Tab / kikattintás)');
     }
 }
 
@@ -1554,6 +1554,9 @@ function showCheatWarning(reason) {
     if (cheatDetected) return;
     // Ha már volt 3 figyelmeztetés, ne számoljon tovább
     if (cheatWarningCount >= 3) return;
+    const now = Date.now();
+    if (now - lastCheatWarningTime < 1500) return;
+    lastCheatWarningTime = now;
 
     cheatWarningCount++;
     logEvent('Cheat warning #' + cheatWarningCount + ': ' + reason);
