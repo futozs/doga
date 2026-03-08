@@ -859,6 +859,18 @@
                     <div><strong>Osztály:</strong> ${data.osztaly || ''}</div>
                     <div><strong>Időtartam:</strong> ${duration} perc</div>
                     <div><strong>Mód:</strong> ${data.mode === 'live' ? 'Éles' : 'Gyakorló'}</div>
+                    ${(() => {
+                        let snap = null;
+                        try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
+                        const jumps = snap && typeof snap.suspiciousJumps === 'number' ? snap.suspiciousJumps : null;
+                        const warnings = data.cheatWarnings || 0;
+                        if (jumps === null && warnings === 0) return '';
+                        const flagColor = (jumps >= 2 || warnings >= 3) ? '#e94560' : '#ffc107';
+                        return `<div style="margin-top:8px;padding:6px 10px;border-radius:6px;border:1px solid ${flagColor};background:rgba(233,69,96,0.08);color:${flagColor};font-size:0.88rem;">
+                            ⚠️ Figyelmeztetések: <strong>${warnings}/3</strong> &nbsp;|&nbsp; Gyanús kódugrás: <strong>${jumps ?? 0}</strong>
+                            ${(jumps >= 2 || warnings >= 3) ? ' &nbsp;<strong style="color:#e94560;">⛔ GYANÚS BEADÁS</strong>' : ''}
+                        </div>`;
+                    })()}
                     <div style="margin-top:10px"><strong>Pontok:</strong></div>
                     ${scoreHtml}
                     <div style="margin-top:12px"><strong>Beadott kód:</strong></div>

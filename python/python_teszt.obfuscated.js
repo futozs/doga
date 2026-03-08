@@ -32,6 +32,8 @@ let cheatPenalty = false;
 let lastCheatWarningTime = 0;
 let fullscreenEnforced = false;
 let fullscreenGraceUntil = 0;
+let suspiciousJumps = 0;
+let lastCodeLengths = [];
 
 // Pyodide singleton – csak egyszer töltjük be, utána újrahasználjuk
 let pyodideInstance = null;
@@ -137,10 +139,13 @@ async function submitToBackend() {
         const scores = taskAnswers.map(a => a.score || 0);
         const totalScore = scores.reduce((s, v) => s + v, 0);
         const maxTotal = maxScores.reduce((s, v) => s + v, 0);
-        const codeSnapshot = JSON.stringify(taskAnswers.map((a, i) => ({
-            task: selectedTasks[i] ? selectedTasks[i].number : i + 1,
-            code: a.answer || ''
-        })));
+        const codeSnapshot = JSON.stringify({
+            tasks: taskAnswers.map((a, i) => ({
+                task: selectedTasks[i] ? selectedTasks[i].number : i + 1,
+                code: a.answer || ''
+            })),
+            suspiciousJumps: suspiciousJumps
+        });
 
         const payload = {
             name: studentData.name,
@@ -189,7 +194,16 @@ async function submitToBackend() {
 async function autoSaveProgress() {
     try {
         if (currentTaskIndex >= 0 && currentTaskIndex < taskAnswers.length) {
-            taskAnswers[currentTaskIndex].answer = codeEditor.getValue();
+            const newCode = codeEditor.getValue();
+            const prevLen = lastCodeLengths[currentTaskIndex] || 0;
+            const jump = newCode.length - prevLen;
+            if (testMode === 'live' && jump >= 80) {
+                suspiciousJumps++;
+                logEvent('Suspicious code jump', { chars: jump, task: currentTaskIndex + 1, total: suspiciousJumps });
+                debugLog('⚠️ Gyanús kódugrás: +' + jump + ' karakter (összesen: ' + suspiciousJumps + ')');
+            }
+            lastCodeLengths[currentTaskIndex] = newCode.length;
+            taskAnswers[currentTaskIndex].answer = newCode;
         }
         const saveData = {
             studentData,
@@ -464,6 +478,14 @@ function startTest() {
             pill.textContent = '🎓 GYAKORLÓ MÓD';
             topBar.insertBefore(pill, topBar.firstChild);
         }
+    }
+
+    if (!document.getElementById('test-watermark')) {
+        const wm = document.createElement('div');
+        wm.id = 'test-watermark';
+        wm.style.cssText = 'position:fixed;bottom:6px;right:10px;color:rgba(255,255,255,0.12);font-size:0.7rem;z-index:100;pointer-events:none;user-select:none;letter-spacing:0.3px;';
+        wm.textContent = (studentData.name || '') + ' · ' + (studentData.email || '');
+        document.body.appendChild(wm);
     }
 
     // Oktatói/bemutató módban nincs fullscreen kényszer
@@ -1483,6 +1505,10 @@ function handleWindowBlur() {
         logEvent('Window lost focus');
 
         fullscreenPrompt.style.display = 'flex';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText('').catch(() => {});
+        }
+        showCheatWarning('Elhagytad az ablakot');
     }
 }
 
@@ -1494,6 +1520,11 @@ function handleWindowFocus() {
     }
 
     logEvent('Window gained focus');
+    if (testMode === 'live' && !quizSection.classList.contains('hidden')) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText('').catch(() => {});
+        }
+    }
 }
 
 // Fókusz ellenőrzés indítása
@@ -1890,7 +1921,7 @@ function startAutoSaveInterval() {
         if (!quizSection.classList.contains('hidden')) {
             autoSaveProgress();
         }
-    }, 30000);
+    }, 10000);
 }
 
 function formatDuration(totalSeconds) {
