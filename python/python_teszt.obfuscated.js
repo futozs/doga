@@ -1448,9 +1448,8 @@ function handleFullscreenChange() {
     }
 
     if (!isFullscreen && testActive) {
-        fullscreenPrompt.style.display = 'none';
-        logEvent('Fullscreen exited - re-entering automatically');
-        setTimeout(() => enterFullscreen(), 150);
+        fullscreenPrompt.style.display = 'flex';
+        logEvent('Fullscreen exited');
         showCheatWarning('Kiléptél a teljes képernyős módból');
     } else {
         fullscreenPrompt.style.display = 'none';
@@ -1482,8 +1481,8 @@ function handleWindowBlur() {
     if (!quizSection.classList.contains('hidden')) {
         logEvent('Window lost focus');
 
+        fullscreenPrompt.style.display = 'flex';
         showCheatWarning('Elhagytad az ablakot (Alt+Tab / kikattintás)');
-        setTimeout(() => { try { window.focus(); } catch(e) {} }, 300);
     }
 }
 
@@ -1587,6 +1586,12 @@ function showCheatWarning(reason) {
 function closeCheatWarning() {
     const overlay = document.getElementById('cheat-warning-overlay');
     if (overlay) overlay.style.display = 'none';
+    fullscreenPrompt.style.display = 'none';
+    if (testMode === 'live' && !quizSection.classList.contains('hidden')) {
+        const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
+                     document.mozFullScreenElement || document.msFullscreenElement;
+        if (!isFs) enterFullscreen();
+    }
 }
 
 function sendCheatNotification(reason) {
