@@ -1516,9 +1516,6 @@ function handleWindowBlur() {
         logEvent('Window lost focus');
 
         fullscreenPrompt.style.display = 'flex';
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText('').catch(() => {});
-        }
         showCheatWarning('Elhagytad az ablakot');
     }
 }
@@ -1531,19 +1528,13 @@ function handleWindowFocus() {
     }
 
     logEvent('Window gained focus');
-    if (testMode === 'live' && !quizSection.classList.contains('hidden')) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText('').catch(() => {});
-        }
-    }
 }
 
 // Fókusz ellenőrzés indítása
 function startFocusCheck() {
     focusCheckInterval = setInterval(() => {
         if (!document.hasFocus() && !quizSection.classList.contains('hidden') && testMode === 'live') {
-            logEvent('Focus check failed');
-            showCheatWarning('Ablak fókusz elveszett');
+            logEvent('Focus check: window still unfocused');
         }
     }, 5000);
 }
