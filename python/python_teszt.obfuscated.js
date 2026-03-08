@@ -1407,16 +1407,24 @@ async function submitTest() {
 
     const endTitle = document.getElementById('end-title');
     const endMessage = document.getElementById('end-message');
+    const endIcon = document.getElementById('end-icon');
+    const endStudentName = document.getElementById('end-student-name');
+
+    if (endStudentName && studentData && studentData.name) {
+        endStudentName.textContent = studentData.name;
+    }
 
     if (cheatDetected) {
-        endTitle.textContent = '⚠️ Csalás észlelve!';
-        endMessage.textContent = 'Csalást észleltünk, ezért az eddigi munkád kerül értékelésre. A csalás miatt a teszt eredménye: elégtelen.';
+        if (endIcon) endIcon.textContent = '⚠️';
+        endTitle.textContent = 'Csalás észlelve!';
+        endTitle.classList.add('cheat');
+        endMessage.textContent = 'Csalást észleltünk, ezért az eddigi munkád kerül értékelésre. A teszt eredménye: elégtelen.';
     } else if (testMode === 'practice') {
-        endTitle.textContent = '✅ Teszt befejezve!';
-        endMessage.textContent = 'Köszönjük a részvételt!';
+        endTitle.textContent = 'Feladat beadva';
+        endMessage.textContent = 'Köszönjük a részvételt! (Gyakorló mód)';
     } else {
-        endTitle.textContent = '✅ Teszt befejezve!';
-        endMessage.textContent = 'Köszönjük, hogy kitöltötted a tesztet! A válaszaidat elküldtük a tanárnak.';
+        endTitle.textContent = 'Feladat beadva';
+        endMessage.textContent = 'A válaszaidat elküldtük a tanárnak.';
     }
 
     if (result && result.success) {

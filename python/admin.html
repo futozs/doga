@@ -424,6 +424,38 @@
             </div>
         </div>
 
+        <!-- Kézi Javítás -->
+        <div class="panel">
+            <h2>📝 Kézi Javítás</h2>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+                <label style="color:#aaa;font-weight:600;">Feladat száma:</label>
+                <select id="grading-task-select" onchange="renderGradingTable()" style="padding:8px 14px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.95rem;cursor:pointer;">
+                    <option value="">— Válassz feladatot —</option>
+                    ${Array.from({length:16},(_,i)=>`<option value="${i+1}">${i+1}. feladat (${i+1<=12?'8':'14'} pont)</option>`).join('')}
+                </select>
+                <span id="grading-count" style="color:#888;font-size:0.88rem;"></span>
+            </div>
+            <div id="grading-table-wrapper" style="display:none;">
+                <div class="table-wrapper">
+                    <table class="submissions-table" style="min-width:700px;">
+                        <thead>
+                            <tr>
+                                <th>Név</th>
+                                <th>Osztály</th>
+                                <th>Beadva</th>
+                                <th>Pontszám</th>
+                                <th>Jegy</th>
+                                <th>Figyelmeztetés</th>
+                                <th>Levonás</th>
+                                <th>Kód</th>
+                            </tr>
+                        </thead>
+                        <tbody id="grading-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- AI Grading -->
         <div class="panel">
             <h2>🤖 Automatikus Javítás (AI)</h2>
@@ -830,6 +862,104 @@
 
         function prevSubmissionsPage() {
             if (submissionsPage > 0) { submissionsPage--; renderSubmissionsPage(); }
+        }
+
+        // Jegy számítás (magyar 1-5 skála)
+        function calcGrade(score, max) {
+            if (!max) return '-';
+            const pct = score / max * 100;
+            if (pct >= 85) return 5;
+            if (pct >= 70) return 4;
+            if (pct >= 55) return 3;
+            if (pct >= 40) return 2;
+            return 1;
+        }
+
+        function gradeColor(g) {
+            if (g === 5) return '#2ed573';
+            if (g === 4) return '#7bed9f';
+            if (g === 3) return '#ffc107';
+            if (g === 2) return '#ff7675';
+            return '#e94560';
+        }
+
+        // Override tároló: { submissionId: true/false }
+        const cheatOverrides = {};
+
+        function renderGradingTable() {
+            const taskNum = parseInt(document.getElementById('grading-task-select').value);
+            const wrapper = document.getElementById('grading-table-wrapper');
+            const tbody = document.getElementById('grading-tbody');
+            const countEl = document.getElementById('grading-count');
+
+            if (!taskNum) { wrapper.style.display = 'none'; countEl.textContent = ''; return; }
+
+            const maxPts = taskNum <= 12 ? 8 : 14;
+            const matching = (submissionsCache || []).filter(s => {
+                const ids = (s.taskIds || '').split(',').map(Number);
+                return ids.includes(taskNum);
+            });
+
+            countEl.textContent = `${matching.length} beadás`;
+            if (!matching.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;padding:16px;">Nincs beadás erre a feladatra.</td></tr>';
+                wrapper.style.display = 'block';
+                return;
+            }
+
+            tbody.innerHTML = matching.slice().reverse().map(s => {
+                const ids = (s.taskIds || '').split(',').map(Number);
+                const scores = (s.scores || '').split(',').map(Number);
+                const idx = ids.indexOf(taskNum);
+                const score = idx >= 0 ? (scores[idx] || 0) : 0;
+                const baseGrade = calcGrade(score, maxPts);
+                const hasCheat = (s.cheatWarnings >= 3 || s.cheatPenalty);
+                const override = cheatOverrides[s.id];
+                const deduct = override !== undefined ? override : hasCheat;
+                const finalGrade = typeof baseGrade === 'number' ? Math.max(1, baseGrade - (deduct ? 1 : 0)) : '-';
+                const date = s.submittedAt ? new Date(s.submittedAt).toLocaleString('hu-HU') : '-';
+                const cheatBadge = (s.cheatWarnings > 0 || s.cheatPenalty)
+                    ? `<span style="color:${s.cheatWarnings >= 3 || s.cheatPenalty ? '#e94560' : '#ffc107'};font-size:0.82rem;">⚠️ ${s.cheatWarnings || 0}/3</span>`
+                    : '<span style="color:#555;font-size:0.82rem;">—</span>';
+
+                let snap = null;
+                try { snap = JSON.parse(s.codeSnapshot || ''); } catch(e) {}
+                const taskCode = snap && Array.isArray(snap.tasks) ? (snap.tasks.find(t => t.task === taskNum)?.code || '') : '';
+
+                return `<tr>
+                    <td style="font-weight:600">${escapeHtml(s.name || '')}</td>
+                    <td>${escapeHtml(s.osztaly || '-')}</td>
+                    <td style="font-size:0.82rem;color:#888">${date}</td>
+                    <td style="text-align:center"><strong>${score}/${maxPts}</strong></td>
+                    <td style="text-align:center">
+                        <span style="font-size:1.1rem;font-weight:700;color:${gradeColor(finalGrade)}">${finalGrade}</span>
+                        ${deduct ? '<span style="font-size:0.75rem;color:#e94560;margin-left:4px">(-1)</span>' : ''}
+                    </td>
+                    <td style="text-align:center">${cheatBadge}</td>
+                    <td style="text-align:center">
+                        <button onclick="toggleCheatDeduct(${s.id}, ${!deduct})" style="padding:3px 10px;border-radius:6px;border:1px solid ${deduct?'#e94560':'#555'};background:transparent;color:${deduct?'#e94560':'#aaa'};cursor:pointer;font-size:0.8rem;">
+                            ${deduct ? '✗ Levon' : '+ Levon'}
+                        </button>
+                    </td>
+                    <td style="text-align:center">
+                        ${taskCode ? `<button onclick="openCodeViewer(${JSON.stringify(escapeHtml(s.name||''))}, ${JSON.stringify(escapeHtml(taskCode))})" style="padding:3px 10px;border-radius:6px;border:1px solid #536dfe;background:transparent;color:#536dfe;cursor:pointer;font-size:0.8rem;">📄 Kód</button>` : '<span style="color:#555;font-size:0.8rem;">—</span>'}
+                    </td>
+                </tr>`;
+            }).join('');
+
+            wrapper.style.display = 'block';
+        }
+
+        function toggleCheatDeduct(id, val) {
+            cheatOverrides[id] = val;
+            renderGradingTable();
+        }
+
+        function openCodeViewer(name, code) {
+            const content = document.getElementById('submission-details-content');
+            content.innerHTML = `<div style="font-weight:700;margin-bottom:8px">${name}</div>
+                <textarea readonly style="width:100%;min-height:340px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #333;background:#0d0d1a;color:#e0e0e0;white-space:pre;">${code}</textarea>`;
+            openSubmissionModal();
         }
 
         async function gradeAllSubmissions() {

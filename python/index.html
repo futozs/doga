@@ -635,20 +635,60 @@
 
         /* End Section */
         #end-section {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 20, 0.97);
+            z-index: 600;
+            display: flex !important;
             flex-direction: column;
-            gap: 2rem;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            padding: 2rem;
+        }
+
+        #end-section.hidden { display: none !important; }
+
+        .end-box {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 20px;
+            padding: 2.5rem 3rem;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 0 60px rgba(83,109,254,0.25), 0 0 120px rgba(233,69,96,0.1);
+        }
+
+        .end-checkmark {
+            font-size: 3.5rem;
+            margin-bottom: 0.6rem;
+            display: block;
         }
 
         #end-section h2 {
-            color: #27ae60;
-            font-size: 1.8rem;
+            color: #2ed573;
+            font-size: 1.7rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 16px rgba(46,213,115,0.5);
+        }
+
+        #end-section h2.cheat {
+            color: #e94560;
+            text-shadow: 0 0 16px rgba(233,69,96,0.5);
+        }
+
+        #end-student-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #536dfe;
+            margin-bottom: 0.3rem;
         }
 
         .info-text {
-            color: #666;
-            font-size: 1.1rem;
+            color: #aaa;
+            font-size: 0.95rem;
             line-height: 1.6;
+            margin-top: 0.4rem;
         }
 
         /* Modal */
@@ -901,9 +941,13 @@
 
         <!-- End Section -->
         <div id="end-section" class="hidden">
-            <h2 id="end-title">✅ Teszt befejezve!</h2>
-            <p class="info-text" id="end-message">Köszönjük, hogy kitöltötted a tesztet! A válaszaidat elküldtük a tanárnak.</p>
-            <p class="info-text" id="final-time"></p>
+            <div class="end-box">
+                <span class="end-checkmark" id="end-icon">✅</span>
+                <h2 id="end-title">Feladat beadva</h2>
+                <div id="end-student-name"></div>
+                <p class="info-text" id="end-message">A válaszaidat elküldtük a tanárnak.</p>
+                <p class="info-text" id="final-time"></p>
+            </div>
         </div>
     </div>
 
