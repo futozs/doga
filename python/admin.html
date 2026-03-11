@@ -601,6 +601,23 @@
         const RAILWAY_URL = 'https://agazati.up.railway.app';
         let authToken = sessionStorage.getItem('admin_token') || '';
 
+        // Autentikált fetch – 401 esetén automatikusan visszaviszi a bejelentkezőre
+        async function authFetch(url, options = {}) {
+            const res = await fetch(url, {
+                ...options,
+                headers: { ...(options.headers || {}), 'Authorization': `Bearer ${authToken}` }
+            });
+            if (res.status === 401) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_authenticated');
+                authToken = '';
+                showError('A munkamenet lejárt – kérlek jelentkezz be újra.');
+                setTimeout(() => location.reload(), 2000);
+                throw new Error('Munkamenet lejárt');
+            }
+            return res;
+        }
+
         // Login handling
         async function handleLogin(event) {
             event.preventDefault();
@@ -677,9 +694,7 @@
         async function loadUsers() {
             document.getElementById('users-loading').style.display = 'block';
             try {
-                const res = await fetch(`${RAILWAY_URL}/api/users`, {
-                    headers: { 'Authorization': 'Bearer ' + authToken }
-                });
+                const res = await authFetch(`${RAILWAY_URL}/api/users`);
                 if (!res.ok) {
                     const text = await res.text();
                     throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
@@ -786,12 +801,9 @@
             if (!confirm(`Biztosan átállítod ${mode === 'practice' ? 'gyakorló' : 'éles'} módra?`)) return;
 
             try {
-                const response = await fetch(`${RAILWAY_URL}/api/config`, {
+                const response = await authFetch(`${RAILWAY_URL}/api/config`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ testMode: mode })
                 });
 
@@ -799,7 +811,8 @@
                     showSuccess(`Mód sikeresen átállítva: ${mode === 'practice' ? 'Gyakorló' : 'Éles'}`);
                     loadConfig();
                 } else {
-                    throw new Error('Nem sikerült átállítani a módot');
+                    const txt = await response.text().catch(() => '');
+                    throw new Error(`HTTP ${response.status}${txt ? ': ' + txt.substring(0,80) : ''}`);
                 }
             } catch (error) {
                 showError('Hiba a mód átállításakor: ' + error.message);
@@ -814,9 +827,7 @@
             document.getElementById('submissions-loading').style.display = 'block';
 
             try {
-                const response = await fetch(`${RAILWAY_URL}/api/submissions`, {
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                });
+                const response = await authFetch(`${RAILWAY_URL}/api/submissions`);
                 const data = await response.json();
 
                 submissionsCache = Array.isArray(data) ? data : [];
