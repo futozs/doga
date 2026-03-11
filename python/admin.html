@@ -680,9 +680,13 @@
                 const res = await fetch(`${RAILWAY_URL}/api/users`, {
                     headers: { 'Authorization': 'Bearer ' + authToken }
                 });
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
+                }
                 const users = await res.json();
                 const tbody = document.getElementById('users-tbody');
-                if (!users.length) {
+                if (!Array.isArray(users) || !users.length) {
                     tbody.innerHTML = '<tr><td colspan="6" class="loading">Nincs regisztrált felhasználó</td></tr>';
                     return;
                 }
