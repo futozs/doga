@@ -463,6 +463,36 @@
             box-shadow: 0 0 8px rgba(83,109,254,0.3);
         }
 
+        /* ── Auto pontozás sorok ── */
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.45rem 1.2rem;
+            cursor: pointer;
+            border-bottom: 1px solid #0f3460;
+            transition: background 0.1s;
+            font-size: 0.85rem;
+        }
+        .check-row:last-child { border-bottom: none; }
+        .check-row:hover { background: rgba(255,255,255,0.04); }
+        .check-row.check-pass { background: rgba(46,213,115,0.06); }
+        .check-row.check-fail { background: rgba(233,69,96,0.05); }
+        .check-row.check-manual-on  { background: rgba(255,167,38,0.1) !important; }
+        .check-row.check-manual-off { background: rgba(100,100,100,0.08) !important; }
+        .check-icon {
+            font-weight: 900;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .check-row.check-pass .check-icon { color: #2ed573; }
+        .check-row.check-fail .check-icon { color: #e94560; }
+        .check-row.check-manual-on  .check-icon { color: #ffa726; }
+        .check-row.check-manual-off .check-icon { color: #607d8b; }
+        .check-label { flex: 1; color: #c0c8e0; line-height: 1.4; }
+
         /* ── Nyomtatás ── */
         @media print {
             .topbar, #drop-zone, .teacher-note, .log-toggle { display: none !important; }
@@ -845,6 +875,57 @@ function renderWebJson(data, container, filename) {
             </div>
         `);
     }
+
+    // Automatikus pontozás
+    const taskChecks = WEB_TASK_CHECKS[data.taskId];
+    if (taskChecks) {
+        const scoreId = 'score-' + Math.random().toString(36).slice(2);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.html || '', 'text/html');
+        const htmlRaw = data.html || '';
+        const cssRaw  = data.css  || '';
+
+        const results = taskChecks.map(ch => {
+            let passed = false;
+            try {
+                if (ch.id === 'html-validated') passed = !!(imgs.html);
+                else if (ch.id === 'css-validated') passed = !!(imgs.css);
+                else passed = !!ch.check(doc, htmlRaw, cssRaw);
+            } catch(e) { passed = false; }
+            return { id: ch.id, label: ch.label, passed };
+        });
+
+        const autoScore = results.filter(r => r.passed).length;
+        const total = results.length;
+
+        const rowsHtml = results.map((r, idx) => `
+            <div class="check-row ${r.passed ? 'check-pass' : 'check-fail'}" id="${scoreId}-row-${idx}"
+                 onclick="toggleCheckRow('${scoreId}', ${idx}, ${total})"
+                 title="Kattints a felülíráshoz">
+                <span class="check-icon">${r.passed ? '✓' : '✗'}</span>
+                <span class="check-label">${esc(r.label)}</span>
+            </div>`).join('');
+
+        const gradeN = calcWebGrade(autoScore, total);
+        container.innerHTML += `
+        <div class="card" id="${scoreId}-card">
+            <div class="card-header ch-score" style="justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+                <span>🔍 Automatikus pontozás</span>
+                <span id="${scoreId}-summary" style="font-size:1rem;">
+                    <span id="${scoreId}-pts" style="font-size:1.4rem;font-weight:900;color:#2ed573;">${autoScore}</span>
+                    <span style="color:#7986cb;">/${total} pont</span>
+                    &nbsp;
+                    <span class="grade-circle grade-${gradeN}" id="${scoreId}-grade" style="display:inline-flex;width:36px;height:36px;font-size:1.1rem;border-width:3px;">${gradeN}</span>
+                </span>
+            </div>
+            <div class="card-body" style="padding:0.5rem 0;">
+                ${rowsHtml}
+            </div>
+        </div>`;
+
+        // state tároló a manuális felülírásokhoz
+        window['_checkState_' + scoreId] = results.map(r => r.passed);
+    }
 }
 
 // ─────────────────────────────────────────────────────────
@@ -871,6 +952,130 @@ function switchTab(activeTabId, inactiveTabId, activePaneId, inactivePaneId) {
     document.getElementById(activePaneId).classList.remove('hidden');
     document.getElementById(inactivePaneId).classList.add('hidden');
 }
+
+// ─────────────────────────────────────────────────────────
+// Web pontozás – manuális felülírás + élő számláló
+// ─────────────────────────────────────────────────────────
+function calcWebGrade(score, total) {
+    if (!total) return '?';
+    const pct = score / total * 100;
+    if (pct >= 80) return 5;
+    if (pct >= 60) return 4;
+    if (pct >= 40) return 3;
+    if (pct >= 20) return 2;
+    return 1;
+}
+
+function toggleCheckRow(scoreId, idx, total) {
+    const state = window['_checkState_' + scoreId];
+    if (!state) return;
+    state[idx] = !state[idx];
+    const row = document.getElementById(scoreId + '-row-' + idx);
+    if (!row) return;
+    const isOn = state[idx];
+    row.className = 'check-row ' + (isOn ? 'check-manual-on' : 'check-manual-off');
+    row.querySelector('.check-icon').textContent = isOn ? '✓' : '✗';
+    const score = state.filter(Boolean).length;
+    const ptsEl = document.getElementById(scoreId + '-pts');
+    const gradeEl = document.getElementById(scoreId + '-grade');
+    if (ptsEl) ptsEl.textContent = score;
+    const g = calcWebGrade(score, total);
+    if (gradeEl) {
+        gradeEl.textContent = g;
+        gradeEl.className = `grade-circle grade-${g}`;
+        gradeEl.style.cssText = 'display:inline-flex;width:36px;height:36px;font-size:1.1rem;border-width:3px;';
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+// Web feladat ellenőrzési kritériumok
+// ─────────────────────────────────────────────────────────
+const WEB_TASK_CHECKS = {
+  bogyos: [
+    { id:"lang-charset",          label:"1. Weboldal nyelve magyar, karakterkódolása UTF-8",                                              check:(doc)=>{ const m=doc.querySelector('meta[charset]'); return doc.documentElement.lang==="hu"&&m&&m.getAttribute('charset').toLowerCase()==='utf-8'; } },
+    { id:"title",                 label:"2. Böngésző címsorában megjelenő cím \"Bogyós gyümölcsök\"",                                    check:(doc)=>doc.title==="Bogyós gyümölcsök" },
+    { id:"style-link",            label:"3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",                     check:(doc,html)=>/href=["'][^"']*style\.css["']/i.test(html) },
+    { id:"fejlec-img",            label:"4. Az img mappában található fejlec.jpg képet elhelyezte",                                       check:(doc)=>doc.querySelector('img[src*="fejlec"]')!==null },
+    { id:"fejlec-alt",            label:"5. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Bogyós gyümölcsök\" szöveg jelenik meg", check:(doc)=>{ const i=doc.querySelector('img[src*="fejlec"]'); return i&&i.alt&&i.title==="Bogyós gyümölcsök"; } },
+    { id:"fejlec-id",             label:"6. Fejléc képre egyedi azonosítót állított fejlec néven",                                        check:(doc)=>doc.querySelector('img#fejlec')!==null },
+    { id:"goji-menu",             label:"7. Elkészítette a Goji bogyó menüpontot és jó oldalra hivatkozik",                              check:(doc)=>Array.from(doc.querySelectorAll('nav a, .navbar a')).some(a=>a.textContent.includes('Goji')&&a.href.includes('wikipedia.org/wiki/Goji')) },
+    { id:"goji-blank",            label:"8. A Goji bogyó linkre kattintva a tartalom új lapon jelenik meg",                              check:(doc)=>Array.from(doc.querySelectorAll('a')).some(a=>a.href.includes('wikipedia.org/wiki/Goji')&&a.target==='_blank') },
+    { id:"h1-focim",              label:"9. A főcím 1-es szintű címsor",                                                                 check:(doc)=>{ const h=doc.querySelector('h1'); return h&&h.textContent.includes('BOGYÓS'); } },
+    { id:"erdei-paragraphs",      label:"10. Az Erdei gyümölcsök részben 2 bekezdést készített",                                         check:(doc)=>{ const e=doc.querySelector('#erdei'); return e&&e.querySelectorAll('p').length>=2; } },
+    { id:"erdei-paragraphs-my4",  label:"11. Az Erdei gyümölcsök bekezdésein alkalmazza a my-4 Bootstrap osztályjelölőt",                check:(doc)=>{ const e=doc.querySelector('#erdei'); return e&&e.querySelectorAll('p.my-4').length>=2; } },
+    { id:"szeder-underline",      label:"12. Az \"5 legjobb szedres nyári finomság:\" aláhúzott",                                        check:(doc)=>{ const u=doc.querySelector('u'); return u&&u.textContent.includes('5 legjobb'); } },
+    { id:"szeder-list",           label:"13. Az \"5 legjobb szedres nyári finomság:\" alatti szövegből számozott felsorolást készített",  check:(doc)=>Array.from(doc.querySelectorAll('ol')).some(o=>o.textContent.includes('muffin')||o.textContent.includes('Szedres')) },
+    { id:"afonya-h3",             label:"14. Az Áfonya részben 3-as szintű címsort készített",                                           check:(doc)=>Array.from(doc.querySelectorAll('h3')).some(h=>h.textContent.includes('Áfonya')) },
+    { id:"afonya-paragraphs",     label:"15. Az Áfonya részben bekezdéseket készített",                                                  check:(doc)=>{ const a=doc.querySelector('#afonya'); return a&&a.querySelectorAll('p').length>=2; } },
+    { id:"afonya-bold",           label:"16. Az Áfonya részben a neveket félkövérré tette",                                              check:(doc)=>doc.querySelectorAll('#afonya b, #afonya strong').length>=1 },
+    { id:"afonya-italic",         label:"17. Az Áfonya részben a latin neveket dőltté tette",                                            check:(doc)=>doc.querySelectorAll('#afonya i, #afonya em').length>=1 },
+    { id:"afonya-img",            label:"18. Az Áfonya részben képet helyezett el",                                                      check:(doc)=>{ const a=doc.querySelector('#afonya'); return a&&a.querySelector('img')!==null; } },
+    { id:"afonya-alt",            label:"19. Az Áfonya kép alt/title szövege helyes",                                                    check:(doc)=>{ const i=doc.querySelector('#afonya img'); return i&&(i.alt||i.title); } },
+    { id:"caption-classes",       label:"20. A képaláírásoknál bootstrap stílus segítségével középre helyezte és félkövérré tette a szöveget", check:(doc)=>doc.querySelectorAll('.fw-bold.text-center, .text-center.fw-bold').length>=1 },
+    { id:"malna-list-ul",         label:"21. A Málna részben számozatlan felsorolást készített",                                         check:(doc)=>{ const m=doc.querySelector('#malna'); return m&&m.querySelector('ul')!==null; } },
+    { id:"malna-list-id",         label:"22. A felsorolásra a malna azonosítót állította",                                               check:(doc)=>doc.querySelector('ul#malna, #malna ul')!==null },
+    { id:"col-lg-4",              label:"23. Háromhasábos elrendezés nagyméretű kijelzőkön",                                             check:(doc)=>doc.querySelectorAll('.col-lg-4').length>=3 },
+    { id:"table-header",          label:"24. A táblázat fejlécét elkészítette",                                                          check:(doc)=>doc.querySelectorAll('thead th, thead td').length>=2 },
+    { id:"table-w25",             label:"25. A táblázat oszlopainak szélessége 25%",                                                     check:(doc,html)=>/width\s*=\s*["']?25%/i.test(html)||/width\s*:\s*25%/i.test(html) },
+    { id:"footer-link-href",      label:"26. A lábléc hivatkozás a megfelelő oldalra mutat",                                             check:(doc)=>doc.querySelector('.lablec a, footer a')!==null },
+    { id:"footer-link-text",      label:"27. A lábléc hivatkozás szövege helyes",                                                        check:(doc)=>{ const a=doc.querySelector('.lablec a, footer a'); return a&&a.textContent.trim().length>0; } },
+    { id:"css-body-font",         label:"28. CSS: Az oldal betűtípusa Verdana",                                                          check:(doc,html,css)=>css&&/body\s*\{[^}]*font-family\s*:\s*[^;]*verdana/i.test(css) },
+    { id:"css-body-height",       label:"29. CSS: Az oldal magassága 400px",                                                             check:(doc,html,css)=>css&&/body\s*\{[^}]*height\s*:\s*400px/i.test(css) },
+    { id:"css-p-justify",         label:"30. CSS: A bekezdések sorkizártak",                                                             check:(doc,html,css)=>css&&/p\s*\{[^}]*text-align\s*:\s*justify/i.test(css) },
+    { id:"css-hobbi-bg",          label:"31. CSS: A hobbi osztályjelölő háttérszíne rgb(255,207,207)",                                   check:(doc,html,css)=>css&&/\.hobbi\s*\{[^}]*background(-color)?\s*:\s*(rgb\s*\(\s*255\s*,\s*207\s*,\s*207\s*\)|#ffcfcf)/i.test(css) },
+    { id:"css-nav-border",        label:"32. CSS: A navigáció listaelemére 3px pontozott piros szegélyt állított",                       check:(doc,html,css)=>css&&/nav\s+li\s*\{[^}]*border\s*:[^;]*3px[^;]*dotted[^;]*red/i.test(css) },
+    { id:"css-footer-link-color", label:"33. CSS: A lablec osztályjelölő hivatkozása fehér színű",                                       check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*(color\s*:\s*(white|#fff|#ffffff))/i.test(css) },
+    { id:"css-footer-link-style", label:"34. CSS: A lablec osztályjelölő hivatkozása félkövér",                                          check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css) },
+    { id:"css-footer-hover",      label:"35. CSS: Ha a lablec hivatkozás felé visszük az egeret, akkor nagybetűs",                       check:(doc,html,css)=>css&&/\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css) },
+    { id:"css-malna-list-image",  label:"36. CSS: A #malna elemkijelölőre beállította a bogyo.png listastílus képet",                    check:(doc,html,css)=>css&&/#malna\s*\{[^}]*list-style-image\s*:\s*url\([^)]*bogyo\.png/i.test(css) },
+    { id:"css-malna-margin",      label:"37. CSS: A #malna elemkijelölőre bal külső margó 25px",                                         check:(doc,html,css)=>css&&/#malna\s*\{[^}]*margin-left\s*:\s*25px/i.test(css) },
+    { id:"css-malna-font-size",   label:"38. CSS: A #malna betűmérete 10%-kal kisebb",                                                   check:(doc,html,css)=>css&&/#malna\s*\{[^}]*font-size\s*:\s*(0\.9em|90%|0\.9rem)/i.test(css) },
+    { id:"html-validated",        label:"39. HTML validálás képernyőképe feltöltve",                                                     check:()=>false },
+    { id:"css-validated",         label:"40. CSS validálás képernyőképe feltöltve",                                                      check:()=>false },
+  ],
+  humanoid: [
+    { id:"lang-charset",          label:"1. Weboldal nyelve magyar, karakterkódolása UTF-8",                                              check:(doc)=>{ const m=doc.querySelector('meta[charset]'); return doc.documentElement.lang==="hu"&&m&&m.getAttribute('charset').toLowerCase()==='utf-8'; } },
+    { id:"style-link",            label:"2. Hivatkozást helyezett el a css mappában található style.css stíluslapra",                     check:(doc,html)=>/href=["'][^"']*style\.css["']/i.test(html) },
+    { id:"title",                 label:"3. Böngésző címsorában megjelenő cím \"Humanoid robotok\"",                                     check:(doc)=>doc.title==="Humanoid robotok" },
+    { id:"h1-felirat",            label:"4. A \"Humanoid robotok\" bekezdés 1-es szintű címsor",                                         check:(doc)=>{ const h=doc.querySelector('h1'); return h&&h.textContent.includes('Humanoid'); } },
+    { id:"fejlec-img",            label:"5. A fejlec.jpg képet a megfelelő helyre helyezte",                                             check:(doc)=>doc.querySelector('img[src*="fejlec"]')!==null },
+    { id:"fejlec-alt",            label:"6. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Humanoid robot\" szöveg jelenik meg", check:(doc)=>{ const i=doc.querySelector('img[src*="fejlec"]'); return i&&i.alt==="Humanoid robot"&&i.title==="Humanoid robot"; } },
+    { id:"fejlec-id",             label:"7. A képre alkalmazta a \"fejlec\" egyedi azonosítót",                                          check:(doc)=>doc.querySelector('img#fejlec')!==null },
+    { id:"nav-link",              label:"8. Elkészítette a menüpontot és jó oldalra hivatkozik",                                         check:(doc)=>Array.from(doc.querySelectorAll('nav a')).some(a=>a.textContent.includes('humanoid robot')&&a.href.includes('netliferobotics.hu')) },
+    { id:"nav-link-blank",        label:"9. A linkre kattintva a tartalom új lapon jelenik meg",                                         check:(doc)=>Array.from(doc.querySelectorAll('nav a')).some(a=>a.href.includes('netliferobotics.hu')&&a.target==='_blank') },
+    { id:"asimo-italic",          label:"10. A zárójelben lévő angol kifejezés dőlt",                                                    check:(doc)=>Array.from(doc.querySelectorAll('i, em')).some(i=>i.textContent.includes('Advanced Step')) },
+    { id:"pepper-underline",      label:"11. A \"Fizikai felépítése:\" szöveg aláhúzott",                                               check:(doc)=>Array.from(doc.querySelectorAll('u')).some(u=>u.textContent.includes('Fizikai')) },
+    { id:"pepper-list",           label:"12. Számozatlan felsorolást készített",                                                         check:(doc)=>{ const ul=doc.querySelector('ul#robotikon'); return ul&&ul.querySelectorAll('li').length>0; } },
+    { id:"pepper-list-id",        label:"13. A számozatlan felsorolásra alkalmazta a \"robotikon\" egyedi azonosítót",                   check:(doc)=>doc.querySelector('ul#robotikon')!==null },
+    { id:"ameca-h2",              label:"14. Az Ameca címsort kettes szintűvé alakította (h2)",                                          check:(doc)=>Array.from(doc.querySelectorAll('h2')).some(h=>h.textContent.includes('Ameca')) },
+    { id:"ameca-paragraphs",      label:"15. Az Ameca részben bekezdéseket készített",                                                   check:(doc)=>{ const h2s=doc.querySelectorAll('h2'); const a=Array.from(h2s).find(h=>h.textContent.includes('Ameca')); if(!a) return false; const c=a.closest('div'); return c&&c.querySelectorAll('p:not(.card-text)').length>=2; } },
+    { id:"ameca-img",             label:"16. A kép forrása az img mappában található ameca.jpg",                                         check:(doc)=>doc.querySelector('img[src*="ameca"]')!==null },
+    { id:"ameca-alt",             label:"17. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Ameca\" szöveg jelenik meg",check:(doc)=>{ const i=doc.querySelector('img[src*="ameca"]'); return i&&i.alt==="Ameca"&&i.title==="Ameca"; } },
+    { id:"bold-5places",          label:"18. A robot neveket tag segítségével félkövérrá tette 6 helyen",                                check:(doc)=>doc.querySelectorAll('b, strong').length>=6 },
+    { id:"caption-classes",       label:"19. A képaláírásoknál bootstrap stílus segítségével középre helyezte és félkövérré tette a szöveget (6 helyen)", check:(doc)=>doc.querySelectorAll('.fw-bold.text-center, .card-text.fw-bold').length>=6 },
+    { id:"table-rows",            label:"20. A táblázat törzsébe elkészítette a hiányzó sorokat és cellákat",                            check:(doc)=>doc.querySelectorAll('tbody tr').length>=3 },
+    { id:"table-bordered",        label:"21. A táblázatra alkalmazta a table és table-bordered osztályokat",                             check:(doc)=>doc.querySelector('table.table.table-bordered')!==null },
+    { id:"uncanny-col-lg-6",      label:"22. Az Uncanny valley részben fele-fele osztásra állította nagyméretű kijelzőnél",              check:(doc)=>{ const u=doc.querySelector('#uncanny'); return u&&u.querySelectorAll('.col-lg-6').length>=2; } },
+    { id:"uncanny-img-classes",   label:"23. A képet bootstrap stílus segítségével középre helyezte",                                    check:(doc)=>{ const u=doc.querySelector('#uncanny'); if(!u) return false; return u.querySelector('img.d-block.mx-auto, img.mx-auto.d-block')!==null; } },
+    { id:"footer-link",           label:"24. A láblécben a hivatkozás a \"leiras\" azonosítóra ugrik, szövege \"Ugrás az elejére\"",    check:(doc)=>{ const l=doc.querySelector('.lablec a[href="#leiras"]'); return l&&l.textContent.includes('Ugrás az elejére'); } },
+    { id:"css-body-font",         label:"25. CSS: Az oldal betűtípusa Rubik",                                                            check:(doc,html,css)=>css&&/body\s*\{[^}]*font-family\s*:\s*[^;]*rubik/i.test(css) },
+    { id:"css-fejlec-width",      label:"26. CSS: A fejlec egyedi azonosítójú elemkijelölő szélessége 100%",                             check:(doc,html,css)=>css&&/#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css) },
+    { id:"css-felirat-smallcaps", label:"27. CSS: A felirat egyedi azonosítójú elemkijelölőre kiskapitális betűt állított",              check:(doc,html,css)=>css&&/#felirat\s*\{[^}]*font-variant\s*:\s*small-caps/i.test(css) },
+    { id:"css-nav-border",        label:"28. CSS: A navigáció listaelemére 3px pontozott cadetblue jobb oldali szegélyt állított",       check:(doc,html,css)=>css&&/nav\s+li\s*\{[^}]*(border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*cadetblue|border-right\s*:[^;]*3px[^;]*dotted[^;]*cadetblue)/i.test(css) },
+    { id:"css-nav-padding",       label:"29. CSS: A navigáció listaelemének belső margója vízszintesen 0, függőlegesen 15px",            check:(doc,html,css)=>css&&/nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css) },
+    { id:"css-robot-bg",          label:"30. CSS: A robot osztály elemkijelölőjére (#f0ffff) kódú háttérszínt állított",                 check:(doc,html,css)=>css&&/\.robot\s*\{[^}]*background(-color)?\s*:\s*(azure|#f0ffff)/i.test(css) },
+    { id:"css-lablec-link-color", label:"31. CSS: A lablec osztály hivatkozásának betűszíne rgb(13,202,240)",                            check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*color\s*:\s*rgb\s*\(\s*13\s*,\s*202\s*,\s*240\s*\)/i.test(css) },
+    { id:"css-lablec-link-bold",  label:"32. CSS: A lablec osztály elemkijelölőjére félkövér stílust állított",                          check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css) },
+    { id:"css-lablec-link-nodecor",label:"33. CSS: A lablec osztály hivatkozásánál megszüntette az aláhúzást",                           check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css) },
+    { id:"css-lablec-hover",      label:"34. CSS: Ha a lablec osztály hivatkozása felé visszük az egeret, akkor nagybetűs",              check:(doc,html,css)=>css&&/\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css) },
+    { id:"css-navbar-fontsize",   label:"35. CSS: A navbar osztály betűméretét 20%-kal nagyobbra állította",                             check:(doc,html,css)=>css&&/\.navbar\s*\{[^}]*font-size\s*:\s*1\.2em/i.test(css) },
+    { id:"css-robotikon-image",   label:"36. CSS: A robotikon egyedi azonosítóra beállította a robot.jpg listaelem stílus képet",        check:(doc,html,css)=>css&&/#robotikon\s*\{[^}]*list-style-image\s*:\s*url\([^)]*robot\.jpg/i.test(css) },
+    { id:"css-robotikon-margin",  label:"37. CSS: A robotikon egyedi azonosító bal oldali külső margójára 10px-t állított",              check:(doc,html,css)=>css&&/#robotikon\s*\{[^}]*margin-left\s*:\s*10px/i.test(css) },
+    { id:"css-p-justify",         label:"38. CSS: Bekezdések sorkizártak",                                                               check:(doc,html,css)=>css&&/p\s*\{[^}]*text-align\s*:\s*justify/i.test(css) },
+    { id:"html-validated",        label:"39. HTML validálás képernyőképe feltöltve",                                                     check:()=>false },
+    { id:"css-validated",         label:"40. CSS validálás képernyőképe feltöltve",                                                      check:()=>false },
+  ],
+};
 </script>
 </body>
 </html>
