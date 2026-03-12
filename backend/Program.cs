@@ -36,6 +36,18 @@ if (db.GetPasswordHash(adminEnvUser) == null)
     db.UpsertTeacher(adminEnvUser, BCrypt.Net.BCrypt.HashPassword(adminEnvPass));
 }
 
+// Alapértelmezett oktató felhasználó seed (Railway restart után is megmarad)
+// Env változók: SEED_OKTATO_EMAIL, SEED_OKTATO_JELSZO, SEED_OKTATO_VEZETEK, SEED_OKTATO_KERESZT
+var seedEmail    = app.Configuration["SEED_OKTATO_EMAIL"];
+var seedJelszo   = app.Configuration["SEED_OKTATO_JELSZO"];
+var seedVezetek  = app.Configuration["SEED_OKTATO_VEZETEK"]  ?? "Oktató";
+var seedKeresztnev = app.Configuration["SEED_OKTATO_KERESZT"] ?? "Alapértelmezett";
+if (!string.IsNullOrEmpty(seedEmail) && !string.IsNullOrEmpty(seedJelszo))
+{
+    db.UpsertUser(seedVezetek, seedKeresztnev, seedEmail,
+        BCrypt.Net.BCrypt.HashPassword(seedJelszo), "oktato");
+}
+
 // ── Token kezelés ─────────────────────────────────────────────────────────────
 
 string CreateToken(string username)

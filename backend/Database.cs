@@ -210,6 +210,22 @@ public class Database
 
     // ── Users ─────────────────────────────────────────────────────────────────
 
+    public void UpsertUser(string vezeteknev, string keresztnev, string email, string passwordHash, string szerep)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT INTO users (vezeteknev, keresztnev, email, password_hash, szerep)
+            VALUES ($v, $k, $e, $ph, $s)
+            ON CONFLICT(email) DO NOTHING";
+        cmd.Parameters.AddWithValue("$v",  vezeteknev);
+        cmd.Parameters.AddWithValue("$k",  keresztnev);
+        cmd.Parameters.AddWithValue("$e",  email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$ph", passwordHash);
+        cmd.Parameters.AddWithValue("$s",  szerep);
+        cmd.ExecuteNonQuery();
+    }
+
     public bool RegisterUser(RegisterRequest r, string passwordHash)
     {
         using var conn = Open();
