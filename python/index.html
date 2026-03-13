@@ -1028,9 +1028,21 @@
                     if (backBtn) backBtn.style.display = 'inline-block';
                 }
 
-                // WEB váltó gomb minden bejelentkezett felhasználónak
-                const switchWebBtn = document.getElementById('btn-switch-web');
-                if (switchWebBtn) switchWebBtn.style.display = 'inline-block';
+                // WEB váltó gomb: oktatónak mindig, tanulónak csak gyakorló módban
+                if (u.szerep === 'oktato') {
+                    const switchWebBtn = document.getElementById('btn-switch-web');
+                    if (switchWebBtn) switchWebBtn.style.display = 'inline-block';
+                } else {
+                    fetch('https://agazati.up.railway.app/api/config')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.test_mode !== 'live') {
+                                const switchWebBtn = document.getElementById('btn-switch-web');
+                                if (switchWebBtn) switchWebBtn.style.display = 'inline-block';
+                            }
+                        })
+                        .catch(() => {}); // hiba esetén marad elrejtve (biztonságosabb)
+                }
 
                 // Rejtett mezők feltöltése (startTest() ezeket olvassa)
                 const fName = document.getElementById('name');

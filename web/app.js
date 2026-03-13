@@ -1643,10 +1643,20 @@ function updateStudentDisplay() {
   } else {
     studentInfo.textContent = '';
   }
-  // Python váltó gomb: csak portálos bejelentkezésnél (kandoUser kell a Python apphoz)
+  // Python váltó gomb: portálos bejelentkezés + csak gyakorló módban
   const switchBtn = document.getElementById('btn-switch-python');
-  if (switchBtn) {
-    switchBtn.style.display = sessionStorage.getItem('kandoUser') && studentData.name ? 'inline-block' : 'none';
+  if (switchBtn && sessionStorage.getItem('kandoUser') && studentData.name) {
+    const kandoUser = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+    if (kandoUser.szerep === 'oktato') {
+      switchBtn.style.display = 'inline-block';
+    } else {
+      fetch('https://agazati.up.railway.app/api/config')
+        .then(r => r.json())
+        .then(data => { if (data.test_mode !== 'live') switchBtn.style.display = 'inline-block'; })
+        .catch(() => {});
+    }
+  } else if (switchBtn) {
+    switchBtn.style.display = 'none';
   }
 }
 
