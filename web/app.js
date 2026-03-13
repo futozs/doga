@@ -1681,7 +1681,7 @@ function logoutStudent() {
   // Ha portálról jött (kandoUser vagy bemutato=1), confirm nélkül visszavisszük a portálra
   const isBemutato = new URLSearchParams(location.search).get('bemutato') === '1';
   if (sessionStorage.getItem('kandoUser') || isBemutato) {
-    sessionStorage.removeItem('kandoUser');
+    // kandoUser-t NEM töröljük – a portal.html ellenőrzi és megjeleníti a főmenüt
     location.replace('../portal.html');
     return;
   }
