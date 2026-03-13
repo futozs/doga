@@ -471,7 +471,7 @@ body {
   grid-template-columns: 35% 1fr;
   gap: 8px;
   padding: 8px;
-  height: calc(100vh - 55px);
+  height: calc(100vh - 55px - 22px);
   overflow: hidden;
 }
 
@@ -857,9 +857,12 @@ iframe {
 
 .footer {
   padding: 4px 12px;
+  margin: 0;
   color: var(--muted);
   font-size: 0.7rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .footer kbd {

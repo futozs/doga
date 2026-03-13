@@ -1704,17 +1704,35 @@ function updateStudentDisplay() {
       btnLogoutEl.title = 'Kijelentkezés';
     }
   }
-  // Python váltó gomb: portálos bejelentkezés + csak gyakorló módban
+  // Python váltó gomb + mód jelző badge
   const switchBtn = document.getElementById('btn-switch-python');
-  if (switchBtn && sessionStorage.getItem('kandoUser') && studentData.name) {
-    const kandoUser = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+  const modeBadge = document.getElementById('mode-badge');
+  const kandoUser = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+
+  function setModeBadge(isLive) {
+    if (!modeBadge) return;
+    if (isLive) {
+      modeBadge.textContent = '🔴 ÉLES MÓD';
+      modeBadge.style.cssText += ';display:inline-block;background:#2d0a0a;border:1px solid #e94560;color:#e94560;';
+    } else {
+      modeBadge.textContent = '🎓 GYAKORLÓ MÓD';
+      modeBadge.style.cssText += ';display:inline-block;background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;';
+    }
+  }
+
+  if (sessionStorage.getItem('kandoUser') && studentData.name) {
     if (kandoUser.szerep === 'oktato') {
-      switchBtn.style.display = 'inline-block';
+      if (switchBtn) switchBtn.style.display = 'inline-block';
+      setModeBadge(false);
     } else {
       fetch('https://agazati.up.railway.app/api/config')
         .then(r => r.json())
-        .then(data => { if (data.test_mode !== 'live') switchBtn.style.display = 'inline-block'; })
-        .catch(() => {});
+        .then(data => {
+          const isLive = data.test_mode === 'live';
+          if (!isLive && switchBtn) switchBtn.style.display = 'inline-block';
+          setModeBadge(isLive);
+        })
+        .catch(() => { setModeBadge(false); });
     }
   } else if (switchBtn) {
     switchBtn.style.display = 'none';
