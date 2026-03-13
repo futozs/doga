@@ -972,6 +972,14 @@ function saveToLocalStorage() {
   localStorage.setItem(htmlKey, html);
   localStorage.setItem(cssKey, css);
   localStorage.setItem(lastSavedKey, new Date().toISOString());
+
+  // Validálás képek mentése (try/catch: base64 képek nagyok lehetnek)
+  try {
+    const validHtmlKey = getStorageKey(currentTask.id, 'validHtml');
+    const validCssKey  = getStorageKey(currentTask.id, 'validCss');
+    if (validHtmlKey) localStorage.setItem(validHtmlKey, validationImages.html || '');
+    if (validCssKey)  localStorage.setItem(validCssKey,  validationImages.css  || '');
+  } catch (e) { /* localStorage quota: nem kritikus */ }
 }
 
 function loadFromLocalStorage(taskId) {
@@ -987,6 +995,13 @@ function loadFromLocalStorage(taskId) {
   const lastSaved = localStorage.getItem(lastSavedKey);
 
   if (html !== null || css !== null) {
+    // Validálás képek visszatöltése
+    const validHtmlKey = getStorageKey(taskId, 'validHtml');
+    const validCssKey  = getStorageKey(taskId, 'validCss');
+    const validHtml = validHtmlKey ? localStorage.getItem(validHtmlKey) : null;
+    const validCss  = validCssKey  ? localStorage.getItem(validCssKey)  : null;
+    if (validHtml) { validationImages.html = validHtml; }
+    if (validCss)  { validationImages.css  = validCss;  }
     return { html, css, lastSaved };
   }
   return null;
@@ -1003,6 +1018,10 @@ function clearLocalStorage(taskId) {
   localStorage.removeItem(htmlKey);
   localStorage.removeItem(cssKey);
   localStorage.removeItem(lastSavedKey);
+  const validHtmlKey = getStorageKey(taskId, 'validHtml');
+  const validCssKey  = getStorageKey(taskId, 'validCss');
+  if (validHtmlKey) localStorage.removeItem(validHtmlKey);
+  if (validCssKey)  localStorage.removeItem(validCssKey);
 }
 
 // Feladat betöltése
@@ -1865,6 +1884,7 @@ function loadValidationImageBlob(type, blob, fileName) {
       validationImages[type] = e.target.result;
       validationImages[`${type}FileName`] = name;
       statusEl.textContent = `${type.toUpperCase()} validálás kép elmentve: ${name}`;
+      saveToLocalStorage(); // pont ne vesszen el frissítéskor
       resolve();
       updatePreview();
     };
