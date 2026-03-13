@@ -65,6 +65,7 @@ public class Database
                 datum     TEXT DEFAULT (date('now', 'localtime'))
             );
         ");
+        try { Exec(conn, "ALTER TABLE submissions ADD COLUMN subject TEXT"); } catch { }
     }
 
     // ── Config ────────────────────────────────────────────────────────────────
@@ -97,10 +98,10 @@ public class Database
         cmd.CommandText = @"
             INSERT INTO submissions
                 (name, email, osztaly, csoport, task_ids, scores, max_scores,
-                 total_score, max_total, duration, mode, code_snapshot)
+                 total_score, max_total, duration, mode, code_snapshot, subject)
             VALUES
                 ($name, $email, $osztaly, $csoport, $task_ids, $scores, $max_scores,
-                 $total_score, $max_total, $duration, $mode, $code_snapshot);
+                 $total_score, $max_total, $duration, $mode, $code_snapshot, $subject);
             SELECT last_insert_rowid();";
 
         cmd.Parameters.AddWithValue("$name",          r.Name);
@@ -115,11 +116,12 @@ public class Database
         cmd.Parameters.AddWithValue("$duration",      r.Duration);
         cmd.Parameters.AddWithValue("$mode",          r.Mode);
         cmd.Parameters.AddWithValue("$code_snapshot", (object?)r.CodeSnapshot ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$subject",       r.Subject ?? "");
 
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
-    public List<Submission> GetSubmissions(string? osztaly = null, string? csoport = null)
+    public List<Submission> GetSubmissions(string? osztaly = null, string? csoport = null, string? subject = null, string? mode = null)
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
@@ -127,10 +129,12 @@ public class Database
         var where = new List<string>();
         if (osztaly != null) { where.Add("osztaly = $osztaly"); cmd.Parameters.AddWithValue("$osztaly", osztaly); }
         if (csoport != null) { where.Add("csoport = $csoport"); cmd.Parameters.AddWithValue("$csoport", csoport); }
+        if (subject != null) { where.Add("subject = $subject"); cmd.Parameters.AddWithValue("$subject", subject); }
+        if (mode != null) { where.Add("mode = $mode"); cmd.Parameters.AddWithValue("$mode", mode); }
 
         cmd.CommandText = $@"
             SELECT id, name, email, osztaly, csoport, task_ids, scores, max_scores,
-                   total_score, max_total, duration, mode, submitted_at
+                   total_score, max_total, duration, mode, subject, submitted_at
             FROM submissions
             {(where.Count > 0 ? "WHERE " + string.Join(" AND ", where) : "")}
             ORDER BY submitted_at DESC";
@@ -144,7 +148,7 @@ public class Database
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
             SELECT id, name, email, osztaly, csoport, task_ids, scores, max_scores,
-                   total_score, max_total, duration, mode, code_snapshot, submitted_at
+                   total_score, max_total, duration, mode, subject, code_snapshot, submitted_at
             FROM submissions WHERE id = $id";
         cmd.Parameters.AddWithValue("$id", id);
         return ReadSubmissions(cmd, includeCode: true).FirstOrDefault();
@@ -446,6 +450,7 @@ public class Database
                 Duration    = r.IsDBNull(i) ? 0  : r.GetInt32(i++),
                 Mode        = r.IsDBNull(i) ? "" : r.GetString(i++),
             };
+            s.Subject = r.IsDBNull(i) ? null : r.GetString(i++);
             if (includeCode)
             {
                 s.CodeSnapshot = r.IsDBNull(i) ? null : r.GetString(i++);

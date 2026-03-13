@@ -521,6 +521,7 @@
     </div>
     <div class="topbar-actions">
         <button class="btn btn-open" id="btn-open">📂 Fájl megnyitása</button>
+        <button class="btn btn-submissions" id="btn-submissions" style="background:#1a3a5c;border:1px solid #3b82f6;color:#93c5fd;">📋 Beadások</button>
         <button class="btn btn-print hidden" id="btn-print">🖨️ Nyomtatás</button>
         <button class="btn btn-clear hidden" id="btn-clear">✕ Bezárás</button>
         <button class="btn" id="btn-home" onclick="window.location.href='portal.html'" style="background:transparent;border:1px solid #7986cb;color:#7986cb;" onmouseover="this.style.background='#7986cb';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#7986cb'">← Főmenü</button>
@@ -538,6 +539,52 @@
         <span class="badge badge-web">🌐 Web .json</span>
     </div>
     <p style="margin-top:1rem; font-size:0.8rem; color:#94a3b8;">Egyszerre több fájl is betölthető</p>
+</div>
+
+<!-- Beadások táblázat -->
+<div id="submissions-section" class="hidden" style="padding:1rem 1.5rem;">
+  <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+    <select id="filter-subject" style="padding:6px 10px;background:#16213e;border:1px solid #0f3460;color:#e0e0e0;border-radius:8px;font-size:0.85rem;">
+      <option value="">Minden tantárgy</option>
+      <option value="python">🐍 Python</option>
+      <option value="web">🌐 WEB</option>
+    </select>
+    <select id="filter-mode" style="padding:6px 10px;background:#16213e;border:1px solid #0f3460;color:#e0e0e0;border-radius:8px;font-size:0.85rem;">
+      <option value="">Minden mód</option>
+      <option value="live">🔴 Éles</option>
+      <option value="practice">🎓 Gyakorló</option>
+    </select>
+    <input id="filter-class" placeholder="Osztály (pl. 9A)" style="padding:6px 10px;background:#16213e;border:1px solid #0f3460;color:#e0e0e0;border-radius:8px;font-size:0.85rem;width:140px;">
+    <button id="btn-filter-apply" style="padding:6px 14px;background:#3b82f6;border:none;border-radius:8px;color:white;font-size:0.85rem;cursor:pointer;">🔍 Szűrés</button>
+    <button id="btn-filter-reset" style="padding:6px 14px;background:transparent;border:1px solid #4b5563;border-radius:8px;color:#94a3b8;font-size:0.85rem;cursor:pointer;">✕ Reset</button>
+    <span id="submissions-count" style="color:#94a3b8;font-size:0.8rem;margin-left:auto;"></span>
+  </div>
+  <div style="overflow-x:auto;">
+    <table id="submissions-table" style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+      <thead>
+        <tr style="background:#0f3460;color:#93c5fd;text-align:left;">
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Név</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Email</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Osztály</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Tantárgy</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Pont</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Mód</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Idő</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Beadva</th>
+          <th style="padding:8px 12px;border-bottom:1px solid #1e3a5f;">Kód</th>
+        </tr>
+      </thead>
+      <tbody id="submissions-tbody"></tbody>
+    </table>
+  </div>
+  <div id="submissions-empty" style="display:none;text-align:center;padding:3rem;color:#4b5563;">Nincs beadás a megadott feltételekkel.</div>
+  <div id="submissions-error" style="display:none;text-align:center;padding:3rem;color:#e94560;"></div>
+</div>
+
+<!-- Kód megjelenítő panel (submissions-ból) -->
+<div id="code-panel" class="hidden" style="padding:1rem 1.5rem;">
+  <button id="code-panel-back" style="padding:6px 14px;background:transparent;border:1px solid #7986cb;border-radius:8px;color:#7986cb;font-size:0.85rem;cursor:pointer;margin-bottom:1rem;">← Vissza a listához</button>
+  <div id="code-panel-content"></div>
 </div>
 
 <!-- Tartalom -->
@@ -1077,6 +1124,174 @@ const WEB_TASK_CHECKS = {
     { id:"css-validated",         label:"40. CSS validálás képernyőképe feltöltve",                                                      check:()=>false },
   ],
 };
+
+// ── Beadások táblázat ──────────────────────────────────────────────────────
+const RAILWAY = 'https://agazati.up.railway.app';
+
+function getToken() {
+  try { return JSON.parse(sessionStorage.getItem('kandoUser') || '{}').token || null; }
+  catch { return null; }
+}
+
+function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function formatDuration(sec) {
+  if (!sec) return '–';
+  const m = Math.floor(sec/60), s = sec%60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function gradeFromPct(pct) {
+  if (pct >= 88) return 5;
+  if (pct >= 75) return 4;
+  if (pct >= 60) return 3;
+  if (pct >= 40) return 2;
+  return 1;
+}
+
+async function loadSubmissions(filters = {}) {
+  const token = getToken();
+  if (!token) {
+    document.getElementById('submissions-error').style.display = 'block';
+    document.getElementById('submissions-error').textContent = '⚠️ Nincs bejelentkezve oktató. Menj vissza a főmenübe és lépj be.';
+    return;
+  }
+  const params = new URLSearchParams();
+  if (filters.subject) params.set('subject', filters.subject);
+  if (filters.mode)    params.set('mode',    filters.mode);
+  if (filters.osztaly) params.set('osztaly', filters.osztaly);
+  try {
+    const res = await fetch(`${RAILWAY}/api/submissions?${params}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) {
+      document.getElementById('submissions-error').style.display = 'block';
+      document.getElementById('submissions-error').textContent = res.status === 401
+        ? '⚠️ Hozzáférés megtagadva. Csak oktatók láthatják a beadásokat.'
+        : `⚠️ Hiba a betöltéskor (${res.status})`;
+      return;
+    }
+    const data = await res.json();
+    renderSubmissionsTable(data);
+  } catch(e) {
+    document.getElementById('submissions-error').style.display = 'block';
+    document.getElementById('submissions-error').textContent = '⚠️ Kapcsolódási hiba a backendhez.';
+  }
+}
+
+function renderSubmissionsTable(list) {
+  const tbody = document.getElementById('submissions-tbody');
+  const empty = document.getElementById('submissions-empty');
+  const err   = document.getElementById('submissions-error');
+  err.style.display = 'none';
+  document.getElementById('submissions-count').textContent = `${list.length} beadás`;
+  if (!list.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = list.map(s => {
+    const pct = s.maxTotal > 0 ? Math.round(s.totalScore / s.maxTotal * 100) : 0;
+    const grade = gradeFromPct(pct);
+    const gradeColor = grade >= 4 ? '#2ed573' : grade === 3 ? '#ffa502' : grade === 2 ? '#ff6b6b' : '#e94560';
+    const subjectLabel = s.subject === 'web' ? '🌐 WEB' : s.subject === 'python' ? '🐍 Python' : (s.subject || '–');
+    const modeLabel = s.mode === 'live' ? '<span style="color:#e94560">🔴 Éles</span>' : '<span style="color:#2ed573">🎓 Gyakorló</span>';
+    const date = s.submittedAt ? s.submittedAt.replace('T',' ').substring(0,16) : '–';
+    return `<tr style="border-bottom:1px solid #1e3a5f;cursor:pointer;" onmouseover="this.style.background='#0f2a4a'" onmouseout="this.style.background=''" onclick="openCodePanel(${s.id})">
+      <td style="padding:8px 12px;font-weight:600;">${esc2(s.name)}</td>
+      <td style="padding:8px 12px;color:#94a3b8;font-size:0.8rem;">${esc2(s.email)}</td>
+      <td style="padding:8px 12px;">${esc2(s.osztaly||'–')}</td>
+      <td style="padding:8px 12px;">${subjectLabel}</td>
+      <td style="padding:8px 12px;"><strong style="color:${gradeColor}">${s.totalScore}/${s.maxTotal}</strong> <span style="color:#94a3b8;font-size:0.75rem;">(${pct}% · ${grade})</span></td>
+      <td style="padding:8px 12px;">${modeLabel}</td>
+      <td style="padding:8px 12px;color:#94a3b8;">${formatDuration(s.duration)}</td>
+      <td style="padding:8px 12px;color:#94a3b8;font-size:0.8rem;">${date}</td>
+      <td style="padding:8px 12px;"><button style="padding:3px 10px;background:#1a3a5c;border:1px solid #3b82f6;border-radius:6px;color:#93c5fd;font-size:0.75rem;cursor:pointer;" onclick="event.stopPropagation();openCodePanel(${s.id})">Kód ▶</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function openCodePanel(id) {
+  const token = getToken();
+  document.getElementById('submissions-section').classList.add('hidden');
+  const panel = document.getElementById('code-panel');
+  const content = document.getElementById('code-panel-content');
+  panel.classList.remove('hidden');
+  content.innerHTML = '<div style="text-align:center;padding:2rem;color:#94a3b8;">Betöltés…</div>';
+  try {
+    const res = await fetch(`${RAILWAY}/api/submissions/${id}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const s = await res.json();
+    let codeHtml = '';
+    if (s.codeSnapshot) {
+      try {
+        const snap = JSON.parse(s.codeSnapshot);
+        if (snap.html !== undefined) {
+          // WEB beadás
+          codeHtml = `
+            <div style="margin-bottom:1rem;">
+              <div style="font-weight:700;color:#93c5fd;margin-bottom:0.5rem;">HTML kód:</div>
+              <pre style="background:#0d1117;border:1px solid #1e3a5f;border-radius:8px;padding:1rem;overflow-x:auto;font-size:0.8rem;color:#e2e8f0;"><code>${esc2(snap.html)}</code></pre>
+            </div>
+            <div>
+              <div style="font-weight:700;color:#93c5fd;margin-bottom:0.5rem;">CSS kód:</div>
+              <pre style="background:#0d1117;border:1px solid #1e3a5f;border-radius:8px;padding:1rem;overflow-x:auto;font-size:0.8rem;color:#e2e8f0;"><code>${esc2(snap.css||'')}</code></pre>
+            </div>`;
+        } else if (snap.tasks) {
+          // Python beadás
+          codeHtml = snap.tasks.map(t => `
+            <div style="margin-bottom:1rem;">
+              <div style="font-weight:700;color:#00d4ff;margin-bottom:0.5rem;">${t.task}. feladat:</div>
+              <pre style="background:#0d1117;border:1px solid #1e3a5f;border-radius:8px;padding:1rem;overflow-x:auto;font-size:0.8rem;color:#e2e8f0;"><code>${esc2(t.code||'– Nem adott választ –')}</code></pre>
+            </div>`).join('');
+        }
+      } catch { codeHtml = `<pre>${esc2(s.codeSnapshot)}</pre>`; }
+    }
+    const pct = s.maxTotal > 0 ? Math.round(s.totalScore / s.maxTotal * 100) : 0;
+    const grade = gradeFromPct(pct);
+    content.innerHTML = `
+      <div style="background:#16213e;border-radius:12px;padding:1.5rem;margin-bottom:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;">
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Tanuló</div><div style="font-weight:700;">${esc2(s.name)}</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Email</div><div>${esc2(s.email)}</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Osztály</div><div>${esc2(s.osztaly||'–')}</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Tantárgy</div><div>${s.subject === 'web' ? '🌐 WEB' : '🐍 Python'}</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Pontszám</div><div style="font-weight:700;color:#2ed573;">${s.totalScore} / ${s.maxTotal} (${grade}. jegy)</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Mód</div><div>${s.mode === 'live' ? '🔴 Éles' : '🎓 Gyakorló'}</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Időtartam</div><div>${formatDuration(s.duration)}</div></div>
+        <div><div style="color:#94a3b8;font-size:0.75rem;">Beadva</div><div style="font-size:0.85rem;">${(s.submittedAt||'').replace('T',' ').substring(0,16)}</div></div>
+      </div>
+      ${codeHtml || '<div style="color:#4b5563;padding:1rem;">Nincs kód mentve.</div>'}`;
+  } catch(e) {
+    content.innerHTML = '<div style="color:#e94560;padding:1rem;">Hiba a betöltéskor.</div>';
+  }
+}
+
+// Gomb kezelők
+document.getElementById('btn-submissions') && document.getElementById('btn-submissions').addEventListener('click', () => {
+  document.getElementById('drop-zone') && document.getElementById('drop-zone').classList.add('hidden');
+  document.getElementById('review-content').classList.add('hidden');
+  document.getElementById('code-panel').classList.add('hidden');
+  document.getElementById('submissions-section').classList.remove('hidden');
+  loadSubmissions();
+});
+
+document.getElementById('code-panel-back') && document.getElementById('code-panel-back').addEventListener('click', () => {
+  document.getElementById('code-panel').classList.add('hidden');
+  document.getElementById('submissions-section').classList.remove('hidden');
+});
+
+document.getElementById('btn-filter-apply') && document.getElementById('btn-filter-apply').addEventListener('click', () => {
+  loadSubmissions({
+    subject: document.getElementById('filter-subject').value,
+    mode:    document.getElementById('filter-mode').value,
+    osztaly: document.getElementById('filter-class').value.trim()
+  });
+});
+
+document.getElementById('btn-filter-reset') && document.getElementById('btn-filter-reset').addEventListener('click', () => {
+  document.getElementById('filter-subject').value = '';
+  document.getElementById('filter-mode').value = '';
+  document.getElementById('filter-class').value = '';
+  loadSubmissions();
+});
 </script>
 <div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;">⌨ Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
 </body>

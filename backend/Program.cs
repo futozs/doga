@@ -77,6 +77,27 @@ bool ValidateToken(HttpContext ctx)
     catch { return false; }
 }
 
+bool ValidateOktato(HttpContext ctx)
+{
+    var auth = ctx.Request.Headers["Authorization"].FirstOrDefault();
+    if (auth == null || !auth.StartsWith("Bearer ")) return false;
+    try
+    {
+        var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(auth[7..]));
+        var dot = decoded.LastIndexOf('.');
+        var payload = decoded[..dot];
+        var sig = decoded[(dot + 1)..];
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey));
+        var expected = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(payload)));
+        if (sig != expected) return false;
+        var ts = long.Parse(payload.Split(':')[1]);
+        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts >= 86400) return false;
+        // Admin token (no pipe) OR oktato user token
+        return !payload.Contains('|') || payload.Contains("|oktato");
+    }
+    catch { return false; }
+}
+
 // Oktatói regisztrációs kód (env változóból)
 var teacherCode = app.Configuration["TEACHER_CODE"] ?? "kandooktato";
 
@@ -117,20 +138,22 @@ app.MapPost("/api/submit", (SubmissionRequest req, Database db) =>
     return Results.Ok(new { success = true, id });
 });
 
-// Beadások listája (admin) – szűrhető ?osztaly=9A&csoport=1
+// Beadások listája (admin) – szűrhető ?osztaly=9A&csoport=1&subject=python&mode=live
 app.MapGet("/api/submissions", (HttpContext ctx, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     var osztaly = ctx.Request.Query["osztaly"].FirstOrDefault();
     var csoport = ctx.Request.Query["csoport"].FirstOrDefault();
-    var list = db.GetSubmissions(osztaly, csoport);
+    var subject = ctx.Request.Query["subject"].FirstOrDefault();
+    var mode    = ctx.Request.Query["mode"].FirstOrDefault();
+    var list = db.GetSubmissions(osztaly, csoport, subject, mode);
     return Results.Ok(list);
 });
 
 // Egy beadás részletei (admin)
 app.MapGet("/api/submissions/{id:int}", (HttpContext ctx, int id, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     var sub = db.GetSubmission(id);
     return sub != null ? Results.Ok(sub) : Results.NotFound();
 });

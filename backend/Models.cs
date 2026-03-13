@@ -16,7 +16,8 @@ public record SubmissionRequest(
     int MaxTotal,
     int Duration,
     string Mode,
-    string? CodeSnapshot
+    string? CodeSnapshot,
+    string? Subject
 );
 
 public class Submission
@@ -33,6 +34,7 @@ public class Submission
     public int MaxTotal { get; set; }
     public int Duration { get; set; }
     public string Mode { get; set; } = "";
+    public string? Subject { get; set; }
     public string? CodeSnapshot { get; set; }
     public string SubmittedAt { get; set; } = "";
 }

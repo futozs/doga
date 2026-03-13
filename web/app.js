@@ -1011,6 +1011,9 @@ function saveToLocalStorage() {
     if (validHtmlKey) localStorage.setItem(validHtmlKey, validationImages.html || '');
     if (validCssKey)  localStorage.setItem(validCssKey,  validationImages.css  || '');
   } catch (e) { /* localStorage quota: nem kritikus */ }
+
+  // Éles módban backend szinkron
+  if (typeof acLive !== 'undefined' && acLive) submitWebToBackend();
 }
 
 function loadFromLocalStorage(taskId) {
@@ -2670,6 +2673,7 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
     } else if (hasStudentData) {
       // Van mentett tanuló adat – nem kell újra bejelentkezni
       hideStudentModal();
+      window._webStartTime = Date.now();
       taskSelector.disabled = false;
       restoreTimer();
       updateTimerDisplay();
@@ -2697,6 +2701,36 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
     statusEl.textContent = "Editor hiba (Monaco/nyelvi modul). Nézd meg a konzolt.";
   }
 })();
+
+// WEB beadás a backendbe (éles módban autosave hívja)
+async function submitWebToBackend() {
+  if (!studentData.name || !studentData.email) return;
+  const htmlCode = htmlEditor ? htmlEditor.getValue() : '';
+  const cssCode  = cssEditor  ? cssEditor.getValue()  : '';
+  if (!htmlCode && !cssCode) return;
+  const payload = {
+    name:         studentData.name,
+    email:        studentData.email,
+    osztaly:      studentData.class || '',
+    csoport:      null,
+    taskIds:      currentTask ? (currentTask.id || '') : '',
+    scores:       '0',
+    maxScores:    '40',
+    totalScore:   0,
+    maxTotal:     40,
+    duration:     Math.round((Date.now() - (window._webStartTime || Date.now())) / 1000),
+    mode:         'live',
+    codeSnapshot: JSON.stringify({ html: htmlCode, css: cssCode, savedAt: new Date().toISOString() }),
+    subject:      'web'
+  };
+  try {
+    await fetch('https://agazati.up.railway.app/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch {}
+}
 
 // ═══════════════════════════════════════════════════════
 // ANTI-CHEAT RENDSZER
