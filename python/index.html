@@ -825,6 +825,7 @@
             <h1>Miskolci SZC Kandó Kálmán Informatikai Technikum</h1>
             <p>Python Programozási Teszt</p>
         </div>
+        <a id="btn-portal-back" href="../portal.html" style="display:none;margin-left:auto;padding:6px 14px;background:transparent;border:1px solid #7986cb;border-radius:8px;color:#7986cb;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='#7986cb';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#7986cb'">← Főmenü</a>
     </header>
     <div class="container">
         <h1>🐍 Python Programozási Teszt</h1>
@@ -1018,6 +1019,12 @@
                     sessionStorage.setItem('kandTeacherMode', 'true');
                 } else {
                     sessionStorage.removeItem('kandTeacherMode');
+                }
+
+                // Főmenü gomb csak oktatóknak
+                if (u.szerep === 'oktato') {
+                    const backBtn = document.getElementById('btn-portal-back');
+                    if (backBtn) backBtn.style.display = 'inline-block';
                 }
 
                 // Rejtett mezők feltöltése (startTest() ezeket olvassa)
