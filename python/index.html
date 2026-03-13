@@ -1128,6 +1128,7 @@
             <!-- Felső sáv: navigáció + pontszám + időmérő -->
             <div class="quiz-top-bar">
                 <a id="btn-quiz-portal-back" href="../portal.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #7986cb;border-radius:8px;color:#7986cb;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#7986cb';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#7986cb'">← Főmenü</a>
+                <a id="btn-quiz-switch-web" href="../web/index.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #3b82f6;border-radius:8px;color:#93c5fd;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#1d4ed8';this.style.color='#dbeafe'" onmouseout="this.style.background='transparent';this.style.color='#93c5fd'">🌐 WEB</a>
                 <div class="task-navigation" id="task-navigation"></div>
                 <div class="live-score">
                     <span id="score-display">0 / 30 pont</span>
@@ -1266,19 +1267,19 @@
                 if (backBtnQuiz) backBtnQuiz.style.display = 'inline-block';
 
                 // WEB váltó gomb: oktatónak mindig, tanulónak csak gyakorló módban
+                function showWebBtn() {
+                    ['btn-switch-web', 'btn-quiz-switch-web'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.style.display = 'inline-block';
+                    });
+                }
                 if (u.szerep === 'oktato') {
-                    const switchWebBtn = document.getElementById('btn-switch-web');
-                    if (switchWebBtn) switchWebBtn.style.display = 'inline-block';
+                    showWebBtn();
                 } else {
                     fetch('https://agazati.up.railway.app/api/config')
                         .then(r => r.json())
-                        .then(data => {
-                            if (data.test_mode !== 'live') {
-                                const switchWebBtn = document.getElementById('btn-switch-web');
-                                if (switchWebBtn) switchWebBtn.style.display = 'inline-block';
-                            }
-                        })
-                        .catch(() => {}); // hiba esetén marad elrejtve (biztonságosabb)
+                        .then(data => { if (data.test_mode !== 'live') showWebBtn(); })
+                        .catch(() => {});
                 }
 
                 // Rejtett mezők feltöltése (startTest() ezeket olvassa)
