@@ -2470,7 +2470,7 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
 
     monaco.editor.defineTheme("vizsga-light", {
       base: "vs",
-      inherit: true,
+      inherit: false,
       semanticHighlighting: false,
       rules: [
         { token: "",                              foreground: "000000" },
@@ -2479,8 +2479,9 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
         { token: "tag.html",                      foreground: "0070C1", fontStyle: "bold" },
         { token: "metatag",                       foreground: "0070C1", fontStyle: "bold" },
         { token: "metatag.html",                  foreground: "0070C1", fontStyle: "bold" },
-        { token: "delimiter",                     foreground: "666666" },
-        { token: "delimiter.html",                foreground: "666666" },
+        { token: "delimiter",                     foreground: "444444" },
+        { token: "delimiter.html",                foreground: "444444" },
+        { token: "attribute",                     foreground: "E45454", fontStyle: "bold" },
         { token: "attribute.name",                foreground: "E45454", fontStyle: "bold" },
         { token: "attribute.name.html",           foreground: "E45454", fontStyle: "bold" },
         { token: "attribute.value",               foreground: "A31515" },
@@ -2492,6 +2493,9 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
         // CSS tokenek – VS Code Light+ stílusban
         { token: "selector.css",                  foreground: "800000", fontStyle: "bold" },
         { token: "keyword.css",                   foreground: "0070C1", fontStyle: "bold" },
+        { token: "property",                      foreground: "0070C1" },
+        { token: "property.css",                  foreground: "0070C1" },
+        { token: "attribute.value",               foreground: "0451A5" },
         { token: "attribute.value.css",           foreground: "0451A5" },
         { token: "attribute.value.number.css",    foreground: "098658", fontStyle: "bold" },
         { token: "attribute.value.unit.css",      foreground: "098658" },
@@ -2500,7 +2504,7 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
         // Általános
         { token: "keyword",                       foreground: "0000FF", fontStyle: "bold" },
         { token: "number",                        foreground: "098658", fontStyle: "bold" },
-        { token: "string",                        foreground: "A31515" },
+        { token: "entity",                        foreground: "0070C1" },
       ],
       colors: {
         "editor.background": "#FFFFFF",
