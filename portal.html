@@ -177,6 +177,18 @@
         }
         .toggle-view-btn:hover { background: #536dfe; color: white; }
 
+        .eredmenyek-btn {
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid #f5a623;
+            border-radius: 8px;
+            color: #f5a623;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .eredmenyek-btn:hover { background: #f5a623; color: #1a1a2e; }
+
         .portal {
             margin-top: 56px;
             width: 100%;
@@ -331,6 +343,7 @@
             <span id="user-role">–</span>
         </div>
         <button class="toggle-view-btn" id="toggle-view-btn" onclick="toggleView()">Tanulói nézet</button>
+        <button class="eredmenyek-btn" id="btn-eredmenyek-topbar" onclick="openEredmenyek()" style="display:none" title="Elért eredmények">🏅 Eredmények</button>
         <button class="delete-btn" onclick="openDeleteModal()" title="Fiók törlése">Fiók törlése</button>
         <button class="logout-btn" onclick="logout()">Kilépés</button>
     </div>
@@ -344,18 +357,13 @@
     <div id="student-portal" class="options-grid" style="display:none">
         <a class="option-card python" href="python/index.html" onclick="event.preventDefault(); location.replace('python/index.html')">
             <span class="icon">🐍</span>
-            <span class="label">Python dolgozat</span>
+            <span class="label">PYTHON</span>
             <span class="desc">Python programozási feladatok</span>
         </a>
         <a class="option-card web" href="web/index.html" onclick="event.preventDefault(); location.replace('web/index.html')">
             <span class="icon">🌐</span>
-            <span class="label">WEB dolgozat</span>
-            <span class="desc">HTML, CSS, JavaScript feladatok</span>
-        </a>
-        <a class="option-card eredmenyek" href="#" onclick="event.preventDefault(); openEredmenyek()">
-            <span class="icon">🏅</span>
-            <span class="label">Elért eredmények</span>
-            <span class="desc">Szinteid, teljesítmények, felkészültség</span>
+            <span class="label">WEB</span>
+            <span class="desc">HTML, CSS, Bootstrap feladatok</span>
         </a>
     </div>
 
@@ -441,7 +449,9 @@
             document.getElementById('toggle-view-btn').style.display = 'block';
         } else {
             document.getElementById('student-portal').style.display = 'grid';
-            document.getElementById('portal-sub').textContent = 'Melyik dolgozatot szeretnéd megírni?';
+            document.getElementById('portal-sub').textContent = 'Válassz ágazati alapvizsga feladatot!';
+            const eredmBtn = document.getElementById('btn-eredmenyek-topbar');
+            if (eredmBtn) eredmBtn.style.display = 'inline-block';
         }
     }
 
@@ -460,7 +470,7 @@
         } else {
             teacher.style.display = 'none';
             student.style.display = 'grid';
-            sub.textContent = 'Melyik dolgozatot szeretnéd megírni?';
+            sub.textContent = 'Válassz ágazati alapvizsga feladatot!';
             btn.textContent = 'Oktatói felület';
         }
     }
