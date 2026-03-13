@@ -815,6 +815,236 @@
             text-align: center;
             padding: 2rem;
         }
+
+        /* ═══════════════════════════════════════════════════
+           DARK MODE OVERRIDE – gaming / tech esztétika
+           ═══════════════════════════════════════════════════ */
+
+        body {
+            background: #0a0e1a;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 15px;
+        }
+
+        .container {
+            background: #111827;
+            border: 1px solid #1e3a5f;
+            box-shadow: 0 0 40px rgba(0,212,255,0.08), 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        h1 { color: #e2e8f0; }
+
+        /* ── Topbar ── */
+        .page-topbar {
+            background: #0d1117;
+            border-bottom: 1px solid #00d4ff33;
+            box-shadow: 0 2px 20px rgba(0,212,255,0.1);
+        }
+        .page-topbar-title h1 { color: #e2e8f0; font-size: 1rem; }
+        .page-topbar-title p  { color: #00d4ff; letter-spacing: 1px; }
+
+        /* ── Quiz felső sáv ── */
+        #quiz-section:not(.hidden) { background: #0a0e1a; }
+
+        .quiz-top-bar {
+            background: #0d1117;
+            border-bottom: 1px solid #1e3a5f;
+        }
+
+        .quiz-left {
+            border-right: 1px solid #1e3a5f;
+            background: #0d1117;
+        }
+
+        .quiz-right { background: #0a0e1a; }
+
+        /* ── Feladat kártya ── */
+        .task-info {
+            background: #111827;
+            border-left: 4px solid #00d4ff;
+            border-radius: 10px;
+        }
+
+        .task-number { color: #00d4ff; font-size: 1.1rem; }
+        .task-description { color: #cbd5e1; font-size: 0.97rem; line-height: 1.7; }
+        .code-label { color: #94a3b8; font-size: 0.9rem; }
+
+        /* ── Navigáció ── */
+        .task-nav-btn {
+            background: #1e3a5f;
+            color: #94a3b8;
+            border: 1px solid #2a4a70;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            padding: 0.45rem 1rem;
+            transition: all 0.2s;
+        }
+        .task-nav-btn:hover { background: #2a4a70; color: #e2e8f0; }
+        .task-nav-btn.active {
+            background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            color: white;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 12px rgba(14,165,233,0.4);
+        }
+        .task-nav-btn.completed {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16,185,129,0.3);
+        }
+
+        /* ── Időmérő ── */
+        .timer { color: #e2e8f0; font-size: 1.2rem; }
+        .timer.warning { color: #f43f5e; text-shadow: 0 0 10px rgba(244,63,94,0.5); }
+
+        /* ── Pontszám ── */
+        #score-display { color: #e2e8f0; font-size: 1.05rem; }
+        .score-grade.grade-1 { background: #2d1b1b; color: #f87171; border: 1px solid #f87171; }
+        .score-grade.grade-2 { background: #2d2310; color: #fbbf24; border: 1px solid #fbbf24; }
+        .score-grade.grade-3 { background: #0f2a35; color: #38bdf8; border: 1px solid #38bdf8; }
+        .score-grade.grade-4 { background: #0d2b1a; color: #4ade80; border: 1px solid #4ade80; }
+        .score-grade.grade-5 { background: #0a2918; color: #00d4ff; border: 1px solid #00d4ff; box-shadow: 0 0 8px rgba(0,212,255,0.3); }
+
+        /* ── Pontozás panel ── */
+        #check-scoring-btn {
+            background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            color: white;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: none;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 15px rgba(14,165,233,0.3);
+            transition: all 0.2s;
+        }
+        #check-scoring-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0369a1, #0284c7);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(14,165,233,0.4);
+        }
+        #check-scoring-btn:disabled { background: #374151; box-shadow: none; }
+
+        #scoring-panel {
+            background: #111827;
+            border: 1px solid #1e3a5f;
+        }
+        .scoring-title { color: #e2e8f0; }
+        .scoring-score { color: #00d4ff; }
+        .scoring-pass    { background: #052e16; color: #4ade80; }
+        .scoring-fail    { background: #2d1b1b; color: #f87171; }
+        .scoring-pending { background: #2d2310; color: #fbbf24; }
+
+        /* ── Kód futtatás gomb ── */
+        .run-code-btn {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            font-size: 1rem;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+            transition: all 0.2s;
+        }
+        .run-code-btn:hover {
+            background: linear-gradient(135deg, #047857, #059669);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16,185,129,0.4);
+        }
+
+        /* ── Skip / Beadás gombok ── */
+        .btn-secondary {
+            background: linear-gradient(135deg, #b45309, #d97706);
+            box-shadow: 0 4px 12px rgba(217,119,6,0.3);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #92400e, #b45309);
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #be123c, #e11d48);
+            box-shadow: 0 4px 12px rgba(225,29,72,0.3);
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #9f1239, #be123c);
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+        }
+
+        /* ── Input modal ── */
+        .python-input-content {
+            background: #111827;
+            border: 1px solid #1e3a5f;
+            box-shadow: 0 0 40px rgba(0,212,255,0.1);
+        }
+        .python-input-content h3 { color: #e2e8f0; }
+        .python-input-content input {
+            background: #0d1117;
+            border: 1px solid #1e3a5f;
+            color: #e2e8f0;
+            border-radius: 8px;
+        }
+        .python-input-content input:focus { border-color: #00d4ff; }
+        .python-input-btn.submit {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+        }
+
+        /* ── Általános modal ── */
+        .modal-content {
+            background: #111827;
+            border: 1px solid #1e3a5f;
+        }
+        .modal-content h3 { color: #e2e8f0; }
+        .modal-content p  { color: #94a3b8; }
+
+        /* ── Form (start képernyő) ── */
+        .form-group label { color: #94a3b8; }
+        .form-group input {
+            background: #0d1117;
+            border: 1px solid #1e3a5f;
+            color: #e2e8f0;
+            border-radius: 8px;
+        }
+        .form-group input:focus { border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
+        .form-group input::placeholder { color: #4b5563; }
+
+        /* ── Version badge ── */
+        .version-badge {
+            background: rgba(0,212,255,0.08);
+            color: #4b6a8a;
+            border: 1px solid #1e3a5f;
+        }
+
+        /* ── CodeMirror ── */
+        .CodeMirror {
+            border: 1px solid #1e3a5f !important;
+            border-radius: 8px;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           PROJEKTOR MÓD  (?nagy URL paraméter)
+           Minden 25%-kal nagyobb, nem törik szét a layout
+           ═══════════════════════════════════════════════════ */
+        body.nagy-mod {
+            font-size: 18px;
+        }
+        body.nagy-mod .task-number    { font-size: 1.3rem; }
+        body.nagy-mod .task-description { font-size: 1.1rem; }
+        body.nagy-mod .timer          { font-size: 1.5rem; }
+        body.nagy-mod #score-display  { font-size: 1.2rem; }
+        body.nagy-mod .task-nav-btn   { font-size: 1rem; padding: 0.6rem 1.2rem; }
+        body.nagy-mod .run-code-btn   { font-size: 1.15rem; padding: 0.85rem 2rem; }
+        body.nagy-mod #check-scoring-btn { font-size: 1.1rem; padding: 0.85rem; }
+        body.nagy-mod .btn            { font-size: 1.3rem; padding: 1.1rem 2.2rem; }
+        body.nagy-mod .scoring-list li { font-size: 1rem; padding: 0.4rem 0.6rem; }
+        body.nagy-mod .page-topbar-title h1 { font-size: 1.2rem; }
+        body.nagy-mod .code-label     { font-size: 1rem; }
+        body.nagy-mod .CodeMirror     { font-size: 1.1rem !important; }
     </style>
 </head>
 
@@ -1020,6 +1250,11 @@
                     sessionStorage.setItem('kandTeacherMode', 'true');
                 } else {
                     sessionStorage.removeItem('kandTeacherMode');
+                }
+
+                // Projektor mód: ?nagy URL paraméter → nagy-mod class a body-n
+                if (new URLSearchParams(window.location.search).has('nagy')) {
+                    document.body.classList.add('nagy-mod');
                 }
 
                 // Főmenü gomb mindenkinél látható
