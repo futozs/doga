@@ -241,14 +241,71 @@
         .option-card.python:hover  { border-color: #4a94d4; box-shadow: 0 8px 24px rgba(55,118,171,0.25); }
         .option-card.web     { border-color: #e44d26; }
         .option-card.web:hover     { border-color: #f06529; box-shadow: 0 8px 24px rgba(228,77,38,0.25); }
-        .option-card.cs      { border-color: #9b59b6; }
-        .option-card.cs:hover      { border-color: #b07cc6; box-shadow: 0 8px 24px rgba(155,89,182,0.25); }
+        .option-card.eredmenyek { border-color: #fbbf24; }
+        .option-card.eredmenyek:hover { border-color: #fde68a; box-shadow: 0 8px 24px rgba(251,191,36,0.25); }
         .option-card.javitas { border-color: #2ed573; }
         .option-card.javitas:hover { border-color: #7bed9f; box-shadow: 0 8px 24px rgba(46,213,115,0.25); }
         .option-card.bemutatas { border-color: #ffa502; }
         .option-card.bemutatas:hover { border-color: #ffd32a; box-shadow: 0 8px 24px rgba(255,165,2,0.25); }
         .option-card.admin   { border-color: #e94560; }
         .option-card.admin:hover   { border-color: #ff6b81; box-shadow: 0 8px 24px rgba(233,69,96,0.25); }
+
+        /* ── Eredmények modal ─────────────────────────────────────────── */
+        .ered-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85); z-index: 200;
+            justify-content: center; align-items: center; padding: 16px;
+        }
+        .ered-overlay.open { display: flex; }
+        .ered-box {
+            background: #16213e; border: 2px solid #fbbf24;
+            border-radius: 18px; padding: 28px 24px;
+            max-width: 560px; width: 100%; max-height: 90vh;
+            overflow-y: auto; position: relative;
+        }
+        .ered-close {
+            position: absolute; top: 14px; right: 16px;
+            background: none; border: none; color: #aaa;
+            font-size: 1.3rem; cursor: pointer; line-height: 1;
+        }
+        .ered-close:hover { color: #e94560; }
+        .ered-title { color: #fbbf24; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+        .ered-subject { margin-bottom: 22px; }
+        .ered-subject-title { color: #e0e0e0; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+        .ered-level-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+        .ered-level-icon { font-size: 1.6rem; }
+        .ered-level-name { color: #e0e0e0; font-size: 1rem; font-weight: 600; }
+        .ered-level-sub  { color: #888; font-size: 0.8rem; }
+        .ered-bar-bg {
+            background: #0f3460; border-radius: 8px; height: 10px;
+            margin: 6px 0 4px; overflow: hidden;
+        }
+        .ered-bar-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; }
+        .ered-bar-web    { background: linear-gradient(90deg, #f97316, #fb923c); }
+        .ered-bar-python { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .ered-stats { color: #888; font-size: 0.8rem; margin-bottom: 6px; }
+        .ered-feedback {
+            background: #0f3460; border-radius: 10px;
+            padding: 10px 14px; color: #e0e0e0; font-size: 0.88rem;
+            margin-top: 6px; line-height: 1.5;
+        }
+        .ered-divider { border: none; border-top: 1px solid #0f3460; margin: 18px 0; }
+        .ered-ach-title { color: #fbbf24; font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
+        .ered-ach-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+        .ered-ach {
+            background: #0f3460; border-radius: 10px; padding: 10px 8px;
+            text-align: center; border: 1px solid #1a3a6e;
+        }
+        .ered-ach.unlocked { border-color: #fbbf24; background: #1a2a10; }
+        .ered-ach-icon { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+        .ered-ach-name { color: #e0e0e0; font-size: 0.75rem; font-weight: 600; line-height: 1.3; }
+        .ered-ach.locked .ered-ach-icon { filter: grayscale(1) opacity(0.35); }
+        .ered-ach.locked .ered-ach-name { color: #555; }
+        .ered-loading { color: #888; text-align: center; padding: 30px 0; }
+        .ered-next-goal { color: #60a5fa; font-size: 0.8rem; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -288,10 +345,10 @@
             <span class="label">WEB dolgozat</span>
             <span class="desc">HTML, CSS, JavaScript feladatok</span>
         </a>
-        <a class="option-card cs" href="cs/index.html" onclick="event.preventDefault(); location.replace('cs/index.html')">
-            <span class="icon">⚙️</span>
-            <span class="label">C# dolgozat</span>
-            <span class="desc">C# programozási feladatok</span>
+        <a class="option-card eredmenyek" href="#" onclick="event.preventDefault(); openEredmenyek()">
+            <span class="icon">🏅</span>
+            <span class="label">Elért eredmények</span>
+            <span class="desc">Szinteid, achievementek, felkészültség</span>
         </a>
     </div>
 
@@ -331,13 +388,18 @@
                 <span class="bem-icon">🌐</span>
                 <span class="bem-label">WEB</span>
             </a>
-            <a class="bem-card cs" href="cs/index.html?bemutato=1" onclick="closeBemutatasModal()">
-                <span class="bem-icon">⚙️</span>
-                <span class="bem-label">C#</span>
-            </a>
         </div>
         <button class="bemutatas-cancel-btn" onclick="closeBemutatasModal()">Mégse</button>
     </div>
+</div>
+
+<!-- Elért eredmények modal -->
+<div class="ered-overlay" id="ered-overlay">
+  <div class="ered-box">
+    <button class="ered-close" onclick="closeEredmenyek()">✕</button>
+    <div class="ered-title">🏅 Elért eredmények</div>
+    <div id="ered-content"><div class="ered-loading">⏳ Adatok betöltése...</div></div>
+  </div>
 </div>
 
 <!-- Fiók törlése modal -->
@@ -394,6 +456,122 @@
             sub.textContent = 'Melyik dolgozatot szeretnéd megírni?';
             btn.textContent = 'Oktatói felület';
         }
+    }
+
+    // ── Eredmények modal ──────────────────────────────────────────────────────
+    const API = 'https://agazati.up.railway.app';
+
+    const LEVELS = [
+        { min: 0,  sessMin: 0,  icon: '❓', name: 'Nincs adat' },
+        { min: 0,  sessMin: 1,  icon: '🌱', name: 'Kezdő' },
+        { min: 0,  sessMin: 5,  icon: '📚', name: 'Tanuló' },
+        { min: 50, sessMin: 10, icon: '⚡', name: 'Haladó' },
+        { min: 70, sessMin: 15, icon: '🎯', name: 'Felkészült' },
+        { min: 85, sessMin: 20, icon: '🏆', name: 'Vizsgakész' }
+    ];
+
+    const ACHIEVEMENTS = [
+        { id:'first_web',    icon:'🌐', name:'Első lépés – WEB',      check: p => p.web.sessions >= 1 },
+        { id:'first_py',     icon:'🐍', name:'Első lépés – Python',   check: p => p.python.sessions >= 1 },
+        { id:'persist_web',  icon:'🔥', name:'Kitartó – WEB',         check: p => p.web.sessions >= 5 },
+        { id:'persist_py',   icon:'🔥', name:'Kitartó – Python',      check: p => p.python.sessions >= 5 },
+        { id:'adv_web',      icon:'⚡', name:'Haladó – WEB',          check: p => p.web.sessions >= 10 },
+        { id:'adv_py',       icon:'⚡', name:'Haladó – Python',       check: p => p.python.sessions >= 10 },
+        { id:'perfect_web',  icon:'💯', name:'Tökéletes WEB',         check: p => p.web.bestPercent >= 99.9 },
+        { id:'perfect_py',   icon:'💯', name:'Tökéletes Python',      check: p => p.python.bestPercent >= 99.9 },
+        { id:'dilig_web',    icon:'🌟', name:'Szorgalmas – WEB',      check: p => p.web.sessions >= 20 },
+        { id:'dilig_py',     icon:'🌟', name:'Szorgalmas – Python',   check: p => p.python.sessions >= 20 },
+        { id:'webmaster',    icon:'👑', name:'Webmester',             check: p => p.web.avgPercent >= 85 },
+        { id:'pymaster',     icon:'🐍', name:'Python mester',         check: p => p.python.avgPercent >= 85 },
+        { id:'both_ready',   icon:'🎓', name:'Teljes felkészültség',  check: p => p.web.avgPercent >= 75 && p.python.avgPercent >= 75 }
+    ];
+
+    function calcLevel(sessions, avgPct) {
+        let level = LEVELS[0];
+        for (const l of LEVELS) {
+            if (sessions >= l.sessMin && avgPct >= l.min) level = l;
+        }
+        return level;
+    }
+
+    function nextGoal(sessions, avgPct, subj) {
+        for (const l of LEVELS.slice(1)) {
+            if (sessions < l.sessMin) return `Következő szint: még ${l.sessMin - sessions} alkalom kell`;
+            if (avgPct < l.min) return `Következő szint: ${l.min}% átlag szükséges (most: ${avgPct}%)`;
+        }
+        return `${subj} – maximális szint elérve! 🎉`;
+    }
+
+    function feedback(avgPct, subj) {
+        if (avgPct >= 90) return `Teljesen felkészültél ${subj}-ból – a vizsgád biztosan sikeres lesz! 🏆`;
+        if (avgPct >= 80) return `Nagy valószínűséggel sikeres lesz a vizsgád ${subj}-ból! 🌟`;
+        if (avgPct >= 65) return `Jó eséllyel sikerülne a vizsga ${subj}-ból – még egy kis gyakorlás! 🎯`;
+        if (avgPct >= 50) return `Jó úton jársz, de még szükség van a gyakorlásra ${subj}-ból. 📚`;
+        if (avgPct > 0)   return `Még sok a tennivaló ${subj}-ból, de kitartással menni fog! 💪`;
+        return `Még nem gyakoroltál ${subj}-ból. Kezdj el, hogy lásd a haladásod!`;
+    }
+
+    function renderSubject(data, label, barClass) {
+        const s = data.sessions;
+        const avg = data.avgPercent ?? 0;
+        const best = data.bestPercent ?? 0;
+        const lv = calcLevel(s, avg);
+        const barPct = Math.min(100, s > 0 ? Math.round(avg) : 0);
+        const lastDate = data.lastSession ? ` · Utoljára: ${data.lastSession}` : '';
+        return `
+        <div class="ered-subject">
+          <div class="ered-subject-title">${label}</div>
+          <div class="ered-level-row">
+            <span class="ered-level-icon">${lv.icon}</span>
+            <div>
+              <div class="ered-level-name">${lv.name}</div>
+              <div class="ered-level-sub">${s} alkalom${lastDate}</div>
+            </div>
+          </div>
+          <div class="ered-bar-bg"><div class="ered-bar-fill ${barClass}" style="width:${barPct}%"></div></div>
+          <div class="ered-stats">Átlag: ${avg}% · Legjobb: ${best}%</div>
+          <div class="ered-next-goal">${nextGoal(s, avg, label.replace(/[🌐🐍]/g,'').trim())}</div>
+          <div class="ered-feedback">${feedback(avg, label.replace(/[🌐🐍]/g,'').trim())}</div>
+        </div>`;
+    }
+
+    function renderAchievements(progress) {
+        const unlocked = ACHIEVEMENTS.filter(a => a.check(progress));
+        const locked   = ACHIEVEMENTS.filter(a => !a.check(progress));
+        let html = `<hr class="ered-divider"><div class="ered-ach-title">🏆 Achievementek (${unlocked.length}/${ACHIEVEMENTS.length})</div><div class="ered-ach-grid">`;
+        for (const a of [...unlocked, ...locked]) {
+            const cls = unlocked.includes(a) ? 'unlocked' : 'locked';
+            html += `<div class="ered-ach ${cls}"><span class="ered-ach-icon">${a.icon}</span><span class="ered-ach-name">${a.name}</span></div>`;
+        }
+        html += '</div>';
+        return html;
+    }
+
+    async function openEredmenyek() {
+        document.getElementById('ered-overlay').classList.add('open');
+        document.getElementById('ered-content').innerHTML = '<div class="ered-loading">⏳ Adatok betöltése...</div>';
+        try {
+            const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+            const email = (u.email || '').replace('@kkszki.hu','');
+            if (!email) { document.getElementById('ered-content').innerHTML = '<div class="ered-loading">Nem találhatók adatok.</div>'; return; }
+            const res = await fetch(`${API}/api/progress/${encodeURIComponent(email)}`);
+            const p = await res.json();
+            // A JSON kulcsai camelCase (C# record)
+            const progress = {
+                web:    { sessions: p.web?.sessions ?? 0, avgPercent: p.web?.avgPercent ?? 0, bestPercent: p.web?.bestPercent ?? 0, lastSession: p.web?.lastSession ?? null },
+                python: { sessions: p.python?.sessions ?? 0, avgPercent: p.python?.avgPercent ?? 0, bestPercent: p.python?.bestPercent ?? 0, lastSession: p.python?.lastSession ?? null }
+            };
+            document.getElementById('ered-content').innerHTML =
+                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web') +
+                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python') +
+                renderAchievements(progress);
+        } catch {
+            document.getElementById('ered-content').innerHTML = '<div class="ered-loading">⚠️ Nem sikerült betölteni az adatokat.</div>';
+        }
+    }
+
+    function closeEredmenyek() {
+        document.getElementById('ered-overlay').classList.remove('open');
     }
 
     function openBemutatasModal() {

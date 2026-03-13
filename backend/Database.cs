@@ -53,6 +53,17 @@ public class Database
                 password_hash TEXT NOT NULL
             );
             INSERT OR IGNORE INTO config (key, value) VALUES ('test_mode', 'practice');
+            CREATE TABLE IF NOT EXISTS progress (
+                id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                email     TEXT NOT NULL,
+                nev       TEXT,
+                osztaly   TEXT,
+                targy     TEXT NOT NULL,
+                feladat   TEXT NOT NULL,
+                pont      INTEGER NOT NULL,
+                max_pont  INTEGER NOT NULL,
+                datum     TEXT DEFAULT (date('now', 'localtime'))
+            );
         ");
     }
 
@@ -305,6 +316,96 @@ public class Database
                 r.IsDBNull(6) ? null : r.GetString(6)
             ));
         return list;
+    }
+
+    // ── Progress ──────────────────────────────────────────────────────────────
+
+    public void SaveProgress(ProgressRequest r)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT INTO progress (email, nev, osztaly, targy, feladat, pont, max_pont)
+            VALUES ($email, $nev, $osztaly, $targy, $feladat, $pont, $max_pont)";
+        cmd.Parameters.AddWithValue("$email",   r.Email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$nev",     (object?)r.Nev     ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$osztaly", (object?)r.Osztaly ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$targy",   r.Targy.ToLower());
+        cmd.Parameters.AddWithValue("$feladat", r.Feladat);
+        cmd.Parameters.AddWithValue("$pont",    r.Pont);
+        cmd.Parameters.AddWithValue("$max_pont",r.MaxPont);
+        cmd.ExecuteNonQuery();
+    }
+
+    public StudentProgress GetStudentProgress(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT targy, pont, max_pont, datum
+            FROM progress WHERE email = $email ORDER BY datum DESC";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+
+        var records = new List<(string targy, int pont, int maxPont, string datum)>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            records.Add((r.GetString(0), r.GetInt32(1), r.GetInt32(2),
+                         r.IsDBNull(3) ? "" : r.GetString(3)));
+
+        return new StudentProgress(
+            CalcSubjectProgress(records.Where(x => x.targy == "web").ToList()),
+            CalcSubjectProgress(records.Where(x => x.targy == "python").ToList())
+        );
+    }
+
+    public List<ProgressSummaryItem> GetAllProgressSummary()
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT email, nev, osztaly, targy, pont, max_pont, datum
+            FROM progress ORDER BY email, datum DESC";
+
+        var raw = new Dictionary<string, (string? nev, string? osztaly,
+            List<(string targy, int pont, int maxPont, string datum)> rows)>();
+
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+        {
+            var email   = r.GetString(0);
+            var nev     = r.IsDBNull(1) ? null : r.GetString(1);
+            var osztaly = r.IsDBNull(2) ? null : r.GetString(2);
+            var targy   = r.GetString(3);
+            var pont    = r.GetInt32(4);
+            var maxPont = r.GetInt32(5);
+            var datum   = r.IsDBNull(6) ? "" : r.GetString(6);
+
+            if (!raw.ContainsKey(email))
+                raw[email] = (nev, osztaly, new());
+            raw[email].rows.Add((targy, pont, maxPont, datum));
+        }
+
+        return raw.Select(kv => new ProgressSummaryItem
+        {
+            Email   = kv.Key,
+            Nev     = kv.Value.nev,
+            Osztaly = kv.Value.osztaly,
+            Web     = CalcSubjectProgress(kv.Value.rows.Where(x => x.targy == "web").ToList()),
+            Python  = CalcSubjectProgress(kv.Value.rows.Where(x => x.targy == "python").ToList())
+        }).OrderBy(x => x.Osztaly).ThenBy(x => x.Nev).ToList();
+    }
+
+    private static SubjectProgress CalcSubjectProgress(
+        List<(string targy, int pont, int maxPont, string datum)> records)
+    {
+        if (records.Count == 0) return new SubjectProgress(0, 0, 0, null);
+        var pcts = records.Select(x => x.maxPont > 0 ? (double)x.pont / x.maxPont * 100 : 0).ToList();
+        return new SubjectProgress(
+            records.Count,
+            Math.Round(pcts.Average(), 1),
+            Math.Round(pcts.Max(), 1),
+            records.First().datum
+        );
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

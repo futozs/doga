@@ -956,6 +956,37 @@ function getStorageKey(taskId, type) {
   return `vizsga_${studentKey}_${taskId}_${type}`;
 }
 
+// ── Progress tracking ─────────────────────────────────────────────────────
+const _progressPosted = new Set(); // "email:web:taskId" – session per post
+
+function maybePostProgress() {
+  const kandoRaw = sessionStorage.getItem('kandoUser');
+  if (!kandoRaw || !currentTask) return;
+  const score = parseInt(scoreCurrent?.textContent || '0');
+  const total = parseInt(scoreTotal?.textContent || '0');
+  if (score <= 0 || total <= 0) return;
+  let u;
+  try { u = JSON.parse(kandoRaw); } catch { return; }
+  const email = u.email;
+  if (!email) return;
+  const key = `${email}:web:${currentTask.id}`;
+  if (_progressPosted.has(key)) return;
+  _progressPosted.add(key);
+  fetch('https://agazati.up.railway.app/api/progress', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      nev: u.nev || '',
+      osztaly: u.osztaly ? `${u.evfolyam || ''}.${u.osztaly}` : '',
+      targy: 'web',
+      feladat: currentTask.id,
+      pont: score,
+      maxPont: total
+    })
+  }).catch(() => {});
+}
+
 function saveToLocalStorage() {
   if (!currentTask || !htmlEditor || !cssEditor) return;
 
@@ -1135,6 +1166,7 @@ function renderTasks(results) {
   const completed = results.filter(r => r.done).length;
   const total = results.length;
   updateProgressBar(completed, total);
+  if (completed > 0) maybePostProgress();
 }
 
 function annotateHtmlWithSourceLines(html) {

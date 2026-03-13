@@ -88,3 +88,36 @@ public record UserRecord(
     string? Osztaly,
     string? Csoport
 );
+
+// ── Progress / Gamification ────────────────────────────────────────────────
+
+public record ProgressRequest(
+    string Email,
+    string? Nev,
+    string? Osztaly,
+    string Targy,      // "web" vagy "python"
+    string Feladat,    // feladat azonosítója
+    int Pont,
+    int MaxPont
+);
+
+public record SubjectProgress(
+    int Sessions,
+    double AvgPercent,
+    double BestPercent,
+    string? LastSession
+);
+
+public record StudentProgress(
+    SubjectProgress Web,
+    SubjectProgress Python
+);
+
+public class ProgressSummaryItem
+{
+    public string Email { get; set; } = "";
+    public string? Nev { get; set; }
+    public string? Osztaly { get; set; }
+    public SubjectProgress Web { get; set; } = new(0, 0, 0, null);
+    public SubjectProgress Python { get; set; } = new(0, 0, 0, null);
+}

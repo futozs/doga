@@ -253,6 +253,33 @@ app.MapPost("/api/auth/change-password", (HttpContext ctx,
     return Results.Ok(new { success = true });
 });
 
+// ── Progress / Gamification ────────────────────────────────────────────────
+
+// Gyakorlás eredményének mentése (mindenki, email alapú)
+app.MapPost("/api/progress", (ProgressRequest req, Database db) =>
+{
+    if (string.IsNullOrWhiteSpace(req.Email) || req.MaxPont <= 0)
+        return Results.BadRequest(new { error = "Érvénytelen adat" });
+    db.SaveProgress(req);
+    return Results.Ok(new { success = true });
+});
+
+// Saját haladás lekérése (email alapú, nyilvános)
+app.MapGet("/api/progress/{email}", (string email, Database db) =>
+{
+    var decoded = Uri.UnescapeDataString(email);
+    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    var progress = db.GetStudentProgress(decoded);
+    return Results.Ok(progress);
+});
+
+// Összes tanuló összesítése (csak admin)
+app.MapGet("/api/progress", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    return Results.Ok(db.GetAllProgressSummary());
+});
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
 
