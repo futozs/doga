@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HTML/CSS Vizsga Preview</title>
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Ha van bejelentkezett felhasználó, a modal eleve rejtett legyen (villanás megelőzése)
+      try {
+        const _kando = sessionStorage.getItem('kandoUser');
+        const _saved = localStorage.getItem('vizsga_student');
+        const _bem   = location.search.includes('bemutato=1');
+        if (_kando || _saved || _bem) {
+          document.write('<style>#student-modal{display:none!important}</style>');
+        }
+      } catch(e) {}
+    </script>
   </head>
   <body>
     <header class="topbar">
@@ -152,6 +163,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/emmet-monaco-es/dist/emmet-monaco.min.js"></script>
-    <script src="app.js?v=16"></script>
+    <script src="app.js?v=17"></script>
   </body>
 </html>
