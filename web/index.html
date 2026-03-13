@@ -18,9 +18,6 @@
           <select id="task-selector" class="task-selector">
             <option value="">-- Feladat --</option>
           </select>
-          <button id="btn-task-desc" type="button" class="btn-sm" disabled title="Feladat leírás">Leírás</button>
-          <button id="btn-sample-img" type="button" class="btn-sm" disabled title="Mintakép">Minta</button>
-          <button id="btn-sources" type="button" class="btn-sm" disabled title="Források">Forrás</button>
         </div>
         <div class="topbar-right">
           <span id="timer" class="timer">60:00</span>
@@ -33,13 +30,31 @@
           <input type="file" id="html-validation-img" accept="image/*" hidden />
           <button id="btn-css-val-img" type="button" class="btn-sm" disabled title="CSS validálás képernyőkép feltöltése">CSS✓📷</button>
           <input type="file" id="css-validation-img" accept="image/*" hidden />
-          <button id="btn-theme-toggle" type="button" class="btn-sm" title="Sötét / Világos mód váltása">🌙</button>
         </div>
       </div>
     </header>
 
     <main class="layout">
-      <section class="panel left">
+      <!-- BAL: Feladatleírás + pontszámláló -->
+      <section class="panel desc-panel">
+        <div class="panel-header">
+          <h2>Feladatleírás</h2>
+          <button id="btn-sources" type="button" class="btn-sm" disabled title="Forrás szövegek">Forrás</button>
+        </div>
+        <iframe id="task-desc-frame" class="desc-frame" title="Feladatleírás" sandbox="allow-same-origin allow-scripts"></iframe>
+        <div class="score-box">
+          <div class="score-display">
+            <span id="score-current">0</span><span class="score-sep"> / </span><span id="score-total">40</span>
+            <span class="score-label">pont</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOBB: Szerkesztő -->
+      <section class="panel editor-panel">
         <div class="panel-header">
           <div class="editor-tabs">
             <button id="tab-html" type="button" class="editor-tab active">HTML</button>
@@ -50,14 +65,14 @@
             <button id="tab-css-validator" type="button" class="editor-tab ref-tab" title="CSS Validator">CSS✓</button>
           </div>
           <div class="actions">
+            <button id="btn-preview-new-tab" type="button" class="btn-sm btn-preview" disabled title="Előnézet új lapon">↗ Előnézet</button>
             <button id="btn-wrap" type="button" title="Kijelölés becsomagolása tag-be">Wrap</button>
-            <button id="btn-format" type="button" title="Kód formázása (Alt+Shift+F)">Kódformázó</button>
+            <button id="btn-format" type="button" title="Kód formázása">Formáz</button>
             <button id="btn-starter" type="button" disabled title="Kiindulás betöltése">⟲ Kiindulás</button>
-            <button id="btn-blocks" type="button" class="is-active" title="Blokk nézet">Blokk</button>
-            <button id="btn-interact" type="button" class="is-active" title="Interakció">Inter.</button>
+            <button id="btn-theme-toggle" type="button" class="btn-sm" title="Sötét / Világos mód">🌙</button>
+            <span class="status" id="status">Válassz feladatot…</span>
           </div>
         </div>
-
         <div class="editor-container">
           <div id="html-editor-wrapper" class="editor-pane active">
             <div id="html-editor" class="editor" aria-label="HTML editor"></div>
@@ -66,30 +81,6 @@
             <div id="css-editor" class="editor" aria-label="CSS editor"></div>
           </div>
         </div>
-
-        <section class="tasks" id="tasks-section">
-          <div class="tasks-header">
-            <span>Feladatok <button id="btn-toggle-tasks" type="button" class="btn-toggle-tasks" title="Összecsuk/Kinyit">▼</button></span>
-            <span id="progress-text" class="progress-text">0/0 (0%)</span>
-          </div>
-          <div id="tasks-content" class="tasks-content">
-            <div class="progress-bar-bg">
-              <div id="progress-bar" class="progress-bar-fill"></div>
-            </div>
-            <ul id="task-list" class="task-list"></ul>
-          </div>
-        </section>
-      </section>
-
-      <section class="panel right">
-        <div class="panel-header">
-          <h2>Előnézet</h2>
-          <div class="preview-actions">
-            <button id="btn-preview-new-tab" type="button" class="btn-sm" disabled title="Új lapon">↗</button>
-            <span class="status" id="status">Válassz feladatot…</span>
-          </div>
-        </div>
-        <iframe id="preview" title="Preview" sandbox="allow-scripts allow-same-origin"></iframe>
       </section>
     </main>
 

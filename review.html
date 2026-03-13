@@ -523,6 +523,7 @@
         <button class="btn btn-open" id="btn-open">📂 Fájl megnyitása</button>
         <button class="btn btn-print hidden" id="btn-print">🖨️ Nyomtatás</button>
         <button class="btn btn-clear hidden" id="btn-clear">✕ Bezárás</button>
+        <button class="btn" id="btn-home" onclick="window.location.href='portal.html'" style="background:transparent;border:1px solid #7986cb;color:#7986cb;" onmouseover="this.style.background='#7986cb';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#7986cb'">← Főmenü</button>
     </div>
     <input type="file" id="file-input" accept=".txt,.json" hidden multiple>
 </header>
@@ -1062,7 +1063,7 @@ const WEB_TASK_CHECKS = {
     { id:"css-fejlec-width",      label:"26. CSS: A fejlec egyedi azonosítójú elemkijelölő szélessége 100%",                             check:(doc,html,css)=>css&&/#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css) },
     { id:"css-felirat-smallcaps", label:"27. CSS: A felirat egyedi azonosítójú elemkijelölőre kiskapitális betűt állított",              check:(doc,html,css)=>css&&/#felirat\s*\{[^}]*font-variant\s*:\s*small-caps/i.test(css) },
     { id:"css-nav-border",        label:"28. CSS: A navigáció listaelemére 3px pontozott cadetblue jobb oldali szegélyt állított",       check:(doc,html,css)=>css&&/nav\s+li\s*\{[^}]*(border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*cadetblue|border-right\s*:[^;]*3px[^;]*dotted[^;]*cadetblue)/i.test(css) },
-    { id:"css-nav-padding",       label:"29. CSS: A navigáció listaelemének belső margója vízszintesen 0, függőlegesen 15px",            check:(doc,html,css)=>css&&/nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css) },
+    { id:"css-nav-padding",       label:"29. CSS: A navigáció listaelemének belső margója vízszintesen 0, függőlegesen 15px",            check:(doc,html,css)=>css&&/nav\s+li\s*\{[^}]*padding\s*:\s*15px\s*0/i.test(css) },
     { id:"css-robot-bg",          label:"30. CSS: A robot osztály elemkijelölőjére (#f0ffff) kódú háttérszínt állított",                 check:(doc,html,css)=>css&&/\.robot\s*\{[^}]*background(-color)?\s*:\s*(azure|#f0ffff)/i.test(css) },
     { id:"css-lablec-link-color", label:"31. CSS: A lablec osztály hivatkozásának betűszíne rgb(13,202,240)",                            check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*color\s*:\s*rgb\s*\(\s*13\s*,\s*202\s*,\s*240\s*\)/i.test(css) },
     { id:"css-lablec-link-bold",  label:"32. CSS: A lablec osztály elemkijelölőjére félkövér stílust állított",                          check:(doc,html,css)=>css&&/\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css) },

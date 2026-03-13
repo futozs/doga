@@ -38,6 +38,10 @@ const cssEditorWrapper = document.getElementById("css-editor-wrapper");
 const tasksSection = document.getElementById("tasks-section");
 const btnToggleTasks = document.getElementById("btn-toggle-tasks");
 const btnWrap = document.getElementById("btn-wrap");
+const descFrame = document.getElementById("task-desc-frame");
+const progressBar = document.getElementById("progress-bar");
+const scoreCurrent = document.getElementById("score-current");
+const scoreTotal = document.getElementById("score-total");
 
 // Időzítő változók
 let timerSeconds = 60 * 60; // 60 perc
@@ -104,7 +108,7 @@ const availableTasks = {
         id: "fejlec-img",
         label: "4. Az img mappában található fejlec.jpg képet elhelyezte",
         check: (doc) => {
-          const img = doc.querySelector('img[src*="fejlec"]');
+          const img = doc.querySelector('img[src*="img/fejlec"]');
           return img !== null;
         },
       },
@@ -112,7 +116,7 @@ const availableTasks = {
         id: "fejlec-alt",
         label: "5. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Bogyós gyümölcsök\" szöveg jelenik meg",
         check: (doc) => {
-          const img = doc.querySelector('img[src*="fejlec"]');
+          const img = doc.querySelector('img[src*="img/fejlec"]');
           return img && img.alt && img.title === "Bogyós gyümölcsök";
         },
       },
@@ -232,7 +236,7 @@ const availableTasks = {
         id: "afonya-img",
         label: "18. A kép forrása az img mappában található afonya.jpg",
         check: (doc) => {
-          const img = doc.querySelector('img[src*="afonya"]');
+          const img = doc.querySelector('img[src*="img/afonya"]');
           return img !== null;
         },
       },
@@ -240,7 +244,7 @@ const availableTasks = {
         id: "afonya-alt",
         label: "19. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Áfonya\" szöveg jelenik meg",
         check: (doc) => {
-          const img = doc.querySelector('img[src*="afonya"]');
+          const img = doc.querySelector('img[src*="img/afonya"]');
           return img && img.alt && img.title === "Áfonya";
         },
       },
@@ -470,14 +474,14 @@ humanoid: {
     },
     {
       id: "fejlec-img",
-      label: "5. A fejlec.jpg képet a megfelelő helyre helyezte",
-      check: (doc) => doc.querySelector('img[src*="fejlec"]') !== null,
+      label: "5. Az img mappában található fejlec.jpg képet a megfelelő helyre helyezte",
+      check: (doc) => doc.querySelector('img[src*="img/fejlec"]') !== null,
     },
     {
       id: "fejlec-alt",
       label: "6. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Humanoid robot\" szöveg jelenik meg",
       check: (doc) => {
-        const img = doc.querySelector('img[src*="fejlec"]');
+        const img = doc.querySelector('img[src*="img/fejlec"]');
         return img && img.alt === "Humanoid robot" && img.title === "Humanoid robot";
       },
     },
@@ -560,13 +564,13 @@ humanoid: {
     {
       id: "ameca-img",
       label: "16. A kép forrása az img mappában található ameca.jpg",
-      check: (doc) => doc.querySelector('img[src*="ameca"]') !== null,
+      check: (doc) => doc.querySelector('img[src*="img/ameca"]') !== null,
     },
     {
       id: "ameca-alt",
       label: "17. Ha nem jeleníthető meg a kép vagy ha az egeret felé visszük a \"Ameca\" szöveg jelenik meg",
       check: (doc) => {
-        const img = doc.querySelector('img[src*="ameca"]');
+        const img = doc.querySelector('img[src*="img/ameca"]');
         return img && img.alt === "Ameca" && img.title === "Ameca";
       },
     },
@@ -654,7 +658,7 @@ humanoid: {
     {
       id: "css-nav-padding",
       label: "29. CSS: A navigáció listaelemének belső margójára vízszintesen 0, függőlegesen 15 képpontot állított",
-      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*15px\s*0/i.test(css),
       cssCheck: true,
     },
     {
@@ -729,6 +733,8 @@ let currentTask = null;
 let htmlEditor;
 let cssEditor;
 let debounceTimer;
+let lastParsedHtml = null;
+let cachedStudentDoc = null;
 let showBlockGuides = true;
 let htmlDepthDecorations = [];
 let htmlTokenDecorations = [];
@@ -1023,15 +1029,12 @@ async function loadTaskFiles(task) {
 async function selectTask(taskId) {
   if (!taskId) {
     currentTask = null;
-    btnTaskDesc.disabled = true;
-    btnStarter.disabled = true;
-    btnSampleImg.disabled = true;
-    btnSources.disabled = true;
-    btnPreviewNewTab.disabled = true;
-    taskList.innerHTML = '';
+    if (btnStarter) btnStarter.disabled = true;
+    if (btnSources) btnSources.disabled = true;
+    if (btnPreviewNewTab) btnPreviewNewTab.disabled = true;
     if (htmlEditor) htmlEditor.setValue('');
     if (cssEditor) cssEditor.setValue('');
-    preview.srcdoc = '';
+    if (descFrame) descFrame.src = 'about:blank';
     statusEl.textContent = 'Válassz feladatot a kezdéshez…';
     updateProgressBar(0, 0);
     return;
@@ -1041,14 +1044,18 @@ async function selectTask(taskId) {
   if (!task) return;
 
   currentTask = task;
-  btnTaskDesc.disabled = false;
-  btnStarter.disabled = false;
-  btnSampleImg.disabled = !task.sampleImage;
-  btnSources.disabled = !task.sourceFiles || task.sourceFiles.length === 0;
-  btnPreviewNewTab.disabled = false;
-  btnSaveFile.disabled = false;
+  lastParsedHtml = null;
+  cachedStudentDoc = null;
+  if (btnStarter) btnStarter.disabled = false;
+  if (btnSources) btnSources.disabled = !task.sourceFiles || task.sourceFiles.length === 0;
+  if (btnPreviewNewTab) btnPreviewNewTab.disabled = false;
+  if (btnSaveFile) btnSaveFile.disabled = false;
   document.getElementById('btn-html-val-img').disabled = false;
   document.getElementById('btn-css-val-img').disabled = false;
+
+  if (descFrame && task.taskDescFile) {
+    descFrame.src = task.basePath + task.taskDescFile;
+  }
 
   // Ellenőrizzük, van-e mentett munka
   const saved = loadFromLocalStorage(taskId);
@@ -1082,49 +1089,35 @@ async function selectTask(taskId) {
 }
 
 function renderTaskChecks() {
-  taskList.innerHTML = '';
-
-  if (!currentTask || !currentTask.checks) {
-    return;
-  }
-
-  currentTask.checks.forEach((task) => {
-    const li = document.createElement("li");
-    li.className = "task";
-    li.innerHTML = `<span class="dot"></span><span>${task.label}</span>`;
-    taskList.appendChild(li);
-  });
+  // Pontszámláló nullázása amikor új feladat töltődik
+  updateProgressBar(0, currentTask ? currentTask.checks.length : 0);
 }
 
 // Progress bar frissítése
 function updateProgressBar(completed, total) {
-  const progressBar = document.getElementById('progress-bar');
-  const progressText = document.getElementById('progress-text');
-
-  if (!progressBar || !progressText) return;
+  if (scoreCurrent) scoreCurrent.textContent = completed;
+  if (scoreTotal) scoreTotal.textContent = total;
+  if (!progressBar) return;
 
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
   progressBar.style.width = `${percent}%`;
-  progressText.textContent = `${completed}/${total} feladat teljesítve (${percent}%)`;
 
-  // Szín változtatás a haladás alapján
   if (percent === 100) {
     progressBar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
-  } else if (percent >= 50) {
+    if (scoreCurrent) scoreCurrent.style.color = '#10b981';
+  } else if (percent >= 60) {
     progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+    if (scoreCurrent) scoreCurrent.style.color = '#f59e0b';
   } else {
     progressBar.style.background = 'linear-gradient(90deg, #3b82f6, #60a5fa)';
+    if (scoreCurrent) scoreCurrent.style.color = '#60a5fa';
   }
 }
 
 function renderTasks(results) {
-  taskList.innerHTML = "";
-  results.forEach((task) => {
-    const li = document.createElement("li");
-    li.className = `task ${task.done ? "done" : ""}`;
-    li.innerHTML = `<span class="dot"></span><span>${task.label}</span>`;
-    taskList.appendChild(li);
-  });
+  const completed = results.filter(r => r.done).length;
+  const total = results.length;
+  updateProgressBar(completed, total);
 }
 
 function annotateHtmlWithSourceLines(html) {
@@ -1186,9 +1179,20 @@ function updatePreview() {
   statusEl.textContent = "Frissítés...";
   const html = htmlEditor.getValue();
   const css = cssEditor.getValue();
-  preview.srcdoc = buildDoc(html, css, showBlockGuides);
 
-  // Automatikus mentés
+  // Scoring frissítése (preview nélkül)
+  if (currentTask && currentTask.checks) {
+    if (html !== lastParsedHtml) {
+      cachedStudentDoc = parseStudentHtml(html);
+      lastParsedHtml = html;
+    }
+    const results = currentTask.checks.map((task) => ({
+      done: task.check(cachedStudentDoc, html, css),
+    }));
+    renderTasks(results);
+    statusEl.textContent = `Frissítve: ${new Date().toLocaleTimeString("hu-HU")}`;
+  }
+
   saveToLocalStorage();
 }
 
@@ -1202,7 +1206,7 @@ function scheduleUpdate() {
 }
 
 function syncActivePreviewBlock() {
-  if (!htmlEditor || !preview.contentWindow) return;
+  if (!htmlEditor || !preview || !preview.contentWindow) return;
   const line = htmlEditor.getPosition() ? htmlEditor.getPosition().lineNumber : 1;
   activeSourceLine = line;
   preview.contentWindow.postMessage({ type: "source-line", line: activeSourceLine }, "*");
@@ -1663,17 +1667,14 @@ function logoutStudent() {
   taskSelector.disabled = true;
   if (htmlEditor) htmlEditor.setValue('');
   if (cssEditor) cssEditor.setValue('');
-  preview.srcdoc = '';
-  taskList.innerHTML = '';
+  if (descFrame) descFrame.src = 'about:blank';
   currentTask = null;
 
   // Gombok letiltása
-  btnTaskDesc.disabled = true;
-  btnStarter.disabled = true;
-  btnSampleImg.disabled = true;
-  btnSources.disabled = true;
-  btnPreviewNewTab.disabled = true;
-  btnSaveFile.disabled = true;
+  if (btnStarter) btnStarter.disabled = true;
+  if (btnSources) btnSources.disabled = true;
+  if (btnPreviewNewTab) btnPreviewNewTab.disabled = true;
+  if (btnSaveFile) btnSaveFile.disabled = true;
   document.getElementById('btn-html-val-img').disabled = true;
   document.getElementById('btn-css-val-img').disabled = true;
 
@@ -2135,39 +2136,10 @@ function parseStudentHtml(htmlString) {
 }
 
 // Event listeners
-preview.addEventListener("load", () => {
-  if (!currentTask || !currentTask.checks) {
-    statusEl.textContent = `Frissítve: ${new Date().toLocaleTimeString("hu-HU")}`;
-    return;
-  }
-
-  // A tanuló által beírt nyers HTML-t és CSS-t használjuk az ellenőrzéshez
-  const studentHtml = htmlEditor ? htmlEditor.getValue() : '';
-  const studentCss = cssEditor ? cssEditor.getValue() : '';
-  const studentDoc = parseStudentHtml(studentHtml);
-
-  const results = currentTask.checks.map((task) => ({
-    id: task.id,
-    label: task.label,
-    done: task.check(studentDoc, studentHtml, studentCss),
-  }));
-
-  renderTasks(results);
-
-  const completed = results.filter(r => r.done).length;
-  const total = results.length;
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-  statusEl.textContent = `Frissítve: ${new Date().toLocaleTimeString("hu-HU")} | ${completed}/${total} feladat (${percent}%)`;
-
-  // Progress bar frissítése
-  updateProgressBar(completed, total);
-
-  syncActivePreviewBlock();
-});
+// preview.addEventListener("load", ...) - eltávolítva, a scoring az updatePreview()-ban fut
 
 window.addEventListener("message", (event) => {
-  if (!event || event.source !== preview.contentWindow || !event.data) return;
+  if (!event || !preview || event.source !== preview.contentWindow || !event.data) return;
   if (event.data.type !== "preview-line") return;
   const line = Number(event.data.line || 1);
   jumpToSourceLine(line);
@@ -2178,10 +2150,10 @@ taskSelector.addEventListener("change", (e) => {
 });
 
 // Új lapon megnyitás eseménykezelők
-btnTaskDesc.addEventListener("click", openTaskDesc);
-btnSampleImg.addEventListener("click", openSampleImg);
-btnSources.addEventListener("click", openSources);
-btnPreviewNewTab.addEventListener("click", openPreviewInNewTab);
+// btnTaskDesc.addEventListener("click", openTaskDesc);
+// btnSampleImg.addEventListener("click", openSampleImg);
+if (btnSources) btnSources.addEventListener("click", openSources);
+if (btnPreviewNewTab) btnPreviewNewTab.addEventListener("click", openPreviewInNewTab);
 
 // Időzítő eseménykezelők
 btnTimerToggle.addEventListener("click", toggleTimer);
@@ -2238,13 +2210,13 @@ btnStarter.addEventListener("click", async () => {
   }
 });
 
-btnBlocks.addEventListener("click", () => {
+if (btnBlocks) btnBlocks.addEventListener("click", () => {
   showBlockGuides = !showBlockGuides;
   btnBlocks.classList.toggle("is-active", showBlockGuides);
   updatePreview();
 });
 
-btnInteract.addEventListener("click", () => {
+if (btnInteract) btnInteract.addEventListener("click", () => {
   lockPreviewInteractions = !lockPreviewInteractions;
   const isEnabled = !lockPreviewInteractions;
   btnInteract.classList.toggle("is-active", isEnabled);
@@ -2296,8 +2268,8 @@ btnHtmlValidator.addEventListener('click', () => {
 });
 
 // Feladatok szekció összecsukása
-btnToggleTasks.addEventListener('click', () => {
-  tasksSection.classList.toggle('collapsed');
+if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
+  if (tasksSection) tasksSection.classList.toggle('collapsed');
   // Monaco editor újraméretezése
   setTimeout(() => {
     if (htmlEditor) htmlEditor.layout();
