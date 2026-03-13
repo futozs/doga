@@ -1127,6 +1127,7 @@
 
             <!-- Felső sáv: navigáció + pontszám + időmérő -->
             <div class="quiz-top-bar">
+                <a id="btn-quiz-portal-back" href="../portal.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #7986cb;border-radius:8px;color:#7986cb;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#7986cb';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#7986cb'">← Főmenü</a>
                 <div class="task-navigation" id="task-navigation"></div>
                 <div class="live-score">
                     <span id="score-display">0 / 30 pont</span>
@@ -1257,9 +1258,11 @@
                     document.body.classList.add('nagy-mod');
                 }
 
-                // Főmenü gomb mindenkinél látható
+                // Főmenü gomb mindenkinél látható (start képernyőn és quiz topbar-ban is)
                 const backBtn = document.getElementById('btn-portal-back');
                 if (backBtn) backBtn.style.display = 'inline-block';
+                const backBtnQuiz = document.getElementById('btn-quiz-portal-back');
+                if (backBtnQuiz) backBtnQuiz.style.display = 'inline-block';
 
                 // WEB váltó gomb: oktatónak mindig, tanulónak csak gyakorló módban
                 if (u.szerep === 'oktato') {
