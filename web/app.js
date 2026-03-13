@@ -1654,15 +1654,15 @@ function loadStudentData() {
       return true;
     } catch (e) { /* folytatjuk */ }
   }
-  // Portálos belépés: kandoUser sessionStorage-ból (tanuló esetén)
+  // Portálos belépés: kandoUser sessionStorage-ból
   const kandoRaw = sessionStorage.getItem('kandoUser');
   if (kandoRaw) {
     try {
       const u = JSON.parse(kandoRaw);
-      if (u.nev && u.evfolyam && u.osztaly) {
+      if (u.nev) {
         studentData.name  = u.nev;
         studentData.email = u.email || '';
-        studentData.class = `${u.evfolyam}.${u.osztaly}`;
+        studentData.class = u.evfolyam && u.osztaly ? `${u.evfolyam}.${u.osztaly}` : (u.szerep === 'oktato' ? 'Oktató' : '');
         saveStudentData();
         updateStudentDisplay();
         return true;
