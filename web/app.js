@@ -1646,15 +1646,15 @@ function updateStudentDisplay() {
 }
 
 function logoutStudent() {
-  if (!confirm('Biztosan kijelentkezel? A munkád mentve marad, de másik tanuló is bejelentkezhet.')) {
-    return;
-  }
-
-  // Ha portálról jött (kandoUser vagy bemutato=1), visszavisszük a portálra
+  // Ha portálról jött (kandoUser vagy bemutato=1), confirm nélkül visszavisszük a portálra
   const isBemutato = new URLSearchParams(location.search).get('bemutato') === '1';
   if (sessionStorage.getItem('kandoUser') || isBemutato) {
     sessionStorage.removeItem('kandoUser');
     location.replace('../portal.html');
+    return;
+  }
+
+  if (!confirm('Biztosan kijelentkezel? A munkád mentve marad, de másik tanuló is bejelentkezhet.')) {
     return;
   }
 
