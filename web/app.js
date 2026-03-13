@@ -1607,6 +1607,21 @@ function loadStudentData() {
       return true;
     } catch (e) { /* folytatjuk */ }
   }
+  // Portálos belépés: kandoUser sessionStorage-ból (tanuló esetén)
+  const kandoRaw = sessionStorage.getItem('kandoUser');
+  if (kandoRaw) {
+    try {
+      const u = JSON.parse(kandoRaw);
+      if (u.nev && u.evfolyam && u.osztaly) {
+        studentData.name  = u.nev;
+        studentData.email = u.email || '';
+        studentData.class = `${u.evfolyam}.${u.osztaly}`;
+        saveStudentData();
+        updateStudentDisplay();
+        return true;
+      }
+    } catch (e) { /* folytatjuk */ }
+  }
   // Visszatérő tanuló: localStorage (csak ha nincs sessionStorage adat)
   const saved = localStorage.getItem('vizsga_student');
   if (saved) {
