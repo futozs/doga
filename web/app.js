@@ -1703,7 +1703,7 @@ function updateStudentDisplay() {
       btnLogoutEl.textContent = '🏠 Főmenü';
       btnLogoutEl.title = 'Vissza a főmenübe';
     } else {
-      btnLogoutEl.textContent = '⏏';
+      btnLogoutEl.innerHTML = '<i class="fas fa-right-from-bracket"></i>';
       btnLogoutEl.title = 'Kijelentkezés';
     }
   }
@@ -1883,7 +1883,7 @@ function updateTimerDisplay() {
 function startTimer() {
   if (timerRunning) return;
   timerRunning = true;
-  btnTimerToggle.textContent = '⏸';
+  btnTimerToggle.innerHTML = '<i class="fas fa-pause"></i>';
   btnTimerToggle.classList.add('running');
 
   timerInterval = setInterval(() => {
@@ -1904,7 +1904,7 @@ function startTimer() {
 
 function stopTimer() {
   timerRunning = false;
-  btnTimerToggle.textContent = '▶';
+  btnTimerToggle.innerHTML = '<i class="fas fa-play"></i>';
   btnTimerToggle.classList.remove('running');
   if (timerInterval) {
     clearInterval(timerInterval);
@@ -2630,13 +2630,13 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
     let editorLight = savedTheme === 'light';
     monaco.editor.setTheme(editorLight ? 'vizsga-light' : 'vizsga-contrast');
     const themeBtn = document.getElementById('btn-theme-toggle');
-    if (themeBtn) themeBtn.textContent = editorLight ? '☀️' : '🌙';
+    if (themeBtn) themeBtn.innerHTML = editorLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
 
     document.getElementById('btn-theme-toggle').addEventListener('click', () => {
       editorLight = !editorLight;
       monaco.editor.setTheme(editorLight ? 'vizsga-light' : 'vizsga-contrast');
       localStorage.setItem('vizsga_theme', editorLight ? 'light' : 'dark');
-      document.getElementById('btn-theme-toggle').textContent = editorLight ? '☀️' : '🌙';
+      document.getElementById('btn-theme-toggle').innerHTML = editorLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
 
     htmlEditor = createEditor(monaco, "html-editor", "html", "");

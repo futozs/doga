@@ -403,6 +403,7 @@
         .ered-countdown-sub { color: #888; font-size: 0.78rem; display: block; margin-top: 3px; }
         .ered-countdown-done { color: #2ed573; font-weight: 700; }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
 
@@ -419,9 +420,9 @@
             <strong id="user-name">–</strong>
             <span id="user-role">–</span>
         </div>
-        <div id="vizsga-badge">🔴 VIZSGA MÓD</div>
+        <div id="vizsga-badge"><i class="fas fa-circle" style="font-size:0.55rem;vertical-align:middle;margin-bottom:1px;color:#ef4444;"></i> VIZSGA MÓD</div>
         <button class="toggle-view-btn" id="toggle-view-btn" onclick="toggleView()">Tanulói nézet</button>
-        <button class="eredmenyek-btn" id="btn-eredmenyek-topbar" onclick="openEredmenyek()" style="display:none" title="Elért eredmények">🏅 Eredmények</button>
+        <button class="eredmenyek-btn" id="btn-eredmenyek-topbar" onclick="openEredmenyek()" style="display:none" title="Elért eredmények"><i class="fas fa-medal"></i> Eredmények</button>
         <button class="delete-btn" onclick="openDeleteModal()" title="Fiók törlése">Fiók törlése</button>
         <button class="logout-btn" onclick="logout()">Kilépés</button>
     </div>
@@ -434,13 +435,13 @@
     <!-- Tanulói nézet -->
     <div id="student-portal" class="options-grid" style="display:none">
         <a class="option-card python" id="card-python" href="python/index.html" onclick="event.preventDefault(); location.replace('python/index.html')">
-            <span class="icon">🐍</span>
+            <span class="icon"><i class="fab fa-python"></i></span>
             <span class="label">PYTHON</span>
             <span class="desc">Python programozási feladatok</span>
             <span class="vizsga-status" id="status-python"></span>
         </a>
         <a class="option-card web" id="card-web" href="web/index.html" onclick="event.preventDefault(); location.replace('web/index.html')">
-            <span class="icon">🌐</span>
+            <span class="icon"><i class="fas fa-globe"></i></span>
             <span class="label">WEB</span>
             <span class="desc">HTML, CSS, Bootstrap feladatok</span>
             <span class="vizsga-status" id="status-web"></span>
@@ -451,17 +452,17 @@
     <div id="teacher-portal" style="display:none">
         <div class="options-grid">
             <a class="option-card javitas" href="review.html">
-                <span class="icon">✅</span>
+                <span class="icon"><i class="fas fa-circle-check"></i></span>
                 <span class="label">Javítás</span>
                 <span class="desc">Beadott dolgozatok megtekintése és értékelése</span>
             </a>
             <a class="option-card bemutatas" href="#" onclick="event.preventDefault(); openBemutatasModal()">
-                <span class="icon">📺</span>
+                <span class="icon"><i class="fas fa-tv"></i></span>
                 <span class="label">Bemutatás</span>
                 <span class="desc">Feladatok bemutatása diákoknak</span>
             </a>
             <a class="option-card admin" href="python/admin.html">
-                <span class="icon">🔧</span>
+                <span class="icon"><i class="fas fa-screwdriver-wrench"></i></span>
                 <span class="label">Admin</span>
                 <span class="desc">Mód beállítása, statisztikák, jelszócsere</span>
             </a>
@@ -471,12 +472,12 @@
 
 <!-- Vizsga befejezve képernyő -->
 <div id="vizsga-befejezve">
-    <div class="vb-icon">🎓</div>
+    <div class="vb-icon"><i class="fas fa-graduation-cap"></i></div>
     <div class="vb-title">Vizsga befejezve!</div>
     <div class="vb-sub">Mindkét digitális feladatot sikeresen beadtad. Most már elkezdheted a Packet Tracer feladatot.</div>
     <div class="vb-box">
-        <div class="vb-task"><span class="vb-check">✓</span> WEB feladat – beadva</div>
-        <div class="vb-task"><span class="vb-check">✓</span> PYTHON feladat – beadva</div>
+        <div class="vb-task"><span class="vb-check"><i class="fas fa-check"></i></span> WEB feladat – beadva</div>
+        <div class="vb-task"><span class="vb-check"><i class="fas fa-check"></i></span> PYTHON feladat – beadva</div>
     </div>
     <div class="vb-hint">Ez az ablak bezárható. Indítsd el a Packet Tracer programot a folytatáshoz.</div>
 </div>
@@ -495,15 +496,15 @@
 <!-- Bemutatás választó modal -->
 <div class="bemutatas-modal" id="bemutatas-modal">
     <div class="bemutatas-modal-box">
-        <h3>📺 Bemutatás</h3>
+        <h3><i class="fas fa-tv"></i> Bemutatás</h3>
         <p>Melyik tárgyból mutatsz be feladatokat?</p>
         <div class="bemutatas-grid">
             <a class="bem-card python" href="python/index.html?bemutato=1" onclick="closeBemutatasModal()">
-                <span class="bem-icon">🐍</span>
+                <span class="bem-icon"><i class="fab fa-python"></i></span>
                 <span class="bem-label">Python</span>
             </a>
             <a class="bem-card web" href="web/index.html?bemutato=1" onclick="closeBemutatasModal()">
-                <span class="bem-icon">🌐</span>
+                <span class="bem-icon"><i class="fas fa-globe"></i></span>
                 <span class="bem-label">WEB</span>
             </a>
         </div>
@@ -514,16 +515,16 @@
 <!-- Elért eredmények modal -->
 <div class="ered-overlay" id="ered-overlay">
   <div class="ered-box">
-    <button class="ered-close" onclick="closeEredmenyek()">✕</button>
-    <div class="ered-title">🏅 Elért eredmények</div>
-    <div id="ered-content"><div class="ered-loading">⏳ Adatok betöltése...</div></div>
+    <button class="ered-close" onclick="closeEredmenyek()"><i class="fas fa-xmark"></i></button>
+    <div class="ered-title"><i class="fas fa-medal"></i> Elért eredmények</div>
+    <div id="ered-content"><div class="ered-loading"><i class="fas fa-spinner fa-spin"></i> Adatok betöltése...</div></div>
   </div>
 </div>
 
 <!-- Fiók törlése modal -->
 <div class="delete-modal" id="delete-modal">
     <div class="delete-modal-box">
-        <h3>⚠️ Fiók törlése</h3>
+        <h3><i class="fas fa-triangle-exclamation"></i> Fiók törlése</h3>
         <p>A fiók törlése <strong style="color:#e94560;">visszavonhatatlan!</strong><br>Add meg a jelszavadat a megerősítéshez.</p>
         <input type="password" id="delete-password" placeholder="Jelszó" autocomplete="current-password">
         <div id="delete-error" style="color:#e94560; font-size:0.85rem; margin-bottom:0.8rem; display:none;"></div>
@@ -736,7 +737,7 @@
     function renderAchievements(progress) {
         const unlocked = ACHIEVEMENTS.filter(a => a.check(progress));
         const locked   = ACHIEVEMENTS.filter(a => !a.check(progress));
-        let html = `<hr class="ered-divider"><div class="ered-ach-title">🏆 Teljesítmények (${unlocked.length}/${ACHIEVEMENTS.length})</div><div class="ered-ach-grid">`;
+        let html = `<hr class="ered-divider"><div class="ered-ach-title"><i class="fas fa-trophy"></i> Teljesítmények (${unlocked.length}/${ACHIEVEMENTS.length})</div><div class="ered-ach-grid">`;
         for (const a of [...unlocked, ...locked]) {
             const cls = unlocked.includes(a) ? 'unlocked' : 'locked';
             html += `<div class="ered-ach ${cls}"><span class="ered-ach-icon">${a.icon}</span><span class="ered-ach-name">${a.name}</span></div>`;
@@ -749,13 +750,13 @@
         const deadline = new Date('2026-05-31T00:00:00');
         const now = new Date();
         const diff = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
-        if (diff <= 0) return `<div class="ered-countdown ered-countdown-done">🎓 Az ágazati alapvizsga időszaka megkezdődött!</div>`;
-        return `<div class="ered-countdown">📅 Az ágazati alapvizsgáig <strong>${diff} nap</strong> van hátra <span class="ered-countdown-sub">(felkészülési határidő: 2026. május 31.)</span></div>`;
+        if (diff <= 0) return `<div class="ered-countdown ered-countdown-done"><i class="fas fa-graduation-cap"></i> Az ágazati alapvizsga időszaka megkezdődött!</div>`;
+        return `<div class="ered-countdown"><i class="fas fa-calendar-days"></i> Az ágazati alapvizsgáig <strong>${diff} nap</strong> van hátra <span class="ered-countdown-sub">(felkészülési határidő: 2026. május 31.)</span></div>`;
     }
 
     async function openEredmenyek() {
         document.getElementById('ered-overlay').classList.add('open');
-        document.getElementById('ered-content').innerHTML = '<div class="ered-loading">⏳ Adatok betöltése...</div>';
+        document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-spinner fa-spin"></i> Adatok betöltése...</div>';
         try {
             const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
             const email = (u.email || '').replace('@kkszki.hu','');
@@ -773,7 +774,7 @@
                 renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python') +
                 renderAchievements(progress);
         } catch {
-            document.getElementById('ered-content').innerHTML = '<div class="ered-loading">⚠️ Nem sikerült betölteni az adatokat.</div>';
+            document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.</div>';
         }
     }
 
@@ -833,6 +834,6 @@
         }
     }
 </script>
-<div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;">⌨ Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HTML/CSS Vizsga Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,8 +13,8 @@
         <div class="brand">
           <img src="kandologo2.png" alt="Kandó KSZKI" class="topbar-logo">
           <span id="student-info" class="student-info"></span>
-          <a id="btn-switch-python" href="../python/index.html" type="button" class="btn-switch" title="Váltás Python tesztre" style="display:none">🐍 Python</a>
-          <button id="btn-logout" type="button" class="btn-logout" title="Kijelentkezés">⏏</button>
+          <a id="btn-switch-python" href="../python/index.html" type="button" class="btn-switch" title="Váltás Python tesztre" style="display:none"><i class="fab fa-python"></i> Python</a>
+          <button id="btn-logout" type="button" class="btn-logout" title="Kijelentkezés"><i class="fas fa-right-from-bracket"></i></button>
         </div>
         <div class="topbar-center">
           <span id="mode-badge" style="display:none;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;"></span>
@@ -23,11 +24,11 @@
         </div>
         <div class="topbar-right">
           <span id="timer" class="timer">60:00</span>
-          <button id="btn-timer-toggle" type="button" class="btn-timer" title="Start/Stop">▶</button>
-          <button id="btn-timer-reset" type="button" class="btn-timer" title="Reset">↺</button>
-          <button id="btn-load-file" type="button" class="btn-sm" title="Betöltés">📂</button>
+          <button id="btn-timer-toggle" type="button" class="btn-timer" title="Start/Stop"><i class="fas fa-play"></i></button>
+          <button id="btn-timer-reset" type="button" class="btn-timer" title="Reset"><i class="fas fa-rotate-left"></i></button>
+          <button id="btn-load-file" type="button" class="btn-sm" title="Betöltés"><i class="fas fa-folder-open"></i></button>
           <input type="file" id="file-input" accept=".json" hidden />
-          <button id="btn-save-file" type="button" class="btn-sm btn-save" disabled title="Mentés">💾</button>
+          <button id="btn-save-file" type="button" class="btn-sm btn-save" disabled title="Mentés"><i class="fas fa-floppy-disk"></i></button>
         </div>
       </div>
     </header>
@@ -63,11 +64,11 @@
             <button id="tab-css-validator" type="button" class="editor-tab ref-tab" title="CSS Validator">CSS✓</button>
           </div>
           <div class="actions">
-            <button id="btn-preview-new-tab" type="button" class="btn-sm btn-preview" disabled title="Előnézet új lapon">↗ Előnézet</button>
+            <button id="btn-preview-new-tab" type="button" class="btn-sm btn-preview" disabled title="Előnézet új lapon"><i class="fas fa-arrow-up-right-from-square"></i> Előnézet</button>
             <button id="btn-wrap" type="button" title="Kijelölés becsomagolása tag-be">Wrap</button>
             <button id="btn-format" type="button" title="Kód formázása">Formáz</button>
-            <button id="btn-starter" type="button" disabled title="Kiindulás betöltése">⟲ Kiindulás</button>
-            <button id="btn-theme-toggle" type="button" class="btn-sm" title="Sötét / Világos mód">🌙</button>
+            <button id="btn-starter" type="button" disabled title="Kiindulás betöltése"><i class="fas fa-rotate-left"></i> Kiindulás</button>
+            <button id="btn-theme-toggle" type="button" class="btn-sm" title="Sötét / Világos mód"><i class="fas fa-moon"></i></button>
             <span class="status" id="status">Válassz feladatot…</span>
           </div>
         </div>
@@ -84,7 +85,7 @@
 
     <footer class="footer">
       <kbd>Tab</kbd> Emmet | Automatikus mentés
-      <span style="margin-left:auto;font-size:0.7rem;color:rgba(255,255,255,0.25);letter-spacing:0.4px;">⌨ Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.35);font-weight:600;">Sándorné Feke Réka</strong></span>
+      <span style="margin-left:auto;font-size:0.7rem;color:rgba(255,255,255,0.25);letter-spacing:0.4px;"><i class="fas fa-keyboard"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.35);font-weight:600;">Sándorné Feke Réka</strong></span>
     </footer>
 
     <!-- Tanuló adatai modal -->
@@ -134,10 +135,10 @@
       <div class="ref-drawer-header">
         <span id="ref-drawer-title"></span>
         <div class="ref-drawer-actions">
-          <button id="ref-drawer-copy-code" class="btn-sm ref-copy-btn" style="display:none" title="Kód másolása vágólapra">📋 Kód másolása</button>
-          <button id="ref-drawer-screenshot" class="btn-sm ref-screenshot-btn" style="display:none" title="Képernyőkép a vágólapról mentése (Win+Shift+S → kattints ide)">📷 Kép mentése</button>
-          <button id="ref-drawer-open-popup" class="btn-sm ref-extlink-btn" title="Megnyitás popup ablakban">↗ Megnyitás</button>
-          <button id="ref-drawer-close" class="btn-sm ref-close-btn" title="Bezárás">✕</button>
+          <button id="ref-drawer-copy-code" class="btn-sm ref-copy-btn" style="display:none" title="Kód másolása vágólapra"><i class="fas fa-clipboard"></i> Kód másolása</button>
+          <button id="ref-drawer-screenshot" class="btn-sm ref-screenshot-btn" style="display:none" title="Képernyőkép a vágólapról mentése (Win+Shift+S → kattints ide)"><i class="fas fa-camera"></i> Kép mentése</button>
+          <button id="ref-drawer-open-popup" class="btn-sm ref-extlink-btn" title="Megnyitás popup ablakban"><i class="fas fa-arrow-up-right-from-square"></i> Megnyitás</button>
+          <button id="ref-drawer-close" class="btn-sm ref-close-btn" title="Bezárás"><i class="fas fa-xmark"></i></button>
         </div>
       </div>
       <div id="ref-drawer-screenshot-status" class="ref-screenshot-status" style="display:none"></div>
@@ -159,7 +160,7 @@
 <!-- Anti-cheat figyelmeztetés overlay -->
 <div id="ac-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;">
   <div style="background:#1a1a2e;border:2px solid #e94560;border-radius:16px;padding:2rem 2.5rem;max-width:460px;text-align:center;box-shadow:0 0 40px rgba(233,69,96,0.4);">
-    <div style="font-size:2.5rem;margin-bottom:0.5rem;">⚠️</div>
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-triangle-exclamation" style="color:#e94560;"></i></div>
     <div id="ac-title" style="font-size:1.25rem;font-weight:700;color:#e94560;margin-bottom:0.6rem;">Szabályszegés!</div>
     <div id="ac-text" style="color:#e2e8f0;margin-bottom:0.5rem;font-size:0.95rem;"></div>
     <div id="ac-count" style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.5rem;"></div>
