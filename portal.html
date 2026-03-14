@@ -826,8 +826,8 @@
             };
             document.getElementById('ered-content').innerHTML =
                 examCountdown() +
-                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web',    'web',    rankData?.web) +
-                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python', 'python', rankData?.python) +
+                renderSubject(progress.web,    '🌐 WEB feladat',    'ered-bar-web',    'web',    rankData?.web) +
+                renderSubject(progress.python, '🐍 Python feladat', 'ered-bar-python', 'python', rankData?.python) +
                 renderAchievements(progress);
         } catch {
             document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.</div>';
@@ -854,8 +854,8 @@
             };
             content.innerHTML =
                 `<div style="color:#536dfe;font-size:0.82rem;margin-bottom:8px;"><i class="fas fa-user"></i> Megjelenítve: ${rawEmail.includes('@') ? rawEmail : rawEmail + '@kkszki.hu'}</div>` +
-                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web',    'web',    null) +
-                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python', 'python', null) +
+                renderSubject(progress.web,    '🌐 WEB feladat',    'ered-bar-web',    'web',    null) +
+                renderSubject(progress.python, '🐍 Python feladat', 'ered-bar-python', 'python', null) +
                 renderAchievements(progress);
         } catch(e) {
             content.innerHTML = `<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem található adat (${e.message}).</div>`;
