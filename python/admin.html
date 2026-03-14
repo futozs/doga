@@ -358,7 +358,7 @@
         .tab-btn {
             padding: 9px 18px;
             background: transparent;
-            color: #666;
+            color: #94a3b8;
             border: 1px solid transparent;
             border-radius: 8px;
             font-size: 0.88rem;
@@ -369,8 +369,8 @@
         }
 
         .tab-btn:hover {
-            background: rgba(255,255,255,0.05);
-            color: #bbb;
+            background: rgba(255,255,255,0.07);
+            color: #e0e0e0;
             transform: none;
             box-shadow: none;
         }
@@ -378,7 +378,7 @@
         .tab-btn.active {
             background: #0f3460;
             color: #e94560;
-            border-color: rgba(233,69,96,0.4);
+            border-color: rgba(233,69,96,0.5);
         }
 
         .mode-vizsga { background: rgba(251,191,36,0.2); color: #fbbf24; border: 1px solid #fbbf24; }
@@ -652,14 +652,23 @@
             </div>
             <div id="users-loading" class="loading" style="display:none;">Betöltés...</div>
             <div class="table-wrapper">
-                <table class="submissions-table" id="users-table" style="min-width:700px;table-layout:auto;">
+                <table class="submissions-table" id="users-table" style="min-width:700px;table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:160px;">
+                        <col style="width:220px;">
+                        <col style="width:110px;">
+                        <col style="width:80px;">
+                        <col style="width:80px;">
+                        <col style="width:145px;">
+                        <col style="width:160px;">
+                    </colgroup>
                     <thead>
                         <tr>
                             <th>Név</th>
                             <th>Email</th>
                             <th>Szerepkör</th>
-                            <th>Osztály</th>
-                            <th>Csoport</th>
+                            <th style="text-align:center;">Osztály</th>
+                            <th style="text-align:center;">Csoport</th>
                             <th>Regisztrálva</th>
                             <th>Műveletek</th>
                         </tr>
@@ -850,10 +859,12 @@
                         <td><span style="color:${isOktato ? '#536dfe' : '#2ed573'};font-weight:700;">${isOktato ? 'Oktató' : 'Tanuló'}</span></td>
                         <td style="text-align:center;">${osztalyTeljes}</td>
                         <td style="text-align:center;">${u.csoport || '-'}</td>
-                        <td style="font-size:0.8rem;color:#888;">${u.createdAt ? u.createdAt.substring(0,16) : '-'}</td>
-                        <td style="display:flex;gap:6px;flex-wrap:wrap;">
-                            <button onclick="openResetPassword('${u.email}')" style="padding:4px 10px;background:transparent;border:1px solid #ffc107;border-radius:6px;color:#ffc107;cursor:pointer;font-size:0.8rem;">🔑 Jelszó</button>
-                            <button onclick="deleteUser('${u.email}')" style="padding:4px 10px;background:transparent;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:0.8rem;">🗑️ Törlés</button>
+                        <td style="font-size:0.8rem;color:#888;">${u.createdAt ? u.createdAt.substring(0,10) : '-'}</td>
+                        <td>
+                            <div style="display:flex;gap:5px;flex-wrap:nowrap;">
+                                <button onclick="openResetPassword('${u.email}')" style="padding:4px 8px;background:transparent;border:1px solid #ffc107;border-radius:6px;color:#ffc107;cursor:pointer;font-size:0.78rem;white-space:nowrap;">🔑 Jelszó</button>
+                                <button onclick="deleteUser('${u.email}')" style="padding:4px 8px;background:transparent;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:0.78rem;white-space:nowrap;">🗑 Törlés</button>
+                            </div>
                         </td>
                     </tr>`;
                 }).join('');
