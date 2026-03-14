@@ -252,6 +252,7 @@
         .toggle-pw:hover { color: #e0e0e0; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -288,6 +289,9 @@
         </div>
 
         <button class="btn-submit" id="login-btn" onclick="doLogin()">Bejelentkezés</button>
+        <div style="text-align:center;margin-top:12px;">
+            <button type="button" onclick="openForgotModal()" style="background:none;border:none;color:#536dfe;font-size:0.85rem;cursor:pointer;text-decoration:underline;">Elfelejtett jelszó?</button>
+        </div>
     </div>
 
     <!-- REGISZTRÁCIÓ -->
@@ -389,8 +393,97 @@
     </div>
 </div>
 
+<!-- Elfelejtett jelszó modal -->
+<div id="forgot-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;justify-content:center;align-items:center;">
+    <div style="background:#16213e;border:2px solid #536dfe;border-radius:14px;padding:2rem;max-width:420px;width:90%;">
+        <h3 style="color:#e0e0e0;margin-bottom:0.4rem;"><i class="fas fa-key"></i> Elfelejtett jelszó</h3>
+        <p style="color:#aaa;font-size:0.85rem;margin-bottom:1.2rem;">Add meg az adataidat, és értesítjük a tanárodat a jelszó-visszaállításról.</p>
+        <div id="forgot-error" style="display:none;color:#e94560;background:rgba(233,69,96,0.1);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.85rem;"></div>
+        <div id="forgot-success" style="display:none;color:#4ade80;background:rgba(74,222,128,0.1);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.85rem;"></div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#aaa;font-size:0.82rem;display:block;margin-bottom:4px;">Email cím *</label>
+            <div style="display:flex;align-items:center;gap:0;">
+                <input id="forgot-email" type="text" placeholder="felhasznalonev" style="flex:1;padding:8px 10px;background:#0f3460;border:1px solid #536dfe;border-right:none;border-radius:8px 0 0 8px;color:#e0e0e0;font-size:0.9rem;">
+                <span style="padding:8px 10px;background:#0f3460;border:1px solid #536dfe;border-left:none;border-radius:0 8px 8px 0;color:#888;font-size:0.85rem;white-space:nowrap;">@kkszki.hu</span>
+            </div>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#aaa;font-size:0.82rem;display:block;margin-bottom:4px;">Teljes név *</label>
+            <input id="forgot-nev" type="text" placeholder="Kiss Péter" style="width:100%;padding:8px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.9rem;">
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:1.2rem;">
+            <div style="flex:1;">
+                <label style="color:#aaa;font-size:0.82rem;display:block;margin-bottom:4px;">Osztály *</label>
+                <input id="forgot-osztaly" type="text" placeholder="10C" style="width:100%;padding:8px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.9rem;">
+            </div>
+            <div style="flex:1;">
+                <label style="color:#aaa;font-size:0.82rem;display:block;margin-bottom:4px;">Csoport *</label>
+                <input id="forgot-csoport" type="text" placeholder="1" style="width:100%;padding:8px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.9rem;">
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <button onclick="closeForgotModal()" style="flex:1;padding:0.6rem;background:transparent;border:1px solid #555;border-radius:8px;color:#aaa;cursor:pointer;">Mégsem</button>
+            <button id="forgot-btn" onclick="sendForgotRequest()" style="flex:2;padding:0.6rem;background:#536dfe;border:none;border-radius:8px;color:white;font-weight:700;cursor:pointer;"><i class="fas fa-paper-plane"></i> Küldés</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const RAILWAY_URL = 'https://agazati.up.railway.app';
+
+    // EmailJS inicializálás
+    emailjs.init('cesxNZpDSC16dOY2u');
+
+    function openForgotModal() {
+        document.getElementById('forgot-email').value = '';
+        document.getElementById('forgot-nev').value = '';
+        document.getElementById('forgot-osztaly').value = '';
+        document.getElementById('forgot-csoport').value = '';
+        document.getElementById('forgot-error').style.display = 'none';
+        document.getElementById('forgot-success').style.display = 'none';
+        document.getElementById('forgot-modal').style.display = 'flex';
+    }
+
+    function closeForgotModal() {
+        document.getElementById('forgot-modal').style.display = 'none';
+    }
+
+    async function sendForgotRequest() {
+        const email = (document.getElementById('forgot-email').value.trim() || '') + '@kkszki.hu';
+        const nev = document.getElementById('forgot-nev').value.trim();
+        const osztaly = document.getElementById('forgot-osztaly').value.trim();
+        const csoport = document.getElementById('forgot-csoport').value.trim();
+        const errEl = document.getElementById('forgot-error');
+        const succEl = document.getElementById('forgot-success');
+        errEl.style.display = 'none';
+        succEl.style.display = 'none';
+        if (!email || email === '@kkszki.hu') { errEl.textContent = 'Add meg az email címed!'; errEl.style.display = 'block'; return; }
+        if (!nev) { errEl.textContent = 'Add meg a nevedet!'; errEl.style.display = 'block'; return; }
+        if (!osztaly) { errEl.textContent = 'Add meg az osztályodat!'; errEl.style.display = 'block'; return; }
+        if (!csoport) { errEl.textContent = 'Add meg a csoportodat!'; errEl.style.display = 'block'; return; }
+        const btn = document.getElementById('forgot-btn');
+        btn.disabled = true;
+        btn.textContent = 'Küldés...';
+        try {
+            await emailjs.send('service_zxskntr', 'template_jelszo_reset', {
+                to_email:  'sandornef@kkszki.hu',
+                tanulo_nev: nev,
+                tanulo_email: email,
+                tanulo_osztaly: osztaly,
+                tanulo_csoport: csoport
+            });
+            succEl.textContent = 'Kérelem elküldve! A tanárod értesítést kapott, hamarosan visszaállítja a jelszavadat.';
+            succEl.style.display = 'block';
+            btn.textContent = 'Elküldve ✓';
+            setTimeout(() => closeForgotModal(), 3000);
+        } catch(e) {
+            errEl.textContent = 'Hiba a küldés során. Kérlek fordulj a tanárodhoz személyesen!';
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Küldés';
+        }
+    }
+
     let selectedRole = 'tanulo';
 
     // Tab váltás
@@ -469,13 +562,14 @@
             if (res.ok) {
                 const data = await res.json();
                 sessionStorage.setItem('kandoUser', JSON.stringify({
-                    token:    data.token,
-                    szerep:   data.szerep,
-                    nev:      data.nev,
-                    email:    data.email,
-                    evfolyam: data.evfolyam,
-                    osztaly:  data.osztaly,
-                    csoport:  data.csoport
+                    token:              data.token,
+                    szerep:             data.szerep,
+                    nev:                data.nev,
+                    email:              data.email,
+                    evfolyam:           data.evfolyam,
+                    osztaly:            data.osztaly,
+                    csoport:            data.csoport,
+                    mustChangePassword: data.mustChangePassword ?? false
                 }));
                 showSuccess('login-success', `Üdv, ${data.nev}! Átirányítás...`);
                 setTimeout(() => {

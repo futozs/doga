@@ -78,6 +78,7 @@ public class Database
         ");
         try { Exec(conn, "ALTER TABLE submissions ADD COLUMN subject TEXT"); } catch { }
         try { Exec(conn, "ALTER TABLE progress ADD COLUMN mode TEXT DEFAULT 'gyakorlo'"); } catch { }
+        try { Exec(conn, "ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0"); } catch { }
     }
 
     // ── Config ────────────────────────────────────────────────────────────────
@@ -279,7 +280,7 @@ public class Database
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
             SELECT id, vezeteknev, keresztnev, email, password_hash,
-                   szerep, evfolyam, osztaly, csoport
+                   szerep, evfolyam, osztaly, csoport, must_change_password
             FROM users WHERE email = $e";
         cmd.Parameters.AddWithValue("$e", email.ToLower().Trim());
         using var r = cmd.ExecuteReader();
@@ -290,7 +291,8 @@ public class Database
             r.GetString(5),
             r.IsDBNull(6) ? null : r.GetString(6),
             r.IsDBNull(7) ? null : r.GetString(7),
-            r.IsDBNull(8) ? null : r.GetString(8)
+            r.IsDBNull(8) ? null : r.GetString(8),
+            r.IsDBNull(9) ? false : r.GetInt32(9) == 1
         );
     }
 
@@ -307,7 +309,7 @@ public class Database
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
-        cmd.CommandText = "UPDATE users SET password_hash = $h WHERE email = $e";
+        cmd.CommandText = "UPDATE users SET password_hash = $h, must_change_password = 1 WHERE email = $e";
         cmd.Parameters.AddWithValue("$h", newHash);
         cmd.Parameters.AddWithValue("$e", email.ToLower().Trim());
         return cmd.ExecuteNonQuery() > 0;
@@ -670,6 +672,16 @@ public class Database
 
     private static double CompScore(double avgPct, int sessions) =>
         avgPct * 0.7 + Math.Min(sessions, 20) / 20.0 * 30.0;
+
+    public bool UpdatePassword(string email, string newHash)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE users SET password_hash = $h, must_change_password = 0 WHERE email = $e";
+        cmd.Parameters.AddWithValue("$h", newHash);
+        cmd.Parameters.AddWithValue("$e", email.ToLower().Trim());
+        return cmd.ExecuteNonQuery() > 0;
+    }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

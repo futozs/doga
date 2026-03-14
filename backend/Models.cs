@@ -89,8 +89,11 @@ public record UserRecord(
     string Szerep,
     string? Evfolyam,
     string? Osztaly,
-    string? Csoport
+    string? Csoport,
+    bool MustChangePassword
 );
+
+public record ChangeOwnPasswordRequest(string Email, string OldPassword, string NewPassword);
 
 // ── Task Sets ──────────────────────────────────────────────────────────────
 

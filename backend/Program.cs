@@ -219,14 +219,15 @@ app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
     var token = CreateToken($"{email}|{user.Szerep}");
     return Results.Ok(new
     {
-        success  = true,
+        success             = true,
         token,
-        szerep   = user.Szerep,
-        nev      = $"{user.Vezeteknev} {user.Keresztnev}",
-        email    = user.Email,
-        evfolyam = user.Evfolyam,
-        osztaly  = user.Osztaly,
-        csoport  = user.Csoport
+        szerep              = user.Szerep,
+        nev                 = $"{user.Vezeteknev} {user.Keresztnev}",
+        email               = user.Email,
+        evfolyam            = user.Evfolyam,
+        osztaly             = user.Osztaly,
+        csoport             = user.Csoport,
+        mustChangePassword  = user.MustChangePassword
     });
 });
 
@@ -377,6 +378,21 @@ app.MapGet("/api/leaderboard/rank/{email}", (string email, Database db) =>
     var decoded = Uri.UnescapeDataString(email);
     if (!decoded.Contains('@')) decoded += "@kkszki.hu";
     return Results.Ok(db.GetStudentRank(decoded));
+});
+
+// Saját jelszó módosítása (tanuló – ideiglenes jelszó után kötelező)
+app.MapPost("/api/auth/change-own-password", (ChangeOwnPasswordRequest req, Database db) =>
+{
+    var email = req.Email.ToLower().Trim();
+    if (!email.Contains('@')) email += "@kkszki.hu";
+    var user = db.GetUserByEmail(email);
+    if (user == null || !BCrypt.Net.BCrypt.Verify(req.OldPassword, user.PasswordHash))
+        return Results.Unauthorized();
+    if (req.NewPassword.Length < 6)
+        return Results.BadRequest(new { error = "A jelszó legalább 6 karakter legyen!" });
+    var hash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+    db.UpdatePassword(email, hash);
+    return Results.Ok(new { success = true });
 });
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";

@@ -409,6 +409,36 @@
         .ered-countdown strong { color: #fbbf24; font-size: 1.1rem; }
         .ered-countdown-sub { color: #888; font-size: 0.78rem; display: block; margin-top: 3px; }
         .ered-countdown-done { color: #2ed573; font-weight: 700; }
+
+        /* Kötelező jelszócsere modal */
+        .pw-change-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.92); z-index: 500;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .pw-change-overlay.open { display: flex; }
+        .pw-change-box {
+            background: #16213e; border: 2px solid #e94560;
+            border-radius: 16px; padding: 2rem 1.8rem;
+            max-width: 420px; width: 100%;
+        }
+        .pw-change-box h3 { color: #e94560; margin-bottom: 0.4rem; font-size: 1.15rem; }
+        .pw-change-box p { color: #aaa; font-size: 0.85rem; margin-bottom: 1.2rem; line-height: 1.5; }
+        .pw-change-box .form-group { margin-bottom: 12px; }
+        .pw-change-box label { color: #aaa; font-size: 0.82rem; display: block; margin-bottom: 4px; }
+        .pw-change-box input {
+            width: 100%; padding: 9px 12px;
+            background: #0f3460; border: 1px solid #536dfe;
+            border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;
+        }
+        .pw-change-btn {
+            width: 100%; padding: 0.7rem; margin-top: 6px;
+            background: #e94560; border: none; border-radius: 10px;
+            color: white; font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pw-change-btn:hover { background: #c73652; }
+        .pw-change-btn:disabled { background: #555; cursor: not-allowed; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
@@ -562,6 +592,7 @@
         const user = JSON.parse(stored);
         document.getElementById('user-name').textContent = user.nev || user.email;
         document.getElementById('user-role').textContent = user.szerep === 'oktato' ? 'Oktató' : 'Tanuló';
+        checkMustChangePassword();
         const nevReszek = (user.nev || '').trim().split(' ');
         const keresztnev = nevReszek[nevReszek.length - 1] || 'felhasználó';
         document.getElementById('portal-title').textContent = `Üdvözöllek, ${keresztnev}!`;
@@ -869,6 +900,49 @@
         document.getElementById('bemutatas-modal').style.display = 'none';
     }
 
+    function checkMustChangePassword() {
+        const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+        if (user.mustChangePassword) {
+            document.getElementById('pw-change-overlay').classList.add('open');
+        }
+    }
+
+    async function submitPasswordChange() {
+        const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+        const oldPw  = document.getElementById('pw-old').value;
+        const newPw  = document.getElementById('pw-new').value;
+        const newPw2 = document.getElementById('pw-new2').value;
+        const errEl  = document.getElementById('pw-change-error');
+        errEl.style.display = 'none';
+        if (!oldPw || !newPw || !newPw2) { errEl.textContent = 'Töltsd ki az összes mezőt!'; errEl.style.display = 'block'; return; }
+        if (newPw.length < 6) { errEl.textContent = 'Az új jelszó legalább 6 karakter legyen!'; errEl.style.display = 'block'; return; }
+        if (newPw !== newPw2) { errEl.textContent = 'A két jelszó nem egyezik!'; errEl.style.display = 'block'; return; }
+        if (newPw === oldPw) { errEl.textContent = 'Az új jelszó nem egyezhet az ideiglenesssel!'; errEl.style.display = 'block'; return; }
+        const btn = document.getElementById('pw-change-btn');
+        btn.disabled = true; btn.textContent = 'Mentés...';
+        try {
+            const res = await fetch(`${API}/api/auth/change-own-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user.email, oldPassword: oldPw, newPassword: newPw })
+            });
+            if (res.ok) {
+                const updated = { ...user, mustChangePassword: false };
+                sessionStorage.setItem('kandoUser', JSON.stringify(updated));
+                document.getElementById('pw-change-overlay').classList.remove('open');
+            } else {
+                const d = await res.json().catch(() => ({}));
+                errEl.textContent = d.error || (res.status === 401 ? 'Hibás ideiglenes jelszó!' : 'Hiba történt.');
+                errEl.style.display = 'block';
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Jelszó mentése';
+            }
+        } catch {
+            errEl.textContent = 'Kapcsolati hiba. Próbáld újra!';
+            errEl.style.display = 'block';
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Jelszó mentése';
+        }
+    }
+
     function logout() {
         sessionStorage.removeItem('kandoUser');
         window.location.replace('login.html');
@@ -914,6 +988,31 @@
         }
     }
 </script>
+
+<!-- Kötelező jelszócsere modal (ideiglenes jelszó után) -->
+<div class="pw-change-overlay" id="pw-change-overlay">
+    <div class="pw-change-box">
+        <h3><i class="fas fa-lock"></i> Jelszó megváltoztatása</h3>
+        <p>Ideiglenes jelszóval léptél be. A folytatáshoz kötelező megváltoztatni a jelszavadat!</p>
+        <div id="pw-change-error" style="display:none;color:#e94560;background:rgba(233,69,96,0.1);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.85rem;"></div>
+        <div class="form-group">
+            <label>Jelenlegi (ideiglenes) jelszó</label>
+            <input type="password" id="pw-old" placeholder="Abc1234">
+        </div>
+        <div class="form-group">
+            <label>Új jelszó (min. 6 karakter)</label>
+            <input type="password" id="pw-new" placeholder="Új jelszó">
+        </div>
+        <div class="form-group">
+            <label>Új jelszó megerősítése</label>
+            <input type="password" id="pw-new2" placeholder="Új jelszó újra">
+        </div>
+        <button class="pw-change-btn" id="pw-change-btn" onclick="submitPasswordChange()">
+            <i class="fas fa-check"></i> Jelszó mentése
+        </button>
+    </div>
+</div>
+
 <div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
 </body>
 </html>
