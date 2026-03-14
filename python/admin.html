@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kandó Teszt – Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -393,7 +394,7 @@
     <!-- Login Screen -->
     <div id="login-screen">
         <div class="login-box">
-            <h1>🔐 Admin Bejelentkezés</h1>
+            <h1><i class="fas fa-lock"></i> Admin Bejelentkezés</h1>
             <div class="login-error" id="login-error"></div>
             <form id="login-form" onsubmit="return handleLogin(event)">
                 <div class="form-group">
@@ -418,13 +419,13 @@
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h1>🎓 Kandó Teszt – Admin Panel</h1>
+                    <h1><i class="fas fa-graduation-cap"></i> Kandó Teszt – Admin Panel</h1>
                     <p class="subtitle">Konfiguráció, feladatsorok és eredmények kezelése</p>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;">
-                    <a href="../portal.html" style="padding: 8px 18px; background: transparent; color: #536dfe; border: 1px solid #536dfe; border-radius: 8px; cursor: pointer; font-weight: 700; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='#536dfe';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#536dfe'">← Portal</a>
+                    <a href="../portal.html" style="padding: 8px 18px; background: transparent; color: #536dfe; border: 1px solid #536dfe; border-radius: 8px; cursor: pointer; font-weight: 700; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='#536dfe';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#536dfe'"><i class="fas fa-arrow-left"></i> Portal</a>
                     <button onclick="logout()" style="padding: 8px 18px; background: transparent; color: #e94560; border: 1px solid #e94560; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.2s;" onmouseover="this.style.background='#e94560';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#e94560'">
-                        Kilépés
+                        <i class="fas fa-right-from-bracket"></i> Kilépés
                     </button>
                 </div>
             </div>
@@ -434,16 +435,16 @@
 
         <!-- Tab navigáció -->
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('vezerlot', this)">📊 Vezérlőpult</button>
-            <button class="tab-btn" onclick="switchTab('feladatsor', this)">📤 Feladatsorok</button>
-            <button class="tab-btn" onclick="switchTab('beadasok', this)">📋 Beadások</button>
-            <button class="tab-btn" onclick="switchTab('javitas', this)">📝 Javítás</button>
-            <button class="tab-btn" onclick="switchTab('felhasznalok', this)">👥 Felhasználók</button>
+            <button class="tab-btn active" onclick="switchTab('vezerlot', this)"><i class="fas fa-gauge-high"></i> Vezérlőpult</button>
+            <button class="tab-btn" onclick="switchTab('feladatsor', this)"><i class="fas fa-folder-open"></i> Feladatsorok</button>
+            <button class="tab-btn" onclick="switchTab('beadasok', this)"><i class="fas fa-clipboard-list"></i> Beadások</button>
+            <button class="tab-btn" onclick="switchTab('javitas', this)"><i class="fas fa-pen-to-square"></i> Javítás</button>
+            <button class="tab-btn" onclick="switchTab('felhasznalok', this)"><i class="fas fa-users"></i> Felhasználók</button>
         </div>
 
         <!-- Config Panel -->
         <div class="panel" data-tab="vezerlot">
-            <h2>🔧 Teszt Mód</h2>
+            <h2><i class="fas fa-sliders"></i> Teszt Mód</h2>
             <div id="config-loading" class="loading">Betöltés...</div>
             <div id="config-error" class="error" style="display: none;"></div>
             <div id="config-success" class="success" style="display: none;"></div>
@@ -455,17 +456,17 @@
                 </div>
                 <div class="btn-group">
                     <button class="btn-practice" onclick="setMode('practice')">
-                        📝 Gyakorló Mód
+                        <i class="fas fa-pencil"></i> Gyakorló Mód
                     </button>
                     <button class="btn-live" onclick="setMode('live')">
-                        🔴 Éles Teszt
+                        <i class="fas fa-circle-dot"></i> Éles Teszt
                     </button>
                     <button class="btn-refresh" onclick="loadConfig()">
-                        🔄 Frissítés
+                        <i class="fas fa-rotate"></i> Frissítés
                     </button>
                 </div>
                 <div style="margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid #333;">
-                    <div style="color:#fbbf24;font-weight:700;margin-bottom:0.7rem;">🎓 Vizsga Mód</div>
+                    <div style="color:#fbbf24;font-weight:700;margin-bottom:0.7rem;"><i class="fas fa-graduation-cap"></i> Vizsga Mód</div>
                     <div style="color:#aaa;font-size:0.85rem;margin-bottom:0.8rem;">Állítsd be a vizsga kezdési időpontját, majd kapcsold be a vizsga módot. A tanulók visszaszámlálót látnak a megadott időpontig.</div>
                     <div style="display:grid;grid-template-columns:auto auto;gap:8px 14px;align-items:center;margin-bottom:0.8rem;">
                         <label style="color:#94a3b8;font-size:0.82rem;">Kezdés:</label>
@@ -476,7 +477,7 @@
                             style="padding:6px 10px;background:#1a1a2e;border:1px solid #e94560;border-radius:8px;color:#e0e0e0;font-size:0.9rem;">
                     </div>
                     <button onclick="setVizsgaMod()" style="padding:7px 16px;background:#92400e;border:1px solid #fbbf24;border-radius:8px;color:#fde68a;font-weight:700;cursor:pointer;font-size:0.9rem;">
-                        🎓 Vizsga Mód bekapcsolása
+                        <i class="fas fa-graduation-cap"></i> Vizsga Mód bekapcsolása
                     </button>
                     <div id="vizsga-kezdes-jelenlegi" style="color:#888;font-size:0.82rem;margin-top:0.6rem;"></div>
                 </div>
@@ -485,12 +486,12 @@
 
         <!-- Feladatsor Feltöltés -->
         <div class="panel" data-tab="feladatsor" style="display:none;">
-            <h2>📤 Feladatsor Feltöltés</h2>
+            <h2><i class="fas fa-upload"></i> Feladatsor Feltöltés</h2>
             <div id="ts-msg" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:0.9rem;"></div>
 
             <!-- Feltöltő form -->
             <div style="background:#0d1b2e;border:1px solid #1a4a8a;border-radius:12px;padding:18px;margin-bottom:20px;">
-                <h3 style="color:#7dd3fc;margin-bottom:14px;font-size:1rem;">➕ Új feladatsor</h3>
+                <h3 style="color:#7dd3fc;margin-bottom:14px;font-size:1rem;"><i class="fas fa-plus"></i> Új feladatsor</h3>
                 <div style="margin-bottom:12px;">
                     <label style="display:block;color:#94a3b8;font-size:0.82rem;margin-bottom:5px;">Feladatsor neve (pl. "Ágazati alapvizsga 2026"):</label>
                     <input type="text" id="ts-nev"
@@ -531,12 +532,12 @@
                 </div>
                 <button onclick="uploadTaskSet()"
                     style="padding:9px 22px;background:#0f766e;border:1px solid #14b8a6;border-radius:8px;color:#ccfbf1;font-weight:700;cursor:pointer;font-size:0.9rem;">
-                    💾 Feladatsor Mentése
+                    <i class="fas fa-floppy-disk"></i> Feladatsor Mentése
                 </button>
             </div>
 
             <!-- Meglévő feladatsorok listája -->
-            <h3 style="color:#7dd3fc;margin-bottom:12px;font-size:1rem;">📋 Feltöltött feladatsorok</h3>
+            <h3 style="color:#7dd3fc;margin-bottom:12px;font-size:1rem;"><i class="fas fa-list"></i> Feltöltött feladatsorok</h3>
             <div id="ts-loading" style="color:#888;font-size:0.9rem;display:none;">Betöltés...</div>
             <div class="table-wrapper">
                 <table class="submissions-table" style="min-width:600px;">
@@ -561,7 +562,7 @@
 
         <!-- Kézi Javítás -->
         <div class="panel" data-tab="javitas" style="display:none;">
-            <h2>📝 Kézi Javítás</h2>
+            <h2><i class="fas fa-pen-to-square"></i> Kézi Javítás</h2>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
                 <label style="color:#aaa;font-weight:600;">Feladat száma:</label>
                 <select id="grading-task-select" onchange="renderGradingTable()" style="padding:8px 14px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.95rem;cursor:pointer;">
@@ -608,13 +609,13 @@
 
         <!-- AI Grading -->
         <div class="panel" data-tab="javitas" style="display:none;">
-            <h2>🤖 Automatikus Javítás (AI)</h2>
+            <h2><i class="fas fa-robot"></i> Automatikus Javítás (AI)</h2>
             <div id="ai-grading-status" style="margin-bottom: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
             <p style="margin-bottom: 15px; color: #666;">
                 A Gemini AI automatikusan kijavítja az összes beadott feladatot a Google Sheets Tasks lapján található kritériumok alapján.
             </p>
             <button class="btn-live" onclick="gradeAllSubmissions()">
-                🤖 Javítás Indítása
+                <i class="fas fa-robot"></i> Javítás Indítása
             </button>
             <div id="grading-progress" style="margin-top: 15px; display: none;">
                 <div style="background: #f0f0f0; border-radius: 10px; height: 20px; overflow: hidden;">
@@ -626,7 +627,7 @@
 
         <!-- Statistics -->
         <div class="panel" data-tab="vezerlot">
-            <h2>📊 Statisztikák</h2>
+            <h2><i class="fas fa-chart-bar"></i> Statisztikák</h2>
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-label">Összes beadás</div>
@@ -646,9 +647,9 @@
 
         <!-- Felhasználók -->
         <div class="panel" id="users-panel" data-tab="felhasznalok" style="display:none;">
-            <h2>👥 Felhasználók kezelése</h2>
+            <h2><i class="fas fa-users"></i> Felhasználók kezelése</h2>
             <div style="display:flex;gap:10px;margin-bottom:14px;">
-                <button class="btn-refresh" onclick="loadUsers()">🔄 Frissítés</button>
+                <button class="btn-refresh" onclick="loadUsers()"><i class="fas fa-rotate"></i> Frissítés</button>
             </div>
             <div id="users-loading" class="loading" style="display:none;">Betöltés...</div>
             <div class="table-wrapper">
@@ -683,7 +684,7 @@
         <!-- Jelszó visszaállítás modal -->
         <div class="modal" id="reset-pw-modal" style="display:none;">
             <div class="modal-content" style="max-width:400px;">
-                <h3 style="color:#ffc107;margin-bottom:1rem;">🔑 Jelszó visszaállítása</h3>
+                <h3 style="color:#ffc107;margin-bottom:1rem;"><i class="fas fa-key"></i> Jelszó visszaállítása</h3>
                 <p id="reset-pw-email-display" style="color:#aaa;margin-bottom:1rem;font-size:0.9rem;"></p>
                 <input type="password" id="reset-pw-new" placeholder="Új jelszó (min. 6 karakter)"
                     style="width:100%;padding:8px 12px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.95rem;margin-bottom:0.8rem;">
@@ -697,11 +698,11 @@
 
         <!-- Submissions -->
         <div class="panel submissions-panel" data-tab="beadasok" style="display:none;">
-            <h2>📋 Legutóbbi Beadások</h2>
+            <h2><i class="fas fa-clipboard-list"></i> Legutóbbi Beadások</h2>
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <button class="btn-refresh" onclick="loadSubmissions()">🔄 Frissítés</button>
-                <button class="btn-refresh" onclick="prevSubmissionsPage()">⬅️ Előző</button>
-                <button class="btn-refresh" onclick="nextSubmissionsPage()">Következő ➡️</button>
+                <button class="btn-refresh" onclick="loadSubmissions()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <button class="btn-refresh" onclick="prevSubmissionsPage()"><i class="fas fa-chevron-left"></i> Előző</button>
+                <button class="btn-refresh" onclick="nextSubmissionsPage()">Következő <i class="fas fa-chevron-right"></i></button>
                 <span id="submissions-page-info" style="color: #666; font-size: 0.9rem;"></span>
             </div>
             <div id="submissions-loading" class="loading" style="display: none;">Betöltés...</div>
@@ -730,8 +731,8 @@
 
         <div class="modal" id="submission-modal">
             <div class="modal-content">
-                <button class="modal-close" id="submission-modal-close">X</button>
-                <h2>🧾 Részletek</h2>
+                <button class="modal-close" id="submission-modal-close"><i class="fas fa-xmark"></i></button>
+                <h2><i class="fas fa-file-lines"></i> Részletek</h2>
                 <div id="submission-details-content"></div>
             </div>
         </div>
@@ -862,8 +863,8 @@
                         <td style="font-size:0.8rem;color:#888;">${u.createdAt ? u.createdAt.substring(0,10) : '-'}</td>
                         <td>
                             <div style="display:flex;gap:5px;flex-wrap:nowrap;">
-                                <button onclick="openResetPassword('${u.email}')" style="padding:4px 8px;background:transparent;border:1px solid #ffc107;border-radius:6px;color:#ffc107;cursor:pointer;font-size:0.78rem;white-space:nowrap;">🔑 Jelszó</button>
-                                <button onclick="deleteUser('${u.email}')" style="padding:4px 8px;background:transparent;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:0.78rem;white-space:nowrap;">🗑 Törlés</button>
+                                <button onclick="openResetPassword('${u.email}')" style="padding:4px 8px;background:transparent;border:1px solid #ffc107;border-radius:6px;color:#ffc107;cursor:pointer;font-size:0.78rem;white-space:nowrap;"><i class="fas fa-key"></i> Jelszó</button>
+                                <button onclick="deleteUser('${u.email}')" style="padding:4px 8px;background:transparent;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:0.78rem;white-space:nowrap;"><i class="fas fa-trash"></i> Törlés</button>
                             </div>
                         </td>
                     </tr>`;
@@ -1509,10 +1510,10 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                     <td style="display:flex;gap:6px;flex-wrap:wrap;">
                         ${!ts.aktiv ? `<button onclick="activateTaskSet(${ts.id})"
                             style="padding:4px 10px;background:#1a3a1a;border:1px solid #4ade80;border-radius:6px;color:#4ade80;cursor:pointer;font-size:0.8rem;">
-                            ✓ Aktívvá</button>` : ''}
+                            <i class="fas fa-check"></i> Aktívvá</button>` : ''}
                         <button onclick="deleteTaskSet(${ts.id}, '${escHtml(ts.nev)}')"
                             style="padding:4px 10px;background:#3a1a1a;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:0.8rem;">
-                            🗑 Törlés</button>
+                            <i class="fas fa-trash"></i> Törlés</button>
                     </td>
                 </tr>`;
             }).join('');
