@@ -503,15 +503,15 @@
                     <div style="display:flex;gap:12px;flex-wrap:wrap;">
                         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;background:#1a1a2e;border:1px solid #334155;border-radius:8px;color:#e0e0e0;font-size:0.88rem;">
                             <input type="radio" name="ts-tipus" value="gyakorlo" style="accent-color:#4ade80;">
-                            📝 Gyakorló
+                            <i class="fas fa-pencil" style="color:#4ade80;"></i> Gyakorló
                         </label>
                         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;background:#1a1a2e;border:1px solid #334155;border-radius:8px;color:#e0e0e0;font-size:0.88rem;">
                             <input type="radio" name="ts-tipus" value="live" style="accent-color:#f97316;">
-                            🔴 Órai számonkérés
+                            <i class="fas fa-circle-dot" style="color:#f97316;"></i> Órai számonkérés
                         </label>
                         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;background:#1a1a2e;border:1px solid #fbbf24;border-radius:8px;color:#fde68a;font-size:0.88rem;">
                             <input type="radio" name="ts-tipus" value="vizsga" checked style="accent-color:#fbbf24;">
-                            🎓 Vizsga
+                            <i class="fas fa-graduation-cap" style="color:#fbbf24;"></i> Vizsga
                         </label>
                     </div>
                 </div>
@@ -803,7 +803,7 @@
                     loadUsers();
                     loadTaskSets();
                 } else {
-                    errorDiv.textContent = '❌ Hibás felhasználónév vagy jelszó!';
+                    errorDiv.textContent = 'Hibás felhasználónév vagy jelszó!';
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
@@ -897,7 +897,7 @@
                 });
                 if (res.ok) {
                     document.getElementById('reset-pw-modal').style.display = 'none';
-                    alert('✅ Jelszó sikeresen visszaállítva!');
+                    alert('Jelszó sikeresen visszaállítva!');
                 } else {
                     const d = await res.json();
                     errEl.textContent = d.error || 'Hiba történt'; errEl.style.display = 'block';
@@ -911,8 +911,8 @@
                 method: 'DELETE',
                 headers: { 'Authorization': 'Bearer ' + authToken }
             });
-            if (res.ok) { alert('✅ Felhasználó törölve.'); loadUsers(); }
-            else alert('❌ Hiba a törlés során.');
+            if (res.ok) { alert('Felhasználó törölve.'); loadUsers(); }
+            else alert('Hiba a törlés során.');
         }
 
         function logout() {
@@ -1179,8 +1179,8 @@
                 const finalGrade = typeof baseGrade === 'number' ? Math.max(1, baseGrade - (deduct ? 1 : 0)) : '-';
                 const date = s.submittedAt ? new Date(s.submittedAt).toLocaleString('hu-HU') : '-';
                 const cheatBadge = (s.cheatWarnings > 0 || s.cheatPenalty)
-                    ? `<span style="color:${s.cheatWarnings >= 3 || s.cheatPenalty ? '#e94560' : '#ffc107'};font-size:0.82rem;">⚠️ ${s.cheatWarnings || 0}/3</span>`
-                    : '<span style="color:#555;font-size:0.82rem;">—</span>';
+                    ? `<span style="color:${s.cheatWarnings >= 3 || s.cheatPenalty ? '#e94560' : '#ffc107'};font-size:0.82rem;"><i class="fas fa-triangle-exclamation"></i> ${s.cheatWarnings || 0}/3</span>`
+                    : '<span style="color:#555;font-size:0.82rem;"><i class="fas fa-minus"></i></span>';
 
                 let snap = null;
                 try { snap = JSON.parse(s.codeSnapshot || ''); } catch(e) {}
@@ -1198,11 +1198,11 @@
                     <td style="text-align:center">${cheatBadge}</td>
                     <td style="text-align:center">
                         <button onclick="toggleCheatDeduct(${s.id}, ${!deduct})" style="padding:3px 10px;border-radius:6px;border:1px solid ${deduct?'#e94560':'#555'};background:transparent;color:${deduct?'#e94560':'#aaa'};cursor:pointer;font-size:0.8rem;">
-                            ${deduct ? '✗ Levon' : '+ Levon'}
+                            ${deduct ? '<i class="fas fa-xmark"></i> Levon' : '<i class="fas fa-plus"></i> Levon'}
                         </button>
                     </td>
                     <td style="text-align:center">
-                        ${taskCode ? `<button onclick="openCodeViewer(${JSON.stringify(escapeHtml(s.name||''))}, ${JSON.stringify(escapeHtml(taskCode))})" style="padding:3px 10px;border-radius:6px;border:1px solid #536dfe;background:transparent;color:#536dfe;cursor:pointer;font-size:0.8rem;">📄 Kód</button>` : '<span style="color:#555;font-size:0.8rem;">—</span>'}
+                        ${taskCode ? `<button onclick="openCodeViewer(${JSON.stringify(escapeHtml(s.name||''))}, ${JSON.stringify(escapeHtml(taskCode))})" style="padding:3px 10px;border-radius:6px;border:1px solid #536dfe;background:transparent;color:#536dfe;cursor:pointer;font-size:0.8rem;"><i class="fas fa-code"></i> Kód</button>` : '<span style="color:#555;font-size:0.8rem;"><i class="fas fa-minus"></i></span>'}
                     </td>
                 </tr>`;
             }).join('');
@@ -1257,8 +1257,8 @@
                         if (jumps === null && warnings === 0) return '';
                         const flagColor = (jumps >= 2 || warnings >= 3) ? '#e94560' : '#ffc107';
                         return `<div style="margin-top:8px;padding:6px 10px;border-radius:6px;border:1px solid ${flagColor};background:rgba(233,69,96,0.08);color:${flagColor};font-size:0.88rem;">
-                            ⚠️ Figyelmeztetések: <strong>${warnings}/3</strong> &nbsp;|&nbsp; Gyanús kódugrás: <strong>${jumps ?? 0}</strong>
-                            ${(jumps >= 2 || warnings >= 3) ? ' &nbsp;<strong style="color:#e94560;">⛔ GYANÚS BEADÁS</strong>' : ''}
+                            <i class="fas fa-triangle-exclamation"></i> Figyelmeztetések: <strong>${warnings}/3</strong> &nbsp;|&nbsp; Gyanús kódugrás: <strong>${jumps ?? 0}</strong>
+                            ${(jumps >= 2 || warnings >= 3) ? ' &nbsp;<strong style="color:#e94560;"><i class="fas fa-ban"></i> GYANÚS BEADÁS</strong>' : ''}
                         </div>`;
                     })()}
                     <div style="margin-top:10px"><strong>Pontok:</strong></div>
@@ -1275,7 +1275,7 @@
                             const extra = Object.entries(e).filter(([k]) => !['timestamp','event'].includes(k)).map(([k,v]) => `${k}: ${v}`).join(' | ');
                             return `<tr style="${isCheat ? 'background:rgba(233,69,96,0.12);color:#e94560;' : ''}">
                                 <td style="padding:3px 8px;font-size:0.8rem;white-space:nowrap">${time}</td>
-                                <td style="padding:3px 8px;font-size:0.8rem">${isCheat ? '⚠️ ' : ''}${escapeHtml(e.event || '')}</td>
+                                <td style="padding:3px 8px;font-size:0.8rem">${isCheat ? '<i class="fas fa-triangle-exclamation"></i> ' : ''}${escapeHtml(e.event || '')}</td>
                                 <td style="padding:3px 8px;font-size:0.8rem;color:#aaa">${escapeHtml(extra)}</td>
                             </tr>`;
                         }).join('');
@@ -1418,14 +1418,17 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
             statusDiv.textContent = message;
 
             if (type === 'success') {
-                statusDiv.style.background = '#d4edda';
-                statusDiv.style.color = '#155724';
+                statusDiv.style.background = 'rgba(46,213,115,0.1)';
+                statusDiv.style.border = '1px solid #2ed573';
+                statusDiv.style.color = '#7bed9f';
             } else if (type === 'error') {
-                statusDiv.style.background = '#f8d7da';
-                statusDiv.style.color = '#721c24';
+                statusDiv.style.background = 'rgba(233,69,96,0.1)';
+                statusDiv.style.border = '1px solid #e94560';
+                statusDiv.style.color = '#ff8fa3';
             } else {
-                statusDiv.style.background = '#d1ecf1';
-                statusDiv.style.color = '#0c5460';
+                statusDiv.style.background = 'rgba(83,109,254,0.1)';
+                statusDiv.style.border = '1px solid #536dfe';
+                statusDiv.style.color = '#7dd3fc';
             }
 
             setTimeout(() => {
@@ -1477,9 +1480,9 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
         }
 
         const TIPUS_LABEL = {
-            gyakorlo: '📝 Gyakorló',
-            live:     '🔴 Számonkérés',
-            vizsga:   '🎓 Vizsga'
+            gyakorlo: '<i class="fas fa-pencil"></i> Gyakorló',
+            live:     '<i class="fas fa-circle-dot"></i> Számonkérés',
+            vizsga:   '<i class="fas fa-graduation-cap"></i> Vizsga'
         };
         const TIPUS_COLOR = {
             gyakorlo: '#4ade80',
@@ -1501,12 +1504,12 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                     <td>${ts.id}</td>
                     <td style="font-weight:600;">${escHtml(ts.nev)}</td>
                     <td><span style="color:${color};font-size:0.82rem;font-weight:600;">${label}</span></td>
-                    <td>${ts.hasPython ? '<span style="color:#4ade80;">✓</span>' : '<span style="color:#666;">–</span>'}</td>
-                    <td>${ts.hasWeb    ? '<span style="color:#4ade80;">✓</span>' : '<span style="color:#666;">–</span>'}</td>
+                    <td style="text-align:center;">${ts.hasPython ? '<i class="fas fa-check" style="color:#4ade80;"></i>' : '<i class="fas fa-minus" style="color:#444;"></i>'}</td>
+                    <td style="text-align:center;">${ts.hasWeb    ? '<i class="fas fa-check" style="color:#4ade80;"></i>' : '<i class="fas fa-minus" style="color:#444;"></i>'}</td>
                     <td style="font-size:0.82rem;color:#888;">${ts.letrehozva || '–'}</td>
                     <td>${ts.aktiv
-                        ? `<span style="color:${color};font-weight:700;">● AKTÍV</span>`
-                        : '<span style="color:#555;">inaktív</span>'}</td>
+                        ? `<span style="color:${color};font-weight:700;"><i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle;margin-bottom:2px;"></i> AKTÍV</span>`
+                        : '<span style="color:#555;font-size:0.82rem;">inaktív</span>'}</td>
                     <td style="display:flex;gap:6px;flex-wrap:wrap;">
                         ${!ts.aktiv ? `<button onclick="activateTaskSet(${ts.id})"
                             style="padding:4px 10px;background:#1a3a1a;border:1px solid #4ade80;border-radius:6px;color:#4ade80;cursor:pointer;font-size:0.8rem;">
@@ -1552,7 +1555,7 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Hiba');
-                showTsMsg(`✓ Feladatsor mentve (ID: ${data.id})`, true);
+                showTsMsg(`<i class="fas fa-check"></i> Feladatsor mentve (ID: ${data.id})`, true);
                 document.getElementById('ts-nev').value = '';
                 document.getElementById('ts-python').value = '';
                 document.getElementById('ts-web-zip').value = '';
@@ -1569,7 +1572,7 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                     headers: { 'Authorization': 'Bearer ' + authToken }
                 });
                 if (!res.ok) throw new Error();
-                showTsMsg('✓ Feladatsor aktívvá téve', true);
+                showTsMsg('<i class="fas fa-check"></i> Feladatsor aktívvá téve', true);
                 loadTaskSets();
             } catch {
                 showTsMsg('Hiba az aktívvá tétel során', false);
@@ -1584,7 +1587,7 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                     headers: { 'Authorization': 'Bearer ' + authToken }
                 });
                 if (!res.ok) throw new Error();
-                showTsMsg('✓ Törölve', true);
+                showTsMsg('<i class="fas fa-check"></i> Törölve', true);
                 loadTaskSets();
             } catch {
                 showTsMsg('Hiba a törlés során', false);
@@ -1593,7 +1596,7 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
 
         function showTsMsg(text, ok) {
             const el = document.getElementById('ts-msg');
-            el.textContent = text;
+            el.innerHTML = text;
             el.style.display = 'block';
             el.style.background = ok ? 'rgba(74,222,128,0.1)' : 'rgba(233,69,96,0.1)';
             el.style.border = ok ? '1px solid #4ade80' : '1px solid #e94560';
@@ -1614,6 +1617,6 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
             return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
     </script>
-<div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;">⌨ Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard" style="color:rgba(255,255,255,0.22);"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
 </body>
 </html>
