@@ -279,17 +279,30 @@
         .ered-overlay.open { display: flex; }
         .ered-box {
             background: #16213e; border: 2px solid #fbbf24;
-            border-radius: 18px; padding: 28px 24px;
+            border-radius: 18px; padding: 0;
             max-width: 560px; width: 100%; max-height: 90vh;
             overflow-y: auto; position: relative;
         }
+        .ered-box::-webkit-scrollbar { width: 7px; }
+        .ered-box::-webkit-scrollbar-track { background: rgba(251,191,36,0.07); border-radius: 0 16px 16px 0; }
+        .ered-box::-webkit-scrollbar-thumb { background: rgba(251,191,36,0.45); border-radius: 4px; }
+        .ered-box::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,0.75); }
+        .ered-header {
+            position: sticky; top: 0; z-index: 1;
+            background: #16213e;
+            border-bottom: 1px solid rgba(251,191,36,0.22);
+            border-radius: 16px 16px 0 0;
+            padding: 18px 20px 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .ered-body { padding: 20px 24px 28px; }
         .ered-close {
-            position: absolute; top: 14px; right: 16px;
-            background: none; border: none; color: #aaa;
+            background: none; border: none; color: #888;
             font-size: 1.3rem; cursor: pointer; line-height: 1;
+            padding: 2px 4px; border-radius: 6px; flex-shrink: 0;
         }
         .ered-close:hover { color: #e94560; }
-        .ered-title { color: #fbbf24; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+        .ered-title { color: #fbbf24; font-size: 1.3rem; font-weight: 700; }
         .ered-subject { margin-bottom: 22px; }
         .ered-subject-title { color: #e0e0e0; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
         .ered-level-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
@@ -556,21 +569,25 @@
 <!-- Elért eredmények modal -->
 <div class="ered-overlay" id="ered-overlay">
   <div class="ered-box">
-    <button class="ered-close" onclick="closeEredmenyek()"><i class="fas fa-xmark"></i></button>
-    <div class="ered-title"><i class="fas fa-medal"></i> Elért eredmények</div>
-    <!-- Oktató előnézet sor – csak tanulói nézetben látható -->
-    <div id="ered-preview-row" style="display:none; background:rgba(83,109,254,0.1); border:1px solid #536dfe; border-radius:10px; padding:10px 14px; margin-bottom:14px;">
-      <div style="color:#aaa; font-size:0.8rem; margin-bottom:6px;"><i class="fas fa-eye" style="color:#536dfe;"></i> Oktató előnézet – tanuló eredményeinek megtekintése</div>
-      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-        <input id="ered-preview-email" type="email" placeholder="tanuló@kkszki.hu"
-          style="flex:1; min-width:200px; padding:6px 12px; background:#0f3460; border:1px solid #536dfe; border-radius:8px; color:#e0e0e0; font-size:0.9rem;">
-        <button onclick="loadPreviewEredmenyek()"
-          style="padding:6px 14px; background:#536dfe; border:none; border-radius:8px; color:white; cursor:pointer; font-size:0.9rem; white-space:nowrap;">
-          <i class="fas fa-magnifying-glass"></i> Betöltés
-        </button>
-      </div>
+    <div class="ered-header">
+      <div class="ered-title"><i class="fas fa-medal"></i> Elért eredmények</div>
+      <button class="ered-close" onclick="closeEredmenyek()"><i class="fas fa-xmark"></i></button>
     </div>
-    <div id="ered-content"><div class="ered-loading"><i class="fas fa-spinner fa-spin"></i> Adatok betöltése...</div></div>
+    <div class="ered-body">
+      <!-- Oktató előnézet sor – csak tanulói nézetben látható -->
+      <div id="ered-preview-row" style="display:none; background:rgba(83,109,254,0.1); border:1px solid #536dfe; border-radius:10px; padding:10px 14px; margin-bottom:14px;">
+        <div style="color:#aaa; font-size:0.8rem; margin-bottom:6px;"><i class="fas fa-eye" style="color:#536dfe;"></i> Oktató előnézet – tanuló eredményeinek megtekintése</div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="ered-preview-email" type="email" placeholder="tanuló@kkszki.hu"
+            style="flex:1; min-width:200px; padding:6px 12px; background:#0f3460; border:1px solid #536dfe; border-radius:8px; color:#e0e0e0; font-size:0.9rem;">
+          <button onclick="loadPreviewEredmenyek()"
+            style="padding:6px 14px; background:#536dfe; border:none; border-radius:8px; color:white; cursor:pointer; font-size:0.9rem; white-space:nowrap;">
+            <i class="fas fa-magnifying-glass"></i> Betöltés
+          </button>
+        </div>
+      </div>
+      <div id="ered-content"><div class="ered-loading"><i class="fas fa-spinner fa-spin"></i> Adatok betöltése...</div></div>
+    </div>
   </div>
 </div>
 
