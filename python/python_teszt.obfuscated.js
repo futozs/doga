@@ -812,36 +812,63 @@ function updateScoringUI(results) {
 
 // ──────────────────��──────────────────────────────────────────────────────────
 
-// Code Editor inicializálása (Monaco)
+// Code Editor inicializálása (Monaco, textarea fallback ha nem tölt be)
 async function initializeCodeEditor() {
-    await monacoReadyPromise;
-    const container = document.getElementById('code-editor');
-    const isNagyMod = document.body.classList.contains('nagy-mod');
-    codeEditor = monaco.editor.create(container, {
-        value: '',
-        language: 'python',
-        theme: 'vs-dark',
-        fontSize: isNagyMod ? 16 : 14,
-        lineNumbers: 'on',
-        automaticLayout: true,
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false,
-        wordWrap: 'on',
-        tabSize: 4,
-        insertSpaces: true,
-        fontFamily: "Consolas, 'Courier New', monospace",
-        renderLineHighlight: 'all',
-        bracketPairColorization: { enabled: true },
-        autoClosingBrackets: 'always',
-        autoClosingQuotes: 'always',
-        suggest: { snippetsPreventQuickSuggestions: false },
-    });
+    try {
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Monaco betöltési időtúllépés (12s)')), 12000)
+        );
+        await Promise.race([monacoReadyPromise, timeout]);
 
-    codeEditor.onDidChangeModelContent(() => {
-        if (currentTaskIndex >= 0 && currentTaskIndex < taskAnswers.length) {
-            taskAnswers[currentTaskIndex].answer = codeEditor.getValue();
-        }
+        const container = document.getElementById('code-editor');
+        const isNagyMod = document.body.classList.contains('nagy-mod');
+        codeEditor = monaco.editor.create(container, {
+            value: '',
+            language: 'python',
+            theme: 'vs-dark',
+            fontSize: isNagyMod ? 16 : 14,
+            lineNumbers: 'on',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            wordWrap: 'on',
+            tabSize: 4,
+            insertSpaces: true,
+            fontFamily: "Consolas, 'Courier New', monospace",
+            renderLineHighlight: 'all',
+            bracketPairColorization: { enabled: true },
+            autoClosingBrackets: 'always',
+            autoClosingQuotes: 'always',
+            suggest: { snippetsPreventQuickSuggestions: false },
+        });
+        codeEditor.onDidChangeModelContent(() => {
+            if (currentTaskIndex >= 0 && currentTaskIndex < taskAnswers.length) {
+                taskAnswers[currentTaskIndex].answer = codeEditor.getValue();
+            }
+        });
+        debugLog('✅ Monaco editor kész');
+    } catch (err) {
+        debugLog('⚠️ Monaco nem töltődött be: ' + err.message + ' – textarea visszaváltás');
+        initFallbackEditor();
+    }
+}
+
+function initFallbackEditor() {
+    const container = document.getElementById('code-editor');
+    container.innerHTML = '';
+    const ta = document.createElement('textarea');
+    ta.style.cssText = 'width:100%;height:100%;background:#1e1e1e;color:#d4d4d4;font-family:Consolas,"Courier New",monospace;font-size:14px;padding:10px;border:none;resize:none;outline:none;line-height:1.5;';
+    ta.placeholder = 'Írd be a Python kódodat...';
+    container.appendChild(ta);
+    codeEditor = {
+        getValue: () => ta.value,
+        setValue: (v) => { ta.value = v; },
+    };
+    ta.addEventListener('input', () => {
+        if (currentTaskIndex >= 0 && currentTaskIndex < taskAnswers.length)
+            taskAnswers[currentTaskIndex].answer = ta.value;
     });
+    debugLog('✅ Textarea fallback editor kész');
 }
 
 // Terminál inicializálása
