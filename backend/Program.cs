@@ -361,6 +361,24 @@ app.MapGet("/api/progress", (HttpContext ctx, Database db) =>
     return Results.Ok(db.GetAllProgressSummary());
 });
 
+// Leaderboard (oktató)
+app.MapGet("/api/leaderboard", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var osztaly = ctx.Request.Query["osztaly"].FirstOrDefault();
+    var csoport = ctx.Request.Query["csoport"].FirstOrDefault();
+    var mode    = ctx.Request.Query["mode"].FirstOrDefault();
+    return Results.Ok(db.GetLeaderboard(osztaly, csoport, mode));
+});
+
+// Saját rang lekérése (tanuló, nyilvános)
+app.MapGet("/api/leaderboard/rank/{email}", (string email, Database db) =>
+{
+    var decoded = Uri.UnescapeDataString(email);
+    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    return Results.Ok(db.GetStudentRank(decoded));
+});
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
 

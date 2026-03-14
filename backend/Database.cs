@@ -77,6 +77,7 @@ public class Database
             );
         ");
         try { Exec(conn, "ALTER TABLE submissions ADD COLUMN subject TEXT"); } catch { }
+        try { Exec(conn, "ALTER TABLE progress ADD COLUMN mode TEXT DEFAULT 'gyakorlo'"); } catch { }
     }
 
     // ── Config ────────────────────────────────────────────────────────────────
@@ -341,8 +342,8 @@ public class Database
         using var conn = Open();
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-            INSERT INTO progress (email, nev, osztaly, targy, feladat, pont, max_pont)
-            VALUES ($email, $nev, $osztaly, $targy, $feladat, $pont, $max_pont)";
+            INSERT INTO progress (email, nev, osztaly, targy, feladat, pont, max_pont, mode)
+            VALUES ($email, $nev, $osztaly, $targy, $feladat, $pont, $max_pont, $mode)";
         cmd.Parameters.AddWithValue("$email",   r.Email.ToLower().Trim());
         cmd.Parameters.AddWithValue("$nev",     (object?)r.Nev     ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$osztaly", (object?)r.Osztaly ?? DBNull.Value);
@@ -350,6 +351,7 @@ public class Database
         cmd.Parameters.AddWithValue("$feladat", r.Feladat);
         cmd.Parameters.AddWithValue("$pont",    r.Pont);
         cmd.Parameters.AddWithValue("$max_pont",r.MaxPont);
+        cmd.Parameters.AddWithValue("$mode",    r.Mode ?? "gyakorlo");
         cmd.ExecuteNonQuery();
     }
 
@@ -534,6 +536,140 @@ public class Database
             Letrehozva   = r.IsDBNull(5) ? null : r.GetString(5)
         };
     }
+
+    public List<LeaderboardItem> GetLeaderboard(string? osztaly, string? csoport, string? mode)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+
+        var where = new List<string>();
+        if (mode != null)   { where.Add("p.mode = $mode");                             cmd.Parameters.AddWithValue("$mode",    mode); }
+        if (osztaly != null){ where.Add("LOWER(COALESCE(p.osztaly,'')) = LOWER($o)");  cmd.Parameters.AddWithValue("$o",       osztaly); }
+        if (csoport != null){ where.Add("LOWER(COALESCE(u.csoport,'')) = LOWER($cs)"); cmd.Parameters.AddWithValue("$cs",      csoport); }
+
+        cmd.CommandText = $@"
+            SELECT
+                p.email,
+                MAX(p.nev)     as nev,
+                MAX(p.osztaly) as osztaly,
+                u.csoport,
+                p.targy,
+                COUNT(*)       as sessions,
+                ROUND(AVG(CAST(p.pont AS REAL) / NULLIF(p.max_pont,0) * 100), 1) as avg_pct,
+                ROUND(MAX(CAST(p.pont AS REAL) / NULLIF(p.max_pont,0) * 100), 1) as best_pct,
+                MAX(p.datum)   as last_session
+            FROM progress p
+            LEFT JOIN users u ON LOWER(p.email) = LOWER(u.email)
+            {(where.Count > 0 ? "WHERE " + string.Join(" AND ", where) : "")}
+            GROUP BY p.email, p.targy
+            ORDER BY p.email";
+
+        var raw = new Dictionary<string, (string? nev, string? osztaly, string? csoport,
+            List<(string targy, int sessions, double avgPct, double bestPct, string? lastSession)> subjects)>();
+
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+        {
+            var email   = r.GetString(0);
+            var nev     = r.IsDBNull(1) ? null : r.GetString(1);
+            var osz     = r.IsDBNull(2) ? null : r.GetString(2);
+            var cs      = r.IsDBNull(3) ? null : r.GetString(3);
+            var targy   = r.GetString(4);
+            var sess    = r.GetInt32(5);
+            var avgPct  = r.IsDBNull(6) ? 0.0 : r.GetDouble(6);
+            var bestPct = r.IsDBNull(7) ? 0.0 : r.GetDouble(7);
+            var last    = r.IsDBNull(8) ? null : r.GetString(8);
+            if (!raw.ContainsKey(email))
+                raw[email] = (nev, osz, cs, new());
+            raw[email].subjects.Add((targy, sess, avgPct, bestPct, last));
+        }
+
+        var items = raw.Select(kv =>
+        {
+            var wd = kv.Value.subjects.FirstOrDefault(x => x.targy == "web");
+            var pd = kv.Value.subjects.FirstOrDefault(x => x.targy == "python");
+            var web = wd != default
+                ? new SubjectProgress(wd.sessions, wd.avgPct, wd.bestPct, wd.lastSession)
+                : new SubjectProgress(0, 0, 0, null);
+            var py = pd != default
+                ? new SubjectProgress(pd.sessions, pd.avgPct, pd.bestPct, pd.lastSession)
+                : new SubjectProgress(0, 0, 0, null);
+            var wp = CompScore(web.AvgPercent, web.Sessions);
+            var pp = CompScore(py.AvgPercent, py.Sessions);
+            return new LeaderboardItem
+            {
+                Email      = kv.Key,
+                Nev        = kv.Value.nev,
+                Osztaly    = kv.Value.osztaly,
+                Csoport    = kv.Value.csoport,
+                Web        = web,
+                Python     = py,
+                WebPont    = Math.Round(wp, 1),
+                PythonPont = Math.Round(pp, 1),
+                OsszesPont = Math.Round((wp + pp) / 2, 1)
+            };
+        }).OrderByDescending(x => x.OsszesPont).ToList();
+
+        for (int i = 0; i < items.Count; i++) items[i].Rank = i + 1;
+        return items;
+    }
+
+    public StudentRankResult GetStudentRank(string email)
+    {
+        var user = GetUserByEmail(email);
+        var csoport = user?.Csoport;
+        var osztaly = user?.Osztaly;
+
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+
+        var groupLabel = csoport != null && osztaly != null
+            ? $"{osztaly}/{csoport}-es csoport"
+            : osztaly != null ? $"{osztaly} osztály" : "Évfolyam";
+
+        var where = new List<string>();
+        if (csoport != null) { where.Add("LOWER(COALESCE(u.csoport,'')) = LOWER($cs)"); cmd.Parameters.AddWithValue("$cs", csoport); }
+        else if (osztaly != null) { where.Add("LOWER(COALESCE(p.osztaly,'')) = LOWER($o)"); cmd.Parameters.AddWithValue("$o", osztaly); }
+
+        cmd.CommandText = $@"
+            SELECT p.email, p.targy,
+                ROUND(AVG(CAST(p.pont AS REAL) / NULLIF(p.max_pont,0) * 100), 1) as avg_pct,
+                COUNT(*) as sessions
+            FROM progress p
+            LEFT JOIN users u ON LOWER(p.email) = LOWER(u.email)
+            {(where.Count > 0 ? "WHERE " + string.Join(" AND ", where) : "")}
+            GROUP BY p.email, p.targy";
+
+        var web = new List<(string email, double avg, int sess)>();
+        var py  = new List<(string email, double avg, int sess)>();
+
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+        {
+            var e    = r.GetString(0);
+            var t    = r.GetString(1);
+            var avg  = r.IsDBNull(2) ? 0.0 : r.GetDouble(2);
+            var sess = r.GetInt32(3);
+            if (t == "web") web.Add((e, avg, sess));
+            else            py.Add((e, avg, sess));
+        }
+
+        web = web.OrderByDescending(x => CompScore(x.avg, x.sess)).ToList();
+        py  = py .OrderByDescending(x => CompScore(x.avg, x.sess)).ToList();
+
+        var wi = web.FindIndex(x => x.email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        var pi = py .FindIndex(x => x.email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        var mw = wi >= 0 ? web[wi] : default;
+        var mp = pi >= 0 ? py [pi] : default;
+
+        return new StudentRankResult(
+            new RankInfo(wi >= 0 ? wi + 1 : 0, web.Count, groupLabel, mw.avg),
+            new RankInfo(pi >= 0 ? pi + 1 : 0, py .Count, groupLabel, mp.avg)
+        );
+    }
+
+    private static double CompScore(double avgPct, int sessions) =>
+        avgPct * 0.7 + Math.Min(sessions, 20) / 20.0 * 30.0;
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

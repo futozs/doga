@@ -128,7 +128,8 @@ public record ProgressRequest(
     string Targy,      // "web" vagy "python"
     string Feladat,    // feladat azonosítója
     int Pont,
-    int MaxPont
+    int MaxPont,
+    string? Mode
 );
 
 public record SubjectProgress(
@@ -151,3 +152,29 @@ public class ProgressSummaryItem
     public SubjectProgress Web { get; set; } = new(0, 0, 0, null);
     public SubjectProgress Python { get; set; } = new(0, 0, 0, null);
 }
+
+public class LeaderboardItem
+{
+    public int Rank { get; set; }
+    public string Email { get; set; } = "";
+    public string? Nev { get; set; }
+    public string? Osztaly { get; set; }
+    public string? Csoport { get; set; }
+    public SubjectProgress Web { get; set; } = new(0, 0, 0, null);
+    public SubjectProgress Python { get; set; } = new(0, 0, 0, null);
+    public double WebPont { get; set; }
+    public double PythonPont { get; set; }
+    public double OsszesPont { get; set; }
+}
+
+public record RankInfo(
+    int Rank,
+    int GroupSize,
+    string GroupLabel,
+    double AvgPercent
+);
+
+public record StudentRankResult(
+    RankInfo Web,
+    RankInfo Python
+);

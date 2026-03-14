@@ -301,6 +301,7 @@
             padding: 10px 14px; color: #e0e0e0; font-size: 0.88rem;
             margin-top: 6px; line-height: 1.5;
         }
+        .ered-rank-row { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.25); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.85rem; color: #e0e0e0; }
         .ered-divider { border: none; border-top: 1px solid #0f3460; margin: 18px 0; }
         .ered-ach-title { color: #fbbf24; font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
         .ered-ach-grid {
@@ -676,13 +677,21 @@
 
     // ── Eredmények modal ──────────────────────────────────────────────────────
 
-    const LEVELS = [
-        { min: 0,  sessMin: 0,  icon: '❓', name: 'Nincs adat' },
-        { min: 0,  sessMin: 1,  icon: '🌱', name: 'Kezdő' },
-        { min: 0,  sessMin: 5,  icon: '📚', name: 'Tanuló' },
-        { min: 50, sessMin: 10, icon: '⚡', name: 'Haladó' },
-        { min: 70, sessMin: 15, icon: '🎯', name: 'Felkészült' },
-        { min: 85, sessMin: 20, icon: '🏆', name: 'Vizsgakész' }
+    const PYTHON_LEVELS = [
+        { min: 0,  icon: '🎨', name: '"Syntax Error" Művész' },
+        { min: 25, icon: '📋', name: 'Copy-Paste Mester' },
+        { min: 45, icon: '⚔️', name: 'Kód Gladiátor' },
+        { min: 65, icon: '💎', name: 'Kódolók Gyöngye' },
+        { min: 80, icon: '🏫', name: 'Kandó Büszkesége' },
+        { min: 90, icon: '🐍', name: 'Python-Bűvölő Félisten' }
+    ];
+    const WEB_LEVELS = [
+        { min: 0,  icon: '🔨', name: 'Junior Kódfaragó' },
+        { min: 25, icon: '🖌️', name: 'Webezgető Művész' },
+        { min: 45, icon: '🛡️', name: 'Böngésző-Bűvölő Harcos' },
+        { min: 65, icon: '⚙️', name: 'Webmester' },
+        { min: 80, icon: '🏫', name: 'Kandó Büszkesége' },
+        { min: 90, icon: '🌐', name: 'Webfejlesztő Félisten' }
     ];
 
     const ACHIEVEMENTS = [
@@ -701,20 +710,24 @@
         { id:'both_ready',   icon:'🎓', name:'Teljes felkészültség',  check: p => p.web.avgPercent >= 75 && p.python.avgPercent >= 75 }
     ];
 
-    function calcLevel(sessions, avgPct) {
-        let level = LEVELS[0];
-        for (const l of LEVELS) {
-            if (sessions >= l.sessMin && avgPct >= l.min) level = l;
+    function calcLevel(avgPct, targy) {
+        const levels = targy === 'python' ? PYTHON_LEVELS : WEB_LEVELS;
+        let level = levels[0];
+        for (const l of levels) {
+            if (avgPct >= l.min) level = l;
         }
         return level;
     }
 
-    function nextGoal(sessions, avgPct, subj) {
-        for (const l of LEVELS.slice(1)) {
-            if (sessions < l.sessMin) return `Következő szint: még ${l.sessMin - sessions} alkalom kell`;
-            if (avgPct < l.min) return `Következő szint: ${l.min}% átlag szükséges (most: ${avgPct}%)`;
+    function nextGoal(avgPct, targy, subj) {
+        const levels = targy === 'python' ? PYTHON_LEVELS : WEB_LEVELS;
+        for (let i = 1; i < levels.length; i++) {
+            if (avgPct < levels[i].min) {
+                const diff = Math.round(levels[i].min - avgPct);
+                return `Következő szint: <strong>${levels[i].name}</strong> – még <strong>+${diff}%</strong> átlag kell`;
+            }
         }
-        return `${subj} – maximális szint elérve! 🎉`;
+        return `<strong>${subj}</strong> – maximális szint elérve! 🎉`;
     }
 
     function feedback(avgPct, subj) {
@@ -727,13 +740,19 @@
         return `Még nem gyakoroltál WEB feladatot. Kezdd el, hogy fel tudj készülni az ágazati alapvizsgára!`;
     }
 
-    function renderSubject(data, label, barClass) {
+    function renderSubject(data, label, barClass, targy, rankInfo) {
         const s = data.sessions;
         const avg = data.avgPercent ?? 0;
         const best = data.bestPercent ?? 0;
-        const lv = calcLevel(s, avg);
+        const lv = calcLevel(avg, targy);
         const barPct = Math.min(100, s > 0 ? Math.round(avg) : 0);
         const lastDate = data.lastSession ? ` · Utoljára: ${data.lastSession}` : '';
+        const rankHtml = rankInfo && rankInfo.rank > 0
+            ? `<div class="ered-rank-row">
+                <i class="fas fa-trophy" style="color:#ffd700;margin-right:5px;"></i>
+                A <strong>${rankInfo.groupLabel}</strong>ban <strong>${rankInfo.rank}. helyen</strong> állsz (${rankInfo.groupSize} főből)
+               </div>`
+            : '';
         return `
         <div class="ered-subject">
           <div class="ered-subject-title">${label}</div>
@@ -744,9 +763,10 @@
               <div class="ered-level-sub">${s} alkalom${lastDate}</div>
             </div>
           </div>
+          ${rankHtml}
           <div class="ered-bar-bg"><div class="ered-bar-fill ${barClass}" style="width:${barPct}%"></div></div>
           <div class="ered-stats">Átlag: ${avg}% · Legjobb: ${best}%</div>
-          <div class="ered-next-goal">${nextGoal(s, avg, label.replace(/[🌐🐍]/g,'').trim())}</div>
+          <div class="ered-next-goal">${nextGoal(avg, targy, label.replace(/[🌐🐍]/g,'').trim())}</div>
           <div class="ered-feedback">${feedback(avg, label.replace(/[🌐🐍]/g,'').trim())}</div>
         </div>`;
     }
@@ -787,8 +807,12 @@
             const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
             const email = (u.email || '').replace('@kkszki.hu','');
             if (!email) { document.getElementById('ered-content').innerHTML = '<div class="ered-loading">Nem találhatók adatok.</div>'; return; }
-            const res = await fetch(`${API}/api/progress/${encodeURIComponent(email)}`);
+            const [res, rankRes] = await Promise.all([
+                fetch(`${API}/api/progress/${encodeURIComponent(email)}`),
+                fetch(`${API}/api/leaderboard/rank/${encodeURIComponent(email)}`)
+            ]);
             const p = await res.json();
+            const rankData = rankRes.ok ? await rankRes.json() : null;
             // A JSON kulcsai camelCase (C# record)
             const progress = {
                 web:    { sessions: p.web?.sessions ?? 0, avgPercent: p.web?.avgPercent ?? 0, bestPercent: p.web?.bestPercent ?? 0, lastSession: p.web?.lastSession ?? null },
@@ -796,8 +820,8 @@
             };
             document.getElementById('ered-content').innerHTML =
                 examCountdown() +
-                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web') +
-                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python') +
+                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web',    'web',    rankData?.web) +
+                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python', 'python', rankData?.python) +
                 renderAchievements(progress);
         } catch {
             document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.</div>';
@@ -824,8 +848,8 @@
             };
             content.innerHTML =
                 `<div style="color:#536dfe;font-size:0.82rem;margin-bottom:8px;"><i class="fas fa-user"></i> Megjelenítve: ${rawEmail.includes('@') ? rawEmail : rawEmail + '@kkszki.hu'}</div>` +
-                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web') +
-                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python') +
+                renderSubject(progress.web,    '🌐 WEB dolgozat',    'ered-bar-web',    'web',    null) +
+                renderSubject(progress.python, '🐍 Python dolgozat', 'ered-bar-python', 'python', null) +
                 renderAchievements(progress);
         } catch(e) {
             content.innerHTML = `<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem található adat (${e.message}).</div>`;

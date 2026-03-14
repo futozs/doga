@@ -441,6 +441,7 @@
             <button class="tab-btn" onclick="switchTab('javitas', this)"><i class="fas fa-pen-to-square"></i> Javítás</button>
             <button class="tab-btn" onclick="switchTab('felhasznalok', this)"><i class="fas fa-users"></i> Felhasználók</button>
             <button class="tab-btn" onclick="switchTab('haladas', this)"><i class="fas fa-chart-line"></i> Haladás</button>
+            <button class="tab-btn" onclick="switchTab('rangsor', this)"><i class="fas fa-ranking-star"></i> Rangsor</button>
         </div>
 
         <!-- Config Panel -->
@@ -726,6 +727,50 @@
             </div>
         </div>
 
+        <div class="panel" id="rangsor-panel" data-tab="rangsor" style="display:none;">
+            <h2><i class="fas fa-ranking-star"></i> Tanulói rangsor</h2>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+                <button class="btn-refresh" onclick="loadLeaderboard()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <select id="rangsor-mod" onchange="loadLeaderboard()" style="padding:6px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="">Minden mód</option>
+                    <option value="gyakorlo">Csak gyakorlás</option>
+                    <option value="szamonkeres">Csak számonkérés</option>
+                </select>
+                <select id="rangsor-targy" onchange="renderLeaderboard()" style="padding:6px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="osszes">Összesített</option>
+                    <option value="web">WEB</option>
+                    <option value="python">Python</option>
+                </select>
+                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                    <select id="rangsor-osztaly" onchange="filterRangsorOsztaly()" style="padding:6px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                        <option value="">Minden osztály</option>
+                    </select>
+                    <select id="rangsor-csoport" onchange="renderLeaderboard()" style="padding:6px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                        <option value="">Minden csoport</option>
+                    </select>
+                </div>
+            </div>
+            <div id="rangsor-loading" style="display:none;text-align:center;padding:20px;color:#aaa;"><i class="fas fa-spinner fa-spin"></i> Betöltés...</div>
+            <div id="rangsor-error" style="display:none;color:#e94560;padding:10px;background:rgba(233,69,96,0.1);border-radius:8px;margin-bottom:10px;"></div>
+            <table class="submissions-table" id="rangsor-table" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th>Tanuló</th>
+                        <th>Osztály</th>
+                        <th>Csoport</th>
+                        <th style="text-align:center;">WEB átlag</th>
+                        <th style="text-align:center;">Python átlag</th>
+                        <th style="text-align:center;">Összetett pont</th>
+                        <th style="text-align:center;">Szint</th>
+                    </tr>
+                </thead>
+                <tbody id="rangsor-tbody">
+                    <tr><td colspan="8" class="loading">Kattints a Frissítés gombra az adatok betöltéséhez</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- Jelszó visszaállítás modal -->
         <div class="modal" id="reset-pw-modal" style="display:none;">
             <div class="modal-content" style="max-width:400px;">
@@ -978,6 +1023,7 @@
             }
             sessionStorage.setItem('admin_tab', name);
             if (name === 'haladas' && haladásData.length === 0) loadProgress();
+            if (name === 'rangsor' && leaderboardData.length === 0) loadLeaderboard();
         }
 
         // Check auth on page load
@@ -1665,6 +1711,120 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
 
         // ── Haladás tab ──────────────────────────────────────────────────────────
         let haladásData = [];
+
+        // ── Rangsor tab ──────────────────────────────────────────────────────────
+        let leaderboardData = [];
+        const RANGSOR_PYTHON_LEVELS = [
+            { min: 0,  icon: '🎨', name: '"Syntax Error" Művész' },
+            { min: 25, icon: '📋', name: 'Copy-Paste Mester' },
+            { min: 45, icon: '⚔️', name: 'Kód Gladiátor' },
+            { min: 65, icon: '💎', name: 'Kódolók Gyöngye' },
+            { min: 80, icon: '🏫', name: 'Kandó Büszkesége' },
+            { min: 90, icon: '🐍', name: 'Python-Bűvölő Félisten' }
+        ];
+        const RANGSOR_WEB_LEVELS = [
+            { min: 0,  icon: '🔨', name: 'Junior Kódfaragó' },
+            { min: 25, icon: '🖌️', name: 'Webezgető Művész' },
+            { min: 45, icon: '🛡️', name: 'Böngésző-Bűvölő Harcos' },
+            { min: 65, icon: '⚙️', name: 'Webmester' },
+            { min: 80, icon: '🏫', name: 'Kandó Büszkesége' },
+            { min: 90, icon: '🌐', name: 'Webfejlesztő Félisten' }
+        ];
+        function getRangsorLevel(avgPct, targy) {
+            const levels = targy === 'python' ? RANGSOR_PYTHON_LEVELS : RANGSOR_WEB_LEVELS;
+            let lv = levels[0];
+            for (const l of levels) { if (avgPct >= l.min) lv = l; }
+            return lv;
+        }
+        async function loadLeaderboard() {
+            document.getElementById('rangsor-loading').style.display = 'block';
+            document.getElementById('rangsor-error').style.display = 'none';
+            const mod = document.getElementById('rangsor-mod').value;
+            try {
+                let url = `${RAILWAY_URL}/api/leaderboard`;
+                if (mod) url += `?mode=${encodeURIComponent(mod)}`;
+                const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + authToken } });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                leaderboardData = await res.json();
+                populateRangsorFilters();
+                renderLeaderboard();
+            } catch(e) {
+                document.getElementById('rangsor-error').textContent = 'Hiba: ' + e.message;
+                document.getElementById('rangsor-error').style.display = 'block';
+            } finally {
+                document.getElementById('rangsor-loading').style.display = 'none';
+            }
+        }
+        function populateRangsorFilters() {
+            const osztSet = new Set(leaderboardData.map(x => x.osztaly).filter(Boolean));
+            const sel = document.getElementById('rangsor-osztaly');
+            const cur = sel.value;
+            sel.innerHTML = '<option value="">Minden osztály</option>';
+            [...osztSet].sort().forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o; opt.textContent = o;
+                if (o === cur) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            filterRangsorOsztaly();
+        }
+        function filterRangsorOsztaly() {
+            const osz = document.getElementById('rangsor-osztaly').value;
+            const csopSel = document.getElementById('rangsor-csoport');
+            const csopSet = new Set(leaderboardData
+                .filter(x => !osz || x.osztaly === osz)
+                .map(x => x.csoport).filter(Boolean));
+            csopSel.innerHTML = '<option value="">Minden csoport</option>';
+            [...csopSet].sort().forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = c + '. csoport';
+                csopSel.appendChild(opt);
+            });
+            renderLeaderboard();
+        }
+        function renderLeaderboard() {
+            const targy  = document.getElementById('rangsor-targy').value;
+            const osz    = document.getElementById('rangsor-osztaly').value;
+            const csop   = document.getElementById('rangsor-csoport').value;
+            let data = leaderboardData.filter(x =>
+                (!osz  || x.osztaly === osz) &&
+                (!csop || x.csoport === csop)
+            );
+            // Re-rank after filter
+            if (targy === 'web')    data = [...data].sort((a,b) => b.webPont - a.webPont);
+            else if (targy === 'python') data = [...data].sort((a,b) => b.pythonPont - a.pythonPont);
+            else                    data = [...data].sort((a,b) => b.osszesPont - a.osszesPont);
+            const tbody = document.getElementById('rangsor-tbody');
+            if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Nincs adat</td></tr>'; return; }
+            const rankMedals = ['🥇','🥈','🥉'];
+            tbody.innerHTML = data.map((p, idx) => {
+                const rank = idx + 1;
+                const medal = rank <= 3 ? rankMedals[rank-1] : rank + '.';
+                const w  = p.web    || { sessions:0, avgPercent:0 };
+                const py = p.python || { sessions:0, avgPercent:0 };
+                const wLv  = getRangsorLevel(w.avgPercent  || 0, 'web');
+                const pyLv = getRangsorLevel(py.avgPercent || 0, 'python');
+                const showLv = targy === 'python' ? pyLv : (targy === 'web' ? wLv : (p.osszesPont >= p.webPont && p.osszesPont >= p.pythonPont ? wLv : pyLv));
+                const rowStyle = rank === 1 ? 'background:rgba(255,215,0,0.08);' : rank === 2 ? 'background:rgba(192,192,192,0.06);' : rank === 3 ? 'background:rgba(205,127,50,0.06);' : '';
+                return `<tr style="${rowStyle}">
+                    <td style="text-align:center;font-size:${rank<=3?'1.2rem':'0.9rem'};font-weight:700;">${medal}</td>
+                    <td>
+                        <div style="font-weight:600;color:#e0e0e0;">${escHtml(p.nev || p.email)}</div>
+                        <div style="font-size:0.75rem;color:#888;">${escHtml(p.email)}</div>
+                    </td>
+                    <td style="text-align:center;color:#aaa;">${escHtml(p.osztaly || '–')}</td>
+                    <td style="text-align:center;color:#aaa;">${p.csoport ? p.csoport + '. cs.' : '–'}</td>
+                    <td style="text-align:center;">
+                        ${w.sessions > 0 ? `<span style="color:#64b5f6;font-weight:600;">${Math.round(w.avgPercent || 0)}%</span><br><span style="color:#555;font-size:0.75rem;">${w.sessions} alk.</span>` : '<span style="color:#333;">–</span>'}
+                    </td>
+                    <td style="text-align:center;">
+                        ${py.sessions > 0 ? `<span style="color:#ffd54f;font-weight:600;">${Math.round(py.avgPercent || 0)}%</span><br><span style="color:#555;font-size:0.75rem;">${py.sessions} alk.</span>` : '<span style="color:#333;">–</span>'}
+                    </td>
+                    <td style="text-align:center;font-weight:700;color:#e0e0e0;">${targy === 'web' ? Math.round(p.webPont||0) : targy === 'python' ? Math.round(p.pythonPont||0) : Math.round(p.osszesPont||0)}</td>
+                    <td style="text-align:center;">${showLv.icon} <span style="font-size:0.78rem;color:#aaa;">${escHtml(showLv.name)}</span></td>
+                </tr>`;
+            }).join('');
+        }
 
         async function loadProgress() {
             document.getElementById('haladas-loading').style.display = 'block';
