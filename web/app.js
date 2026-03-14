@@ -2338,12 +2338,12 @@ const REF_CONFIG = {
     screenshot: 'html',
     codeType: 'html',
     steps: [
-      'Kattints a <b>📋 Kód másolása</b> gombra (fent)',
-      'Kattints a <b>↗ Megnyitás</b> gombra — megnyílik a validátor',
+      'Kattints a <b><i class="fas fa-clipboard"></i> Kód másolása</b> gombra (fent)',
+      'Kattints a <b><i class="fas fa-arrow-up-right-from-square"></i> Megnyitás</b> gombra — megnyílik a validátor',
       'A validátorban illeszd be a kódot (<b>Ctrl+V</b>) a szövegmezőbe',
       'Kattints a <b>Check</b> gombra',
       'Készíts képernyőképet az eredményről (<b>Win+Shift+S</b>)',
-      'Térj vissza ide és kattints a <b>📷 Kép mentése</b> gombra',
+      'Térj vissza ide és kattints a <b><i class="fas fa-camera"></i> Kép mentése</b> gombra',
     ],
   },
   'css-validator': {
@@ -2353,12 +2353,12 @@ const REF_CONFIG = {
     screenshot: 'css',
     codeType: 'css',
     steps: [
-      'Kattints a <b>📋 Kód másolása</b> gombra (fent)',
-      'Kattints a <b>↗ Megnyitás</b> gombra — megnyílik a validátor',
+      'Kattints a <b><i class="fas fa-clipboard"></i> Kód másolása</b> gombra (fent)',
+      'Kattints a <b><i class="fas fa-arrow-up-right-from-square"></i> Megnyitás</b> gombra — megnyílik a validátor',
       'A validátorban illeszd be a kódot (<b>Ctrl+V</b>) a szövegmezőbe',
       'Kattints a <b>Check</b> gombra',
       'Készíts képernyőképet az eredményről (<b>Win+Shift+S</b>)',
-      'Térj vissza ide és kattints a <b>📷 Kép mentése</b> gombra',
+      'Térj vissza ide és kattints a <b><i class="fas fa-camera"></i> Kép mentése</b> gombra',
     ],
   },
 };
@@ -2414,13 +2414,13 @@ refCopyCode.addEventListener('click', async () => {
   const code = refCodePreview.value;
   try {
     await navigator.clipboard.writeText(code);
-    refCopyCode.textContent = '✔ Másolva!';
-    setTimeout(() => { refCopyCode.textContent = '📋 Kód másolása'; }, 2000);
+    refCopyCode.innerHTML = '<i class="fas fa-check"></i> Másolva!';
+    setTimeout(() => { refCopyCode.innerHTML = '<i class="fas fa-clipboard"></i> Kód másolása'; }, 2000);
   } catch {
     refCodePreview.select();
     document.execCommand('copy');
-    refCopyCode.textContent = '✔ Másolva!';
-    setTimeout(() => { refCopyCode.textContent = '📋 Kód másolása'; }, 2000);
+    refCopyCode.innerHTML = '<i class="fas fa-check"></i> Másolva!';
+    setTimeout(() => { refCopyCode.innerHTML = '<i class="fas fa-clipboard"></i> Kód másolása'; }, 2000);
   }
 });
 
