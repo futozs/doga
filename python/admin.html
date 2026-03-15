@@ -385,27 +385,7 @@
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="login-box">
-            <h1>🔐 Admin Bejelentkezés</h1>
-            <div class="login-error" id="login-error"></div>
-            <form id="login-form" onsubmit="return handleLogin(event)">
-                <div class="form-group">
-                    <label for="username">Felhasználónév:</label>
-                    <input type="text" id="username" required autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label for="password">Jelszó:</label>
-                    <input type="password" id="password" required autocomplete="current-password">
-                </div>
-                <p style="color: #666; font-size: 0.9rem; margin-top: -10px; margin-bottom: 15px;">
-                    A jelszó az admin funkciók eléréséhez szükséges.
-                </p>
-                <button type="submit" class="btn-login">Bejelentkezés</button>
-            </form>
-        </div>
-    </div>
+    <!-- Login Screen (eltávolítva - auto bejelentkezés) -->
 
     <!-- Admin Content (hidden until login) -->
     <div id="admin-content">
@@ -599,90 +579,20 @@
         // API URL - Same for everyone (students and admin)
         let API_URL = 'https://script.google.com/macros/s/AKfycbw6c00BA-N3Lf3lWFg3Jm-uVJKrOKKmoRTI9vBUxk2xRdFBrNR_ztB9EoA_Uq2Kg-Ms/exec';
 
-        // Admin password stored in session after login
-        let ADMIN_PASSWORD = sessionStorage.getItem('admin_password') || '';
-
-        // Login handling
-        async function handleLogin(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const errorDiv = document.getElementById('login-error');
-
-            if (!username || !password) {
-                errorDiv.textContent = 'Kérlek töltsd ki mindkét mezőt!';
-                errorDiv.style.display = 'block';
-                return false;
-            }
-
-            // Show loading
-            errorDiv.style.display = 'none';
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            submitBtn.textContent = 'Ellenőrzés...';
-            submitBtn.disabled = true;
-
-            try {
-                // Check credentials with backend
-                const response = await fetch(`${API_URL}?action=checkAdmin&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
-                const data = await response.json();
-
-                if (data.success && data.authenticated) {
-                    // Store admin password for subsequent requests
-                    ADMIN_PASSWORD = password;
-                    sessionStorage.setItem('admin_password', ADMIN_PASSWORD);
-                    sessionStorage.setItem('admin_authenticated', 'true');
-                    sessionStorage.setItem('admin_username', username);
-
-                    // Update the API URL field
-                    document.getElementById('api-url').value = API_URL;
-
-                    // Show admin panel
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('admin-content').style.display = 'block';
-
-                    // Load data
-                    loadConfig();
-                    loadSubmissions();
-                } else {
-                    errorDiv.textContent = '❌ Hibás felhasználónév vagy jelszó!';
-                    errorDiv.style.display = 'block';
-                }
-            } catch (error) {
-                errorDiv.textContent = 'Hiba a bejelentkezés során: ' + error.message;
-                errorDiv.style.display = 'block';
-            } finally {
-                submitBtn.textContent = 'Bejelentkezés';
-                submitBtn.disabled = false;
-            }
-
-            return false;
-        }
-
-        // Check if already logged in
-        function checkAuth() {
-            const isAuthenticated = sessionStorage.getItem('admin_authenticated') === 'true';
-            ADMIN_PASSWORD = sessionStorage.getItem('admin_password') || '';
-
-            if (isAuthenticated && ADMIN_PASSWORD) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-content').style.display = 'block';
-                document.getElementById('api-url').value = API_URL;
-                loadConfig();
-                loadSubmissions();
-            }
-        }
+        // Admin jelszó hardcodeolva (GAS Config sheet D2 oszlopával egyeznie kell)
+        const ADMIN_PASSWORD = atob('S2FuZG8xMjM0');
 
         // Logout function
         function logout() {
-            sessionStorage.clear();
-            ADMIN_PASSWORD = '';
             location.reload();
         }
 
-        // Check auth on page load
+        // Auto bejelentkezés oldalletöltéskor
         window.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
+            document.getElementById('admin-content').style.display = 'block';
+            if (document.getElementById('api-url')) document.getElementById('api-url').value = API_URL;
+            loadConfig();
+            loadSubmissions();
         });
 
 
