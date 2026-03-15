@@ -2466,7 +2466,12 @@ btnStarter.addEventListener("click", async () => {
   if (files) {
     lastParsedHtml = null;
     cachedStudentDoc = null;
-    updateProgressBar(0, currentTask ? currentTask.checks.length : 0);
+    validationImages.html = null;
+    validationImages.htmlFileName = null;
+    validationImages.css = null;
+    validationImages.cssFileName = null;
+    clearLocalStorage(currentTask.id);
+    renderTaskChecks();
     htmlEditor.setValue(files.html);
     cssEditor.setValue(files.css);
     statusEl.textContent = 'Kiindulási fájlok betöltve';
