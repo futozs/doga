@@ -442,6 +442,9 @@ async function startTest() {
         class: studentClass
     };
 
+    const userInfoEl = document.getElementById('quiz-user-info');
+    if (userInfoEl) userInfoEl.textContent = name + ' – ' + email;
+
     testStartTime = new Date();
     testSubmitted = false;
     logEvent('Test started', studentData);
