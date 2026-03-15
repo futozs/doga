@@ -231,7 +231,6 @@ function setupEventListeners() {
     document.getElementById('confirm-submit').addEventListener('click', submitTest);
     document.getElementById('cancel-submit').addEventListener('click', hideSubmitModal);
     document.getElementById('run-code-btn').addEventListener('click', runPythonCode);
-    document.getElementById('check-scoring-btn').addEventListener('click', checkScoring);
 
     // Jobb klikk letiltása
     document.addEventListener('contextmenu', e => {
@@ -730,18 +729,11 @@ async function checkScoring() {
     const code = codeEditor.getValue().trim();
 
     scoringRunning = true;
-    const btn = document.getElementById('check-scoring-btn');
-    btn.disabled = true;
-    btn.textContent = '⏳ Ellenőrzés folyamatban...';
 
     const panel = document.getElementById('scoring-panel');
     panel.classList.remove('hidden');
 
     if (!code) {
-        document.getElementById('scoring-content').innerHTML =
-            '<div class="scoring-header-row"><span class="scoring-title" style="color:#721c24">⚠️ Nincs beírva kód!</span></div>';
-        btn.disabled = false;
-        btn.textContent = '🔍 Pontozás';
         scoringRunning = false;
         return;
     }
@@ -783,8 +775,6 @@ async function checkScoring() {
         updateScoringUI(results);
     }
 
-    btn.disabled = false;
-    btn.textContent = '🔍 Pontozás';
     scoringRunning = false;
 
     // Progress mentése a backendre (csak ha van pont és portálos bejelentkezés)
@@ -998,17 +988,13 @@ function showTask(index) {
     document.getElementById('task-description').textContent = task.description;
     document.getElementById('task-example').textContent = task.example;
 
-    // Pontozás gomb és panel kezelése feladatváltáskor
-    const scoringBtn = document.getElementById('check-scoring-btn');
+    // Pontozás panel kezelése feladatváltáskor
     const scoringPanel = document.getElementById('scoring-panel');
     document.getElementById('scoring-content').innerHTML = '';
     if (task.criteria && task.criteria.length > 0) {
-        scoringBtn.classList.remove('hidden');
         scoringPanel.classList.remove('hidden');
-        // Automatikus strukturális pontozás kis késleltetéssel (editor betöltés után)
         setTimeout(autoCheckStructural, 300);
     } else {
-        scoringBtn.classList.add('hidden');
         scoringPanel.classList.add('hidden');
     }
 
@@ -1258,6 +1244,9 @@ builtins.input = input
 
         // Automatikus mentés a háttérben
         autoSaveProgress();
+
+        // Teljes pontozás automatikusan (teszt: kritériumok is)
+        setTimeout(() => checkScoring(), 200);
 
     } catch (error) {
         const errorMsg = error.message || String(error);
