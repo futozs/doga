@@ -446,6 +446,7 @@
             <button class="tab-btn" onclick="switchTab('felhasznalok', this)"><i class="fas fa-users"></i> Felhasználók</button>
             <button class="tab-btn" onclick="switchTab('haladas', this)"><i class="fas fa-chart-line"></i> Haladás</button>
             <button class="tab-btn" onclick="switchTab('rangsor', this)"><i class="fas fa-ranking-star"></i> Rangsor</button>
+            <button class="tab-btn" onclick="switchTab('megoldasok', this)"><i class="fas fa-lightbulb"></i> Megoldások</button>
         </div>
 
         <!-- Config Panel -->
@@ -774,6 +775,59 @@
                     <tr><td colspan="9" class="loading">Kattints a Frissítés gombra az adatok betöltéséhez</td></tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Megoldások és Tippek panel -->
+        <div class="panel" id="megoldasok-panel" data-tab="megoldasok" style="display:none;">
+            <h2><i class="fas fa-lightbulb"></i> Megoldások &amp; Tippek (Gyakorló mód)</h2>
+            <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.2rem;">Feladatonként tölts fel mintamegoldást és legfeljebb 3 fokozatos tippet. Gyakorló módban a diákok ezt kérhetik le.</p>
+            <div id="megoldas-error" class="error" style="display:none;margin-bottom:0.8rem;"></div>
+            <div id="megoldas-success" class="success" style="display:none;margin-bottom:0.8rem;"></div>
+            <div style="margin-bottom:1rem;">
+                <label style="color:#7dd3fc;font-weight:600;display:block;margin-bottom:0.4rem;">Feladat:</label>
+                <select id="megoldas-task-select" onchange="loadMegoldasFromApi()" style="padding:0.5rem 1rem;border-radius:6px;border:1px solid #334155;background:#0f3460;color:#e0e0e0;font-size:0.95rem;width:100%;max-width:520px;">
+                    <option value="1">1. Két szám összehasonlítása</option>
+                    <option value="2">2. Dobókocka játék</option>
+                    <option value="3">3. Mozijegy ára</option>
+                    <option value="4">4. BMI kalkulátor</option>
+                    <option value="5">5. Évszak meghatározása</option>
+                    <option value="6">6. Hőmérséklet konverzió</option>
+                    <option value="7">7. Számjegyek összege</option>
+                    <option value="8">8. Oszthatóság</option>
+                    <option value="9">9. Szökőév</option>
+                    <option value="10">10. Jegyszámítás</option>
+                    <option value="11">11. Pénzváltó</option>
+                    <option value="12">12. Háromszög típusa</option>
+                    <option value="13">13. Függvény – páros/páratlan</option>
+                    <option value="14">14. While ciklus – összeg</option>
+                    <option value="15">15. For ciklus – szorzótábla</option>
+                    <option value="16">16. Bool visszatérési értékű függvény</option>
+                </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+                <div>
+                    <label style="color:#7dd3fc;font-weight:600;display:block;margin-bottom:0.4rem;"><i class="fas fa-code"></i> Mintamegoldás:</label>
+                    <textarea id="megoldas-solution" rows="14" style="width:100%;font-family:monospace;font-size:0.83rem;padding:0.6rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="Ide írd be a mintamegoldást..."></textarea>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.7rem;">
+                    <div>
+                        <label style="color:#f59e0b;font-weight:600;display:block;margin-bottom:0.3rem;">💡 1. Tipp (legáltalánosabb):</label>
+                        <textarea id="megoldas-hint1" rows="3" style="width:100%;font-size:0.85rem;padding:0.5rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="pl. Gondolj arra, hogy..."></textarea>
+                    </div>
+                    <div>
+                        <label style="color:#f59e0b;font-weight:600;display:block;margin-bottom:0.3rem;">💡 2. Tipp (konkrétabb):</label>
+                        <textarea id="megoldas-hint2" rows="3" style="width:100%;font-size:0.85rem;padding:0.5rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="pl. Használj if/elif szerkezetet..."></textarea>
+                    </div>
+                    <div>
+                        <label style="color:#f59e0b;font-weight:600;display:block;margin-bottom:0.3rem;">💡 3. Tipp (majdnem megoldás):</label>
+                        <textarea id="megoldas-hint3" rows="3" style="width:100%;font-size:0.85rem;padding:0.5rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="pl. A struktúra: ..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:1rem;display:flex;align-items:center;gap:1rem;">
+                <button onclick="saveMegoldasToApi()" style="padding:0.5rem 1.5rem;background:#2196F3;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;"><i class="fas fa-save"></i> Mentés</button>
+                <span id="megoldas-status" style="font-size:0.85rem;color:#94a3b8;"></span>
+            </div>
         </div>
 
         <!-- Jelszó visszaállítás modal -->
@@ -1937,6 +1991,67 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                     </td>
                 </tr>`;
             }).join('');
+        }
+
+        // ── Megoldások & Tippek ───────────────────────────────────────────
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6c00BA-N3Lf3lWFg3Jm-uVJKrOKKmoRTI9vBUxk2xRdFBrNR_ztB9EoA_Uq2Kg-Ms/exec';
+        const GAS_ADMIN_PASSWORD = atob('S2FuZG8xMjM0');
+
+        async function saveMegoldasToApi() {
+            const taskId = document.getElementById('megoldas-task-select').value;
+            const solution = document.getElementById('megoldas-solution').value.trim();
+            const hint1 = document.getElementById('megoldas-hint1').value.trim();
+            const hint2 = document.getElementById('megoldas-hint2').value.trim();
+            const hint3 = document.getElementById('megoldas-hint3').value.trim();
+            const statusEl = document.getElementById('megoldas-status');
+            const errEl = document.getElementById('megoldas-error');
+            const okEl = document.getElementById('megoldas-success');
+            errEl.style.display = 'none'; okEl.style.display = 'none';
+            statusEl.textContent = 'Mentés...';
+            try {
+                const resp = await fetch(GAS_URL + '?action=saveMegoldas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_password: GAS_ADMIN_PASSWORD, feladatId: taskId, solution, hint1, hint2, hint3 })
+                });
+                const data = await resp.json();
+                if (data.ok) {
+                    okEl.textContent = '✅ Mentve!'; okEl.style.display = 'block';
+                    statusEl.textContent = '';
+                } else {
+                    errEl.textContent = '❌ Hiba: ' + (data.error || 'Ismeretlen'); errEl.style.display = 'block';
+                    statusEl.textContent = '';
+                }
+            } catch(e) {
+                errEl.textContent = '❌ Hálózati hiba: ' + e.message; errEl.style.display = 'block';
+                statusEl.textContent = '';
+            }
+        }
+
+        async function loadMegoldasFromApi() {
+            const taskId = document.getElementById('megoldas-task-select').value;
+            const statusEl = document.getElementById('megoldas-status');
+            statusEl.textContent = 'Betöltés...';
+            try {
+                const resp = await fetch(GAS_URL + '?action=getMegoldasok');
+                const data = await resp.json();
+                if (data.ok && data.data && data.data[taskId]) {
+                    const d = data.data[taskId];
+                    document.getElementById('megoldas-solution').value = d.solution || '';
+                    document.getElementById('megoldas-hint1').value = d.hints[0] || '';
+                    document.getElementById('megoldas-hint2').value = d.hints[1] || '';
+                    document.getElementById('megoldas-hint3').value = d.hints[2] || '';
+                    statusEl.textContent = 'Betöltve.';
+                } else {
+                    document.getElementById('megoldas-solution').value = '';
+                    document.getElementById('megoldas-hint1').value = '';
+                    document.getElementById('megoldas-hint2').value = '';
+                    document.getElementById('megoldas-hint3').value = '';
+                    statusEl.textContent = 'Nincs mentett adat.';
+                }
+            } catch(e) {
+                statusEl.textContent = 'Betöltési hiba.';
+            }
         }
     </script>
 <div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard" style="color:rgba(255,255,255,0.22);"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
