@@ -1199,3 +1199,20 @@ iframe {
   resize: none;
   outline: none;
 }
+.table-wrapper { overflow-x: auto; }
+.lamp-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 4px 0 2px;
+}
+.lamp-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  cursor: default;
+  flex-shrink: 0;
+}
+.lamp-red   { background: #e74c3c; box-shadow: 0 0 3px #e74c3c88; }
+.lamp-green { background: #27ae60; box-shadow: 0 0 3px #27ae6088; }

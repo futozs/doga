@@ -496,7 +496,7 @@ humanoid: {
       check: (doc) => {
         const links = doc.querySelectorAll('nav a');
         return Array.from(links).some(a =>
-          a.textContent.includes('humanoid robot') &&
+          a.textContent.toLowerCase().includes('humanoid robot') &&
           a.href.includes('netliferobotics.hu')
         );
       },
@@ -1144,7 +1144,12 @@ async function selectTask(taskId) {
 }
 
 function renderTaskChecks() {
-  // Pontszámláló nullázása amikor új feladat töltődik
+  const lampDots = document.getElementById('lamp-dots');
+  if (lampDots && currentTask) {
+    lampDots.innerHTML = currentTask.checks.map(chk =>
+      `<span class="lamp-dot lamp-red" title="\u2717 ${(chk.label || '').replace(/"/g, '&quot;')}"></span>`
+    ).join('');
+  }
   updateProgressBar(0, currentTask ? currentTask.checks.length : 0);
 }
 
@@ -1173,6 +1178,18 @@ function renderTasks(results) {
   const completed = results.filter(r => r.done).length;
   const total = results.length;
   updateProgressBar(completed, total);
+
+  const lampDots = document.getElementById('lamp-dots');
+  if (lampDots && currentTask) {
+    lampDots.innerHTML = results.map((r, i) => {
+      const chk = currentTask.checks[i];
+      const label = chk ? chk.label : `${i + 1}.`;
+      const cls   = r.done ? 'lamp-green' : 'lamp-red';
+      const icon  = r.done ? '\u2713' : '\u2717';
+      return `<span class="lamp-dot ${cls}" title="${icon} ${label.replace(/"/g, '&quot;')}"></span>`;
+    }).join('');
+  }
+
   if (completed > 0) maybePostProgress();
 }
 

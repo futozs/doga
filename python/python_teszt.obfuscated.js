@@ -702,12 +702,13 @@ function autoCheckStructural() {
     const task = selectedTasks[currentTaskIndex];
     if (!task || !task.criteria || task.criteria.length === 0) return;
     const code = codeEditor ? codeEditor.getValue().trim() : '';
-    if (!code) return;
     const panel = document.getElementById('scoring-panel');
     if (panel) panel.classList.remove('hidden');
     const results = task.criteria.map(criterion => {
-        if (criterion.type === 'teszt') return { criterion, passed: null, pending: true };
-        return { criterion, passed: evaluateCriterion(code, criterion), pending: false };
+        if (criterion.type === 'teszt') {
+            return { criterion, passed: false, needsRun: code.length > 0 };
+        }
+        return { criterion, passed: evaluateCriterion(code, criterion) };
     });
     updateScoringUI(results);
 }
@@ -815,15 +816,20 @@ function updateScoringUI(results) {
     const task = selectedTasks[currentTaskIndex];
     const maxPts = task ? task.points : total;
 
-    const pyodideFailed = results.some(r => r.pyodideFailed);
     const scoreColor = earned === total ? '#27ae60' : earned > 0 ? '#e67e22' : '#e74c3c';
 
     let dots = '';
     for (const r of results) {
         let color, title;
-        if (r.pending || r.pyodideFailed) {
+        if (r.pending) {
             color = '#f59e0b';
-            title = '⏳ ' + r.criterion.label + ' → kattints a Pontozás gombra a kiértékeléshez';
+            title = '⏳ ' + r.criterion.label + ' → futtatás folyamatban...';
+        } else if (r.pyodideFailed) {
+            color = '#f59e0b';
+            title = '⚠️ ' + r.criterion.label + ' → Python értelmező hiba';
+        } else if (r.needsRun) {
+            color = '#f59e0b';
+            title = '▶ ' + r.criterion.label + ' → futtasd le a kódot az ellenőrzéséhez';
         } else if (r.passed) {
             color = '#27ae60';
             title = '✓ ' + r.criterion.label;
@@ -834,19 +840,13 @@ function updateScoringUI(results) {
         dots += `<span title="${title.replace(/"/g, '&quot;')}" style="display:inline-block;width:13px;height:13px;border-radius:50%;background:${color};flex-shrink:0;cursor:default;box-shadow:0 0 3px ${color}88;"></span>`;
     }
 
-    const pyodideWarn = pyodideFailed
-        ? `<span title="Futtatásos tesztek csak a ▶ Pontozás gombra értékelhetők" style="font-size:0.75rem;color:#f59e0b;margin-left:0.3rem;">⚠️ futtatás kell</span>`
-        : '';
-
     content.innerHTML = `
         <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
             <span style="font-size:1.5rem;font-weight:800;color:${scoreColor};white-space:nowrap;">${earned} / ${maxPts} <span style="font-size:0.85rem;font-weight:600;color:#888;">pont</span></span>
             <div style="display:flex;gap:0.35rem;flex-wrap:wrap;align-items:center;">${dots}</div>
-            ${pyodideWarn}
         </div>`;
 
-    // Ha már nincs függőben lévő teszt, mentjük a pontokat és frissítjük a live score-t
-    if (!results.some(r => r.pending) && currentTaskIndex >= 0 && taskAnswers[currentTaskIndex]) {
+    if (!results.some(r => r.pending || r.needsRun) && currentTaskIndex >= 0 && taskAnswers[currentTaskIndex]) {
         taskAnswers[currentTaskIndex].earnedPoints = earned;
         taskAnswers[currentTaskIndex].scoringResults = results.map(r => ({
             label: r.criterion.label,
