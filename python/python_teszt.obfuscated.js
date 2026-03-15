@@ -518,13 +518,13 @@ async function startTest() {
     const pill = document.getElementById('quiz-mode-pill');
     if (pill) {
         if ((testMode === 'live' || testMode === 'vizsga') && !isTeacherMode) {
-            pill.style.cssText = 'display:block;background:#2d0a0a;border:1px solid #e94560;color:#e94560;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;';
+            pill.style.cssText = 'display:block;background:#2d0a0a;border:1px solid #e94560;color:#e94560;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;margin-right:3rem;';
             pill.textContent = '🔴 SZÁMONKÉRÉS MÓD';
         } else if (isTeacherMode) {
-            pill.style.cssText = 'display:block;background:#1a0d2e;border:1px solid #7c3aed;color:#c4b5fd;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;';
+            pill.style.cssText = 'display:block;background:#1a0d2e;border:1px solid #7c3aed;color:#c4b5fd;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;margin-right:3rem;';
             pill.textContent = '🎬 BEMUTATÓ MÓD';
         } else {
-            pill.style.cssText = 'display:block;background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;';
+            pill.style.cssText = 'display:block;background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;margin-right:3rem;';
             pill.textContent = '🎓 GYAKORLÓ MÓD';
         }
     }
