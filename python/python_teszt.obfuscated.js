@@ -513,27 +513,19 @@ async function startTest() {
         if (term) term.writeln('⚠️ Terminál: egyszerű mód (' + err.message + ')');
     }
 
-    // Módjelzés a quiz top bar-ban
+    // Módjelzés a quiz top bar-ban (elem már HTML-ben van, csak frissítjük)
     const isTeacherMode = sessionStorage.getItem('kandTeacherMode') === 'true';
-    if (!document.getElementById('quiz-mode-pill')) {
-        const topBar = document.querySelector('.quiz-top-bar');
-        if (topBar) {
-            const pill = document.createElement('div');
-            pill.id = 'quiz-mode-pill';
-            if ((testMode === 'live' || testMode === 'vizsga') && !isTeacherMode) {
-                pill.style.cssText = 'background:#2d0a0a;border:1px solid #e94560;color:#e94560;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;';
-                pill.textContent = '🔴 SZÁMONKÉRÉS MÓD';
-            } else if (isTeacherMode) {
-                pill.style.cssText = 'background:#1a0d2e;border:1px solid #7c3aed;color:#c4b5fd;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;';
-                pill.textContent = '🎬 BEMUTATÓ MÓD';
-            } else {
-                pill.style.cssText = 'background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;';
-                pill.textContent = '🎓 GYAKORLÓ MÓD';
-            }
-            // qtb-left végére szúrjuk (margin-left:auto tolja jobbra)
-            const qtbLeft = document.querySelector('.qtb-left');
-            if (qtbLeft) qtbLeft.appendChild(pill);
-            else topBar.appendChild(pill);
+    const pill = document.getElementById('quiz-mode-pill');
+    if (pill) {
+        if ((testMode === 'live' || testMode === 'vizsga') && !isTeacherMode) {
+            pill.style.cssText = 'display:block;background:#2d0a0a;border:1px solid #e94560;color:#e94560;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;';
+            pill.textContent = '🔴 SZÁMONKÉRÉS MÓD';
+        } else if (isTeacherMode) {
+            pill.style.cssText = 'display:block;background:#1a0d2e;border:1px solid #7c3aed;color:#c4b5fd;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;';
+            pill.textContent = '🎬 BEMUTATÓ MÓD';
+        } else {
+            pill.style.cssText = 'display:block;background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:auto;';
+            pill.textContent = '🎓 GYAKORLÓ MÓD';
         }
     }
 
