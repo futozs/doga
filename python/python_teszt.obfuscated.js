@@ -838,7 +838,7 @@ function updateScoringUI(results) {
         let color, title;
         if (r.pending || r.pyodideFailed) {
             color = '#f59e0b';
-            title = r.pyodideFailed ? '⏳ ' + r.criterion.label + ' (futtatás szükséges)' : '⏳ ' + r.criterion.label;
+            title = '⏳ ' + r.criterion.label + ' → kattints a Pontozás gombra a kiértékeléshez';
         } else if (r.passed) {
             color = '#27ae60';
             title = '✓ ' + r.criterion.label;
