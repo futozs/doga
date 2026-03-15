@@ -1361,13 +1361,36 @@
                     <div id="end-student-name"></div>
                     <p class="info-text" id="end-message">A válaszaidat elküldtük a tanárnak.</p>
                     <p class="info-text" id="final-time"></p>
-                    <p class="info-text" style="margin-top:1rem;font-size:0.9rem;color:#64748b;">Mit szeretnél ezután?</p>
-                    <div style="margin-top:0.7rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-                        <a href="index.html" style="display:inline-block;padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;border:1px solid #2d5986;"><i class="fab fa-python"></i> Újra Python</a>
-                        <a href="../web/index.html" style="display:inline-block;padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;border:1px solid #2d5986;"><i class="fas fa-globe"></i> WEB feladat</a>
-                        <button id="btn-show-results" onclick="document.getElementById('end-results').style.display='block';this.style.display='none';" style="padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;border:1px solid #2d5986;font-weight:600;font-size:0.9rem;cursor:pointer;"><i class="fas fa-chart-bar"></i> Eredményeim</button>
+
+                    <!-- Éles/vizsga mód: sima gombok -->
+                    <div id="end-live-buttons">
+                        <p class="info-text" style="margin-top:1rem;font-size:0.9rem;color:#64748b;">Mit szeretnél ezután?</p>
+                        <div style="margin-top:0.7rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+                            <a href="index.html" style="display:inline-block;padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;border:1px solid #2d5986;"><i class="fab fa-python"></i> Újra Python</a>
+                            <a href="../web/index.html" style="display:inline-block;padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;border:1px solid #2d5986;"><i class="fas fa-globe"></i> WEB feladat</a>
+                            <button id="btn-show-results" onclick="document.getElementById('end-results').style.display='block';this.style.display='none';" style="padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;border:1px solid #2d5986;font-weight:600;font-size:0.9rem;cursor:pointer;"><i class="fas fa-chart-bar"></i> Eredményeim</button>
+                        </div>
+                        <div id="end-results" style="display:none;margin-top:1.2rem;text-align:left;background:#0f1b2d;border-radius:10px;padding:1rem 1.2rem;max-height:260px;overflow-y:auto;"></div>
                     </div>
-                    <div id="end-results" style="display:none;margin-top:1.2rem;text-align:left;background:#0f1b2d;border-radius:10px;padding:1rem 1.2rem;max-height:260px;overflow-y:auto;"></div>
+
+                    <!-- Gyakorló mód: korábbi körök -->
+                    <div id="end-practice-history" style="display:none;margin-top:1.2rem;"></div>
+
+                    <!-- Gyakorló mód: újrakezdés típusválasztóval -->
+                    <div id="end-practice-restart" style="display:none;margin-top:1.2rem;">
+                        <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:0.6rem;">Szeretnél még gyakorolni?</p>
+                        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem;">
+                            <button class="task-type-btn active" data-type="random" onclick="setTaskType('random', this)">🎲 Vegyes</button>
+                            <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)">8 pontos × 3</button>
+                            <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)">14 pontos × 3</button>
+                            <button class="task-type-btn" disabled>18 pontos (hamarosan)</button>
+                        </div>
+                        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+                            <button onclick="restartPractice()" style="padding:0.65rem 1.6rem;background:linear-gradient(135deg,#059669,#10b981);color:white;border:none;border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;">🔄 Még egy kör!</button>
+                            <a href="../portal.html" style="display:inline-flex;align-items:center;padding:0.65rem 1.3rem;background:#1e3a5f;color:#e2e8f0;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;border:1px solid #2d5986;">← Főmenü</a>
+                        </div>
+                    </div>
+
                     <div style="margin-top:1.4rem;padding-top:1rem;border-top:1px solid #1e3a5f;">
                         <button onclick="sessionStorage.clear();window.location.href='index.html';" style="background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;"><i class="fas fa-right-from-bracket"></i> Kijelentkezés (más tanuló lép be)</button>
                     </div>
@@ -1383,6 +1406,22 @@
             <button onclick="document.getElementById('debug-panel').style.display='none'" style="background: #f00; color: #fff; border: none; padding: 2px 8px; cursor: pointer; border-radius: 3px;">X</button>
         </div>
         <div id="debug-content"></div>
+    </div>
+
+    <!-- Megoldás Modal (csak olvasható) -->
+    <div id="solution-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:#1e2d3d; border:1px solid #2d4a6b; border-radius:12px; max-width:720px; width:92%; max-height:80vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+            <div style="padding:0.9rem 1.2rem; border-bottom:1px solid #2d4a6b; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#4ade80; font-weight:600; font-size:0.95rem;">📋 Megoldás (csak olvasható)</span>
+                <button onclick="document.getElementById('solution-modal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:1.3rem; cursor:pointer; line-height:1;">✕</button>
+            </div>
+            <div style="padding:1rem 1.2rem; overflow-y:auto; flex:1;">
+                <pre id="solution-modal-code" style="margin:0; color:#e2e8f0; font-family:'Consolas','Courier New',monospace; font-size:14px; white-space:pre-wrap; word-break:break-word; line-height:1.6;"></pre>
+            </div>
+            <div style="padding:0.7rem 1.2rem; border-top:1px solid #2d4a6b; color:#fbbf24; font-size:0.8rem; text-align:center;">
+                ⚠️ A megoldókulcs megtekintése miatt ez a kör nem kerül a statisztikába.
+            </div>
+        </div>
     </div>
 
     <!-- Confirmation Modal -->
@@ -1422,7 +1461,7 @@
         </div>
     </div>
 
-    <script src="python_teszt.obfuscated.js?v=20260315b"></script>
+    <script src="python_teszt.obfuscated.js"></script>
     <script>
         // Előtöltés sessionStorage.kandoUser-ből
         (function () {
