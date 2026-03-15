@@ -2011,7 +2011,6 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
             try {
                 const resp = await fetch(GAS_URL + '?action=saveMegoldas', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ admin_password: GAS_ADMIN_PASSWORD, feladatId: taskId, solution, hint1, hint2, hint3 })
                 });
                 const data = await resp.json();
