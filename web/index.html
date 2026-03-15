@@ -71,7 +71,11 @@
             <button id="btn-wrap" type="button" title="Kijelölés becsomagolása tag-be">Wrap</button>
             <button id="btn-format" type="button" title="Kód formázása">Formáz</button>
             <button id="btn-starter" type="button" disabled title="Kiindulás betöltése"><i class="fas fa-rotate-left"></i> Kiindulás</button>
-            <button id="btn-theme-toggle" type="button" class="btn-sm" title="Sötét / Világos mód"><i class="fas fa-moon"></i></button>
+            <span style="display:flex;align-items:center;gap:3px;">
+              <button onclick="changeWebFontSize(-1)" type="button" class="btn-sm" title="Betűméret csökkentése" style="font-size:1rem;padding:2px 8px;line-height:1;">−</button>
+              <span id="web-font-size-display" style="color:#94a3b8;font-size:0.8rem;min-width:36px;text-align:center;">18px</span>
+              <button onclick="changeWebFontSize(1)" type="button" class="btn-sm" title="Betűméret növelése" style="font-size:1rem;padding:2px 8px;line-height:1;">+</button>
+            </span>
             <span class="status" id="status">Válassz feladatot…</span>
           </div>
         </div>

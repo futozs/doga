@@ -1408,6 +1408,15 @@ function updateHtmlTokenDecorations() {
   htmlTokenDecorations = htmlEditor.deltaDecorations(htmlTokenDecorations, nextDecorations);
 }
 
+let webFontSize = 18;
+function changeWebFontSize(delta) {
+  webFontSize = Math.min(36, Math.max(10, webFontSize + delta));
+  try { if (htmlEditor) htmlEditor.updateOptions({ fontSize: webFontSize }); } catch(e) {}
+  try { if (cssEditor) cssEditor.updateOptions({ fontSize: webFontSize }); } catch(e) {}
+  const display = document.getElementById('web-font-size-display');
+  if (display) display.textContent = webFontSize + 'px';
+}
+
 function createEditor(monaco, elementId, language, value) {
   const editor = monaco.editor.create(document.getElementById(elementId), {
     value,
@@ -1416,8 +1425,8 @@ function createEditor(monaco, elementId, language, value) {
     bracketPairColorization: { enabled: true },
     guides: { bracketPairs: true },
     minimap: { enabled: false },
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 18,
+    lineHeight: 26,
     tabSize: 2,
     insertSpaces: true,
     wordWrap: "on",
@@ -2584,68 +2593,7 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
       },
     });
 
-    monaco.editor.defineTheme("vizsga-light", {
-      base: "vs",
-      inherit: true,
-      semanticHighlighting: false,
-      rules: [
-        { token: "",                              foreground: "000000" },
-        // HTML tokenek – Iskolai light téma
-        { token: "tag",                           foreground: "800000", fontStyle: "bold" },
-        { token: "tag.html",                      foreground: "800000", fontStyle: "bold" },
-        { token: "metatag",                       foreground: "800000", fontStyle: "bold" },
-        { token: "metatag.html",                  foreground: "800000", fontStyle: "bold" },
-        { token: "delimiter",                     foreground: "0000FF" },
-        { token: "delimiter.html",                foreground: "0000FF" },
-        { token: "attribute",                     foreground: "FF0000", fontStyle: "bold" },
-        { token: "attribute.name",                foreground: "FF0000", fontStyle: "bold" },
-        { token: "attribute.name.html",           foreground: "FF0000", fontStyle: "bold" },
-        { token: "attribute.value",               foreground: "0000FF" },
-        { token: "attribute.value.html",          foreground: "0000FF" },
-        { token: "string",                        foreground: "0000FF" },
-        { token: "string.html",                   foreground: "0000FF" },
-        { token: "comment",                       foreground: "008000", fontStyle: "italic" },
-        { token: "comment.html",                  foreground: "008000", fontStyle: "italic" },
-        // CSS tokenek
-        { token: "selector.css",                  foreground: "800000", fontStyle: "bold" },
-        { token: "keyword.css",                   foreground: "0070C1", fontStyle: "bold" },
-        { token: "property",                      foreground: "0070C1" },
-        { token: "property.css",                  foreground: "0070C1" },
-        { token: "attribute.value.css",           foreground: "0451A5" },
-        { token: "attribute.value.number.css",    foreground: "098658", fontStyle: "bold" },
-        { token: "attribute.value.unit.css",      foreground: "098658" },
-        { token: "string.css",                    foreground: "A31515" },
-        { token: "comment.css",                   foreground: "008000", fontStyle: "italic" },
-        // Általános
-        { token: "keyword",                       foreground: "0000FF", fontStyle: "bold" },
-        { token: "number",                        foreground: "098658", fontStyle: "bold" },
-        { token: "entity",                        foreground: "800000" },
-      ],
-      colors: {
-        "editor.background": "#FFFFFF",
-        "editor.foreground": "#000000",
-        "editorLineNumber.foreground": "#333333",
-        "editorLineNumber.activeForeground": "#000000",
-        "editorCursor.foreground": "#000000",
-        "editor.selectionBackground": "#ADD6FF",
-        "editor.lineHighlightBackground": "#E8E8E8",
-        "editorIndentGuide.background": "#CCCCCC",
-        "editorWhitespace.foreground": "#BBBBBB",
-      },
-    });
-
-    const savedTheme = localStorage.getItem('vizsga_theme') || 'dark';
-    let editorLight = savedTheme === 'light';
-    monaco.editor.setTheme(editorLight ? 'vizsga-light' : 'vizsga-contrast');
-    const themeBtn = document.getElementById('btn-theme-toggle');
-    if (themeBtn) themeBtn.innerHTML = editorLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-
-    document.getElementById('btn-theme-toggle').addEventListener('click', () => {
-      editorLight = !editorLight;
-      monaco.editor.setTheme(editorLight ? 'vizsga-light' : 'vizsga-contrast');
-      localStorage.setItem('vizsga_theme', editorLight ? 'light' : 'dark');
-      document.getElementById('btn-theme-toggle').innerHTML = editorLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    });
+    monaco.editor.setTheme('vizsga-contrast');
 
     htmlEditor = createEditor(monaco, "html-editor", "html", "");
     cssEditor = createEditor(monaco, "css-editor", "css", "");
