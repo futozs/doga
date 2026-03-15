@@ -304,14 +304,29 @@
 
         /* Felső sáv */
         .quiz-top-bar {
-            display: flex;
-            justify-content: flex-start;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             background: #f8f9fa;
-            padding: 0.4rem 1rem;
+            padding: 0.3rem 1rem;
             border-bottom: 2px solid #dee2e6;
             flex-shrink: 0;
             gap: 0.5rem;
+        }
+        .qtb-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .qtb-center {
+            display: flex;
+            justify-content: center;
+        }
+        .qtb-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 1rem;
         }
 
         /* Split konténer */
@@ -383,9 +398,8 @@
         .live-score {
             display: flex;
             align-items: center;
-            gap: 1.2rem;
-            padding: 0 0.4rem;
-            margin-left: auto;
+            gap: 0.8rem;
+            white-space: nowrap;
         }
 
         #score-display {
@@ -924,6 +938,10 @@
             border-bottom: 1px solid #1e3a5f;
         }
 
+        .qtb-left a, .qtb-left span { color: #cbd5e1; }
+        #score-display { color: #e2e8f0; }
+        .timer { color: #e2e8f0; }
+
         .quiz-left {
             border-right: 1px solid #1e3a5f;
             background: #0d1117;
@@ -1203,16 +1221,23 @@
 
             <!-- Felső sáv: navigáció + pontszám + időmérő -->
             <div class="quiz-top-bar">
-                <img src="kandologo2.png" alt="Kandó KSZKI" style="height:26px;width:auto;flex-shrink:0;opacity:0.85;">
-                <span id="quiz-user-info" style="font-size:0.8rem;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;flex-shrink:1;"></span>
-                <a id="btn-quiz-portal-back" href="../portal.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #6b7280;border-radius:8px;color:#6b7280;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#6b7280';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#6b7280'">← Főmenü</a>
-                <a id="btn-quiz-switch-web" href="../web/index.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #e94560;border-radius:8px;color:#e94560;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#e94560';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#e94560'"><i class="fas fa-globe"></i> WEB</a>
-                <div class="task-navigation" id="task-navigation"></div>
-                <div class="live-score">
-                    <span id="score-display">0 / 30 pont</span>
-                    <span class="score-grade grade-1" id="score-grade">Érdemjegy: 1</span>
+                <!-- Bal: logó + név + gombok + mód -->
+                <div class="qtb-left">
+                    <img src="kandologo2.png" alt="Kandó KSZKI" style="height:26px;width:auto;flex-shrink:0;opacity:0.85;">
+                    <span id="quiz-user-info" style="font-size:0.8rem;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;flex-shrink:1;"></span>
+                    <a id="btn-quiz-portal-back" href="../portal.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #6b7280;border-radius:8px;color:#6b7280;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;" onmouseover="this.style.background='#6b7280';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#6b7280'">← Főmenü</a>
+                    <a id="btn-quiz-switch-web" href="../web/index.html" style="display:none;padding:4px 12px;background:transparent;border:1px solid #e94560;border-radius:8px;color:#e94560;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;" onmouseover="this.style.background='#e94560';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#e94560'"><i class="fas fa-globe"></i> WEB</a>
                 </div>
-                <div class="timer" id="global-timer">Hátralévő idő: 45:00</div>
+                <!-- Közép: feladat gombok -->
+                <div class="qtb-center">
+                    <div class="task-navigation" id="task-navigation"></div>
+                </div>
+                <!-- Jobb: pont + érdemjegy + idő -->
+                <div class="qtb-right">
+                    <span id="score-display" style="font-size:1rem;font-weight:700;white-space:nowrap;">0 / 30 pont</span>
+                    <span class="score-grade grade-1" id="score-grade">Érdemjegy: 1</span>
+                    <div class="timer" id="global-timer">44:57</div>
+                </div>
             </div>
 
             <!-- Kétpaneles elrendezés -->

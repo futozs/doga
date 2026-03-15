@@ -530,9 +530,9 @@ async function startTest() {
                 pill.style.cssText = 'background:#0d2b0d;border:1px solid #2ed573;color:#2ed573;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:700;white-space:nowrap;flex-shrink:0;';
                 pill.textContent = '🎓 GYAKORLÓ MÓD';
             }
-            // Logo után, de navigáció előtt szúrjuk be
-            const nav = document.getElementById('task-navigation');
-            if (nav) topBar.insertBefore(pill, nav);
+            // Bal blokkba szúrjuk be (qtb-left)
+            const qtbLeft = document.querySelector('.qtb-left');
+            if (qtbLeft) qtbLeft.appendChild(pill);
             else topBar.insertBefore(pill, topBar.firstChild);
         }
     }
