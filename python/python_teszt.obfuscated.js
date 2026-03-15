@@ -544,14 +544,6 @@ async function startTest() {
         }
     }
 
-    // Vízjel – tanuló neve + emailje (screenshothoz)
-    if (!document.getElementById('test-watermark')) {
-        const wm = document.createElement('div');
-        wm.id = 'test-watermark';
-        wm.style.cssText = 'position:fixed;bottom:6px;right:10px;color:rgba(255,255,255,0.12);font-size:0.7rem;z-index:100;pointer-events:none;user-select:none;letter-spacing:0.3px;';
-        wm.textContent = (studentData.name || '') + ' · ' + (studentData.email || '');
-        document.body.appendChild(wm);
-    }
 
     // Oktatói/bemutató módban nincs fullscreen kényszer; vizsga módban igen
     if (!isTeacherMode && (testMode === 'live' || testMode === 'vizsga')) {
