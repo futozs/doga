@@ -23,8 +23,19 @@ teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes
 teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli
 
 Tippek:
+Kérd be a két számot input()-tal, majd alakítsd őket int()-re!
+Használj if / elif / else elágazást: ha az első nagyobb, ha a második nagyobb, ha egyenlők.
+Az egyenlőség esetét elif a == b: vagy else: ággal kezeld.
 
 Megoldas:
+a = int(input("Add meg az első számot: "))
+b = int(input("Add meg a második számot: "))
+if a > b:
+    print("A nagyobb szám:", a)
+elif b > a:
+    print("A nagyobb szám:", b)
+else:
+    print("A két szám egyenlő!")
 
 2. feladat
 
@@ -62,8 +73,22 @@ tartalmaz:Döntetlen|A döntetlen esetet kezeli a kódban
 tartalmaz:dobása|A dobásokat kiírja a képernyőre
 
 Tippek:
+Importáld a random modult, majd random.randint(1, 6)-tal generálj véletlenszámot mindkét félnek.
+Tárold el a dobásokat változókba, és írd ki őket a minta szerint: print("A játékos dobása:", jatekos)
+Hasonlítsd össze a két dobást if / elif / else-szel.
 
 Megoldas:
+import random
+jatekos = random.randint(1, 6)
+gep = random.randint(1, 6)
+print("A játékos dobása:", jatekos)
+print("A gép dobása:", gep)
+if jatekos > gep:
+    print("A játékos nyert!")
+elif gep > jatekos:
+    print("A gép nyert!")
+else:
+    print("Döntetlen!")
 
 3. feladat
 
@@ -97,8 +122,20 @@ teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva
 teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva
 
 Tippek:
+Kérd be a nevet és az életkort, az életkort alakítsd int()-re.
+Ha az életkor <= 14, gyerekjegy jár: az ár 3000 * 0.5 = 1500 Ft.
+A kiírásnál a nevet is szerepeltesd: print(nev, "a jegyed ára:", ar, "Ft")
 
 Megoldas:
+nev = input("Add meg a neved: ")
+kor = int(input("Add meg a korodat: "))
+if kor <= 14:
+    print("Gyerek jegyet kapsz.")
+    ar = 1500
+else:
+    print("Felnőtt jegyet kapsz.")
+    ar = 3000
+print(nev, "a jegyed ára:", ar, "Ft")
 
 4. feladat
 
@@ -126,8 +163,19 @@ teszt:Réka,14:Jó napot, Réka|Nappali köszöntés helyes
 teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes
 
 Tippek:
+Kérd be a nevet és az órát, az órát alakítsd int()-re.
+Három tartomány van: 0–9 reggel, 10–17 nappal, 18–23 este – if / elif / else-szel.
+A köszöntésbe illeszd be a nevet: print("Jó reggelt,", nev + "!")
 
 Megoldas:
+nev = input("Add meg a neved: ")
+ora = int(input("Hány óra van? "))
+if ora < 10:
+    print("Jó reggelt,", nev + "!")
+elif ora < 18:
+    print("Jó napot,", nev + "!")
+else:
+    print("Jó estét,", nev + "!")
 
 5. feladat
 
@@ -162,8 +210,22 @@ teszt:38.6:gyógyszer|Lázat felismeri és kezel
 teszt:39.8:orvos|Nagyon magas lázat felismeri
 
 Tippek:
+Az input float()-ra alakítandó, nem int()-re, mert tizedes értékek is előfordulnak.
+Öt tartomány van – if / elif / elif / elif / else struktúrával oldd meg.
+A tartományok sorrendje fontos: menj a legalsótól felfelé (< 36, <= 37, <= 38, <= 39.5, else).
 
 Megoldas:
+ho = float(input("Add meg a testhőmérsékleted (°C): "))
+if ho < 36:
+    print("Kihűltél, takarózz be, igyál meleg teát.")
+elif ho <= 37:
+    print("Normál testhőmérséklet, minden rendben.")
+elif ho <= 38:
+    print("Hőemelkedés, pihenj és igyál folyadékot.")
+elif ho <= 39.5:
+    print("Lázas vagy. Vegyél be gyógyszert, igyál sok folyadékot, pihenj sokat.")
+else:
+    print("Nagyon magas lázad van, fordulj orvoshoz!")
 
 6. feladat
 
@@ -197,8 +259,18 @@ teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli
 teszt:120:A torony magas|Magas torony esetét felismeri
 
 Tippek:
+Kérd be a magasságot és alakítsd int()-re.
+Három eset van: kisebb mint 30, 30 és 100 között (határokat beleértve), nagyobb mint 100.
+A határokat pontosan kezeld: if magassag < 30, elif magassag <= 100, else.
 
 Megoldas:
+magassag = int(input("A torony magassága (m): "))
+if magassag < 30:
+    print("A torony alacsony.")
+elif magassag <= 100:
+    print("A torony megfelelő magasságú.")
+else:
+    print("A torony magas.")
 
 7. feladat
 
@@ -237,8 +309,17 @@ teszt:16:zárva|Pontosan záráskor zárva van
 teszt:17:zárva|Zárás utáni időt felismeri
 
 Tippek:
+A bolt 8 és 15 óra között (8 <= ora < 16) van nyitva – 16-kor már zárva.
+Nyitva esetén a hátralévő idő kiszámítása: 16 - ora.
+Két eset van: nyitva (if) és zárva (else).
 
 Megoldas:
+ora = int(input("Hány óra van most? "))
+if 8 <= ora < 16:
+    print("A bolt nyitva van.")
+    print("Ennyi órád van még odaérni:", 16 - ora)
+else:
+    print("A bolt zárva van.")
 
 8. feladat
 
@@ -279,8 +360,22 @@ teszt:12:Tél|Téli hónapot felismeri
 teszt:0:Nincs|Érvénytelen hónapot jelez
 
 Tippek:
+Tél: 12, 1, 2 – Tavasz: 3, 4, 5 – Nyár: 6, 7, 8 – Ősz: 9, 10, 11.
+Használj in operátort: if honap in [3, 4, 5]: – ez a legelegánsabb megoldás.
+Ne felejtsd el a hibás tartomány kezelését: ha a szám nem 1–12 között van, írd ki "Nincs ilyen hónap!"
 
 Megoldas:
+honap = int(input("Add meg milyen hónap van (1-12): "))
+if honap in [3, 4, 5]:
+    print("Tavasz van!")
+elif honap in [6, 7, 8]:
+    print("Nyár van!")
+elif honap in [9, 10, 11]:
+    print("Ősz van!")
+elif honap in [12, 1, 2]:
+    print("Tél van!")
+else:
+    print("Nincs ilyen hónap!")
 
 9. feladat
 
@@ -314,8 +409,20 @@ teszt:44:Felnőtt|Felnőtt kategóriát felismeri
 teszt:70:Idős|Idős kategóriát felismeri
 
 Tippek:
+Négy kategória van: 0–14, 15–24, 25–64, 65+.
+Az if / elif / elif / else struktúra ideális erre.
+Elég a felső határt vizsgálni sorban: if kor <= 14, elif kor <= 24, elif kor <= 64, else.
 
 Megoldas:
+kor = int(input("Add meg az életkorod! "))
+if kor <= 14:
+    print("Gyermek vagy.")
+elif kor <= 24:
+    print("Fiatal vagy.")
+elif kor <= 64:
+    print("Felnőtt vagy.")
+else:
+    print("Idős vagy.")
 
 10. feladat
 
@@ -347,8 +454,23 @@ teszt:50,1.75:Sovány|Sovány kategóriát felismeri
 teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri
 
 Tippek:
+Mindkét értéket float()-ra kell alakítani.
+BMI = suly / (magassag ** 2), majd round(bmi, 2) kerekítéshez.
+Négy kategória: < 18.5 sovány, < 25 normál, < 30 túlsúlyos, >= 30 elhízott.
 
 Megoldas:
+suly = float(input("Add meg a testsúlyod kg-ban! "))
+magassag = float(input("Add meg a magasságod méterben! "))
+bmi = round(suly / (magassag ** 2), 2)
+print("A BMI értéked:", bmi)
+if bmi < 18.5:
+    print("Sovány vagy!")
+elif bmi < 25:
+    print("Normál testsúlyú vagy!")
+elif bmi < 30:
+    print("Túlsúlyos vagy!")
+else:
+    print("Elhízott vagy!")
 
 11. feladat
 
@@ -384,8 +506,20 @@ teszt:4,5,3:Megfelelt|Megfelelt esetét helyesen kezeli
 teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli
 
 Tippek:
+Kérd be a három jegyet külön-külön, mindegyiket int()-re alakítva.
+Átlag: round((j1 + j2 + j3) / 3, 2) – ez két tizedesre kerekít.
+Ha az átlag >= 2.0: "Megfelelt.", különben "Nem felelt meg."
 
 Megoldas:
+j1 = int(input("Add meg az 1. jegyet! "))
+j2 = int(input("Add meg a 2. jegyet! "))
+j3 = int(input("Add meg a 3. jegyet! "))
+atlag = round((j1 + j2 + j3) / 3, 2)
+print("Átlag:", atlag)
+if atlag >= 2.0:
+    print("Megfelelt.")
+else:
+    print("Nem felelt meg.")
 
 12. feladat
 
@@ -423,8 +557,18 @@ teszt:100:folyékony|100 fokon még folyékony
 teszt:150:légnemű|100 fok felett légnemű
 
 Tippek:
+Az input lehet negatív is – float() vagy int() is megfelelő.
+Három tartomány: < 0 szilárd, 0–100 folyékony, > 100 légnemű.
+A 0 és 100 fokos határértékek folyékonyak – figyelj a <= jelekre!
 
 Megoldas:
+ho = float(input("Add meg a hőmérsékletet Celsius fokban! "))
+if ho < 0:
+    print("A víz halmazállapota: szilárd")
+elif ho <= 100:
+    print("A víz halmazállapota: folyékony")
+else:
+    print("A víz halmazállapota: légnemű")
 
 13. feladat
 Pont: 14
@@ -472,8 +616,26 @@ teszt:0:0 Ft|Azonnal kilépve 0 Ft bevételt jelez
 teszt:5000,10000,15000,0:1200 Ft|Három tranzakció összbevétele helyes (200+500+500)
 
 Tippek:
+Először írd meg a KezelesiKoltseg(osszeg) függvényt: ha osszeg < 10000: return 200, else: return 500.
+A főprogramban bevetel = 0-val indíts, majd while True: ciklust és break-et használj 0-ra.
+Minden körben add hozzá a költséget a bevételhez: bevetel += koltseg.
 
 Megoldas:
+def KezelesiKoltseg(osszeg):
+    if osszeg < 10000:
+        return 200
+    else:
+        return 500
+
+bevetel = 0
+while True:
+    osszeg = int(input("Adja meg a csekk összegét (0 a kilépés): "))
+    if osszeg == 0:
+        break
+    koltseg = KezelesiKoltseg(osszeg)
+    print("A fizetendő költség:", koltseg, "Ft")
+    bevetel += koltseg
+print("A posta teljes bevétele a költségekből:", bevetel, "Ft")
 
 14. feladat
 Pont: 14
@@ -524,8 +686,31 @@ teszt:-2,-1:Hibás|Negatív adat esetén Hibás adatot jelez
 teszt:8,12,-1:1500 Ft|Összbírságot helyesen összesíti (500+1000=1500)
 
 Tippek:
+A Birsag(nap) függvény: <= 5 → 0, <= 10 → 500, > 10 → 1000. Ne feledd a return-t!
+A főciklusban először vizsgáld a -1-et (break), aztán a negatív számokat (Hibás!), végül hívd a függvényt.
+bevetel += birsag csak akkor hajtódjon végre, ha az adat helyes volt (nem negatív).
 
 Megoldas:
+def Birsag(nap):
+    if nap <= 5:
+        return 0
+    elif nap <= 10:
+        return 500
+    else:
+        return 1000
+
+bevetel = 0
+while True:
+    nap = int(input("Hány napot késett? (-1 a kilépés): "))
+    if nap == -1:
+        break
+    elif nap < 0:
+        print("Hibás adat!")
+    else:
+        b = Birsag(nap)
+        print("A bírság:", b, "Ft")
+        bevetel += b
+print("A teljes beszedett bírság:", bevetel, "Ft")
 
 15. feladat
 Pont: 14
@@ -586,8 +771,23 @@ teszt:15000,10000,9850,4568,12000,5800,6900:Nincs teljesítve|Nem teljesített n
 teszt:15000,10000,9850,4568,12000,5800,6900:2|Sikeresen teljesített napok számát megadja
 
 Tippek:
+Az Aktivitas(lepesek) függvény egyszerű: return lepesek > 10000 – ez automatikusan True/False értéket ad vissza.
+for i in range(1, 8): fut 1-től 7-ig, így f"{i}. nap lépésszáma: " szép számozást ad.
+Ha Aktivitas(lepesek) True, növeld a sikeres_napok-at 1-gyel és írd ki "Teljesítve"-t, különben "Nincs teljesítve"-t.
 
 Megoldas:
+def Aktivitas(lepesek):
+    return lepesek > 10000
+
+sikeres_napok = 0
+for i in range(1, 8):
+    lepesek = int(input(f"{i}. nap lépésszáma: "))
+    if Aktivitas(lepesek):
+        print("Teljesítve")
+        sikeres_napok += 1
+    else:
+        print("Nincs teljesítve")
+print("A héten", sikeres_napok, "napon sikerült a cél!")
 
 16. feladat
 Pont: 14
@@ -642,3 +842,26 @@ teszt:150,50,49,178,168,200:Leverte|150 cm-nél Leverte eredmény
 teszt:150,50,49,178,168,200:Átment|178 cm-nél Átment eredmény
 teszt:150,50,49,178,168,200:alacsony|49 cm esetén túl alacsony jelzés
 teszt:150,50,49,178,168,200:200 cm|A legnagyobb próbálkozás 200 cm
+
+Tippek:
+A Siker(magassag) függvény: ha magassag > 150: return "Átment", else: return "Leverte".
+for i in range(1, 7): fut 1-től 6-ig – így i-t használhatod a bekérés számozásához.
+Ha magassag >= 50: hívd meg Siker-t, és frissítsd a legnagyobbat: if magassag > legnagyobb: legnagyobb = magassag.
+
+Megoldas:
+def Siker(magassag):
+    if magassag > 150:
+        return "Átment"
+    else:
+        return "Leverte"
+
+legnagyobb = 0
+for i in range(1, 7):
+    magassag = int(input(f"{i}. ugrás magassága (cm): "))
+    if magassag < 50:
+        print("Ez túl alacsony!")
+    else:
+        print("Eredmény:", Siker(magassag))
+        if magassag > legnagyobb:
+            legnagyobb = magassag
+print("A legnagyobb próbálkozás:", legnagyobb, "cm")
