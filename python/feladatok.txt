@@ -22,6 +22,10 @@ teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg
 teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes
 teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli
 
+Tippek:
+
+Megoldas:
+
 2. feladat
 
 Írj programot, ahol véletlenszám generálással játszon a gép és a játékos.
@@ -57,6 +61,10 @@ tartalmaz:gép nyert|A gép győzelmét kezeli a kódban
 tartalmaz:Döntetlen|A döntetlen esetet kezeli a kódban
 tartalmaz:dobása|A dobásokat kiírja a képernyőre
 
+Tippek:
+
+Megoldas:
+
 3. feladat
 
 Készíts egy programot, amely bekéri a felhasználó nevét és életkorát, majd a kapott adatok alapján kiszámítja a mozijegyének árát.
@@ -88,6 +96,10 @@ tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza
 teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva
 teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva
 
+Tippek:
+
+Megoldas:
+
 4. feladat
 
 Készíts egy programot, amely köszön a felhasználónak a napszaknak megfelelően.
@@ -112,6 +124,10 @@ elif|Több napszakot kezel (elif)
 teszt:Réka,8:Jó reggelt, Réka|Reggeli köszöntés helyes
 teszt:Réka,14:Jó napot, Réka|Nappali köszöntés helyes
 teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes
+
+Tippek:
+
+Megoldas:
 
 5. feladat
 
@@ -145,6 +161,10 @@ teszt:37.5:pihenj|Hőemelkedést felismeri
 teszt:38.6:gyógyszer|Lázat felismeri és kezel
 teszt:39.8:orvos|Nagyon magas lázat felismeri
 
+Tippek:
+
+Megoldas:
+
 6. feladat
 
 Készíts egy programot, amiben bekérsz egy egész számot. Ez egy torony magassága lesz, méterben meghatározva.
@@ -175,6 +195,10 @@ teszt:15:alacsony|Alacsony torony esetét felismeri
 teszt:30:megfelelő|Alsó határértéket (30m) helyesen kezeli
 teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli
 teszt:120:A torony magas|Magas torony esetét felismeri
+
+Tippek:
+
+Megoldas:
 
 7. feladat
 
@@ -211,6 +235,10 @@ teszt:8:nyitva|Nyitáskor nyitva van
 teszt:12:Ennyi|Nyitva esetén a hátralévő időt kiírja
 teszt:16:zárva|Pontosan záráskor zárva van
 teszt:17:zárva|Zárás utáni időt felismeri
+
+Tippek:
+
+Megoldas:
 
 8. feladat
 
@@ -250,6 +278,10 @@ teszt:10:Ősz|Őszi hónapot felismeri
 teszt:12:Tél|Téli hónapot felismeri
 teszt:0:Nincs|Érvénytelen hónapot jelez
 
+Tippek:
+
+Megoldas:
+
 9. feladat
 
 Írj programot, amelyben bekéred a felhasználó életkorát, majd írd ki, hogy gyermek (0-14 év), fiatal (15-24 év), felnőtt (25-64 év) vagy idős (65+ év) kategóriába tartozik.
@@ -281,6 +313,10 @@ teszt:18:Fiatal|Fiatal kategóriát felismeri
 teszt:44:Felnőtt|Felnőtt kategóriát felismeri
 teszt:70:Idős|Idős kategóriát felismeri
 
+Tippek:
+
+Megoldas:
+
 10. feladat
 
 Írj programot, amelyben bekéred a felhasználó testsúlyát kilogramm-ban és magasságát méterben, majd számítsd ki és írd ki a BMI értékét két tizedesjegyre kerekítve! A program írjon rövid választ a felhasználónak, hogy melyik kategóriába tartozik: Sovány / Normál testsúlyú / Túlsúlyos / Elhízott vagy! szöveggel.
@@ -309,6 +345,10 @@ if|Elágazást használ
 teszt:75,1.8:23.15|BMI értéket helyesen kiszámolja
 teszt:50,1.75:Sovány|Sovány kategóriát felismeri
 teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri
+
+Tippek:
+
+Megoldas:
 
 11. feladat
 
@@ -342,6 +382,10 @@ if|Elágazást használ
 teszt:4,5,3:4.0|Az átlagot helyesen kiszámolja
 teszt:4,5,3:Megfelelt|Megfelelt esetét helyesen kezeli
 teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli
+
+Tippek:
+
+Megoldas:
 
 12. feladat
 
@@ -377,6 +421,10 @@ teszt:0:folyékony|0 fokon folyékony
 teszt:25:folyékony|Normál hőmérsékleten folyékony
 teszt:100:folyékony|100 fokon még folyékony
 teszt:150:légnemű|100 fok felett légnemű
+
+Tippek:
+
+Megoldas:
 
 13. feladat
 Pont: 14
@@ -422,6 +470,10 @@ teszt:10000,0:500 Ft|Pontosan 10000 Ft esetén 500 Ft díjat számol
 teszt:2000,10000,0:700 Ft|Két tranzakció után összbevétel 700 Ft
 teszt:0:0 Ft|Azonnal kilépve 0 Ft bevételt jelez
 teszt:5000,10000,15000,0:1200 Ft|Három tranzakció összbevétele helyes (200+500+500)
+
+Tippek:
+
+Megoldas:
 
 14. feladat
 Pont: 14
@@ -470,6 +522,10 @@ teszt:5,-1:0 Ft|5 napos késésnél 0 Ft bírság
 teszt:8,-1:500 Ft|6-10 napos késésnél 500 Ft bírság
 teszt:-2,-1:Hibás|Negatív adat esetén Hibás adatot jelez
 teszt:8,12,-1:1500 Ft|Összbírságot helyesen összesíti (500+1000=1500)
+
+Tippek:
+
+Megoldas:
 
 15. feladat
 Pont: 14
@@ -529,6 +585,10 @@ teszt:15000,10000,9850,4568,12000,5800,6900:Teljesítve|Sikeres napot felismer
 teszt:15000,10000,9850,4568,12000,5800,6900:Nincs teljesítve|Nem teljesített napot jelez
 teszt:15000,10000,9850,4568,12000,5800,6900:2|Sikeresen teljesített napok számát megadja
 
+Tippek:
+
+Megoldas:
+
 16. feladat
 Pont: 14
 
@@ -573,7 +633,7 @@ return|Függvény visszatérési értéket ad (return)
 tartalmaz:Siker|Siker névvel írja a függvényt
 int_float:1|A magasságot számmá alakítja
 for|For ciklust használ (pontosan 6 alkalommal)
-tartalmaz:ugrás magassága (cm): |A bekérés szövege tartalmazza: "ugrás magassága (cm): "
+tartalmaz:ugrás magassága (cm): |A bekérés szövege tartalmazza: "ugrás magássága (cm): "
 if|Elágazást használ
 tartalmaz:Átment|"Átment" szöveget tartalmazza a kód
 tartalmaz:Leverte|"Leverte" szöveget tartalmazza a kód

@@ -369,8 +369,16 @@ function parseTasks(text) {
     let currentTask = null;
     let inExample = false;
     let inCriteria = false;
+    let inTippek = false;
+    let inMegoldas = false;
     let exampleLines = [];
     let criteriaLines = [];
+    let tippLines = [];
+    let megoldasLines = [];
+
+    const resetSections = () => {
+        inExample = false; inCriteria = false; inTippek = false; inMegoldas = false;
+    };
 
     for (let line of lines) {
         const taskMatch = line.match(/^(\d+)\.\s*feladat/i);
@@ -379,53 +387,35 @@ function parseTasks(text) {
             if (currentTask) {
                 currentTask.example = exampleLines.join('\n');
                 currentTask.criteria = parseCriteria(criteriaLines);
+                currentTask.hints = tippLines.filter(h => h.trim() !== '');
+                currentTask.solution = megoldasLines.join('\n').trim();
                 tasks.push(currentTask);
             }
-
-            currentTask = {
-                number: parseInt(taskMatch[1]),
-                description: '',
-                example: '',
-                points: 8,
-                criteria: []
-            };
-            inExample = false;
-            inCriteria = false;
-            exampleLines = [];
-            criteriaLines = [];
+            currentTask = { number: parseInt(taskMatch[1]), description: '', example: '', points: 8, criteria: [], hints: [], solution: '' };
+            resetSections();
+            exampleLines = []; criteriaLines = []; tippLines = []; megoldasLines = [];
             continue;
         }
 
-        // Pontszám jelölés: "Pont: 14" vagy "Pont: 8"
         const pointMatch = line.match(/^Pont:\s*(\d+)/i);
-        if (pointMatch && currentTask) {
-            currentTask.points = parseInt(pointMatch[1]);
-            continue;
-        }
+        if (pointMatch && currentTask) { currentTask.points = parseInt(pointMatch[1]); continue; }
 
-        // Pontozás szekció
-        if (line.trim() === 'Pontozas:') {
-            inCriteria = true;
-            inExample = false;
-            continue;
-        }
+        if (line.trim() === 'Pontozas:')  { resetSections(); inCriteria = true; continue; }
+        if (line.trim() === 'Tippek:')    { resetSections(); inTippek   = true; continue; }
+        if (line.trim() === 'Megoldas:')  { resetSections(); inMegoldas = true; continue; }
 
-        // Mind a ```python, mind a ``` jelölést támogatja
         if (line.trim() === '```python' || line.trim() === '```') {
-            if (!inCriteria) inExample = !inExample;
+            if (!inCriteria && !inTippek) inExample = inMegoldas ? false : !inExample;
             continue;
         }
-
-        if (line.match(/^Minta kód:/i)) {
-            continue;
-        }
+        if (line.match(/^Minta kód:/i)) continue;
 
         if (currentTask) {
-            if (inCriteria) {
-                if (line.trim() !== '') criteriaLines.push(line.trim());
-            } else if (inExample) {
-                exampleLines.push(line);
-            } else if (line.trim() !== '') {
+            if (inCriteria)  { if (line.trim() !== '') criteriaLines.push(line.trim()); }
+            else if (inTippek)   { if (line.trim() !== '') tippLines.push(line.trim()); }
+            else if (inMegoldas) { megoldasLines.push(line); }
+            else if (inExample)  { exampleLines.push(line); }
+            else if (line.trim() !== '') {
                 if (currentTask.description !== '') currentTask.description += '\n';
                 currentTask.description += line;
             }
@@ -435,6 +425,8 @@ function parseTasks(text) {
     if (currentTask) {
         currentTask.example = exampleLines.join('\n');
         currentTask.criteria = parseCriteria(criteriaLines);
+        currentTask.hints = tippLines.filter(h => h.trim() !== '');
+        currentTask.solution = megoldasLines.join('\n').trim();
         tasks.push(currentTask);
     }
 
@@ -2459,10 +2451,9 @@ function formatDuration(totalSeconds) {
 function showNextHint() {
     const task = selectedTasks[currentTaskIndex];
     if (!task) return;
-    const taskId = String(task.number);
-    const data = megoldasok[taskId];
+    const hints = task.hints && task.hints.length > 0 ? task.hints : (megoldasok[String(task.number)]?.hints || []);
 
-    if (!data || !data.hints || data.hints.length === 0) {
+    if (hints.length === 0) {
         showHintToast('ℹ️ Ehhez a feladathoz nincs tipp.', 0);
         return;
     }
@@ -2470,20 +2461,18 @@ function showNextHint() {
     if (!tippIndex[currentTaskIndex]) tippIndex[currentTaskIndex] = 0;
     const idx = tippIndex[currentTaskIndex];
 
-    if (idx >= data.hints.length) {
+    if (idx >= hints.length) {
         showHintToast('Már az összes tippet láttad! 😊', 0);
         return;
     }
 
-    const hint = data.hints[idx];
     const titles = ['1. Tipp (általános)', '2. Tipp (konkrétabb)', '3. Tipp (majdnem megoldás)'];
-    showHintToast(hint, idx, titles[idx] || `${idx+1}. Tipp`);
+    showHintToast(hints[idx], idx, titles[idx] || `${idx+1}. Tipp`);
     tippIndex[currentTaskIndex] = idx + 1;
 
-    // Gomb frissítése
     const btn = document.getElementById('btn-hint');
     if (btn) {
-        const remaining = data.hints.length - tippIndex[currentTaskIndex];
+        const remaining = hints.length - tippIndex[currentTaskIndex];
         btn.textContent = remaining > 0 ? `💡 Tipp (${remaining} maradt)` : '💡 Nincs több tipp';
     }
 }
@@ -2511,10 +2500,9 @@ function showHintToast(text, level, title) {
 function showSolution() {
     const task = selectedTasks[currentTaskIndex];
     if (!task) return;
-    const taskId = String(task.number);
-    const data = megoldasok[taskId];
+    const solution = (task.solution && task.solution.trim()) ? task.solution : (megoldasok[String(task.number)]?.solution || '');
 
-    if (!data || !data.solution) {
+    if (!solution) {
         showHintToast('Ehhez a feladathoz nincs feltöltött megoldás.', 0, 'ℹ️ Megoldás');
         return;
     }
@@ -2523,7 +2511,7 @@ function showSolution() {
     const codeEl = document.getElementById('solution-modal-code');
     if (!modal || !codeEl) return;
 
-    codeEl.textContent = data.solution;
+    codeEl.textContent = solution;
     modal.style.display = 'flex';
 
     // Flag: ezt a feladatot megoldókulcssal nézte
@@ -2540,8 +2528,7 @@ function retryTask() {
     const btn = document.getElementById('btn-hint');
     const task = selectedTasks[currentTaskIndex];
     if (btn && task) {
-        const data = megoldasok[String(task.number)];
-        const hintCount = data && data.hints ? data.hints.length : 0;
-        btn.textContent = hintCount > 0 ? `💡 Tipp (${hintCount} maradt)` : '💡 Tipp';
+        const hints = task.hints && task.hints.length > 0 ? task.hints : (megoldasok[String(task.number)]?.hints || []);
+        btn.textContent = hints.length > 0 ? `💡 Tipp (${hints.length} maradt)` : '💡 Tipp';
     }
 }
