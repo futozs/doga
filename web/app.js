@@ -1772,6 +1772,10 @@ function updateStudentDisplay() {
           const isLive   = data.test_mode === 'live' || isVizsga;
           if (!isLive && switchBtn) switchBtn.style.display = 'inline-block';
           setModeBadge(isLive);
+          if (isLive) {
+            btnTimerToggle.style.display = 'none';
+            btnTimerReset.style.display = 'none';
+          }
           if (isVizsga && data.vizsga_vege) {
             scheduleVizsgaDeadline(data.vizsga_vege);
           }
@@ -1934,7 +1938,11 @@ function startTimer() {
       }
     } else {
       stopTimer();
-      alert('Az idő lejárt! Mentsd el a munkádat!');
+      if (typeof acLive !== 'undefined' && acLive) {
+        triggerVizsgaDeadline();
+      } else {
+        alert('Az idő lejárt! Mentsd el a munkádat!');
+      }
     }
   }, 1000);
 }
