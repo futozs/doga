@@ -2273,6 +2273,9 @@ async function toggleSources() {
 // Előnézet új lapon megnyitása
 function openPreviewInNewTab() {
   if (!htmlEditor || !cssEditor) return;
+  // Anti-cheat grace: az előnézet új lapon nyílik → blur + visibilitychange elnémítva
+  acPopupGrace = true;
+  setTimeout(() => { acPopupGrace = false; }, 8000);
 
   const html = htmlEditor.getValue();
   const css = cssEditor.getValue();
@@ -2817,9 +2820,9 @@ function initAntiCheat(isLive) {
     }
   });
 
-  // Fül elhagyás
+  // Fül elhagyás (engedélyezett popupok – előnézet, W3S, validátor – ki vannak véve)
   document.addEventListener('visibilitychange', function() {
-    if (document.hidden && acLive) acShow('Elhagytad a böngésző fület!');
+    if (document.hidden && acLive && !acPopupGrace) acShow('Elhagytad a böngésző fület!');
   });
 
   // Fókuszvesztés (Alt+Tab, másik ablakra kattintás)
