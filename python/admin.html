@@ -226,23 +226,27 @@
 
         /* Rangsor tábla – saját layout, nincs csonkítás */
         #rangsor-table {
-            table-layout: auto;
-            min-width: 700px;
+            table-layout: fixed;
+            width: 100%;
+            min-width: 780px;
         }
         #rangsor-table th,
         #rangsor-table td {
-            overflow: visible;
-            text-overflow: clip;
-            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         #rangsor-table th:nth-child(1), #rangsor-table td:nth-child(1) { width: 44px; text-align: center; }
-        #rangsor-table th:nth-child(3), #rangsor-table td:nth-child(3) { width: 72px; text-align: center; }
-        #rangsor-table th:nth-child(4), #rangsor-table td:nth-child(4) { width: 68px; text-align: center; }
-        #rangsor-table th:nth-child(5), #rangsor-table td:nth-child(5) { width: 82px; text-align: center; }
-        #rangsor-table th:nth-child(6), #rangsor-table td:nth-child(6) { width: 82px; text-align: center; }
-        #rangsor-table th:nth-child(7), #rangsor-table td:nth-child(7) { width: 58px; text-align: center; }
-        #rangsor-table th:nth-child(8), #rangsor-table td:nth-child(8) { width: 130px; }
-        #rangsor-table th:nth-child(9), #rangsor-table td:nth-child(9) { width: 78px; text-align: center; }
+        #rangsor-table th:nth-child(2), #rangsor-table td:nth-child(2) { width: 200px; }
+        #rangsor-table th:nth-child(3), #rangsor-table td:nth-child(3) { width: 70px; text-align: center; }
+        #rangsor-table th:nth-child(4), #rangsor-table td:nth-child(4) { width: 70px; text-align: center; }
+        #rangsor-table th:nth-child(5), #rangsor-table td:nth-child(5) { width: 80px; text-align: center; }
+        #rangsor-table th:nth-child(6), #rangsor-table td:nth-child(6) { width: 80px; text-align: center; }
+        #rangsor-table th:nth-child(7), #rangsor-table td:nth-child(7) { width: 56px; text-align: center; }
+        #rangsor-table th:nth-child(8), #rangsor-table td:nth-child(8) { width: 160px; }
+        #rangsor-table th:nth-child(9), #rangsor-table td:nth-child(9) { width: 84px; text-align: center; }
+        /* Szint tartalom soronként – engedélyezzük a törést */
+        #rangsor-table td:nth-child(8) { white-space: normal; }
 
         .table-wrapper { overflow-x: auto; }
 
@@ -785,7 +789,7 @@
                         <th>Osztály</th>
                         <th>Csoport</th>
                         <th>WEB %</th>
-                        <th>Python %</th>
+                        <th>Py %</th>
                         <th>Pont</th>
                         <th>Szint</th>
                         <th><i class="fas fa-fire" style="color:#f97316;"></i> Streak</th>
