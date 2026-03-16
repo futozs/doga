@@ -1437,15 +1437,21 @@
     </div>
 
     <!-- Fullscreen Prompt -->
-    <div id="fullscreen-prompt">
-        <div style="text-align:center;">
-            <h2><i class="fas fa-triangle-exclamation"></i> Fullscreen mód szükséges!</h2>
-            <p style="font-size: 1.2rem; margin-top: 1rem;">A teszt folytatásához maradj fullscreen módban.</p>
-            <div id="fs-countdown" style="display:none; margin-top:1.8rem; color:#94a3b8; font-size:1rem;">
+    <div id="fullscreen-prompt" onclick="reenterFullscreen()" style="cursor:pointer;">
+        <div style="text-align:center;" onclick="event.stopPropagation()">
+            <h2><i class="fas fa-triangle-exclamation"></i> Kilépés a teljes képernyőből!</h2>
+            <p style="font-size: 1rem; margin-top: 0.8rem; color:#94a3b8;">A tartalom rejtve van. Kattints az alábbi gombra a folytatáshoz.</p>
+            <button onclick="reenterFullscreen()" style="margin-top:1.4rem; padding:0.9rem 2.2rem; background:linear-gradient(135deg,#e94560,#c0392b); border:none; border-radius:12px; color:white; font-size:1.1rem; font-weight:700; cursor:pointer; font-family:inherit; letter-spacing:0.3px;">
+                <i class="fas fa-expand"></i> Visszatérés teljes képernyőre
+            </button>
+            <div id="fs-cheat-warn" style="display:none; margin-top:1.2rem; color:#fbbf24; font-size:0.9rem;">
+                <i class="fas fa-triangle-exclamation"></i> Figyelmeztetés folyamatban…
+            </div>
+            <div id="fs-countdown" style="display:none; margin-top:1.4rem; color:#94a3b8; font-size:0.95rem;">
                 Visszatérés a főmenübe:
-                <span id="fs-countdown-num" style="color:#e94560; font-weight:700; font-size:1.4rem; margin:0 4px;">5</span>
+                <span id="fs-countdown-num" style="color:#e94560; font-weight:700; font-size:1.3rem; margin:0 4px;">5</span>
                 másodperc múlva…
-                <div style="margin-top:1rem;">
+                <div style="margin-top:0.8rem;">
                     <button onclick="location.replace('../portal.html')" style="padding:0.5rem 1.6rem; background:transparent; border:1.5px solid #475569; border-radius:8px; color:#94a3b8; cursor:pointer; font-size:0.9rem; font-family:inherit;">
                         <i class="fas fa-house"></i> Főmenü most
                     </button>

@@ -26,6 +26,7 @@ let focusLossTimeout = null;
 let focusCheckInterval = null;
 let fullscreenCheckInterval = null;
 let fsCountdownTimer = null;
+let fsCheatDelayTimer = null;
 let autosaveInterval = null;
 let cheatDetected = false;
 let cheatReason = '';
@@ -1753,16 +1754,38 @@ function handleFullscreenChange() {
     if (!isFullscreen && testActive) {
         // Azonnal feketére váltás – tartalom nem látható
         fullscreenPrompt.style.display = 'flex';
-        startFsCountdown();
         logEvent('Fullscreen exited');
-        showCheatWarning('Kiléptél a teljes képernyős módból');
+        // 3 másodperces grace periódus: visszatérhet büntetés nélkül
+        const warnDiv = document.getElementById('fs-cheat-warn');
+        if (warnDiv) warnDiv.style.display = 'block';
+        clearTimeout(fsCheatDelayTimer);
+        fsCheatDelayTimer = setTimeout(() => {
+            fsCheatDelayTimer = null;
+            startFsCountdown();
+            showCheatWarning('Kiléptél a teljes képernyős módból');
+        }, 3000);
     } else {
         fullscreenPrompt.style.display = 'none';
+        clearTimeout(fsCheatDelayTimer);
+        fsCheatDelayTimer = null;
+        const warnDiv = document.getElementById('fs-cheat-warn');
+        if (warnDiv) warnDiv.style.display = 'none';
         cancelFsCountdown();
         if (isFullscreen) {
             fullscreenEnforced = true;
         }
     }
+}
+
+function reenterFullscreen() {
+    clearTimeout(fsCheatDelayTimer);
+    fsCheatDelayTimer = null;
+    const warnDiv = document.getElementById('fs-cheat-warn');
+    if (warnDiv) warnDiv.style.display = 'none';
+    cancelFsCountdown();
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) req.call(el);
 }
 
 // Láthatóság változás kezelése
@@ -1970,6 +1993,8 @@ function handleCheating(reason) {
         autosaveInterval = null;
     }
 
+    clearTimeout(fsCheatDelayTimer);
+    fsCheatDelayTimer = null;
     const overlay = document.getElementById('cheat-warning-overlay');
     if (overlay) overlay.style.display = 'none';
     fullscreenPrompt.style.display = 'none';
