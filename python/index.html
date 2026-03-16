@@ -1438,9 +1438,19 @@
 
     <!-- Fullscreen Prompt -->
     <div id="fullscreen-prompt">
-        <div>
+        <div style="text-align:center;">
             <h2><i class="fas fa-triangle-exclamation"></i> Fullscreen mód szükséges!</h2>
             <p style="font-size: 1.2rem; margin-top: 1rem;">A teszt folytatásához maradj fullscreen módban.</p>
+            <div id="fs-countdown" style="display:none; margin-top:1.8rem; color:#94a3b8; font-size:1rem;">
+                Visszatérés a főmenübe:
+                <span id="fs-countdown-num" style="color:#e94560; font-weight:700; font-size:1.4rem; margin:0 4px;">5</span>
+                másodperc múlva…
+                <div style="margin-top:1rem;">
+                    <button onclick="location.replace('../portal.html')" style="padding:0.5rem 1.6rem; background:transparent; border:1.5px solid #475569; border-radius:8px; color:#94a3b8; cursor:pointer; font-size:0.9rem; font-family:inherit;">
+                        <i class="fas fa-house"></i> Főmenü most
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

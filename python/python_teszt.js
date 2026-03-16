@@ -25,6 +25,7 @@ let terminalInputBuffer = '';
 let focusLossTimeout = null;
 let focusCheckInterval = null;
 let fullscreenCheckInterval = null;
+let fsCountdownTimer = null;
 let autosaveInterval = null;
 let cheatDetected = false;
 let cheatReason = '';
@@ -1764,10 +1765,12 @@ function handleFullscreenChange() {
     if (!isFullscreen && testActive) {
         // Azonnal feketére váltás – tartalom nem látható
         fullscreenPrompt.style.display = 'flex';
+        startFsCountdown();
         logEvent('Fullscreen exited');
         showCheatWarning('Kiléptél a teljes képernyős módból');
     } else {
         fullscreenPrompt.style.display = 'none';
+        cancelFsCountdown();
         if (isFullscreen) {
             fullscreenEnforced = true;
         }
@@ -1900,10 +1903,36 @@ function showCheatWarning(reason) {
     }
 }
 
+function startFsCountdown() {
+    const wrap = document.getElementById('fs-countdown');
+    const numEl = document.getElementById('fs-countdown-num');
+    if (!wrap || !numEl) return;
+    cancelFsCountdown();
+    let n = 5;
+    numEl.textContent = n;
+    wrap.style.display = 'block';
+    fsCountdownTimer = setInterval(() => {
+        n--;
+        numEl.textContent = n;
+        if (n <= 0) {
+            cancelFsCountdown();
+            location.replace('../portal.html');
+        }
+    }, 1000);
+}
+
+function cancelFsCountdown() {
+    clearInterval(fsCountdownTimer);
+    fsCountdownTimer = null;
+    const wrap = document.getElementById('fs-countdown');
+    if (wrap) wrap.style.display = 'none';
+}
+
 function closeCheatWarning() {
     const overlay = document.getElementById('cheat-warning-overlay');
     if (overlay) overlay.style.display = 'none';
     fullscreenPrompt.style.display = 'none';
+    cancelFsCountdown();
     // Visszalép fullscreen-be ha éles/vizsga módban vagyunk és nem vagyunk fullscreen-ben
     if ((testMode === 'live' || testMode === 'vizsga') && !quizSection.classList.contains('hidden')) {
         const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
@@ -1956,6 +1985,7 @@ function handleCheating(reason) {
     const overlay = document.getElementById('cheat-warning-overlay');
     if (overlay) overlay.style.display = 'none';
     fullscreenPrompt.style.display = 'none';
+    cancelFsCountdown();
     exitFullscreen();
     submitTest();
 }
