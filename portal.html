@@ -712,7 +712,7 @@
 
             const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
             const isExam = cfg.test_mode === 'live' || cfg.test_mode === 'vizsga';
-            if (isExam && user.szerep !== 'oktato') {
+            if (isExam) {
                 portalExamMode = true;
             }
 
