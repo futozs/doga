@@ -1154,9 +1154,28 @@ function renderTaskChecks() {
 }
 
 // Progress bar frissítése
+function updateGradeBadge(score, max) {
+  const badge = document.getElementById('grade-badge');
+  if (!badge) return;
+  if (!max || score === undefined) { badge.style.display = 'none'; return; }
+  const pct = score / max * 100;
+  let grade, color, bg, border;
+  if      (pct >= 80) { grade = 5; color = '#4ade80'; bg = '#052e16'; border = '#16a34a'; }
+  else if (pct >= 60) { grade = 4; color = '#a3e635'; bg = '#1a2e05'; border = '#65a30d'; }
+  else if (pct >= 40) { grade = 3; color = '#fbbf24'; bg = '#2d1b00'; border = '#d97706'; }
+  else if (pct >= 20) { grade = 2; color = '#fb923c'; bg = '#2d1200'; border = '#ea580c'; }
+  else                { grade = 1; color = '#f87171'; bg = '#2d0a0a'; border = '#dc2626'; }
+  badge.textContent = grade;
+  badge.style.color = color;
+  badge.style.background = bg;
+  badge.style.borderColor = border;
+  badge.style.display = 'inline-block';
+}
+
 function updateProgressBar(completed, total) {
   if (scoreCurrent) scoreCurrent.textContent = completed;
   if (scoreTotal) scoreTotal.textContent = total;
+  updateGradeBadge(completed, 40);
   if (!progressBar) return;
 
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
