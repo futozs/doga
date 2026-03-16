@@ -2825,10 +2825,8 @@ function initAntiCheat(isLive) {
     if (document.hidden && acLive && !acPopupGrace) acShow('Elhagytad a böngésző fület!');
   });
 
-  // Fókuszvesztés (Alt+Tab, másik ablakra kattintás)
-  window.addEventListener('blur', function() {
-    if (acLive && !acPopupGrace) acShow('Elhagytad az oldalt!');
-  });
+  // Alt+Tab / ablakváltás szándékosan engedélyezett a WEB vizsgán
+  // (előnézet, W3S, validátor – tipikus fejlesztői munkafolyamat)
 
   // Oldal elhagyás blokkolása
   window.addEventListener('beforeunload', function(e) {
