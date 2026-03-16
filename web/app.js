@@ -1165,7 +1165,7 @@ function updateGradeBadge(score, max) {
   else if (pct >= 40) { grade = 3; color = '#fbbf24'; bg = '#2d1b00'; border = '#d97706'; }
   else if (pct >= 20) { grade = 2; color = '#fb923c'; bg = '#2d1200'; border = '#ea580c'; }
   else                { grade = 1; color = '#f87171'; bg = '#2d0a0a'; border = '#dc2626'; }
-  badge.textContent = grade;
+  badge.textContent = 'Érdemjegy: ' + grade;
   badge.style.color = color;
   badge.style.background = bg;
   badge.style.borderColor = border;
@@ -1791,6 +1791,11 @@ function updateStudentDisplay() {
           if (isLive) {
             liveModeDetected = true;
             Object.keys(availableTasks).forEach(id => clearLocalStorage(id));
+            // Timer visszaállítása 60 percre (korábbi gyakorló értéket töröljük)
+            stopTimer();
+            timerSeconds = 60 * 60;
+            updateTimerDisplay();
+            const tk = getTimerStorageKey(); if (tk) localStorage.removeItem(tk);
             const btnSubmitExam = document.getElementById('btn-submit-exam');
             if (btnSubmitExam) btnSubmitExam.style.display = 'inline-block';
             if (btnTimerToggle) btnTimerToggle.style.display = 'none';
@@ -1811,6 +1816,11 @@ function updateStudentDisplay() {
           if (isLive) {
             liveModeDetected = true;
             Object.keys(availableTasks).forEach(id => clearLocalStorage(id));
+            // Timer visszaállítása 60 percre (korábbi gyakorló értéket töröljük)
+            stopTimer();
+            timerSeconds = 60 * 60;
+            updateTimerDisplay();
+            const tk2 = getTimerStorageKey(); if (tk2) localStorage.removeItem(tk2);
             btnTimerToggle.style.display = 'none';
             btnTimerReset.style.display  = 'none';
             if (btnLoadFile) btnLoadFile.style.display = 'none';

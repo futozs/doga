@@ -17,6 +17,7 @@
           <span id="student-info" class="student-info"></span>
           <a id="btn-switch-python" href="../python/index.html" type="button" class="btn-switch" title="Váltás Python tesztre" style="display:none"><i class="fab fa-python"></i> Python</a>
           <button id="btn-logout" type="button" class="btn-logout" title="Kijelentkezés"><i class="fas fa-right-from-bracket"></i></button>
+          <span id="mode-badge" style="display:none;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;"></span>
         </div>
         <div class="topbar-center">
           <select id="task-selector" class="task-selector">
@@ -24,11 +25,13 @@
           </select>
         </div>
         <div class="topbar-right">
-          <span id="mode-badge" style="display:none;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;"></span>
-          <span id="grade-badge" style="display:none;padding:3px 12px;border-radius:20px;font-size:0.9rem;font-weight:800;white-space:nowrap;border:2px solid #475569;color:#94a3b8;background:#1e293b;" title="Jelenlegi érdemjegy">–</span>
-          <span id="timer" class="timer">60:00</span>
-          <button id="btn-timer-toggle" type="button" class="btn-timer" title="Start/Stop"><i class="fas fa-play"></i></button>
-          <button id="btn-timer-reset" type="button" class="btn-timer" title="Reset"><i class="fas fa-rotate-left"></i></button>
+          <span id="grade-badge" style="display:none;padding:3px 12px;border-radius:20px;font-size:0.85rem;font-weight:700;white-space:nowrap;border:2px solid #475569;color:#94a3b8;background:#1e293b;" title="Jelenlegi érdemjegy"></span>
+          <div class="timer-container">
+            <span class="timer-label">Hátralévő idő:</span>
+            <span id="timer" class="timer">60:00</span>
+            <button id="btn-timer-toggle" type="button" class="btn-timer" title="Start/Stop"><i class="fas fa-play"></i></button>
+            <button id="btn-timer-reset" type="button" class="btn-timer" title="Reset"><i class="fas fa-rotate-left"></i></button>
+          </div>
           <button id="btn-load-file" type="button" class="btn-sm" title="Betöltés"><i class="fas fa-folder-open"></i></button>
           <input type="file" id="file-input" accept=".json" hidden />
           <button id="btn-save-file" type="button" class="btn-sm btn-save" disabled title="Mentés"><i class="fas fa-floppy-disk"></i></button>
