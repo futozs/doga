@@ -83,7 +83,7 @@ bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "
 bekeres:Add meg a korodat: |Bekérés szövege: "Add meg a korodat: "
 int_float:1|Az életkort számmá alakítja
 if|Elágazást használ
-tartalmaz:1500|A kedvezményes árat (1500 Ft) tartalmazza
+teszt:Marci,13:1500|A kedvezményes árat (1500 Ft) a kimenetben tartalmazza
 tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza
 teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva
 teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva
