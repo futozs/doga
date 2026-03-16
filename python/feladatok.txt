@@ -13,29 +13,18 @@ A nagyobb szám: 8
 ```
 
 Pontozas:
-bekeres:Add meg az első számot: |Bekérés szövege: "Add meg az első számot: "
-int_float:1|Első számot számmá alakítja
-bekeres:Add meg a második számot: |Bekérés szövege: "Add meg a második számot: "
-int_float:2|Második számot is átalakítja
-if|Elágazást használ
-teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg
-teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes
-teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli
+bekeres:Add meg az első számot: |Bekérés szövege: "Add meg az első számot: "|Pontosan kell a szöveg – még egy extra szóköz is számít! 🔍|✅ Az első bekérés szövege tökéletesen egyezik!
+int_float:1|Első számot számmá alakítja|Az input() mindig szöveget ad vissza... de számokat akarsz összehasonlítani. Mit kell tenni előbb? 🤔|🔢 Szövegből szám lett – most már tud versenyezni!
+bekeres:Add meg a második számot: |Bekérés szövege: "Add meg a második számot: "|Ugyanaz a trükk mint az első számnál – emlékszel hogyan csináltad? 😏|✅ A második bekérés is hibátlan!
+int_float:2|Második számot is átalakítja|A második szám is szövegként érkezik... vajon mit kell vele csinálni? 🤔|🔢 Mindkét szám készen áll a megmérettetésre!
+if|Elágazást használ|Három eset van: nagyobb, kisebb, vagy egyenlő. Melyik Python kulcsszóval kezded az elágazást?|🌿 Az elágazás megvan – a program már tud dönteni!
+teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg|Ha 5 és 3 versenyez, melyik nyer? Írja a programod is ugyanezt ki? 🏆|🥇 Helyes! Az 5 megérdemelten nyert!
+teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes|Most megfordult a sorrend – a programod is észrevette? 🔄|🎯 Fordított sorrend, tökéletes eredmény!
+teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli|Mi történik ha két egyforma szám versenyez? Van erre külön ágad? 🤝|🤝 Az egyenlőséget is kezelni tudod – ez a teljes megoldás!
 
 Tippek:
-Kérd be a két számot input()-tal, majd alakítsd őket int()-re!
-Használj if / elif / else elágazást: ha az első nagyobb, ha a második nagyobb, ha egyenlők.
-Az egyenlőség esetét elif a == b: vagy else: ággal kezeld.
 
 Megoldas:
-a = int(input("Add meg az első számot: "))
-b = int(input("Add meg a második számot: "))
-if a > b:
-    print("A nagyobb szám:", a)
-elif b > a:
-    print("A nagyobb szám:", b)
-else:
-    print("A két szám egyenlő!")
 
 2. feladat
 
@@ -63,32 +52,18 @@ Döntetlen!
 ```
 
 Pontozas:
-import:random|Importálja a random modult
-tartalmaz:randint|Véletlenszám generálást alkalmaz (randint)
-if|Elágazást használ a győztes eldöntéséhez
-elif|Mindhárom esetet külön ággal kezeli
-tartalmaz:játékos nyert|A játékos győzelmét kezeli a kódban
-tartalmaz:gép nyert|A gép győzelmét kezeli a kódban
-tartalmaz:Döntetlen|A döntetlen esetet kezeli a kódban
-tartalmaz:dobása|A dobásokat kiírja a képernyőre
+import:random|Importálja a random modult|Véletlenszámhoz egy beépített eszközt kell behívni a programba. Melyik az a modul? 📦|📦 A random modul beérkezett – a véletlenszerűség megérkezett!
+tartalmaz:randint|Véletlenszám generálást alkalmaz (randint)|A random modulnak van egy függvénye ami két szám között választ. Mi a neve? 🎲|🎲 randint – most már tényleg kockajáték ez!
+if|Elágazást használ a győztes eldöntéséhez|Három kimenetel van: játékos nyert, gép nyert, vagy döntetlen. Melyik kulcsszóval indítod? 🤔|🌿 Az elágazás megvan, a döntőbíró már a helyén!
+elif|Mindhárom esetet külön ággal kezeli|Az if után mi jön, ha van egy másik eset is amit kezelni kell? 🔀|🔀 Mindhárom eset saját ágat kapott – profi megoldás!
+tartalmaz:játékos nyert|A játékos győzelmét kezeli a kódban|Mit ír ki a program, ha a játékos dobása nagyobb? Pontosan így kell: "A játékos nyert!"|🏆 A játékos győzelmét már kezeli a kódod!
+tartalmaz:gép nyert|A gép győzelmét kezeli a kódban|Mit ír ki a program, ha a gép dobása a nagyobb? Pontosan így kell: "A gép nyert!"|🤖 A gép győzelme is rendben van!
+tartalmaz:Döntetlen|A döntetlen esetet kezeli a kódban|Mi van ha mindkét fél ugyanannyit dobott? Van erre külön ágad? 🤝|🤝 Döntetlen eset kezelve – semmi sem maradt ki!
+tartalmaz:dobása|A dobásokat kiírja a képernyőre|A minta szerint ki kell írni a dobás értékét is. Tartalmazza a kódod a "dobása" szót? 👀|👀 A dobásokat is kiírja – a néző is látja mi történt!
 
 Tippek:
-Importáld a random modult, majd random.randint(1, 6)-tal generálj véletlenszámot mindkét félnek.
-Tárold el a dobásokat változókba, és írd ki őket a minta szerint: print("A játékos dobása:", jatekos)
-Hasonlítsd össze a két dobást if / elif / else-szel.
 
 Megoldas:
-import random
-jatekos = random.randint(1, 6)
-gep = random.randint(1, 6)
-print("A játékos dobása:", jatekos)
-print("A gép dobása:", gep)
-if jatekos > gep:
-    print("A játékos nyert!")
-elif gep > jatekos:
-    print("A gép nyert!")
-else:
-    print("Döntetlen!")
 
 3. feladat
 
@@ -112,30 +87,18 @@ Marci a jegyed ára: 1500 Ft
 ```
 
 Pontozas:
-bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "
-bekeres:Add meg a korodat: |Bekérés szövege: "Add meg a korodat: "
-int_float:1|Az életkort számmá alakítja
-if|Elágazást használ
-teszt:Marci,13:1500|A kedvezményes árat (1500 Ft) a kimenetben tartalmazza
-tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza
-teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva
-teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva
+bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "|Pontosan kell a szöveg, ahogy a mintában látod! 🔍|✅ A névbekérés szövege tökéletesen egyezik!
+bekeres:Add meg a korodat: |Bekérés szövege: "Add meg a korodat: "|Figyeld a mintát – milyen szöveggel kell bekérni a kort? 🎂|✅ A korbekérés is hibátlan!
+int_float:1|Az életkort számmá alakítja|A kor egy szám – de az input() szöveget ad vissza. Mit kell tenni? 🔢|🔢 Az életkor mostantól számként él a programban!
+if|Elágazást használ|14 év alatt gyerekjegy, felette felnőttjegy. Melyik kulcsszóval döntesz? 🎬|🌿 Az elágazás megvan – a pénztáros már tud dönteni!
+teszt:Marci,13:1500|A kedvezményes árat (1500 Ft) a kimenetben tartalmazza|Marci 13 éves – gyerekjegyet kap. 3000 Ft 50%-a mennyi? 🧮|💰 Helyes! 1500 Ft a gyerekjegy ára!
+tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza|Mi a felnőttjegy ára? Megtalálható ez a szám a kódodban? 💳|💳 A 3000 Ft-os ár is ott van a kódban!
+teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva|Réka 44 éves – mit ír ki a programod? Pontosan "Felnőtt jegyet kapsz." kell! 🎟️|🎟️ Felnőttjegy kiállítva – Réka mehet a moziba!
+teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva|Marci 13 éves – mit ír ki a programod? Pontosan "Gyerek jegyet kapsz." kell! 🧒|🧒 Gyerekjegy kiállítva – Marci is megnézheti a filmet!
 
 Tippek:
-Kérd be a nevet és az életkort, az életkort alakítsd int()-re.
-Ha az életkor <= 14, gyerekjegy jár: az ár 3000 * 0.5 = 1500 Ft.
-A kiírásnál a nevet is szerepeltesd: print(nev, "a jegyed ára:", ar, "Ft")
 
 Megoldas:
-nev = input("Add meg a neved: ")
-kor = int(input("Add meg a korodat: "))
-if kor <= 14:
-    print("Gyerek jegyet kapsz.")
-    ar = 1500
-else:
-    print("Felnőtt jegyet kapsz.")
-    ar = 3000
-print(nev, "a jegyed ára:", ar, "Ft")
 
 4. feladat
 
@@ -153,29 +116,18 @@ Jó napot, Réka!
 ```
 
 Pontozas:
-bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "
-bekeres:Hány óra van? |Bekérés szövege: "Hány óra van? "
-int_float:1|Az órát számmá alakítja
-if|Elágazást használ
-elif|Több napszakot kezel (elif)
-teszt:Réka,8:Jó reggelt, Réka|Reggeli köszöntés helyes
-teszt:Réka,14:Jó napot, Réka|Nappali köszöntés helyes
-teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes
+bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "|Pontosan kell a szöveg – figyeld a mintát! 🔍|✅ A névbekérés szövege stimmel!
+bekeres:Hány óra van? |Bekérés szövege: "Hány óra van? "|Milyen szöveggel kéred be az órát? Pontosan kell! 🕐|✅ Az órabekérés is tökéletes!
+int_float:1|Az órát számmá alakítja|Az óra egy szám – de szövegként érkezik. Mit kell csinálni vele? 🔢|🔢 Az óra mostantól számként kezelődik!
+if|Elágazást használ|Három napszak van – reggel, nappal, este. Melyik kulcsszóval indítod az elágazást? 🌅|🌅 Az elágazás megvan – a program tudja mikor van!
+elif|Több napszakot kezel (elif)|Az if után mi jön, ha van egy másik napszak is? 🌞|🌞 Mindhárom napszakhoz van külön ág!
+teszt:Réka,8:Jó reggelt, Réka|Reggeli köszöntés helyes|8 óra van – reggel van még. Mit köszön a programod? A nevet is bele kell írni! 🌄|🌄 Jó reggelt! A reggeli köszöntés tökéletes!
+teszt:Réka,14:Jó napot, Réka|Nappali köszöntés helyes|14 óra – nappal van. A programod ezt felismeri és Rékát is megszólítja? ☀️|☀️ Jó napot! A nappali köszöntés is stimmel!
+teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes|20 óra van már – este. Mit mond a programod? A nevet sem felejti el? 🌙|🌙 Jó estét! Mindenki kap köszöntést – tökéletes!
 
 Tippek:
-Kérd be a nevet és az órát, az órát alakítsd int()-re.
-Három tartomány van: 0–9 reggel, 10–17 nappal, 18–23 este – if / elif / else-szel.
-A köszöntésbe illeszd be a nevet: print("Jó reggelt,", nev + "!")
 
 Megoldas:
-nev = input("Add meg a neved: ")
-ora = int(input("Hány óra van? "))
-if ora < 10:
-    print("Jó reggelt,", nev + "!")
-elif ora < 18:
-    print("Jó napot,", nev + "!")
-else:
-    print("Jó estét,", nev + "!")
 
 5. feladat
 
@@ -200,32 +152,18 @@ Kihűltél, takarózz be, igyál meleg teát.
 ```
 
 Pontozas:
-bekeres:Add meg a testhőmérsékleted (°C): |Bekérés szövege: "Add meg a testhőmérsékleted (°C): "
-int_float:1|Számmá alakítja (float)
-if|Elágazást használ
-teszt:35.5:kihűl|Kihűlés esetét felismeri és jelzi
-teszt:36.5:rendben|Normál hőmérsékletet helyesen értékeli
-teszt:37.5:pihenj|Hőemelkedést felismeri
-teszt:38.6:gyógyszer|Lázat felismeri és kezel
-teszt:39.8:orvos|Nagyon magas lázat felismeri
+bekeres:Add meg a testhőmérsékleted (°C): |Bekérés szövege: "Add meg a testhőmérsékleted (°C): "|Pontosan kell a szöveg a °C jellel együtt! Figyeld a mintát! 🌡️|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja (float)|A hőmérséklet tizedes szám lehet – int() nem elég. Melyik függvény kell? 🤔|🌡️ Tizedes szám is kezelhető – float() megmentette a napot!
+if|Elágazást használ|Öt különböző eset van – melyik kulcsszóval indítod az elágazást? 🏥|🏥 Az elágazás elindul – a diagnózis folyamatban!
+teszt:35.5:kihűl|Kihűlés esetét felismeri és jelzi|35.5 fok – ez kihűlés. Felismeri a programod és ad tanácsot? 🥶|🥶 Kihűlés diagnosztizálva – takarózzon be!
+teszt:36.5:rendben|Normál hőmérsékletet helyesen értékeli|36.5 fok – ez normális. Mit mond a programod? Megnyugtatja a beteget? 😊|😊 Normális hőmérséklet – minden rendben van!
+teszt:37.5:pihenj|Hőemelkedést felismeri|37.5 fok – már nem normális, de még nem is láz. Felismeri a programod ezt a tartományt? 🌡️|⚠️ Hőemelkedés felismerve – pihenés javasolt!
+teszt:38.6:gyógyszer|Lázat felismeri és kezel|38.6 fok – ez már láz. A programod tud gyógyszerről is? 💊|💊 Láz észlelve – a program megfelelően reagál!
+teszt:39.8:orvos|Nagyon magas lázat felismeri|39.8 fok – vészjelzés! A programod orvoshoz irányít? 🚨|🚨 Nagyon magas láz – a program azonnal orvoshoz küld!
 
 Tippek:
-Az input float()-ra alakítandó, nem int()-re, mert tizedes értékek is előfordulnak.
-Öt tartomány van – if / elif / elif / elif / else struktúrával oldd meg.
-A tartományok sorrendje fontos: menj a legalsótól felfelé (< 36, <= 37, <= 38, <= 39.5, else).
 
 Megoldas:
-ho = float(input("Add meg a testhőmérsékleted (°C): "))
-if ho < 36:
-    print("Kihűltél, takarózz be, igyál meleg teát.")
-elif ho <= 37:
-    print("Normál testhőmérséklet, minden rendben.")
-elif ho <= 38:
-    print("Hőemelkedés, pihenj és igyál folyadékot.")
-elif ho <= 39.5:
-    print("Lázas vagy. Vegyél be gyógyszert, igyál sok folyadékot, pihenj sokat.")
-else:
-    print("Nagyon magas lázad van, fordulj orvoshoz!")
 
 6. feladat
 
@@ -249,28 +187,18 @@ A torony megfelelő magasságú.
 ```
 
 Pontozas:
-bekeres:A torony magassága (m): |Bekérés szövege: "A torony magassága (m): "
-int_float:1|Számmá alakítja
-if|Elágazást használ
-elif|Több tartományt kezel (elif)
-teszt:15:alacsony|Alacsony torony esetét felismeri
-teszt:30:megfelelő|Alsó határértéket (30m) helyesen kezeli
-teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli
-teszt:120:A torony magas|Magas torony esetét felismeri
+bekeres:A torony magassága (m): |Bekérés szövege: "A torony magassága (m): "|Pontosan kell a szöveg az (m) jellel együtt! 🏗️|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|A magasság szövegként érkezik – mit kell tenni, hogy számként tudd vizsgálni? 🔢|🔢 A magasság mostantól számként kezelhető!
+if|Elágazást használ|Három eset van: alacsony, megfelelő, magas. Melyik kulcsszóval indítod? 🏗️|🌿 Az elágazás megvan – az építész már tud ítélni!
+elif|Több tartományt kezel (elif)|Az if után mi jön a második esethez? 🤔|🔀 Mindhárom tartománynak saját ága van!
+teszt:15:alacsony|Alacsony torony esetét felismeri|15 méter – elég magas ez egy toronynak? Mit ír ki a programod? 📏|📏 Alacsony torony felismerve!
+teszt:30:megfelelő|Alsó határértéket (30m) helyesen kezeli|Pontosan 30 méter – ez már megfelelő vagy még alacsony? Figyelj a határra! ⚖️|⚖️ A 30 méteres határt tökéletesen kezeli!
+teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli|Pontosan 100 méter – ez még megfelelő vagy már magas? A felső határt is ellenőrizd! ⚖️|⚖️ A 100 méteres határt is pontosan kezeli!
+teszt:120:A torony magas|Magas torony esetét felismeri|120 méter – ez már igazi felhőkarcoló! Mit ír ki a programod? 🏙️|🏙️ Magas torony felismerve – felhőkarcoló!
 
 Tippek:
-Kérd be a magasságot és alakítsd int()-re.
-Három eset van: kisebb mint 30, 30 és 100 között (határokat beleértve), nagyobb mint 100.
-A határokat pontosan kezeld: if magassag < 30, elif magassag <= 100, else.
 
 Megoldas:
-magassag = int(input("A torony magassága (m): "))
-if magassag < 30:
-    print("A torony alacsony.")
-elif magassag <= 100:
-    print("A torony megfelelő magasságú.")
-else:
-    print("A torony magas.")
 
 7. feladat
 
@@ -299,27 +227,18 @@ Ennyi órád van még odaérni: 4
 ```
 
 Pontozas:
-bekeres:Hány óra van most? |Bekérés szövege: "Hány óra van most? "
-int_float:1|Számmá alakítja
-if|Elágazást használ
-teszt:7:zárva|Nyitás előtti időt felismeri
-teszt:8:nyitva|Nyitáskor nyitva van
-teszt:12:Ennyi|Nyitva esetén a hátralévő időt kiírja
-teszt:16:zárva|Pontosan záráskor zárva van
-teszt:17:zárva|Zárás utáni időt felismeri
+bekeres:Hány óra van most? |Bekérés szövege: "Hány óra van most? "|Pontosan kell a szöveg kérdőjellel és szóközzel együtt! 🕐|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|Az óra szövegként érkezik – mivel alakítod számmá? 🔢|🔢 Az óra számként szerepel – a bolt már tud dönteni!
+if|Elágazást használ|Két eset van: nyitva vagy zárva. Melyik kulcsszóval döntesz? 🏪|🏪 Az elágazás megvan – a bolt tud nyitni és zárni!
+teszt:7:zárva|Nyitás előtti időt felismeri|7 óra van – a bolt 8-kor nyit. Mit ír ki a programod? 😴|😴 7 óra – a bolt még nem nyitott ki!
+teszt:8:nyitva|Nyitáskor nyitva van|Pontosan 8 óra – a bolt nyitva van már vagy még nem? Figyelj a határra! ⚖️|🔓 8 órakor már nyitva – tökéletes!
+teszt:12:Ennyi|Nyitva esetén a hátralévő időt kiírja|12 órakor nyitva van a bolt – de hány óra van még zárásig? Melyik a képlet? ➕|⏰ A hátralévő időt is kiszámolja – hasznos bolt!
+teszt:16:zárva|Pontosan záráskor zárva van|Pontosan 16 óra – a bolt zárva van már vagy még nyitva? Ez a legcsaládosabb határeset! ⚖️|🔒 16 órakor már zárva – pontosan kezeli a határt!
+teszt:17:zárva|Zárás utáni időt felismeri|17 óra – a bolt már régen bezárt. Tudja ezt a programod? 🌆|🌆 17 óra – elkéstél, a bolt zárva!
 
 Tippek:
-A bolt 8 és 15 óra között (8 <= ora < 16) van nyitva – 16-kor már zárva.
-Nyitva esetén a hátralévő idő kiszámítása: 16 - ora.
-Két eset van: nyitva (if) és zárva (else).
 
 Megoldas:
-ora = int(input("Hány óra van most? "))
-if 8 <= ora < 16:
-    print("A bolt nyitva van.")
-    print("Ennyi órád van még odaérni:", 16 - ora)
-else:
-    print("A bolt zárva van.")
 
 8. feladat
 
@@ -350,32 +269,18 @@ Nincs ilyen hónap!
 ```
 
 Pontozas:
-bekeres:Add meg milyen hónap van (1-12): |Bekérés szövege: "Add meg milyen hónap van (1-12): "
-int_float:1|Számmá alakítja
-if|Elágazást használ
-teszt:3:Tavasz|Tavaszi hónapot felismeri
-teszt:8:Nyár|Nyári hónapot felismeri
-teszt:10:Ősz|Őszi hónapot felismeri
-teszt:12:Tél|Téli hónapot felismeri
-teszt:0:Nincs|Érvénytelen hónapot jelez
+bekeres:Add meg milyen hónap van (1-12): |Bekérés szövege: "Add meg milyen hónap van (1-12): "|Pontosan kell a szöveg a zárójelekkel együtt! 📅|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|A hónap szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A hónap mostantól számként vizsgálható!
+if|Elágazást használ|Öt eset van: 4 évszak és a hibás adat. Melyik kulcsszóval indítod? 🍂|🍂 Az elágazás megvan – az évszakok felismerhetők!
+teszt:3:Tavasz|Tavaszi hónapot felismeri|3-as hónap – március. Melyik évszak ez? Kiírja a programod? 🌸|🌸 Tavasz van! A programod virágba borult!
+teszt:8:Nyár|Nyári hónapot felismeri|8-as hónap – augusztus. Tűző nap, forróság – melyik évszak? ☀️|☀️ Nyár van! Tökéletesen felismeri!
+teszt:10:Ősz|Őszi hónapot felismeri|10-es hónap – október. Hulló levelek – melyik évszak? 🍁|🍁 Ősz van! Lehullanak a levelek!
+teszt:12:Tél|Téli hónapot felismeri|12-es hónap – december. Hó, hideg, karácsony – melyik évszak? ❄️|❄️ Tél van! Elő a meleg kabátot!
+teszt:0:Nincs|Érvénytelen hónapot jelez|0-s hónap nem létezik – mit ír ki a programod? Van külön ágad erre? ❌|❌ Hibás adatot is felismeri – semmi sem ejti zavarba!
 
 Tippek:
-Tél: 12, 1, 2 – Tavasz: 3, 4, 5 – Nyár: 6, 7, 8 – Ősz: 9, 10, 11.
-Használj in operátort: if honap in [3, 4, 5]: – ez a legelegánsabb megoldás.
-Ne felejtsd el a hibás tartomány kezelését: ha a szám nem 1–12 között van, írd ki "Nincs ilyen hónap!"
 
 Megoldas:
-honap = int(input("Add meg milyen hónap van (1-12): "))
-if honap in [3, 4, 5]:
-    print("Tavasz van!")
-elif honap in [6, 7, 8]:
-    print("Nyár van!")
-elif honap in [9, 10, 11]:
-    print("Ősz van!")
-elif honap in [12, 1, 2]:
-    print("Tél van!")
-else:
-    print("Nincs ilyen hónap!")
 
 9. feladat
 
@@ -399,30 +304,18 @@ Idős vagy.
 ```
 
 Pontozas:
-bekeres:Add meg az életkorod! |Bekérés szövege: "Add meg az életkorod! "
-int_float:1|Számmá alakítja
-if|Elágazást használ
-elif|Több kategóriát kezel (elif)
-teszt:13:Gyermek|Gyermek kategóriát felismeri
-teszt:18:Fiatal|Fiatal kategóriát felismeri
-teszt:44:Felnőtt|Felnőtt kategóriát felismeri
-teszt:70:Idős|Idős kategóriát felismeri
+bekeres:Add meg az életkorod! |Bekérés szövege: "Add meg az életkorod! "|Pontosan kell a szöveg felkiáltójellel! 🔍|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|Az életkor szövegként érkezik – mivel alakítod számmá? 🔢|🔢 Az életkor mostantól számként vizsgálható!
+if|Elágazást használ|Négy kategória van – melyik kulcsszóval indítod az elágazást? 🧑|🌿 Az elágazás megvan – a kategorizálás elkezdődött!
+elif|Több kategóriát kezel (elif)|Az if után mi jön a következő kategóriához? 🔀|🔀 Több kategória – több ág, tökéletesen strukturált!
+teszt:13:Gyermek|Gyermek kategóriát felismeri|13 éves – ez gyermek, fiatal, felnőtt vagy idős? Melyik határon belül van? 👦|👦 Gyermek kategória felismerve!
+teszt:18:Fiatal|Fiatal kategóriát felismeri|18 éves – ez már nem gyermek, de még nem felnőtt. Melyik kategória? 🧑|🧑 Fiatal kategória felismerve!
+teszt:44:Felnőtt|Felnőtt kategóriát felismeri|44 éves – melyik kategóriába esik? A határokat jól állítottad be? 👨|👨 Felnőtt kategória felismerve!
+teszt:70:Idős|Idős kategóriát felismeri|70 éves – ez az utolsó kategória. Kezeli a programod a 65+ esetét? 👴|👴 Idős kategória felismerve – minden korosztály kezelt!
 
 Tippek:
-Négy kategória van: 0–14, 15–24, 25–64, 65+.
-Az if / elif / elif / else struktúra ideális erre.
-Elég a felső határt vizsgálni sorban: if kor <= 14, elif kor <= 24, elif kor <= 64, else.
 
 Megoldas:
-kor = int(input("Add meg az életkorod! "))
-if kor <= 14:
-    print("Gyermek vagy.")
-elif kor <= 24:
-    print("Fiatal vagy.")
-elif kor <= 64:
-    print("Felnőtt vagy.")
-else:
-    print("Idős vagy.")
 
 10. feladat
 
@@ -444,33 +337,18 @@ Normál testsúlyú vagy!
 ```
 
 Pontozas:
-bekeres:Add meg a testsúlyod kg-ban! |Bekérés szövege: "Add meg a testsúlyod kg-ban! "
-int_float:1|Testsúlyt számmá alakítja
-bekeres:Add meg a magasságod méterben! |Bekérés szövege: "Add meg a magasságod méterben! "
-int_float:2|Magasságot is számmá alakítja
-if|Elágazást használ
-teszt:75,1.8:23.15|BMI értéket helyesen kiszámolja
-teszt:50,1.75:Sovány|Sovány kategóriát felismeri
-teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri
+bekeres:Add meg a testsúlyod kg-ban! |Bekérés szövege: "Add meg a testsúlyod kg-ban! "|Pontosan kell a szöveg felkiáltójellel! ⚖️|✅ A testsúly bekérése tökéletesen egyezik!
+int_float:1|Testsúlyt számmá alakítja|A testsúly szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A testsúly számként él a programban!
+bekeres:Add meg a magasságod méterben! |Bekérés szövege: "Add meg a magasságod méterben! "|Pontosan kell a szöveg – figyeld a felkiáltójelet! 📏|✅ A magasság bekérése is tökéletes!
+int_float:2|Magasságot is számmá alakítja|A magasság tizedes szám lehet (pl. 1.8) – int() vagy float() kell? 🤔|📏 A magasság is számként kezelődik!
+if|Elágazást használ|Négy kategória van – melyik kulcsszóval indítod az elágazást? 💪|🌿 Az elágazás megvan – a BMI kategóriák ítélhetők!
+teszt:75,1.8:23.15|BMI értéket helyesen kiszámolja|75 kg, 1.8 m – BMI = 75 / (1.8 * 1.8). Megkapod a 23.15-öt? Két tizedesre kerekítsd! 🧮|🧮 A BMI számítás tökéletes – 23.15 a helyes eredmény!
+teszt:50,1.75:Sovány|Sovány kategóriát felismeri|50 kg, 1.75 m – a BMI 16.33. Ez melyik kategória? 🪶|🪶 Sovány kategória felismerve!
+teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri|90 kg, 1.7 m – a BMI 31.14. Ez melyik kategória? Kezeli a programod a 30 feletti értéket? 🎯|🎯 Minden kategória helyesen kezelve!
 
 Tippek:
-Mindkét értéket float()-ra kell alakítani.
-BMI = suly / (magassag ** 2), majd round(bmi, 2) kerekítéshez.
-Négy kategória: < 18.5 sovány, < 25 normál, < 30 túlsúlyos, >= 30 elhízott.
 
 Megoldas:
-suly = float(input("Add meg a testsúlyod kg-ban! "))
-magassag = float(input("Add meg a magasságod méterben! "))
-bmi = round(suly / (magassag ** 2), 2)
-print("A BMI értéked:", bmi)
-if bmi < 18.5:
-    print("Sovány vagy!")
-elif bmi < 25:
-    print("Normál testsúlyú vagy!")
-elif bmi < 30:
-    print("Túlsúlyos vagy!")
-else:
-    print("Elhízott vagy!")
 
 11. feladat
 
@@ -496,30 +374,18 @@ Nem felelt meg.
 ```
 
 Pontozas:
-bekeres:Add meg az 1. jegyet! |Bekérés szövege: "Add meg az 1. jegyet! "
-bekeres:Add meg a 2. jegyet! |Bekérés szövege: "Add meg a 2. jegyet! "
-bekeres:Add meg a 3. jegyet! |Bekérés szövege: "Add meg a 3. jegyet! "
-int_float:3|Mindhárom jegyet számmá alakítja
-if|Elágazást használ
-teszt:4,5,3:4.0|Az átlagot helyesen kiszámolja
-teszt:4,5,3:Megfelelt|Megfelelt esetét helyesen kezeli
-teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli
+bekeres:Add meg az 1. jegyet! |Bekérés szövege: "Add meg az 1. jegyet! "|Pontosan kell a szöveg – figyelj a felkiáltójelre és a szóközre! 📝|✅ Az első jegy bekérése tökéletesen egyezik!
+bekeres:Add meg a 2. jegyet! |Bekérés szövege: "Add meg a 2. jegyet! "|Ugyanolyan trükk mint az első jegynél! 📝|✅ A második jegy bekérése is stimmel!
+bekeres:Add meg a 3. jegyet! |Bekérés szövege: "Add meg a 3. jegyet! "|Harmadik jegy – ugyanolyan bekérés! 📝|✅ Mindhárom jegy bekérése tökéletes!
+int_float:3|Mindhárom jegyet számmá alakítja|A jegyek szövegként érkeznek – mindhárom esetben mit kell tenni? 🔢|🔢 Mindhárom jegy számként él a programban!
+if|Elágazást használ|2.0 felett megfelelt, alatta nem. Melyik kulcsszóval döntesz? 🎓|🎓 Az elágazás megvan – az osztályzat ítélhető!
+teszt:4,5,3:4.0|Az átlagot helyesen kiszámolja|(4+5+3)/3 = 4.0 – kijön ez a programodból? Két tizedesre kerekítsd! 🧮|🧮 Az átlagszámítás tökéletes – 4.0!
+teszt:4,5,3:Megfelelt|Megfelelt esetét helyesen kezeli|4.0 átlag – ez megfelelt vagy nem? Mit ír ki a programod? 🎉|🎉 Megfelelt! A programod jól dönt!
+teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli|(1+1+2)/3 = 1.33 – ez megfelelt? Mit ír ki a programod? 😬|😬 Nem felelt meg – a programod ezt is helyesen kezeli!
 
 Tippek:
-Kérd be a három jegyet külön-külön, mindegyiket int()-re alakítva.
-Átlag: round((j1 + j2 + j3) / 3, 2) – ez két tizedesre kerekít.
-Ha az átlag >= 2.0: "Megfelelt.", különben "Nem felelt meg."
 
 Megoldas:
-j1 = int(input("Add meg az 1. jegyet! "))
-j2 = int(input("Add meg a 2. jegyet! "))
-j3 = int(input("Add meg a 3. jegyet! "))
-atlag = round((j1 + j2 + j3) / 3, 2)
-print("Átlag:", atlag)
-if atlag >= 2.0:
-    print("Megfelelt.")
-else:
-    print("Nem felelt meg.")
 
 12. feladat
 
@@ -547,28 +413,18 @@ A víz halmazállapota: légnemű
 ```
 
 Pontozas:
-bekeres:Add meg a hőmérsékletet Celsius fokban! |Bekérés szövege: "Add meg a hőmérsékletet Celsius fokban! "
-int_float:1|Számmá alakítja
-if|Elágazást használ
-teszt:-5:szilárd|0 fok alatti hőmérsékletet kezeli
-teszt:0:folyékony|0 fokon folyékony
-teszt:25:folyékony|Normál hőmérsékleten folyékony
-teszt:100:folyékony|100 fokon még folyékony
-teszt:150:légnemű|100 fok felett légnemű
+bekeres:Add meg a hőmérsékletet Celsius fokban! |Bekérés szövege: "Add meg a hőmérsékletet Celsius fokban! "|Pontosan kell a szöveg felkiáltójellel! 🌡️|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|A hőmérséklet tizedes szám is lehet – int() vagy float() kell? 🤔|🌡️ A hőmérséklet számként vizsgálható!
+if|Elágazást használ|Három halmazállapot van – melyik kulcsszóval indítod az elágazást? 💧|💧 Az elágazás megvan – a fizika törvényei érvényesülnek!
+teszt:-5:szilárd|0 fok alatti hőmérsékletet kezeli|-5 fok – a víz befagyott. Felismeri a programod? ❄️|❄️ Szilárd! A víz befagyott a kódodban is!
+teszt:0:folyékony|0 fokon folyékony|Pontosan 0 fok – ez szilárd vagy folyékony? Figyeld a határt! ⚖️|💧 0 fokon még folyékony – a határt tökéletesen kezeli!
+teszt:25:folyékony|Normál hőmérsékleten folyékony|25 fok – normál szobahőmérséklet. Milyen a víz ilyenkor? 🚰|🚰 Szobahőmérsékleten folyékony – természetesen!
+teszt:100:folyékony|100 fokon még folyékony|Pontosan 100 fok – ez még folyékony vagy már gőz? A felső határt is ellenőrizd! ⚖️|⚖️ 100 fokon még folyékony – a felső határt is tökéletesen kezeli!
+teszt:150:légnemű|100 fok felett légnemű|150 fok – forró gőz. Felismeri a programod? 💨|💨 Légnemű! A gőz megjelent a kódodban!
 
 Tippek:
-Az input lehet negatív is – float() vagy int() is megfelelő.
-Három tartomány: < 0 szilárd, 0–100 folyékony, > 100 légnemű.
-A 0 és 100 fokos határértékek folyékonyak – figyelj a <= jelekre!
 
 Megoldas:
-ho = float(input("Add meg a hőmérsékletet Celsius fokban! "))
-if ho < 0:
-    print("A víz halmazállapota: szilárd")
-elif ho <= 100:
-    print("A víz halmazállapota: folyékony")
-else:
-    print("A víz halmazállapota: légnemű")
 
 13. feladat
 Pont: 14
@@ -600,42 +456,24 @@ A posta teljes bevétele a költségekből: 700 Ft
 ```
 
 Pontozas:
-def|Függvényt definiál (def)
-return|Függvény visszatérési értéket ad (return)
-tartalmaz:KezelesiKoltseg|KezelesiKoltseg névvel írja a függvényt
-int_float:1|A csekk összegét számmá alakítja
-while|While ciklust alkalmaz az adatbekéréshez
-bekeres:Adja meg a csekk összegét (0 a kilépés): |Bekérés szövege: "Adja meg a csekk összegét (0 a kilépés): "
-if|Elágazást használ a költség meghatározásához
-tartalmaz:200|200 Ft-os díjat tartalmaz a kód
-tartalmaz:500|500 Ft-os díjat tartalmaz a kód
-teszt:2000,0:200 Ft|Kis összegnél (2000) 200 Ft díjat számol
-teszt:10000,0:500 Ft|Pontosan 10000 Ft esetén 500 Ft díjat számol
-teszt:2000,10000,0:700 Ft|Két tranzakció után összbevétel 700 Ft
-teszt:0:0 Ft|Azonnal kilépve 0 Ft bevételt jelez
-teszt:5000,10000,15000,0:1200 Ft|Három tranzakció összbevétele helyes (200+500+500)
+def|Függvényt definiál (def)|Saját függvényt kell írni. Melyik Python kulcsszóval hozod létre? 🛠️|🛠️ A függvény megalkotva – a posta rendszere él!
+return|Függvény visszatérési értéket ad (return)|A függvény kiszámolja az értéket – de hogyan adja vissza a főprogramnak? 📤|📤 A return megvan – az érték visszaér a főprogramba!
+tartalmaz:KezelesiKoltseg|KezelesiKoltseg névvel írja a függvényt|A függvénynek pontosan "KezelesiKoltseg" a neve – nagybetűk számítanak! 🔤|🔤 A függvény neve tökéletesen egyezik!
+int_float:1|A csekk összegét számmá alakítja|A bekért összeg szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A csekk összege számként vizsgálható!
+while|While ciklust alkalmaz az adatbekéréshez|Az adatbekérés addig ismétlődik, amíg 0-t nem írnak. Melyik ciklus alkalmas erre? 🔄|🔄 A while ciklus forog – a posta befogad minden csekket!
+bekeres:Adja meg a csekk összegét (0 a kilépés): |Bekérés szövege: "Adja meg a csekk összegét (0 a kilépés): "|Pontosan kell a szöveg a zárójelekkel együtt! 📋|✅ A bekérés szövege tökéletesen egyezik!
+if|Elágazást használ a költség meghatározásához|10.000 Ft alatt 200, felette 500 Ft a díj. Melyik kulcsszóval döntöd el? 💰|💰 Az elágazás megvan – a díjszabás érvényes!
+tartalmaz:200|200 Ft-os díjat tartalmaz a kód|Kis összegű csekkek díja 200 Ft – szerepel ez a szám a kódodban? 🔍|💵 A 200 Ft-os díj megvan a kódban!
+tartalmaz:500|500 Ft-os díjat tartalmaz a kód|Nagy összegű csekkek díja 500 Ft – szerepel ez a szám a kódodban? 🔍|💵 Az 500 Ft-os díj is megvan!
+teszt:2000,0:200 Ft|Kis összegnél (2000) 200 Ft díjat számol|2000 Ft csekk – ez kisebb mint 10.000, tehát mennyi a díj? 🧮|🧮 2000 Ft-os csekknél 200 Ft díj – helyes!
+teszt:10000,0:500 Ft|Pontosan 10000 Ft esetén 500 Ft díjat számol|Pontosan 10.000 Ft – ez a határeset. 200 vagy 500 Ft a díj? Figyeld a feltételt! ⚖️|⚖️ A határesetet is tökéletesen kezeli!
+teszt:2000,10000,0:700 Ft|Két tranzakció után összbevétel 700 Ft|200 + 500 = ? Összesíti a bevételeket a programod? 📊|📊 Az összesítés tökéletes – 700 Ft a végeredmény!
+teszt:0:0 Ft|Azonnal kilépve 0 Ft bevételt jelez|Ha rögtön 0-t írunk, mi lesz a bevétel? Van 0-s eset kezelve? 🤔|✅ Azonnal kilépés esetén is helyes a 0 Ft bevétel!
+teszt:5000,10000,15000,0:1200 Ft|Három tranzakció összbevétele helyes (200+500+500)|200+500+500=? Három csekk összesített bevétele helyes? 🧮|🏆 Három tranzakció, tökéletes összesítés – 1200 Ft!
 
 Tippek:
-Először írd meg a KezelesiKoltseg(osszeg) függvényt: ha osszeg < 10000: return 200, else: return 500.
-A főprogramban bevetel = 0-val indíts, majd while True: ciklust és break-et használj 0-ra.
-Minden körben add hozzá a költséget a bevételhez: bevetel += koltseg.
 
 Megoldas:
-def KezelesiKoltseg(osszeg):
-    if osszeg < 10000:
-        return 200
-    else:
-        return 500
-
-bevetel = 0
-while True:
-    osszeg = int(input("Adja meg a csekk összegét (0 a kilépés): "))
-    if osszeg == 0:
-        break
-    koltseg = KezelesiKoltseg(osszeg)
-    print("A fizetendő költség:", koltseg, "Ft")
-    bevetel += koltseg
-print("A posta teljes bevétele a költségekből:", bevetel, "Ft")
 
 14. feladat
 Pont: 14
@@ -670,47 +508,24 @@ A teljes beszedett bírság: 1500 Ft
 ```
 
 Pontozas:
-def|Függvényt definiál (def)
-return|Függvény visszatérési értéket ad (return)
-tartalmaz:Birsag|Birsag névvel írja a függvényt
-int_float:1|Napok számát számmá alakítja
-while|While ciklust alkalmaz
-bekeres:Hány napot késett? (-1 a kilépés): |Bekérés szövege: "Hány napot késett? (-1 a kilépés): "
-if|Elágazást használ
-tartalmaz:500|500 Ft-os bírságot tartalmaz a kód
-tartalmaz:1000|1000 Ft-os bírságot tartalmaz a kód
-tartalmaz:Hibás|Hibás adat esetét kezeli
-teszt:5,-1:0 Ft|5 napos késésnél 0 Ft bírság
-teszt:8,-1:500 Ft|6-10 napos késésnél 500 Ft bírság
-teszt:-2,-1:Hibás|Negatív adat esetén Hibás adatot jelez
-teszt:8,12,-1:1500 Ft|Összbírságot helyesen összesíti (500+1000=1500)
+def|Függvényt definiál (def)|Saját függvényt kell írni a bírság kiszámításához. Melyik kulcsszóval? 🛠️|🛠️ A Birsag függvény megalkotva – a könyvtáros boldog!
+return|Függvény visszatérési értéket ad (return)|A függvény kiszámolja a bírságot – hogyan adja vissza az értéket? 📤|📤 A return megvan – a bírság visszaér a főprogramba!
+tartalmaz:Birsag|Birsag névvel írja a függvényt|A függvénynek pontosan "Birsag" a neve – a B nagy! 🔤|🔤 A függvény neve tökéletesen egyezik!
+int_float:1|Napok számát számmá alakítja|A napok száma szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A napok száma számként kezelhető!
+while|While ciklust alkalmaz|Az adatbekérés -1-ig ismétlődik. Melyik ciklus alkalmas erre? 🔄|🔄 A while ciklus forog – minden késő olvasó sorra kerül!
+bekeres:Hány napot késett? (-1 a kilépés): |Bekérés szövege: "Hány napot késett? (-1 a kilépés): "|Pontosan kell a szöveg a zárójelekkel és kérdőjellel! 📋|✅ A bekérés szövege tökéletesen egyezik!
+if|Elágazást használ|Háromféle eset van: -1 kilépés, hibás negatív, vagy helyes adat. Melyik kulcsszóval döntesz? 🔀|🔀 Az elágazás megvan – minden eset kezelt!
+tartalmaz:500|500 Ft-os bírságot tartalmaz a kód|6-10 napos késés díja 500 Ft – szerepel ez a kódodban? 🔍|💵 Az 500 Ft-os bírság megvan!
+tartalmaz:1000|1000 Ft-os bírságot tartalmaz a kód|10 nap feletti késés díja 1000 Ft – szerepel ez a kódodban? 🔍|💵 Az 1000 Ft-os bírság is megvan!
+tartalmaz:Hibás|Hibás adat esetét kezeli|Ha valaki negatív számot ír (de nem -1-et) – mit kell kiírni? A "Hibás" szó benne van? ⚠️|⚠️ Hibás adat felismerve – a könyvtáros nem engedi át!
+teszt:5,-1:0 Ft|5 napos késésnél 0 Ft bírság|5 nap késés – ingyenes. Mit ír ki a programod? 😅|😅 5 nap – megúszta, 0 Ft a bírság!
+teszt:8,-1:500 Ft|6-10 napos késésnél 500 Ft bírság|8 nap késés – melyik sávba esik? Mennyi a bírság? 📚|📚 8 nap – 500 Ft bírság, helyes!
+teszt:-2,-1:Hibás|Negatív adat esetén Hibás adatot jelez|-2 napot nem lehet késni – mit ír ki a programod erre? ❌|❌ Hibás adatot felismer – a könyvtáros nem zavarodik meg!
+teszt:8,12,-1:1500 Ft|Összbírságot helyesen összesíti (500+1000=1500)|500+1000=? Két tranzakció összesített bírsága helyes? 🧮|🏆 Tökéletes összesítés – 1500 Ft a napi bevétel!
 
 Tippek:
-A Birsag(nap) függvény: <= 5 → 0, <= 10 → 500, > 10 → 1000. Ne feledd a return-t!
-A főciklusban először vizsgáld a -1-et (break), aztán a negatív számokat (Hibás!), végül hívd a függvényt.
-bevetel += birsag csak akkor hajtódjon végre, ha az adat helyes volt (nem negatív).
 
 Megoldas:
-def Birsag(nap):
-    if nap <= 5:
-        return 0
-    elif nap <= 10:
-        return 500
-    else:
-        return 1000
-
-bevetel = 0
-while True:
-    nap = int(input("Hány napot késett? (-1 a kilépés): "))
-    if nap == -1:
-        break
-    elif nap < 0:
-        print("Hibás adat!")
-    else:
-        b = Birsag(nap)
-        print("A bírság:", b, "Ft")
-        bevetel += b
-print("A teljes beszedett bírság:", bevetel, "Ft")
 
 15. feladat
 Pont: 14
@@ -755,39 +570,24 @@ A héten 2 napon sikerült a cél!
 ```
 
 Pontozas:
-def|Függvényt definiál (def)
-return|Függvény visszatérési értéket ad (return)
-tartalmaz:Aktivitas|Aktivitas névvel írja a függvényt
-int_float:1|A lépésszámot számmá alakítja
-for|For ciklust használ (pontosan 7 alkalommal)
-tartalmaz:nap lépésszáma: |A bekérés szövege tartalmazza: "nap lépésszáma: "
-if|Elágazást használ a teljesítés eldöntéséhez
-tartalmaz:Teljesítve|"Teljesítve" szöveget kiírja
-tartalmaz:Nincs teljesítve|"Nincs teljesítve" szöveget kiírja
-tartalmaz:True|True értékkel tér vissza a függvény
-tartalmaz:10000|A 10000 lépéses határt tartalmazza a kód
-teszt:15000,10000,9850,4568,12000,5800,6900:Teljesítve|Sikeres napot felismer
-teszt:15000,10000,9850,4568,12000,5800,6900:Nincs teljesítve|Nem teljesített napot jelez
-teszt:15000,10000,9850,4568,12000,5800,6900:2|Sikeresen teljesített napok számát megadja
+def|Függvényt definiál (def)|Logikai értéket visszaadó függvényt kell írni. Melyik kulcsszóval hozod létre? 🛠️|🛠️ Az Aktivitas függvény megalkotva – az okosóra szoftver él!
+return|Függvény visszatérési értéket ad (return)|A függvény True vagy False értéket ad vissza – melyik kulcsszóval? 📤|📤 A return megvan – az eredmény visszaér!
+tartalmaz:Aktivitas|Aktivitas névvel írja a függvényt|A függvénynek pontosan "Aktivitas" a neve – az A nagy! 🔤|🔤 A függvény neve tökéletesen egyezik!
+int_float:1|A lépésszámot számmá alakítja|A lépések száma szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A lépésszám számként vizsgálható!
+for|For ciklust használ (pontosan 7 alkalommal)|A ciklus pontosan 7-szer fusson le. Melyik ciklus alkalmas erre és hogyan adod meg a 7-et? 🔄|🔄 A for ciklus pontosan 7-szer forog – minden napra jut!
+tartalmaz:nap lépésszáma: |A bekérés szövege tartalmazza: "nap lépésszáma: "|A bekérés szövege tartalmazza a "nap lépésszáma: " részt – benne van a kódodban? 👟|✅ A bekérés szövege tartalmazza a "nap lépésszáma: " részt!
+if|Elágazást használ a teljesítés eldöntéséhez|A függvény True vagy False-t ad vissza – melyik kulcsszóval vizsgálod az eredményt? 🏃|🌿 Az elágazás megvan – a nap értékelése működik!
+tartalmaz:Teljesítve|"Teljesítve" szöveget kiírja|Ha a függvény True-t ad vissza, mit kell kiírni? Pontosan kell: "Teljesítve"! 🏆|🏆 Teljesítve! A szöveg tökéletesen egyezik!
+tartalmaz:Nincs teljesítve|"Nincs teljesítve" szöveget kiírja|Ha a függvény False-t ad vissza, mit kell kiírni? Pontosan kell: "Nincs teljesítve"! 😔|😔 Nincs teljesítve szöveg is megvan!
+tartalmaz:True|True értékkel tér vissza a függvény|Ha a lépések száma > 10000, mit ad vissza a függvény? 💡|💡 True értékkel tér vissza – a logikai visszatérés megvan!
+tartalmaz:10000|A 10000 lépéses határt tartalmazza a kód|A határérték 10.000 lépés – szerepel ez a szám a kódodban? 🔍|👟 A 10000 lépéses határ megvan a kódban!
+teszt:15000,10000,9850,4568,12000,5800,6900:Teljesítve|Sikeres napot felismer|15000 lépés – ez több mint 10000, tehát teljesítve. Felismeri a programod? 🏃|🏃 Sikeres napot felismer – 15000 lépés teljesítve!
+teszt:15000,10000,9850,4568,12000,5800,6900:Nincs teljesítve|Nem teljesített napot jelez|10000 lépés – ez pontosan a határ, de nem több. Teljesítve vagy nem? ⚖️|⚖️ A határesetet is helyesen kezeli!
+teszt:15000,10000,9850,4568,12000,5800,6900:2|Sikeresen teljesített napok számát megadja|A héten hányszor sikerült a 10000 lépés? Megszámolta a programod? 📊|📊 2 sikeres nap – tökéletes összeszámlálás!
 
 Tippek:
-Az Aktivitas(lepesek) függvény egyszerű: return lepesek > 10000 – ez automatikusan True/False értéket ad vissza.
-for i in range(1, 8): fut 1-től 7-ig, így f"{i}. nap lépésszáma: " szép számozást ad.
-Ha Aktivitas(lepesek) True, növeld a sikeres_napok-at 1-gyel és írd ki "Teljesítve"-t, különben "Nincs teljesítve"-t.
 
 Megoldas:
-def Aktivitas(lepesek):
-    return lepesek > 10000
-
-sikeres_napok = 0
-for i in range(1, 8):
-    lepesek = int(input(f"{i}. nap lépésszáma: "))
-    if Aktivitas(lepesek):
-        print("Teljesítve")
-        sikeres_napok += 1
-    else:
-        print("Nincs teljesítve")
-print("A héten", sikeres_napok, "napon sikerült a cél!")
 
 16. feladat
 Pont: 14
@@ -828,40 +628,21 @@ A legnagyobb próbálkozás: 200 cm
 ```
 
 Pontozas:
-def|Függvényt definiál (def)
-return|Függvény visszatérési értéket ad (return)
-tartalmaz:Siker|Siker névvel írja a függvényt
-int_float:1|A magasságot számmá alakítja
-for|For ciklust használ (pontosan 6 alkalommal)
-tartalmaz:ugrás magassága (cm): |A bekérés szövege tartalmazza: "ugrás magássága (cm): "
-if|Elágazást használ
-tartalmaz:Átment|"Átment" szöveget tartalmazza a kód
-tartalmaz:Leverte|"Leverte" szöveget tartalmazza a kód
-tartalmaz:150|A 150 cm-es határt tartalmazza a kód
-teszt:150,50,49,178,168,200:Leverte|150 cm-nél Leverte eredmény
-teszt:150,50,49,178,168,200:Átment|178 cm-nél Átment eredmény
-teszt:150,50,49,178,168,200:alacsony|49 cm esetén túl alacsony jelzés
-teszt:150,50,49,178,168,200:200 cm|A legnagyobb próbálkozás 200 cm
+def|Függvényt definiál (def)|Szöveget visszaadó függvényt kell írni. Melyik kulcsszóval hozod létre? 🛠️|🛠️ A Siker függvény megalkotva – a bíró a helyén!
+return|Függvény visszatérési értéket ad (return)|A függvény "Átment" vagy "Leverte" szöveget ad vissza – melyik kulcsszóval? 📤|📤 A return megvan – az ítélet visszaér!
+tartalmaz:Siker|Siker névvel írja a függvényt|A függvénynek pontosan "Siker" a neve – az S nagy! 🔤|🔤 A függvény neve tökéletesen egyezik!
+int_float:1|A magasságot számmá alakítja|A magasság szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A magasság számként vizsgálható!
+for|For ciklust használ (pontosan 6 alkalommal)|A ciklus pontosan 6-szor fusson le. Hogyan adod meg a 6-ot a for ciklusban? 🔄|🔄 A for ciklus pontosan 6-szor forog – minden kísérlet sorra kerül!
+tartalmaz:ugrás magassága (cm): |A bekérés szövege tartalmazza: "ugrás magassága (cm): "|A bekérés szövege tartalmazza az "ugrás magassága (cm): " részt? 🏃|✅ A bekérés szövege tartalmazza az "ugrás magassága (cm): " részt!
+if|Elágazást használ|50 cm alatt túl alacsony, 150 cm felett átment – melyik kulcsszóval döntesz? 🤸|🌿 Az elágazás megvan – a bíró tud ítélni!
+tartalmaz:Átment|"Átment" szöveget tartalmazza a kód|Ha a magasság > 150 cm, mit ad vissza a függvény? Pontosan kell: "Átment"! 🏆|🏆 Átment! A szöveg tökéletesen egyezik!
+tartalmaz:Leverte|"Leverte" szöveget tartalmazza a kód|Ha a magasság <= 150 cm, mit ad vissza a függvény? Pontosan kell: "Leverte"! 💥|💥 Leverte! A szöveg megvan a kódban!
+tartalmaz:150|A 150 cm-es határt tartalmazza a kód|A határmagasság 150 cm – szerepel ez a szám a kódodban? 🔍|📏 A 150 cm-es határ megvan a kódban!
+teszt:150,50,49,178,168,200:Leverte|150 cm-nél Leverte eredmény|150 cm – pontosan a határ. Ez átment vagy leverte? Figyeld a feltételt! ⚖️|⚖️ 150 cm-nél Leverte – a határt tökéletesen kezeli!
+teszt:150,50,49,178,168,200:Átment|178 cm-nél Átment eredmény|178 cm – ez jóval 150 felett. Mit ír ki a programod? 🏆|🏆 178 cm-nél Átment – a sportoló repül!
+teszt:150,50,49,178,168,200:alacsony|49 cm esetén túl alacsony jelzés|49 cm – ez 50 alatt van. Felismeri a programod és kiírja hogy túl alacsony? 🤔|✅ Túl alacsony esetet is kezeli!
+teszt:150,50,49,178,168,200:200 cm|A legnagyobb próbálkozás 200 cm|A hat kísérlet közül melyik volt a legnagyobb? Megtalálja a programod? 🥇|🥇 200 cm a legnagyobb – tökéletes összeredmény!
 
 Tippek:
-A Siker(magassag) függvény: ha magassag > 150: return "Átment", else: return "Leverte".
-for i in range(1, 7): fut 1-től 6-ig – így i-t használhatod a bekérés számozásához.
-Ha magassag >= 50: hívd meg Siker-t, és frissítsd a legnagyobbat: if magassag > legnagyobb: legnagyobb = magassag.
 
 Megoldas:
-def Siker(magassag):
-    if magassag > 150:
-        return "Átment"
-    else:
-        return "Leverte"
-
-legnagyobb = 0
-for i in range(1, 7):
-    magassag = int(input(f"{i}. ugrás magassága (cm): "))
-    if magassag < 50:
-        print("Ez túl alacsony!")
-    else:
-        print("Eredmény:", Siker(magassag))
-        if magassag > legnagyobb:
-            legnagyobb = magassag
-print("A legnagyobb próbálkozás:", legnagyobb, "cm")

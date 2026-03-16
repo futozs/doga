@@ -612,17 +612,19 @@ function selectRandomTasks() {
 // Kritériumok beolvasása szöveges sorokból
 function parseCriteria(lines) {
     return lines.map(line => {
-        const pipeIdx = line.indexOf('|');
-        if (pipeIdx === -1) return null;
-        const spec = line.substring(0, pipeIdx); // NE trim-elj – megőrzi a záró szóközt (pl. bekeres args)
-        const label = line.substring(pipeIdx + 1).trim();
+        const parts = line.split('|');
+        if (parts.length < 2) return null;
+        const spec  = parts[0]; // NE trim-elj – megőrzi a záró szóközt (pl. bekeres args)
+        const label = parts[1].trim();
+        const hint     = parts[2] ? parts[2].trim() : null;
+        const reaction = parts[3] ? parts[3].trim() : null;
         const colonIdx = spec.indexOf(':');
         if (colonIdx === -1) {
-            return { type: spec.trim(), args: null, label };
+            return { type: spec.trim(), args: null, label, hint, reaction };
         }
         const type = spec.substring(0, colonIdx).trim();
         const args = spec.substring(colonIdx + 1); // args-ot NEM trim-eljük
-        return { type, args, label };
+        return { type, args, label, hint, reaction };
     }).filter(c => c !== null);
 }
 
@@ -865,6 +867,16 @@ function updateScoringUI(results) {
         </div>`;
 
     if (!results.some(r => r.pending || r.needsRun) && currentTaskIndex >= 0 && taskAnswers[currentTaskIndex]) {
+        // Újonnan megszerzett kritériumok reakciói
+        const prevPassed = new Set(
+            (taskAnswers[currentTaskIndex].scoringResults || [])
+                .filter(r => r.passed).map(r => r.label)
+        );
+        const newlyPassed = results.filter(r => r.passed === true && !prevPassed.has(r.criterion.label) && r.criterion.reaction);
+        newlyPassed.forEach((r, i) => {
+            setTimeout(() => showReactionToast(r.criterion.reaction), i * 1600);
+        });
+
         taskAnswers[currentTaskIndex].earnedPoints = earned;
         taskAnswers[currentTaskIndex].scoringResults = results.map(r => ({
             label: r.criterion.label,
@@ -872,6 +884,33 @@ function updateScoringUI(results) {
         }));
         updateLiveScore();
     }
+}
+
+function showReactionToast(text) {
+    const el = document.createElement('div');
+    el.style.cssText = `
+        position:fixed;bottom:5rem;right:1.5rem;z-index:9999;
+        background:linear-gradient(135deg,#064e3b,#065f46);
+        border:1px solid #10b981;border-radius:12px;
+        padding:0.7rem 1.1rem;max-width:280px;
+        color:#d1fae5;font-size:0.9rem;font-weight:600;
+        box-shadow:0 4px 20px rgba(16,185,129,0.35);
+        animation:reactionPop 0.3s cubic-bezier(.175,.885,.32,1.275);`;
+    el.textContent = text;
+    document.body.appendChild(el);
+
+    if (!document.getElementById('reaction-keyframes')) {
+        const s = document.createElement('style');
+        s.id = 'reaction-keyframes';
+        s.textContent = `@keyframes reactionPop{from{opacity:0;transform:scale(0.7) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}`;
+        document.head.appendChild(s);
+    }
+
+    setTimeout(() => {
+        el.style.transition = 'opacity 0.4s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 400);
+    }, 3000);
 }
 
 // ──────────────────��──────────────────────────────────────────────────────────
@@ -2462,9 +2501,18 @@ function formatDuration(totalSeconds) {
 function showNextHint() {
     const task = selectedTasks[currentTaskIndex];
     if (!task) return;
-    const hints = task.hints && task.hints.length > 0 ? task.hints : (megoldasok[String(task.number)]?.hints || []);
 
-    if (hints.length === 0) {
+    // Kritériumokból vett tippek (csak amelyiknek van tipp és még nincs megszerzett)
+    const passedLabels = new Set(
+        (taskAnswers[currentTaskIndex]?.scoringResults || [])
+            .filter(r => r.passed).map(r => r.label)
+    );
+    const hintCriteria = (task.criteria || []).filter(c => c.hint && !passedLabels.has(c.label));
+
+    // Fallback: régi task.hints tömb (pl. ha nincs kritérium-tipp)
+    const legacyHints = task.hints && task.hints.length > 0 ? task.hints : (megoldasok[String(task.number)]?.hints || []);
+
+    if (hintCriteria.length === 0 && legacyHints.length === 0) {
         showHintToast('ℹ️ Ehhez a feladathoz nincs tipp.', 0);
         return;
     }
@@ -2472,19 +2520,29 @@ function showNextHint() {
     if (!tippIndex[currentTaskIndex]) tippIndex[currentTaskIndex] = 0;
     const idx = tippIndex[currentTaskIndex];
 
-    if (idx >= hints.length) {
-        showHintToast('Már az összes tippet láttad! 😊', 0);
-        return;
-    }
+    if (hintCriteria.length > 0) {
+        if (idx >= hintCriteria.length) {
+            showHintToast('Már az összes tippet láttad! Próbáld meg magadtól! 💪', 0);
+            return;
+        }
+        const crit = hintCriteria[idx];
+        const num = idx + 1;
+        showHintToast(crit.hint, Math.min(idx, 2), `💡 ${num}. tipp`);
+        tippIndex[currentTaskIndex] = idx + 1;
 
-    const titles = ['1. Tipp (általános)', '2. Tipp (konkrétabb)', '3. Tipp (majdnem megoldás)'];
-    showHintToast(hints[idx], idx, titles[idx] || `${idx+1}. Tipp`);
-    tippIndex[currentTaskIndex] = idx + 1;
-
-    const btn = document.getElementById('btn-hint');
-    if (btn) {
-        const remaining = hints.length - tippIndex[currentTaskIndex];
-        btn.textContent = remaining > 0 ? `💡 Tipp (${remaining} maradt)` : '💡 Nincs több tipp';
+        const btn = document.getElementById('btn-hint');
+        if (btn) {
+            const remaining = hintCriteria.length - tippIndex[currentTaskIndex];
+            btn.textContent = remaining > 0 ? `💡 Tipp (${remaining} maradt)` : '💡 Nincs több tipp';
+        }
+    } else {
+        // legacy fallback
+        if (idx >= legacyHints.length) {
+            showHintToast('Már az összes tippet láttad! 😊', 0);
+            return;
+        }
+        showHintToast(legacyHints[idx], Math.min(idx, 2), `💡 ${idx + 1}. tipp`);
+        tippIndex[currentTaskIndex] = idx + 1;
     }
 }
 
