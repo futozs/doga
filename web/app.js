@@ -1775,6 +1775,8 @@ function updateStudentDisplay() {
           if (isLive) {
             btnTimerToggle.style.display = 'none';
             btnTimerReset.style.display = 'none';
+            const btnSubmitExam = document.getElementById('btn-submit-exam');
+            if (btnSubmitExam) btnSubmitExam.style.display = 'inline-block';
           }
           if (isVizsga && data.vizsga_vege) {
             scheduleVizsgaDeadline(data.vizsga_vege);
@@ -2811,6 +2813,30 @@ function initAntiCheat(isLive) {
 // ═══════════════════════════════════════════════════════
 // VIZSGA HATÁRIDŐ – AUTO-BEADÁS
 // ═══════════════════════════════════════════════════════
+async function handleWebSubmit() {
+  if (!confirm('Biztosan be szeretnéd adni a dolgozatot?\n\nBeadás után már nem tudod szerkeszteni!')) return;
+  acLive = false;
+  stopTimer();
+  sessionStorage.setItem('vizsga_web_beadva', '1');
+  await submitWebToBackend();
+  if (htmlEditor) htmlEditor.updateOptions({ readOnly: true });
+  if (cssEditor)  cssEditor.updateOptions({ readOnly: true });
+  const overlay = document.getElementById('ac-overlay');
+  const title   = document.getElementById('ac-title');
+  const text    = document.getElementById('ac-text');
+  const count   = document.getElementById('ac-count');
+  const btn     = document.getElementById('ac-close-btn');
+  if (overlay) {
+    title.textContent = '✅ Dolgozat beadva!';
+    title.style.color = '#4ade80';
+    text.textContent  = 'A munkádat sikeresen elküldtük. A szerkesztő zárolva.';
+    count.textContent = 'Lépj vissza a főmenübe.';
+    btn.textContent   = 'Vissza a főmenübe';
+    btn.onclick       = function() { location.replace('../portal.html'); };
+    overlay.style.display = 'flex';
+  }
+}
+
 function scheduleVizsgaDeadline(vizsgaVegeISO) {
   const vege = new Date(vizsgaVegeISO);
   const now  = new Date();

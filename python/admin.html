@@ -847,26 +847,39 @@
 
         <!-- Submissions -->
         <div class="panel submissions-panel" data-tab="beadasok" style="display:none;">
-            <h2><i class="fas fa-clipboard-list"></i> Legutóbbi Beadások</h2>
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <h2><i class="fas fa-clipboard-list"></i> Számonkérés beadások</h2>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
                 <button class="btn-refresh" onclick="loadSubmissions()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <select id="filter-osztaly" onchange="applySubmissionFilters()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.88rem;cursor:pointer;">
+                    <option value="">Minden osztály</option>
+                </select>
+                <select id="filter-csoport" onchange="applySubmissionFilters()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.88rem;cursor:pointer;">
+                    <option value="">Minden csoport</option>
+                    <option value="1">1. csoport</option>
+                    <option value="2">2. csoport</option>
+                </select>
+                <select id="filter-subject" onchange="applySubmissionFilters()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.88rem;cursor:pointer;">
+                    <option value="">WEB + Python</option>
+                    <option value="web">WEB</option>
+                    <option value="python">Python</option>
+                </select>
                 <button class="btn-refresh" onclick="prevSubmissionsPage()"><i class="fas fa-chevron-left"></i> Előző</button>
                 <button class="btn-refresh" onclick="nextSubmissionsPage()">Következő <i class="fas fa-chevron-right"></i></button>
-                <span id="submissions-page-info" style="color: #666; font-size: 0.9rem;"></span>
+                <span id="submissions-page-info" style="color:#666;font-size:0.9rem;"></span>
             </div>
-            <div id="submissions-loading" class="loading" style="display: none;">Betöltés...</div>
+            <div id="submissions-loading" class="loading" style="display:none;">Betöltés...</div>
             <div class="table-wrapper">
                 <table class="submissions-table" id="submissions-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Időpont</th>
-                            <th>Név</th>
-                            <th>Email</th>
-                            <th>Osztály</th>
-                            <th>Időtartam</th>
-                            <th>Feladatok</th>
-                            <th>Státusz</th>
+                            <th style="min-width:130px;">Beadás időpontja</th>
+                            <th style="min-width:150px;">Tanuló neve</th>
+                            <th style="min-width:70px;text-align:center;">Osztály</th>
+                            <th style="min-width:80px;text-align:center;">Csoport</th>
+                            <th style="min-width:70px;text-align:center;">Tárgy</th>
+                            <th style="min-width:120px;">Feladat</th>
+                            <th style="min-width:100px;text-align:center;">Elért pontszám</th>
+                            <th style="min-width:90px;text-align:center;">Eltelt idő</th>
                         </tr>
                     </thead>
                     <tbody id="submissions-tbody">
@@ -1201,16 +1214,18 @@
         let submissionsPage = 0;
         const submissionsPageSize = 16;
 
+        let submissionsRaw = []; // teljes lista szűrés előtt
+        let submissionsFiltered = []; // szűrt lista
+
         async function loadSubmissions() {
             document.getElementById('submissions-loading').style.display = 'block';
-
             try {
                 const response = await authFetch(`${RAILWAY_URL}/api/submissions`);
                 const data = await response.json();
-
-                submissionsCache = Array.isArray(data) ? data : [];
-                submissionsPage = 0;
-                renderSubmissionsPage();
+                // Csak számonkérés módú beadások (kiszűrjük a practice-t)
+                submissionsRaw = (Array.isArray(data) ? data : []).filter(s => s.mode !== 'practice');
+                populateOsztalyFilter();
+                applySubmissionFilters();
                 document.getElementById('submissions-loading').style.display = 'none';
             } catch (error) {
                 document.getElementById('submissions-loading').style.display = 'none';
@@ -1218,12 +1233,34 @@
             }
         }
 
+        function populateOsztalyFilter() {
+            const sel = document.getElementById('filter-osztaly');
+            const current = sel.value;
+            const classes = [...new Set(submissionsRaw.map(s => s.osztaly).filter(Boolean))].sort();
+            sel.innerHTML = '<option value="">Minden osztály</option>' +
+                classes.map(c => `<option value="${c}"${c===current?' selected':''}>${c}</option>`).join('');
+        }
+
+        function applySubmissionFilters() {
+            const osztaly  = document.getElementById('filter-osztaly')?.value || '';
+            const csoport  = document.getElementById('filter-csoport')?.value || '';
+            const subject  = document.getElementById('filter-subject')?.value || '';
+            submissionsFiltered = submissionsRaw.filter(s =>
+                (!osztaly  || s.osztaly  === osztaly) &&
+                (!csoport  || s.csoport  === csoport) &&
+                (!subject  || (s.subject || '').toLowerCase() === subject)
+            );
+            submissionsCache = submissionsFiltered;
+            submissionsPage = 0;
+            renderSubmissionsPage();
+        }
+
         function renderSubmissionsPage() {
             const tbody = document.getElementById('submissions-tbody');
             tbody.innerHTML = '';
 
             if (!submissionsCache || submissionsCache.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs beadás</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs számonkérés beadás</td></tr>';
                 document.getElementById('submissions-page-info').textContent = '';
                 return;
             }
@@ -1232,28 +1269,35 @@
             const today = new Date().toISOString().split('T')[0];
             const todayCount = submissionsCache.filter(s => s.submittedAt && s.submittedAt.startsWith(today)).length;
             const avgTime = Math.round(submissionsCache.reduce((sum, s) => sum + (s.duration || 0), 0) / total / 60);
-
             document.getElementById('stat-total').textContent = total;
             document.getElementById('stat-today').textContent = todayCount;
             document.getElementById('stat-avg-time').textContent = avgTime;
 
             const start = submissionsPage * submissionsPageSize;
             const end = Math.min(start + submissionsPageSize, submissionsCache.length);
-            const pageItems = submissionsCache.slice().reverse().slice(start, end);
+            const pageItems = submissionsCache.slice(start, end); // már DESC sorrendben érkezik
+
+            const subjectBadge = s => {
+                const sub = (s.subject || '').toLowerCase();
+                if (sub === 'web') return '<span style="background:#1e3a5f;color:#64b5f6;padding:2px 7px;border-radius:10px;font-size:0.78rem;font-weight:700;">WEB</span>';
+                if (sub === 'python') return '<span style="background:#3d2f00;color:#ffd54f;padding:2px 7px;border-radius:10px;font-size:0.78rem;font-weight:700;">Python</span>';
+                return sub || '–';
+            };
 
             pageItems.forEach(sub => {
                 const row = document.createElement('tr');
                 const duration = Math.round((sub.duration || 0) / 60);
-
+                const pct = sub.maxTotal > 0 ? Math.round(sub.totalScore / sub.maxTotal * 100) : 0;
+                const scoreColor = pct >= 80 ? '#4ade80' : pct >= 60 ? '#fbbf24' : pct >= 40 ? '#fb923c' : '#f87171';
                 row.innerHTML = `
-                    <td>${sub.id}</td>
                     <td>${formatDate(sub.submittedAt)}</td>
                     <td>${sub.name}</td>
-                    <td>${sub.email}</td>
-                    <td>${sub.osztaly || ''}</td>
-                    <td>${duration} perc</td>
-                    <td>${sub.taskIds || ''}</td>
-                    <td>${sub.totalScore}/${sub.maxTotal} pont</td>
+                    <td style="text-align:center;">${sub.osztaly || '–'}</td>
+                    <td style="text-align:center;">${sub.csoport ? sub.csoport + '. cs.' : '–'}</td>
+                    <td style="text-align:center;">${subjectBadge(sub)}</td>
+                    <td style="font-size:0.82rem;color:#94a3b8;">${sub.taskIds || '–'}</td>
+                    <td style="text-align:center;color:${scoreColor};font-weight:700;">${sub.totalScore}/${sub.maxTotal} <span style="color:#64748b;font-weight:400;font-size:0.8rem;">(${pct}%)</span></td>
+                    <td style="text-align:center;">${duration} perc</td>
                 `;
                 row.style.cursor = 'pointer';
                 row.addEventListener('click', () => { loadSubmissionDetails(sub.id); });
@@ -1262,7 +1306,7 @@
 
             const totalPages = Math.ceil(submissionsCache.length / submissionsPageSize);
             document.getElementById('submissions-page-info').textContent =
-                `Oldal: ${submissionsPage + 1} / ${totalPages}`;
+                `${total} beadás – Oldal: ${submissionsPage + 1} / ${totalPages}`;
         }
 
         function nextSubmissionsPage() {
