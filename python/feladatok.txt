@@ -1023,3 +1023,150 @@ else:
     print(f"Visszajáró: {visszajaro} Ft")
     print("Köszönjük, hogy nálunk vásárolt!")
 
+18. feladat
+Pont: 14
+
+Az iskolai büfében önkiszolgáló kasszát vezettek be. A programnak először meg kell kérdeznie, hány dolgot vesz a diák, majd pontosan annyiszor kell bekérnie a termékek kódját, ahány terméket vásárol. A vásárolt tételeket egy listában kell gyűjteni.
+
+Írj egy Ar nevű függvényt! A függvény paramétere a termék kódja, visszatérési értéke pedig az ára az alábbi étlap szerint:
+1 - Sajtos-sonkás szendvics (350 Ft)
+2 - Körözöttes szendvics (400 Ft)
+3 - Hamburger (1000 Ft)
+4 - Hot-dog (700 Ft)
+5 - Kóla (400 Ft)
+6 - Ásványvíz (300 Ft)
+7 - Kakaó (350 Ft)
+8 - Gumicukor (250 Ft)
+Minden más kód esetén a függvény 0 Ft-ot adjon vissza!
+
+A főprogramban hozz létre egy üres listát (pl. kosar), amiben a megvásárolt termékek árait fogod gyűjteni!
+Írd ki a teljes kínálatot a képernyőre, majd kérdezd meg a felhasználótól, hogy összesen hány terméket szeretne vásárolni!
+
+Vásárlás folyamata:
+Készíts egy ciklust, amely pontosan annyiszor fut le, ahány terméket a felhasználó megadott!
+
+A cikluson belül:
+Kérd be az aktuális termék kódját (pl. "1. termék kódja:").
+Hívd meg az Ar függvényt a bekért kóddal!
+Ha az ár nagyobb, mint 0 (létező termék): Írd ki a termék árát, és fűzd hozzá a listához!
+Ha az ár 0 (érvénytelen kód): Írd ki: "Hibás kód!" (Ezt ne tedd a listába).
+
+Fizetés és Kedvezmény:
+A ciklus lefutása után a lista elemeinek segítségével számold ki a végösszeget!
+Ha a végösszeg eléri vagy meghaladja a 2500 Ft-ot, a diák 10% kedvezményt kap. Ekkor írd ki: "Nagy bevásárlás, 10% kedvezmény jár!", és számold ki a csökkentett árat!
+Végül írd ki a fizetendő összeget!
+
+Minta kód:
+
+```
+--- BÜFÉ ÉTLAP ---
+1 - Sajtos-sonkás szendvics (350 Ft)
+2 - Körözöttes szendvics (400 Ft)
+3 - Hamburger (1000 Ft)
+4 - Hot-dog (700 Ft)
+5 - Kóla (400 Ft)
+6 - Ásványvíz (300 Ft)
+7 - Kakaó (350 Ft)
+8 - Gumicukor (250 Ft)
+Hány terméket veszel? 2
+1. termék kódja: 1
+Ár: 350 Ft
+2. termék kódja: 5
+Ár: 400 Ft
+Fizetendő összeg: 750 Ft
+
+--- BÜFÉ ÉTLAP ---
+...
+Hány terméket veszel? 2
+1. termék kódja: 9
+Hibás kód!
+2. termék kódja: 3
+Ár: 1000 Ft
+Fizetendő összeg: 1000 Ft
+
+--- BÜFÉ ÉTLAP ---
+...
+Hány terméket veszel? 3
+1. termék kódja: 3
+Ár: 1000 Ft
+2. termék kódja: 3
+Ár: 1000 Ft
+3. termék kódja: 3
+Ár: 1000 Ft
+Nagy bevásárlás, 10% kedvezmény jár!
+Fizetendő összeg: 2700 Ft
+
+```
+
+Pontozas:
+def|Függvényt definiál (def)|Az árszámítót függvényként kell megírni. Melyik kulcsszóval hozod létre? 🛠️|🛠️ Az Ar függvény megalkotva – a kassza tudja az árakat!
+return|Függvény visszatérési értéket ad (return)|A függvény visszaadja az árat – melyik kulcsszóval? 📤|📤 A return megvan – az ár visszaér a főprogramba!
+tartalmaz:Ar|Ar névvel írja a függvényt|A függvénynek pontosan "Ar" a neve – az A nagybetű! 🔤|🔤 A függvény neve tökéletesen egyezik!
+int_float:1|A kódot számmá alakítja|A kód szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A kód számként vizsgálható!
+for|For ciklust használ a vásárláshoz|A ciklus pontosan annyiszor fusson le, ahány terméket vesznek. Melyik ciklus alkalmas erre? 🔄|🔄 A for ciklus forog – minden termékre sor kerül!
+tartalmaz:kosar|Kosár listát hoz létre|Az árakat egy listában kell gyűjteni. Mi a lista neve a leírás szerint? 🛒|🛒 A kosár lista megvan – a vásárlás folyhat!
+tartalmaz:append|Az árakat hozzáfűzi a listához|Ha létező a termék, az árát hozzá kell adni a listához. Melyik lista metódust használod? ➕|➕ append() – az ár bekerült a kosárba!
+tartalmaz:sum|A végösszeget sum()-mal számolja|A lista összes elemét össze kell adni. Van erre egy beépített Python függvény – mi a neve? 🧮|🧮 sum() – a végösszeg egy sorban kész!
+tartalmaz:Hibás kód|Érvénytelen kódra "Hibás kód!" üzenetet ír|Ha valaki nem létező kódot ad meg, mit kell kiírni? ❌|❌ Hibás kód felismerve – a kassza nem engedi át!
+bekeres:Hány terméket veszel? |Bekérés szövege: "Hány terméket veszel? "|Pontosan kell a szöveg kérdőjellel és szóközzel! 🛍️|✅ A darabszám bekérése tökéletesen egyezik!
+tartalmaz:termék kódja: |A bekérés szövege tartalmazza: "termék kódja: "|A termékkód bekérésekor a szöveg tartalmazza a "termék kódja: " részt? 🔢|✅ A termékkód bekérése megvan!
+tartalmaz:kedvezmény|2500 Ft felett kedvezmény üzenetet ír|Ha elég nagy a végösszeg, mit ír ki a program? A "kedvezmény" szó benne van? 🎉|🎉 Kedvezmény jár – a büfés boldog!
+if|Elágazást használ a kedvezmény feltételéhez|Mikor jár kedvezmény? Melyik kulcsszóval vizsgálod a végösszeget? 💰|💰 Az elágazás megvan – a kedvezmény feltétele kezelt!
+teszt:2,1,5:750 Ft|Két termék végösszege helyes (350+400=750)|Szendvics (350) + Kóla (400) = ? 🧮|🧮 750 Ft – a végösszeg tökéletes!
+teszt:1,9:Hibás kód|Érvénytelen kódra helyes hibaüzenet|9-es kód nem létezik – felismeri a programod? ❌|❌ Hibás kód – a kassza visszautasítja!
+teszt:3,3,3,3:kedvezmény|2500 Ft felett kedvezményt ad|3×1000=3000 Ft – ez eléri a 2500-at? Jár kedvezmény? 🎉|🎉 Nagy bevásárlás – 10% kedvezmény jár!
+teszt:3,3,3,3:2700 Ft|Kedvezménnyel a végösszeg 2700 Ft|3000 Ft * 0.9 = ? 🧮|🧮 2700 Ft – a kedvezményes ár helyes!
+
+Tippek:
+
+Megoldas:
+def Ar(kod):
+    if kod == 1:
+        return 350
+    elif kod == 2:
+        return 400
+    elif kod == 3:
+        return 1000
+    elif kod == 4:
+        return 700
+    elif kod == 5:
+        return 400
+    elif kod == 6:
+        return 300
+    elif kod == 7:
+        return 350
+    elif kod == 8:
+        return 250
+    else:
+        return 0
+
+kosar = []
+
+print("--- BÜFÉ ÉTLAP ---")
+print("1 - Sajtos-sonkás szendvics (350 Ft)")
+print("2 - Körözöttes szendvics (400 Ft)")
+print("3 - Hamburger (1000 Ft)")
+print("4 - Hot-dog (700 Ft)")
+print("5 - Kóla (400 Ft)")
+print("6 - Ásványvíz (300 Ft)")
+print("7 - Kakaó (350 Ft)")
+print("8 - Gumicukor (250 Ft)")
+
+darab = int(input("Hány terméket veszel? "))
+
+for i in range(1, darab + 1):
+    kod = int(input(f"{i}. termék kódja: "))
+    ar = Ar(kod)
+    if ar > 0:
+        print(f"Ár: {ar} Ft")
+        kosar.append(ar)
+    else:
+        print("Hibás kód!")
+
+vegosszeg = sum(kosar)
+
+if vegosszeg >= 2500:
+    print("Nagy bevásárlás, 10% kedvezmény jár!")
+    vegosszeg = int(vegosszeg * 0.9)
+
+print(f"Fizetendő összeg: {vegosszeg} Ft")
