@@ -14,91 +14,128 @@ A nagyobb szám: 8
 
 Pontozas:
 bekeres:Add meg az első számot: |Bekérés szövege: "Add meg az első számot: "|Pontosan kell a szöveg – még egy extra szóköz is számít! 🔍|✅ Az első bekérés szövege tökéletesen egyezik!
-int_float:1|Első számot számmá alakítja|Az input() mindig szöveget ad vissza... de számokat akarsz összehasonlítani. Mit kell tenni előbb? 🤔|🔢 Szövegből szám lett – most már tud versenyezni!
+int_float:1|Első számot számmá alakítja|Az input() mindig szöveget ad vissza... de számokat akarsz összehasonlítani. Mit kell tenni előbb? 🤔|🔢 Szövegből szám lett – most már működik!
 bekeres:Add meg a második számot: |Bekérés szövege: "Add meg a második számot: "|Ugyanaz a trükk mint az első számnál – emlékszel hogyan csináltad? 😏|✅ A második bekérés is hibátlan!
 int_float:2|Második számot is átalakítja|A második szám is szövegként érkezik... vajon mit kell vele csinálni? 🤔|🔢 Mindkét szám készen áll a megmérettetésre!
 if|Elágazást használ|Három eset van: nagyobb, kisebb, vagy egyenlő. Melyik Python kulcsszóval kezded az elágazást?|🌿 Az elágazás megvan – a program már tud dönteni!
-teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg|Ha 5 és 3 versenyez, melyik nyer? Írja a programod is ugyanezt ki? 🏆|🥇 Helyes! Az 5 megérdemelten nyert!
+teszt:5,3:A nagyobb szám: 5|A nagyobbat helyesen adja meg|Ha 5 és 3 versenyez, melyik nyer? A programod is ugyanezt írja ki? 🏆|🥇 Helyes! Az 5 megérdemelten nyert!
 teszt:3,8:A nagyobb szám: 8|Fordított sorrend is helyes|Most megfordult a sorrend – a programod is észrevette? 🔄|🎯 Fordított sorrend, tökéletes eredmény!
 teszt:3,3:A két szám egyenlő!|Egyenlő esetét is kezeli|Mi történik ha két egyforma szám versenyez? Van erre külön ágad? 🤝|🤝 Az egyenlőséget is kezelni tudod – ez a teljes megoldás!
 
 Tippek:
 
 Megoldas:
+szam1 = int(input("Add meg az első számot: "))
+szam2 = int(input("Add meg a második számot: "))                                                          
+if szam1 > szam2:                                                                                         
+    print(f"A nagyobb szám: {szam1}")                                                                       
+elif szam2 > szam1:
+    print(f"A nagyobb szám: {szam2}")                                                                       
+else:
+    print("A két szám egyenlő!")
 
 2. feladat
 
-Írj programot, ahol véletlenszám generálással játszon a gép és a játékos.
-A játékos és a gép is dobjon a dobókockával 1-6-ig, ezt jelenítse meg a program, majd utána írja ki, hogy ki nyert.
-Ha a játékos nyert írja ki, hogy: A játékos nyert!
-Ha a gép nyert, írja ki, hogy: A gép nyert!
-Amennyiben az eredmény döntetlen, írja ki: Döntetlen!
+Írj programot, amelyben kő-papír-olló játékot játszhat a felhasználó a géppel!
+A játékos adja meg a választását (kő, papír vagy olló), majd a gép véletlenszerűen választ a három lehetőség közül.
+A program írja ki a gép választását, majd döntse el, hogy ki nyert!
+Ha a játékos nyert, írja ki: A játékos nyert!
+Ha a gép nyert, írja ki: A gép nyert!
+Ha döntetlen, írja ki: Döntetlen!
 
 Minta kód:
 
 ```
-A játékos dobása: 4
-A gép dobása: 1
-A játékos nyert!
-
-A játékos dobása: 2
-A gép dobása: 6
+Válassz (kő/papír/olló): kő
+A gép választása: papír
 A gép nyert!
 
-A játékos dobása: 3
-A gép dobása: 3
+Válassz (kő/papír/olló): papír
+A gép választása: kő
+A játékos nyert!
+
+Válassz (kő/papír/olló): kő
+A gép választása: kő
 Döntetlen!
 
 ```
 
 Pontozas:
-import:random|Importálja a random modult|Véletlenszámhoz egy beépített eszközt kell behívni a programba. Melyik az a modul? 📦|📦 A random modul beérkezett – a véletlenszerűség megérkezett!
-tartalmaz:randint|Véletlenszám generálást alkalmaz (randint)|A random modulnak van egy függvénye ami két szám között választ. Mi a neve? 🎲|🎲 randint – most már tényleg kockajáték ez!
-if|Elágazást használ a győztes eldöntéséhez|Három kimenetel van: játékos nyert, gép nyert, vagy döntetlen. Melyik kulcsszóval indítod? 🤔|🌿 Az elágazás megvan, a döntőbíró már a helyén!
-elif|Mindhárom esetet külön ággal kezeli|Az if után mi jön, ha van egy másik eset is amit kezelni kell? 🔀|🔀 Mindhárom eset saját ágat kapott – profi megoldás!
-tartalmaz:játékos nyert|A játékos győzelmét kezeli a kódban|Mit ír ki a program, ha a játékos dobása nagyobb? Pontosan így kell: "A játékos nyert!"|🏆 A játékos győzelmét már kezeli a kódod!
-tartalmaz:gép nyert|A gép győzelmét kezeli a kódban|Mit ír ki a program, ha a gép dobása a nagyobb? Pontosan így kell: "A gép nyert!"|🤖 A gép győzelme is rendben van!
-tartalmaz:Döntetlen|A döntetlen esetet kezeli a kódban|Mi van ha mindkét fél ugyanannyit dobott? Van erre külön ágad? 🤝|🤝 Döntetlen eset kezelve – semmi sem maradt ki!
-tartalmaz:dobása|A dobásokat kiírja a képernyőre|A minta szerint ki kell írni a dobás értékét is. Tartalmazza a kódod a "dobása" szót? 👀|👀 A dobásokat is kiírja – a néző is látja mi történt!
+import:random|Importálja a random modult|A gép véletlenszerű választásához egy beépített eszközt kell meghívni. Melyik az a modul? 📦|📦 A random modul beérkezett – a gép már tud választani!
+tartalmaz:choice|random.choice()-t alkalmaz|A random modulnak van egy függvénye, ami egy listából választ véletlenszerűen. Mi a neve? 🎲|🎲 choice() – a gép már tud dönteni a három lehetőség közül!
+bekeres:Válassz (kő/papír/olló): |Bekérés szövege: "Válassz (kő/papír/olló): "|Pontosan kell a szöveg a zárójelekkel és perjelekkel együtt! 🔍|✅ A bekérés szövege tökéletesen egyezik!
+if|Elágazást használ a győztes eldöntéséhez|Három kimenetel van: játékos nyert, gép nyert, döntetlen. Melyik kulcsszóval indítod az elágazást? 🤔|🌿 Az elágazás megvan – a döntőbíró a helyén!
+elif|Több esetet kezel (elif)|Az if után mi jön, ha van egy másik eset is amit kezelni kell? 🔀|🔀 Mindhárom eset saját ágat kapott – profi megoldás!
+tartalmaz:A gép választása|A gép választását kiírja|A minta szerint ki kell írni, hogy a gép mit választott. Benne van a kódodban? 👀|👀 A gép választása megjelenik – a játékos látja, mi ellen küzd!
+tartalmaz:A játékos nyert|A játékos győzelmét kezeli|Mit ír ki a program, ha a játékos nyert? Pontosan kell: "A játékos nyert!"|🏆 A játékos győzelme kezelve – a bajnok neve megjelenik!
+tartalmaz:Döntetlen|A döntetlen esetet kezeli|Mi van ha mindkét fél ugyanazt választja? Van erre külön ágad? 🤝|🤝 Döntetlen eset kezelve – semmi sem maradt ki!
 
 Tippek:
 
 Megoldas:
+import random
+
+lehetosegek = ["kő", "papír", "olló"]
+
+jatekos_valasztasa = input("Válassz (kő/papír/olló): ").lower()
+
+gep_valasztasa = random.choice(lehetosegek)
+
+print(f"A gép választása: {gep_valasztasa}")
+
+if jatekos_valasztasa == gep_valasztasa:
+    print("Döntetlen!")
+elif (jatekos_valasztasa == "kő" and gep_valasztasa == "olló") or \
+     (jatekos_valasztasa == "papír" and gep_valasztasa == "kő") or \
+     (jatekos_valasztasa == "olló" and gep_valasztasa == "papír"):
+    print("A játékos nyert!")
+else:
+    print("A gép nyert!")
 
 3. feladat
 
-Készíts egy programot, amely bekéri a felhasználó nevét és életkorát, majd a kapott adatok alapján kiszámítja a mozijegyének árát.
-A teljes árú jegy 3000 Ft-ba kerül. 14 éves kor és az alatt, gyereknek számít a néző és 50%-os kedvezményt kap a jegy árából.
-A program döntse el, hogy a néző gyerek- vagy felnőttjegyet kap, majd írja ki a fizetendő összeget.
+Készíts egy programot, amely kiszámítja a havi nettó bért a bruttó bérből!
+A számításhoz használj konstansokat a kód elején:
+SZJA mértéke: 15% (0.15)
+TB-járulék mértéke: 18.5% (0.185)
+Kérd be a bruttó bért, számítsd ki az SZJA összegét, a TB-járulék összegét, majd a nettó bért (bruttó - SZJA - TB-járulék), és írd ki mindet! Az összegeket egész számra kerekítve jelenítsd meg!
 
 Minta kód:
 
 ```
-Add meg a neved: Réka
-Add meg a korodat: 44
-Felnőtt jegyet kapsz.
-Réka a jegyed ára: 3000 Ft
-
-Add meg a neved: Marci
-Add meg a korodat: 13
-Gyerek jegyet kapsz.
-Marci a jegyed ára: 1500 Ft
+Add meg a bruttó béredet (Ft): 500000
+SZJA (15%): 75000 Ft
+TB-járulék (18.5%): 92500 Ft
+Nettó bér: 332500 Ft
 
 ```
 
 Pontozas:
-bekeres:Add meg a neved: |Bekérés szövege: "Add meg a neved: "|Pontosan kell a szöveg, ahogy a mintában látod! 🔍|✅ A névbekérés szövege tökéletesen egyezik!
-bekeres:Add meg a korodat: |Bekérés szövege: "Add meg a korodat: "|Figyeld a mintát – milyen szöveggel kell bekérni a kort? 🎂|✅ A korbekérés is hibátlan!
-int_float:1|Az életkort számmá alakítja|A kor egy szám – de az input() szöveget ad vissza. Mit kell tenni? 🔢|🔢 Az életkor mostantól számként él a programban!
-if|Elágazást használ|14 év alatt gyerekjegy, felette felnőttjegy. Melyik kulcsszóval döntesz? 🎬|🌿 Az elágazás megvan – a pénztáros már tud dönteni!
-teszt:Marci,13:1500|A kedvezményes árat (1500 Ft) a kimenetben tartalmazza|Marci 13 éves – gyerekjegyet kap. 3000 Ft 50%-a mennyi? 🧮|💰 Helyes! 1500 Ft a gyerekjegy ára!
-tartalmaz:3000|A teljes árat (3000 Ft) tartalmazza|Mi a felnőttjegy ára? Megtalálható ez a szám a kódodban? 💳|💳 A 3000 Ft-os ár is ott van a kódban!
-teszt:Réka,44:Felnőtt jegyet|Felnőtt eset helyesen megállapítva|Réka 44 éves – mit ír ki a programod? Pontosan "Felnőtt jegyet kapsz." kell! 🎟️|🎟️ Felnőttjegy kiállítva – Réka mehet a moziba!
-teszt:Marci,13:Gyerek jegyet|Gyerek eset helyesen megállapítva|Marci 13 éves – mit ír ki a programod? Pontosan "Gyerek jegyet kapsz." kell! 🧒|🧒 Gyerekjegy kiállítva – Marci is megnézheti a filmet!
+tartalmaz:SZJA|SZJA konstanst definiál|A kód elején érdemes névvel ellátni az adókulcsot – így ha változik a törvény, csak egy helyen kell módosítani. Nagybetűkkel szokás jelölni! 📌|📌 Az SZJA konstans megvan – a törvény változása csak egy sorba kerül!
+tartalmaz:TB|TB-járulék konstanst definiál|A TB-járulékot is érdemes konstansként tárolni. Nagybetűkkel! 📌|📌 A TB-járulék konstans is megvan – profi kód!
+tartalmaz:0.15|Az SZJA értéke 0.15|A 15% tizedestört alakban: 0.15 – szerepel ez a szám a kódodban? 🔢|🔢 0.15 – az SZJA kulcsa a kódban!
+tartalmaz:0.185|A TB-járulék értéke 0.185|A 18.5% tizedestört alakban: 0.185 – megtalálható a kódodban? 🔢|🔢 0.185 – a TB-kulcs is megvan!
+bekeres:Add meg a bruttó béredet (Ft): |Bekérés szövege: "Add meg a bruttó béredet (Ft): "|Pontosan kell a szöveg az (Ft) résszel és kettősponttal együtt! 🔍|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|A bruttó bért számmá alakítja|A bekért összeg szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A bruttó bér számként kezelődik – a számítás elkezdődhet!
+teszt:500000:75000|SZJA összegét helyesen kiszámolja|500000 * 0.15 = ? Kiírja a programod a helyes SZJA összeget? 🧮|💡 75000 Ft az SZJA – a számítás helyes!
+teszt:500000:332500|Nettó bért helyesen kiszámolja|500000 - 75000 - 92500 = ? Megkapja a programod a helyes nettót? 💰|💰 332500 Ft a nettó bér – minden levonás megvan!
 
 Tippek:
 
 Megoldas:
+SZJA = 0.15
+TB = 0.185
+
+brutto_ber = int(input("Add meg a bruttó béredet (Ft): "))
+
+szja_osszeg = brutto_ber * SZJA
+tb_osszeg = brutto_ber * TB
+
+netto_ber = brutto_ber - szja_osszeg - tb_osszeg
+
+print(f"SZJA (15%): {szja_osszeg:.0f} Ft")
+print(f"TB-járulék (18.5%): {tb_osszeg:.0f} Ft")
+print(f"Nettó bér: {netto_ber:.0f} Ft")
 
 4. feladat
 
@@ -128,77 +165,116 @@ teszt:Réka,20:Jó estét, Réka|Esti köszöntés helyes|20 óra van már – e
 Tippek:
 
 Megoldas:
+nev = input("Add meg a neved: ")
+ora = int(input("Hány óra van? "))
+
+if ora < 10:
+    koszones = "Jó reggelt"
+elif ora <= 18:
+    koszones = "Jó napot"
+else:
+    koszones = "Jó estét"
+
+print(f"{koszones}, {nev}!")
 
 5. feladat
 
-Hozz létre egy programot, amely bekéri a felhasználótól, hogy mennyi a jelenlegi testhőmérséklete, majd visszajelez neki, hogy mi történik vele és mit javasolsz, ha gond van.
+Hozz létre egy programot, amely bekéri a felhasználótól a jelenlegi testhőmérsékletét, majd kiírja a diagnózist!
 Testhőmérsékletek:
-36-tól kisebb - kihűlés (takarózzon be, legyen meleg helyen, igyon meleg italt)
-36 - 37-ig - normál testhőmérséklet (jól van, minden rendben)
-37,1 - 38-ig - hőemelkedés (pihenjen, igyon folyadékot)
-38,1 - 39,5 - láz (feküdjön le, vegyen be gyógyszert, pihenjen, igyon folyadékot)
-39,6-tól több - nagyon magas láz (azonnal orvosi segítségre van szüksége)
+36 fok alatt: Kihűltél.
+36 - 37 fok között: Normál testhőmérsékletű vagy.
+37,1 - 38 fok között: Hőemelkedésed van.
+38,1 - 39,5 fok között: Lázad van.
+39,6 fok felett: Nagyon magas lázad van.
 
 Minta kód:
 
 ```
-Add meg a testhőmérsékleted (°C): 38.6
-Lázas vagy. Vegyél be gyógyszert, igyál sok folyadékot, pihenj sokat.
-Add meg a testhőmérsékleted (°C): 39.8
-Nagyon magas lázad van, fordulj orvoshoz!
 Add meg a testhőmérsékleted (°C): 35.8
-Kihűltél, takarózz be, igyál meleg teát.
+Kihűltél.
+
+Add meg a testhőmérsékleted (°C): 36.5
+Normál testhőmérsékletű vagy.
+
+Add meg a testhőmérsékleted (°C): 38.6
+Lázad van.
 
 ```
 
 Pontozas:
 bekeres:Add meg a testhőmérsékleted (°C): |Bekérés szövege: "Add meg a testhőmérsékleted (°C): "|Pontosan kell a szöveg a °C jellel együtt! Figyeld a mintát! 🌡️|✅ A bekérés szövege tökéletesen egyezik!
-int_float:1|Számmá alakítja (float)|A hőmérséklet tizedes szám lehet – int() nem elég. Melyik függvény kell? 🤔|🌡️ Tizedes szám is kezelhető – float() megmentette a napot!
+int_float:1|Számmá alakítja (float)|A hőmérséklet tizedes szám lehet – int() nem elég. Melyik függvény kell? 🤔|🌡️ Tizedes szám is kezelhető – float() a nyerő!
 if|Elágazást használ|Öt különböző eset van – melyik kulcsszóval indítod az elágazást? 🏥|🏥 Az elágazás elindul – a diagnózis folyamatban!
-teszt:35.5:kihűl|Kihűlés esetét felismeri és jelzi|35.5 fok – ez kihűlés. Felismeri a programod és ad tanácsot? 🥶|🥶 Kihűlés diagnosztizálva – takarózzon be!
-teszt:36.5:rendben|Normál hőmérsékletet helyesen értékeli|36.5 fok – ez normális. Mit mond a programod? Megnyugtatja a beteget? 😊|😊 Normális hőmérséklet – minden rendben van!
-teszt:37.5:pihenj|Hőemelkedést felismeri|37.5 fok – már nem normális, de még nem is láz. Felismeri a programod ezt a tartományt? 🌡️|⚠️ Hőemelkedés felismerve – pihenés javasolt!
-teszt:38.6:gyógyszer|Lázat felismeri és kezel|38.6 fok – ez már láz. A programod tud gyógyszerről is? 💊|💊 Láz észlelve – a program megfelelően reagál!
-teszt:39.8:orvos|Nagyon magas lázat felismeri|39.8 fok – vészjelzés! A programod orvoshoz irányít? 🚨|🚨 Nagyon magas láz – a program azonnal orvoshoz küld!
+teszt:35.5:Kihűltél|Kihűlés esetét felismeri|35.5 fok – ez kihűlés. Pontosan "Kihűltél." kell a kimenetben! 🥶|🥶 Kihűlés diagnosztizálva!
+teszt:36.5:Normál|Normál hőmérsékletet felismeri|36.5 fok – normális. Pontosan "Normál testhőmérsékletű vagy." kell! 😊|😊 Normális hőmérséklet – megnyugodhat!
+teszt:37.5:emelkedés|Hőemelkedést felismeri|37.5 fok – hőemelkedés. "Hőemelkedésed van." kell a kimenetbe! 🌡️|⚠️ Hőemelkedés felismerve!
+teszt:38.6:Lázad|Lázat felismeri|38.6 fok – láz. Pontosan "Lázad van." kell! 💊|💊 Láz észlelve – a diagnózis helyes!
+teszt:39.8:Nagyon|Nagyon magas lázat felismeri|39.8 fok – vészjelzés! "Nagyon magas lázad van." kell! 🚨|🚨 Nagyon magas láz felismerve!
 
 Tippek:
 
 Megoldas:
+testho = float(input("Add meg a testhőmérsékleted (°C): "))
+
+if testho < 36:
+    print("Kihűltél.")
+elif testho <= 37:
+    print("Normál testhőmérsékletű vagy.")
+elif testho <= 38:
+    print("Hőemelkedésed van.")
+elif testho <= 39.5:
+    print("Lázad van.")
+else:
+    print("Nagyon magas lázad van.")
 
 6. feladat
 
-Készíts egy programot, amiben bekérsz egy egész számot. Ez egy torony magassága lesz, méterben meghatározva.
-Ha a torony alacsonyabb, mint 30 méter, akkor írd ki, hogy "A torony alacsony.".
-Ha magasabb, mint 100 méter, akkor írd ki, hogy "A torony magas."
-Ha 30 és 100 méter között van (beleértve a határértékeket is), akkor írd ki, hogy "A torony megfelelő magasságú."!
+Készíts egy programot, amely bekéri egy autó sebességét km/h-ban, majd kiírja, hogy milyen úton haladhat ilyen sebességgel!
+0-50 km/h: Lakott területen haladhatsz.
+51-90 km/h: Főúton haladhatsz.
+91-130 km/h: Autópályán haladhatsz.
+130 km/h felett: Ki vagy te Villám McQueen?!
 
 Minta kód:
 
 ```
-A torony magassága (m): 15
-A torony alacsony.
+Add meg a sebességet (km/h): 45
+Lakott területen haladhatsz.
 
-A torony magassága (m): 120
-A torony magas.
+Add meg a sebességet (km/h): 75
+Főúton haladhatsz.
 
-A torony magassága (m): 72
-A torony megfelelő magasságú.
+Add meg a sebességet (km/h): 110
+Autópályán haladhatsz.
+
+Add meg a sebességet (km/h): 145
+Ki vagy te Villám McQueen?!
 
 ```
 
 Pontozas:
-bekeres:A torony magassága (m): |Bekérés szövege: "A torony magassága (m): "|Pontosan kell a szöveg az (m) jellel együtt! 🏗️|✅ A bekérés szövege tökéletesen egyezik!
-int_float:1|Számmá alakítja|A magasság szövegként érkezik – mit kell tenni, hogy számként tudd vizsgálni? 🔢|🔢 A magasság mostantól számként kezelhető!
-if|Elágazást használ|Három eset van: alacsony, megfelelő, magas. Melyik kulcsszóval indítod? 🏗️|🌿 Az elágazás megvan – az építész már tud ítélni!
-elif|Több tartományt kezel (elif)|Az if után mi jön a második esethez? 🤔|🔀 Mindhárom tartománynak saját ága van!
-teszt:15:alacsony|Alacsony torony esetét felismeri|15 méter – elég magas ez egy toronynak? Mit ír ki a programod? 📏|📏 Alacsony torony felismerve!
-teszt:30:megfelelő|Alsó határértéket (30m) helyesen kezeli|Pontosan 30 méter – ez már megfelelő vagy még alacsony? Figyelj a határra! ⚖️|⚖️ A 30 méteres határt tökéletesen kezeli!
-teszt:100:megfelelő|Felső határértéket (100m) helyesen kezeli|Pontosan 100 méter – ez még megfelelő vagy már magas? A felső határt is ellenőrizd! ⚖️|⚖️ A 100 méteres határt is pontosan kezeli!
-teszt:120:A torony magas|Magas torony esetét felismeri|120 méter – ez már igazi felhőkarcoló! Mit ír ki a programod? 🏙️|🏙️ Magas torony felismerve – felhőkarcoló!
+bekeres:Add meg a sebességet (km/h): |Bekérés szövege: "Add meg a sebességet (km/h): "|Pontosan kell a szöveg a (km/h) résszel együtt! 🚗|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|A sebesség szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A sebesség számként kezelhető – a mérőóra működik!
+if|Elágazást használ|Négy kategória van – melyik kulcsszóval indítod az elágazást? 🚦|🚦 Az elágazás megvan – a közlekedési tábla felállt!
+elif|Több kategóriát kezel (elif)|Az if után mi jön a következő sebességsávhoz? 🔀|🔀 Minden sebességsávnak saját ága van!
+teszt:45:Lakott|Lakott területi sebességet felismeri|45 km/h – melyik úttípushoz illik ez a sebesség? 🏘️|🏘️ Lakott terület felismerve!
+teszt:75:Főúton|Főúti sebességet felismeri|75 km/h – ez már nem lakott terület, de autópálya sem. Melyik? 🛣️|🛣️ Főút felismerve!
+teszt:110:Autópályán|Autópályai sebességet felismeri|110 km/h – nagy sebesség, nagy út. Melyik kategória? 🚀|🚀 Autópálya felismerve!
+teszt:145:Villám|Sebességtúllépést felismeri|145 km/h – ez már mindenhol túl sok! Mit ír ki a programod? 🚨|🚨 Villám McQueen – én a sebesség!
 
 Tippek:
 
 Megoldas:
+sebesseg = float(input("Add meg a sebességet (km/h): "))
+
+if sebesseg <= 50:
+    print("Lakott területen haladhatsz.")
+elif sebesseg <= 90:
+    print("Főúton haladhatsz.")
+elif sebesseg <= 130:
+    print("Autópályán haladhatsz.")
+else:
+    print("Ki vagy te Villám McQueen?!")
 
 7. feladat
 
@@ -239,6 +315,14 @@ teszt:17:zárva|Zárás utáni időt felismeri|17 óra – a bolt már régen be
 Tippek:
 
 Megoldas:
+ora = int(input("Hány óra van most? "))
+
+if 8<= ora < 16:
+    print("A bolt nyitva van.")
+    zarasig = 16 - ora
+    print ("Ennyi órád van még odaérni:", zarasig)
+else:
+    print("A bolt zárva van.")
 
 8. feladat
 
@@ -281,41 +365,80 @@ teszt:0:Nincs|Érvénytelen hónapot jelez|0-s hónap nem létezik – mit ír k
 Tippek:
 
 Megoldas:
+honap = int(input("Add meg milyen hónap van (1-12): "))
+
+tel = [12, 1, 2]
+tavasz = [3, 4, 5]
+nyar = [6, 7, 8]
+osz = [9, 10, 11]
+
+if honap in tel:
+    print("Tél van!")
+elif honap in tavasz:
+    print("Tavasz van!")
+elif honap in nyar:
+    print("Nyár van!")
+elif honap in osz:
+    print("Ősz van!")
+else:
+    print("Nincs ilyen hónap!")
 
 9. feladat
 
-Írj programot, amelyben bekéred a felhasználó életkorát, majd írd ki, hogy gyermek (0-14 év), fiatal (15-24 év), felnőtt (25-64 év) vagy idős (65+ év) kategóriába tartozik.
+Készíts programot, amely bekér egy dolgozat pontszámát (0-100), majd kiírja a megfelelő érdemjegyet!
+0-19 pont: Elégtelen (1)
+20-39 pont: Elégséges (2)
+40-59 pont: Közepes (3)
+60-79 pont: Jó (4)
+80-100 pont: Jeles (5)
 
 Minta kód:
 
 ```
-Add meg az életkorod! 13
-Gyermek vagy.
+Add meg a pontszámot (0-100): 45
+Elégtelen (1)
 
-Add meg az életkorod! 18
-Fiatal vagy.
+Add meg a pontszámot (0-100): 55
+Elégséges (2)
 
-Add meg az életkorod! 44
-Felnőtt vagy.
+Add meg a pontszámot (0-100): 70
+Közepes (3)
 
-Add meg az életkorod! 70
-Idős vagy.
+Add meg a pontszámot (0-100): 82
+Jó (4)
+
+Add meg a pontszámot (0-100): 95
+Jeles (5)
 
 ```
 
 Pontozas:
-bekeres:Add meg az életkorod! |Bekérés szövege: "Add meg az életkorod! "|Pontosan kell a szöveg felkiáltójellel! 🔍|✅ A bekérés szövege tökéletesen egyezik!
-int_float:1|Számmá alakítja|Az életkor szövegként érkezik – mivel alakítod számmá? 🔢|🔢 Az életkor mostantól számként vizsgálható!
-if|Elágazást használ|Négy kategória van – melyik kulcsszóval indítod az elágazást? 🧑|🌿 Az elágazás megvan – a kategorizálás elkezdődött!
-elif|Több kategóriát kezel (elif)|Az if után mi jön a következő kategóriához? 🔀|🔀 Több kategória – több ág, tökéletesen strukturált!
-teszt:13:Gyermek|Gyermek kategóriát felismeri|13 éves – ez gyermek, fiatal, felnőtt vagy idős? Melyik határon belül van? 👦|👦 Gyermek kategória felismerve!
-teszt:18:Fiatal|Fiatal kategóriát felismeri|18 éves – ez már nem gyermek, de még nem felnőtt. Melyik kategória? 🧑|🧑 Fiatal kategória felismerve!
-teszt:44:Felnőtt|Felnőtt kategóriát felismeri|44 éves – melyik kategóriába esik? A határokat jól állítottad be? 👨|👨 Felnőtt kategória felismerve!
-teszt:70:Idős|Idős kategóriát felismeri|70 éves – ez az utolsó kategória. Kezeli a programod a 65+ esetét? 👴|👴 Idős kategória felismerve – minden korosztály kezelt!
+bekeres:Add meg a pontszámot (0-100): |Bekérés szövege: "Add meg a pontszámot (0-100): "|Pontosan kell a szöveg a zárójelekkel együtt! 🔍|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|A pontszám szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A pontszám számként vizsgálható – az osztályozás elkezdődhet!
+if|Elágazást használ|Öt kategória van – melyik kulcsszóval indítod az elágazást? 🎓|🎓 Az elágazás megvan – a tanár már tud osztályozni!
+teszt:10:Elégtelen|Elégtelen jegyet ad (0-19)|10 pont – ez melyik jegy? A határokat jól állítottad be? 😬|😬 Elégtelen felismerve – legközelebb sikerül!
+teszt:30:Elégséges|Elégséges jegyet ad (20-39)|30 pont – ez már megfelelt, de melyik jegy? 📝|📝 Elégséges felismerve – átment!
+teszt:50:Közepes|Közepes jegyet ad (40-59)|50 pont – közepes tartomány. Felismeri a programod? 📊|📊 Közepes felismerve – van még hova fejlődni!
+teszt:70:Jó|Jó jegyet ad (60-79)|70 pont – ez már jó jegy! Felismeri a programod? 👍|👍 Jó felismerve – szép eredmény!
+teszt:95:Jeles|Jeles jegyet ad (80-100)|95 pont – ez a legjobb jegy. Kiírja a programod? 🏆|🏆 Jeles! Gratulálunk – tökéletes eredmény!
 
 Tippek:
 
 Megoldas:
+pontszam = int(input("Add meg a pontszámot (0-100): "))
+
+if pontszam <= 19:
+    print("Elégtelen (1)")
+elif pontszam <= 39:
+    print("Elégséges (2)")
+elif pontszam <= 59:
+    print("Közepes (3)")
+elif pontszam <= 79:
+    print("Jó (4)")
+elif pontszam <= 100:
+    print("Jeles (5)")
+else:
+    print("Érvénytelen pontszám!")
 
 10. feladat
 
@@ -349,6 +472,21 @@ teszt:90,1.7:Elhízott|Elhízott kategóriát felismeri|90 kg, 1.7 m – a BMI 3
 Tippek:
 
 Megoldas:
+suly = float(input("Add meg a testsúlyod kg-ban! "))
+magassag = float(input("Add meg a magasságod méterben! "))
+
+bmi = suly / (magassag * magassag)
+
+print(f"A BMI értéked: {round(bmi, 2)}") 
+
+if bmi < 18.5:
+    print("Sovány vagy.")
+elif bmi <= 24.99:
+    print("Normál testsúlyú vagy.")
+elif bmi <= 29.99:
+    print("Túlsúlyos vagy.")
+else:
+    print("Elhízott vagy.")
 
 11. feladat
 
@@ -386,45 +524,72 @@ teszt:1,1,2:Nem felelt meg|Nem megfelelt esetét kezeli|(1+1+2)/3 = 1.33 – ez 
 Tippek:
 
 Megoldas:
+jegy1 = int(input("Add meg az 1. jegyet! "))
+jegy2 = int(input("Add meg a 2. jegyet! "))
+jegy3 = int(input("Add meg a 3. jegyet! "))
+
+atlag = (jegy1 + jegy2 + jegy3) / 3
+
+print(f"Átlag: {round(atlag, 2)}")
+
+if atlag >= 2.0:
+    print("Megfelelt.")
+else:
+    print("Nem felelt meg.")
 
 12. feladat
 
-Írj programot, amely bekér a felhasználótól egy hőmérsékletet Celsius fokban, majd kiírja, hogy ezen a hőmérsékleten a víz milyen halmazállapotban van!
-(0°C alatt szilárd/jég, 0-100°C között folyékony/víz, 100°C felett légnemű/gőz).
+Készíts programot, amely bekér egy éttermi értékelést 1-10 között, majd kiírja a véleményt!
+1-2 pont: Szörnyű! Ide többet nem megyek.
+3-4 pont: Gyenge.
+5-6 pont: Átlagos.
+7-8 pont: Jó! Visszajövök.
+9-10 pont: Kiváló! Mindenkinek ajánlom!
 
 Minta kód:
 
 ```
-Add meg a hőmérsékletet Celsius fokban! -5
-A víz halmazállapota: szilárd
+Add meg az értékelést (1-10): 2
+Szörnyű! Ide többet nem megyek.
 
-Add meg a hőmérsékletet Celsius fokban! 0
-A víz halmazállapota: folyékony
+Add meg az értékelést (1-10): 5
+Átlagos.
 
-Add meg a hőmérsékletet Celsius fokban! 25
-A víz halmazállapota: folyékony
+Add meg az értékelést (1-10): 8
+Jó! Visszajövök.
 
-Add meg a hőmérsékletet Celsius fokban! 100
-A víz halmazállapota: folyékony
-
-Add meg a hőmérsékletet Celsius fokban! 150
-A víz halmazállapota: légnemű
+Add meg az értékelést (1-10): 10
+Kiváló! Mindenkinek ajánlom!
 
 ```
 
 Pontozas:
-bekeres:Add meg a hőmérsékletet Celsius fokban! |Bekérés szövege: "Add meg a hőmérsékletet Celsius fokban! "|Pontosan kell a szöveg felkiáltójellel! 🌡️|✅ A bekérés szövege tökéletesen egyezik!
-int_float:1|Számmá alakítja|A hőmérséklet tizedes szám is lehet – int() vagy float() kell? 🤔|🌡️ A hőmérséklet számként vizsgálható!
-if|Elágazást használ|Három halmazállapot van – melyik kulcsszóval indítod az elágazást? 💧|💧 Az elágazás megvan – a fizika törvényei érvényesülnek!
-teszt:-5:szilárd|0 fok alatti hőmérsékletet kezeli|-5 fok – a víz befagyott. Felismeri a programod? ❄️|❄️ Szilárd! A víz befagyott a kódodban is!
-teszt:0:folyékony|0 fokon folyékony|Pontosan 0 fok – ez szilárd vagy folyékony? Figyeld a határt! ⚖️|💧 0 fokon még folyékony – a határt tökéletesen kezeli!
-teszt:25:folyékony|Normál hőmérsékleten folyékony|25 fok – normál szobahőmérséklet. Milyen a víz ilyenkor? 🚰|🚰 Szobahőmérsékleten folyékony – természetesen!
-teszt:100:folyékony|100 fokon még folyékony|Pontosan 100 fok – ez még folyékony vagy már gőz? A felső határt is ellenőrizd! ⚖️|⚖️ 100 fokon még folyékony – a felső határt is tökéletesen kezeli!
-teszt:150:légnemű|100 fok felett légnemű|150 fok – forró gőz. Felismeri a programod? 💨|💨 Légnemű! A gőz megjelent a kódodban!
+bekeres:Add meg az értékelést (1-10): |Bekérés szövege: "Add meg az értékelést (1-10): "|Pontosan kell a szöveg a zárójelekkel együtt! 🍽️|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja|Az értékelés szövegként érkezik – mivel alakítod számmá? 🔢|🔢 Az értékelés számként vizsgálható – az ítélet elkezdődhet!
+if|Elágazást használ|Öt kategória van – melyik kulcsszóval indítod az elágazást? 🍽️|🍽️ Az elágazás megvan – a kritikus megszólalt!
+elif|Több kategóriát kezel (elif)|Az if után mi jön a következő értékeléshez? 🔀|🔀 Minden értékelési kategóriának saját ága van!
+teszt:2:Szörnyű|1-2 pontnál Szörnyű értékelést ad|2 pont – ez a legrosszabb. Mit ír ki a programod? 😱|😱 Szörnyű! A program nem kíméli az éttermet!
+teszt:4:Gyenge|3-4 pontnál Gyenge értékelést ad|4 pont – nem jó, de nem is a legrosszabb. Melyik kategória? 😕|😕 Gyenge! Volt jobb is!
+teszt:6:Átlagos|5-6 pontnál Átlagos értékelést ad|6 pont – középen van. Mit ír ki a programod? 😐|😐 Átlagos! Semmi különös!
+teszt:10:Kiváló|9-10 pontnál Kiváló értékelést ad|10 pont – tökéletes! Mit ír ki a programod? ⭐|⭐ Kiváló! Mindenkinek ajánlom!
 
 Tippek:
 
 Megoldas:
+ertekeles = int(input("Add meg az értékelést (1-10): "))
+
+if ertekeles <= 2:
+    print("Szörnyű! Ide többet nem megyek.")
+elif ertekeles <= 4:
+    print("Gyenge.")
+elif ertekeles <= 6:
+    print("Átlagos.")
+elif ertekeles <= 8:
+    print("Jó! Visszajövök.")
+elif ertekeles <= 10:
+    print("Kiváló! Mindenkinek ajánlom!")
+else:
+    print("Érvénytelen értékelés! Kérlek 1 és 10 közötti számot adj meg.")
 
 13. feladat
 Pont: 14
@@ -474,6 +639,26 @@ teszt:5000,10000,15000,0:1200 Ft|Három tranzakció összbevétele helyes (200+5
 Tippek:
 
 Megoldas:
+def KezelesiKoltseg(osszeg):
+    if osszeg < 10000:
+        koltseg = 200
+    else:
+        koltseg = 500
+    return koltseg
+
+osszes_bevetel = 0
+
+befizetes = -1  
+
+while befizetes != 0:
+    befizetes = int(input("Adja meg a csekk összegét (0 a kilépés): "))
+
+    if befizetes != 0:
+        aktualis_koltseg = KezelesiKoltseg(befizetes)
+        print(f"A fizetendő költség: {aktualis_koltseg} Ft")
+        osszes_bevetel = osszes_bevetel + aktualis_koltseg
+
+print(f"A posta teljes bevétele a költségekből: {osszes_bevetel} Ft")
 
 14. feladat
 Pont: 14
@@ -526,6 +711,32 @@ teszt:8,12,-1:1500 Ft|Összbírságot helyesen összesíti (500+1000=1500)|500+1
 Tippek:
 
 Megoldas:
+def Birsag(napok):
+    if napok <= 5:
+        return 0
+    elif napok <= 10:
+        return 500
+    else:
+        return 1000
+
+bevetel = 0
+
+while True:
+    napok = int(input("Hány napot késett? (-1 a kilépés): "))
+
+    if napok == -1:
+        break
+
+    if napok < 0:
+        print("Hibás adat!")
+        continue
+
+    fizetendo = Birsag(napok)
+    print(f"A bírság: {fizetendo} Ft")
+
+    bevetel = bevetel + fizetendo
+
+print(f"A teljes beszedett bírság: {bevetel} Ft")
 
 15. feladat
 Pont: 14
@@ -588,6 +799,23 @@ teszt:15000,10000,9850,4568,12000,5800,6900:2|Sikeresen teljesített napok szám
 Tippek:
 
 Megoldas:
+def Aktivitas(lepes):
+    if lepes > 10000:
+        return True
+    else:
+        return False
+    
+sikeres_napok = 0
+
+for i in range(1, 8):
+    adat = int(input(f"{i}. nap lépésszáma: "))
+    if Aktivitas(adat):
+        print("Teljesítve")
+        sikeres_napok += 1
+    else:
+        print("Nincs teljesítve")
+
+print(f"A héten {sikeres_napok} napon sikerült a cél!")
 
 16. feladat
 Pont: 14
@@ -646,3 +874,23 @@ teszt:150,50,49,178,168,200:200 cm|A legnagyobb próbálkozás 200 cm|A hat kís
 Tippek:
 
 Megoldas:
+def Siker(magassag):
+    if magassag > 150:
+        return "Átment"
+    else:
+        return "Leverte"
+
+legnagyobb = 0
+
+for i in range(1, 7):
+    adat = int(input(f"{i}. ugrás magassága (cm): "))
+    if adat < 50:
+        print("Ez túl alacsony!")
+    else:
+        eredmeny = Siker(adat)
+        print(f"Eredmény: {eredmeny}")
+
+        if adat > legnagyobb:
+            legnagyobb = adat
+
+print(f"A legnagyobb próbálkozás: {legnagyobb} cm")
