@@ -464,12 +464,10 @@
         <!-- Tab navigáció -->
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('vezerlot', this)"><i class="fas fa-gauge-high"></i> Vezérlőpult</button>
-            <button class="tab-btn" onclick="switchTab('feladatsor', this)"><i class="fas fa-folder-open"></i> Feladatsorok</button>
             <button class="tab-btn" onclick="switchTab('beadasok', this)"><i class="fas fa-clipboard-list"></i> Beadások</button>
             <button class="tab-btn" onclick="switchTab('felhasznalok', this)"><i class="fas fa-users"></i> Felhasználók</button>
             <button class="tab-btn" onclick="switchTab('haladas', this)"><i class="fas fa-chart-line"></i> Haladás</button>
             <button class="tab-btn" onclick="switchTab('rangsor', this)"><i class="fas fa-ranking-star"></i> Rangsor</button>
-            <button class="tab-btn" onclick="switchTab('megoldasok', this)"><i class="fas fa-lightbulb"></i> Megoldások</button>
         </div>
 
         <!-- Config Panel -->
@@ -511,82 +509,6 @@
                     </button>
                     <div id="vizsga-kezdes-jelenlegi" style="color:#888;font-size:0.82rem;margin-top:0.6rem;"></div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Feladatsor Feltöltés -->
-        <div class="panel" data-tab="feladatsor" style="display:none;">
-            <h2><i class="fas fa-upload"></i> Feladatsor Feltöltés</h2>
-            <div id="ts-msg" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:0.9rem;"></div>
-
-            <!-- Feltöltő form -->
-            <div style="background:#0d1b2e;border:1px solid #1a4a8a;border-radius:12px;padding:18px;margin-bottom:20px;">
-                <h3 style="color:#7dd3fc;margin-bottom:14px;font-size:1rem;"><i class="fas fa-plus"></i> Új feladatsor</h3>
-                <div style="margin-bottom:12px;">
-                    <label style="display:block;color:#94a3b8;font-size:0.82rem;margin-bottom:5px;">Feladatsor neve (pl. "Ágazati alapvizsga 2026"):</label>
-                    <input type="text" id="ts-nev"
-                        style="width:100%;padding:8px 12px;background:#1a1a2e;border:1px solid #334155;border-radius:8px;color:#e0e0e0;font-size:0.9rem;"
-                        placeholder="Feladatsor neve...">
-                </div>
-                <div style="margin-bottom:12px;">
-                    <label style="display:block;color:#94a3b8;font-size:0.82rem;margin-bottom:6px;">Felhasználás típusa:</label>
-                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;background:#1a1a2e;border:1px solid #334155;border-radius:8px;color:#e0e0e0;font-size:0.88rem;">
-                            <input type="radio" name="ts-tipus" value="gyakorlo" style="accent-color:#4ade80;">
-                            <i class="fas fa-pencil" style="color:#4ade80;"></i> Gyakorló
-                        </label>
-                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;background:#1a1a2e;border:1px solid #334155;border-radius:8px;color:#e0e0e0;font-size:0.88rem;">
-                            <input type="radio" name="ts-tipus" value="live" style="accent-color:#f97316;">
-                            <i class="fas fa-circle-dot" style="color:#f97316;"></i> Órai számonkérés
-                        </label>
-                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;background:#1a1a2e;border:1px solid #fbbf24;border-radius:8px;color:#fde68a;font-size:0.88rem;">
-                            <input type="radio" name="ts-tipus" value="vizsga" checked style="accent-color:#fbbf24;">
-                            <i class="fas fa-graduation-cap" style="color:#fbbf24;"></i> Vizsga
-                        </label>
-                    </div>
-                </div>
-                <div style="margin-bottom:12px;">
-                    <label style="display:block;color:#94a3b8;font-size:0.82rem;margin-bottom:5px;">
-                        Python feladatok szövege (feladatok.txt formátum – csak a vizsgán szereplő feladatok):
-                    </label>
-                    <textarea id="ts-python" rows="12"
-                        style="width:100%;padding:8px 12px;background:#1a1a2e;border:1px solid #334155;border-radius:8px;color:#e0e0e0;font-size:0.82rem;font-family:monospace;resize:vertical;"
-                        placeholder="# 1. feladat – 8 pont&#10;Készíts programot, amely...&#10;input:1|Bekér egy számot&#10;if|if kulcsszó megléte&#10;..."></textarea>
-                    <div style="color:#64748b;font-size:0.78rem;margin-top:4px;">Ugyanolyan formátum, mint a feladatok.txt – minden feladat #N. feladat sorral kezdődik.</div>
-                </div>
-                <div style="margin-bottom:14px;">
-                    <label style="display:block;color:#94a3b8;font-size:0.82rem;margin-bottom:5px;">WEB feladat (ZIP fájl – HTML, CSS, képek):</label>
-                    <input type="file" id="ts-web-zip" accept=".zip"
-                        style="color:#e0e0e0;font-size:0.88rem;">
-                    <div style="color:#64748b;font-size:0.78rem;margin-top:4px;">A ZIP-et a Drive mappából töltsd le, majd itt töltsd fel. Max ~20 MB.</div>
-                </div>
-                <button onclick="uploadTaskSet()"
-                    style="padding:9px 22px;background:#0f766e;border:1px solid #14b8a6;border-radius:8px;color:#ccfbf1;font-weight:700;cursor:pointer;font-size:0.9rem;">
-                    <i class="fas fa-floppy-disk"></i> Feladatsor Mentése
-                </button>
-            </div>
-
-            <!-- Meglévő feladatsorok listája -->
-            <h3 style="color:#7dd3fc;margin-bottom:12px;font-size:1rem;"><i class="fas fa-list"></i> Feltöltött feladatsorok</h3>
-            <div id="ts-loading" style="color:#888;font-size:0.9rem;display:none;">Betöltés...</div>
-            <div class="table-wrapper">
-                <table class="submissions-table" style="min-width:600px;">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Név</th>
-                            <th>Típus</th>
-                            <th>Python</th>
-                            <th>WEB</th>
-                            <th>Létrehozva</th>
-                            <th>Státusz</th>
-                            <th>Műveletek</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ts-tbody">
-                        <tr><td colspan="8" class="loading">Nincs feltöltött feladatsor</td></tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
@@ -736,58 +658,6 @@
             </table>
         </div>
 
-        <!-- Megoldások és Tippek panel -->
-        <div class="panel" id="megoldasok-panel" data-tab="megoldasok" style="display:none;">
-            <h2><i class="fas fa-lightbulb"></i> Megoldások &amp; Tippek (Gyakorló mód)</h2>
-            <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.2rem;">Feladatonként tölts fel mintamegoldást és legfeljebb 3 fokozatos tippet. Gyakorló módban a diákok ezt kérhetik le.</p>
-            <div id="megoldas-error" class="error" style="display:none;margin-bottom:0.8rem;"></div>
-            <div id="megoldas-success" class="success" style="display:none;margin-bottom:0.8rem;"></div>
-            <div style="margin-bottom:1rem;">
-                <label style="color:#7dd3fc;font-weight:600;display:block;margin-bottom:0.4rem;">Feladat:</label>
-                <select id="megoldas-task-select" onchange="loadMegoldasFromApi()" style="padding:0.5rem 1rem;border-radius:6px;border:1px solid #334155;background:#0f3460;color:#e0e0e0;font-size:0.95rem;width:100%;max-width:520px;">
-                    <option value="1">1. Két szám összehasonlítása</option>
-                    <option value="2">2. Dobókocka játék</option>
-                    <option value="3">3. Mozijegy ára</option>
-                    <option value="4">4. BMI kalkulátor</option>
-                    <option value="5">5. Évszak meghatározása</option>
-                    <option value="6">6. Hőmérséklet konverzió</option>
-                    <option value="7">7. Számjegyek összege</option>
-                    <option value="8">8. Oszthatóság</option>
-                    <option value="9">9. Szökőév</option>
-                    <option value="10">10. Jegyszámítás</option>
-                    <option value="11">11. Pénzváltó</option>
-                    <option value="12">12. Háromszög típusa</option>
-                    <option value="13">13. Függvény – páros/páratlan</option>
-                    <option value="14">14. While ciklus – összeg</option>
-                    <option value="15">15. For ciklus – szorzótábla</option>
-                    <option value="16">16. Bool visszatérési értékű függvény</option>
-                </select>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
-                <div>
-                    <label style="color:#7dd3fc;font-weight:600;display:block;margin-bottom:0.4rem;"><i class="fas fa-code"></i> Mintamegoldás:</label>
-                    <textarea id="megoldas-solution" rows="14" style="width:100%;font-family:monospace;font-size:0.83rem;padding:0.6rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="Ide írd be a mintamegoldást..."></textarea>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:0.7rem;">
-                    <div>
-                        <label style="color:#f59e0b;font-weight:600;display:block;margin-bottom:0.3rem;">💡 1. Tipp (legáltalánosabb):</label>
-                        <textarea id="megoldas-hint1" rows="3" style="width:100%;font-size:0.85rem;padding:0.5rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="pl. Gondolj arra, hogy..."></textarea>
-                    </div>
-                    <div>
-                        <label style="color:#f59e0b;font-weight:600;display:block;margin-bottom:0.3rem;">💡 2. Tipp (konkrétabb):</label>
-                        <textarea id="megoldas-hint2" rows="3" style="width:100%;font-size:0.85rem;padding:0.5rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="pl. Használj if/elif szerkezetet..."></textarea>
-                    </div>
-                    <div>
-                        <label style="color:#f59e0b;font-weight:600;display:block;margin-bottom:0.3rem;">💡 3. Tipp (majdnem megoldás):</label>
-                        <textarea id="megoldas-hint3" rows="3" style="width:100%;font-size:0.85rem;padding:0.5rem;border:1px solid #334155;border-radius:6px;background:#0a1628;color:#e2e8f0;resize:vertical;" placeholder="pl. A struktúra: ..."></textarea>
-                    </div>
-                </div>
-            </div>
-            <div style="margin-top:1rem;display:flex;align-items:center;gap:1rem;">
-                <button onclick="saveMegoldasToApi()" style="padding:0.5rem 1.5rem;background:#2196F3;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;"><i class="fas fa-save"></i> Mentés</button>
-                <span id="megoldas-status" style="font-size:0.85rem;color:#94a3b8;"></span>
-            </div>
-        </div>
 
         <!-- Jelszó visszaállítás modal -->
         <div class="modal" id="reset-pw-modal" style="display:none;">
