@@ -742,6 +742,7 @@ baglyok: {
     { name: "forras.txt", label: "Hóbagoly szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Táblázat fejléc (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -946,9 +947,80 @@ baglyok: {
       },
     },
     {
+      id: "css-body-font",
+      label: "24. CSS: Az oldal betűtípusa Rubik",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*rubik/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-width",
+      label: "25. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-smallcaps",
+      label: "26. CSS: A felirat azonosítóra kiskapitális betű van beállítva",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*font-variant\s*:\s*small-caps/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-bold",
+      label: "27. CSS: A felirat azonosítóra félkövér betűstílus van beállítva",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "28. CSS: A navigáció listaelemére 3px vastag, pontozott, narancssárga jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*orange/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-h2-fontsize",
+      label: "29. CSS: A h2 betűmérete 2.5em",
+      check: (doc, html, css) => css && /h2\s*\{[^}]*font-size\s*:\s*2\.5em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-bagoly-bg",
+      label: "30. CSS: A bagoly osztály háttérszíne #f0edd1",
+      check: (doc, html, css) => css && /\.bagoly\s*\{[^}]*background(-color)?\s*:\s*#f0edd1/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-color",
+      label: "31. CSS: A lablec osztály hivatkozásának betűszíne fehér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*color\s*:\s*white/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-nodecor",
+      label: "32. CSS: A lablec osztály hivatkozásánál nincs aláhúzás",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-taplalek-image",
+      label: "33. CSS: A taplalek azonosítóra bagoly.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#taplalek\s*\{[^}]*list-style-image\s*:\s*url\([^)]*bagoly\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "34. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "24. HTML validálás képernyőképe feltöltve",
+      label: "35. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "36. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -967,6 +1039,7 @@ egijelensegek: {
     { name: "forras.txt", label: "Sas-köd szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Új táblázatsorok (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -1124,9 +1197,92 @@ egijelensegek: {
       },
     },
     {
+      id: "css-body-font",
+      label: "21. CSS: Az oldal betűtípusa IBM Plex Mono",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*IBM\s*Plex\s*Mono/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-height",
+      label: "22. CSS: A fejlec azonosítóra 100%-os magasság van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*height\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-color",
+      label: "23. CSS: A felirat azonosító betűszíne rgb(13,1,81)",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*color\s*:\s*rgb\s*\(\s*13\s*,\s*1\s*,\s*81\s*\)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-smallcaps",
+      label: "24. CSS: A felirat azonosítóra kiskapitális betű van beállítva",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*font-variant\s*:\s*small-caps/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "25. CSS: A navigáció listaelemére 3px vastag, pontozott, narancssárga jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*orange/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-padding",
+      label: "26. CSS: A navigáció listaelemének vízszintes belső margója 15px",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-hobbi-bg",
+      label: "27. CSS: A hobbi osztály háttérszíne fehér (#ffffff)",
+      check: (doc, html, css) => css && /\.hobbi\s*\{[^}]*background(-color)?\s*:\s*(#ffffff|white)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-color",
+      label: "28. CSS: A lablec osztály hivatkozásának betűszíne fehér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*color\s*:\s*white/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-bold",
+      label: "29. CSS: A lablec osztály hivatkozása félkövér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-nodecor",
+      label: "30. CSS: A lablec osztály hivatkozásánál nincs aláhúzás",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-navbar-fontsize",
+      label: "31. CSS: A navbar osztály betűmérete 1.2em",
+      check: (doc, html, css) => css && /\.navbar\s*\{[^}]*font-size\s*:\s*1\.2em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nap-image",
+      label: "32. CSS: A nap azonosítóra nap.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#nap\s*\{[^}]*list-style-image\s*:\s*url\([^)]*nap\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "33. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "21. HTML validálás képernyőképe feltöltve",
+      label: "34. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "35. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -1145,6 +1301,7 @@ evmadarai: {
     { name: "forras.txt", label: "Zöld küllő szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Új táblázatsorok (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -1292,9 +1449,80 @@ evmadarai: {
       },
     },
     {
+      id: "css-body-font",
+      label: "19. CSS: Az oldal betűtípusa Rubik",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*rubik/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-height",
+      label: "20. CSS: A fejlec azonosítóra 100%-os magasság van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*height\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-color",
+      label: "21. CSS: A felirat azonosító betűszíne rgb(13,1,81)",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*color\s*:\s*rgb\s*\(\s*13\s*,\s*1\s*,\s*81\s*\)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-smallcaps",
+      label: "22. CSS: A felirat azonosítóra kiskapitális betű van beállítva",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*font-variant\s*:\s*small-caps/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "23. CSS: A navigáció listaelemére 3px vastag, pontozott, narancssárga jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*orange/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-hobbi-bg",
+      label: "24. CSS: A hobbi osztály háttérszíne #fff7ad",
+      check: (doc, html, css) => css && /\.hobbi\s*\{[^}]*background(-color)?\s*:\s*#fff7ad/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-color",
+      label: "25. CSS: A lablec osztály hivatkozásának betűszíne fehér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*color\s*:\s*white/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-bold",
+      label: "26. CSS: A lablec osztály hivatkozása félkövér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-navbar-fontsize",
+      label: "27. CSS: A navbar osztály betűmérete 1.2em",
+      check: (doc, html, css) => css && /\.navbar\s*\{[^}]*font-size\s*:\s*1\.2em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-taplalek-image",
+      label: "28. CSS: A taplalek azonosítóra madar.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#taplalek\s*\{[^}]*list-style-image\s*:\s*url\([^)]*madar\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "29. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "19. HTML validálás képernyőképe feltöltve",
+      label: "30. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "31. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -1313,6 +1541,7 @@ gombak: {
     { name: "forras.txt", label: "Gyilkos galóca szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Táblázat fejléc (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -1476,9 +1705,80 @@ gombak: {
       },
     },
     {
+      id: "css-body-font",
+      label: "20. CSS: Az oldal betűtípusa cursive",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*cursive/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-width",
+      label: "21. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-h3-color",
+      label: "22. CSS: A h3 betűszíne fekete",
+      check: (doc, html, css) => css && /h3\s*\{[^}]*color\s*:\s*black/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-h3-fontsize",
+      label: "23. CSS: A h3 betűmérete 2.2em",
+      check: (doc, html, css) => css && /h3\s*\{[^}]*font-size\s*:\s*2\.2em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "24. CSS: A navigáció listaelemére 3px vastag, pontozott jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-padding",
+      label: "25. CSS: A navigáció listaelemének vízszintes belső margója 15px",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-bold",
+      label: "26. CSS: A lablec osztály hivatkozása félkövér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-nodecor",
+      label: "27. CSS: A lablec osztály hivatkozásánál nincs aláhúzás",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "28. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-kaja-image",
+      label: "29. CSS: A kaja azonosítóra gomba.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#kaja\s*\{[^}]*list-style-image\s*:\s*url\([^)]*gomba\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-kaja-margin",
+      label: "30. CSS: A kaja azonosító bal külső margója 25px",
+      check: (doc, html, css) => css && /#kaja\s*\{[^}]*margin-left\s*:\s*25px/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "20. HTML validálás képernyőképe feltöltve",
+      label: "31. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "32. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -1497,6 +1797,7 @@ hobbiallatok: {
     { name: "forras.txt", label: "Törpesün szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Tartási költségek táblázat (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -1642,9 +1943,86 @@ hobbiallatok: {
       },
     },
     {
+      id: "css-body-font",
+      label: "18. CSS: Az oldal betűtípusa Verdana",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*verdana/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-width",
+      label: "19. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-h3-fontsize",
+      label: "20. CSS: A h3 betűmérete 2.5em",
+      check: (doc, html, css) => css && /h3\s*\{[^}]*font-size\s*:\s*2\.5em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-hobbi-bg",
+      label: "21. CSS: A hobbi osztály háttérszíne rgb(255,242,207)",
+      check: (doc, html, css) => css && /\.hobbi\s*\{[^}]*background(-color)?\s*:\s*rgb\s*\(\s*255\s*,\s*242\s*,\s*207\s*\)/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-hobbi-border",
+      label: "22. CSS: A hobbi osztályra 2px vastag fekete szegélyt állított",
+      check: (doc, html, css) => css && /\.hobbi\s*\{[^}]*border\s*:\s*2px\s+solid\s+black/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-color",
+      label: "23. CSS: A lablec osztály hivatkozásának betűszíne fekete",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*color\s*:\s*black/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-bold",
+      label: "24. CSS: A lablec osztály hivatkozása félkövér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-nodecor",
+      label: "25. CSS: A lablec osztály hivatkozásánál nincs aláhúzás",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-hover",
+      label: "26. CSS: Ha a lablec osztály hivatkozása fölé visszük az egeret, nagybetűs",
+      check: (doc, html, css) => css && /\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "27. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-eleseg-image",
+      label: "28. CSS: Az eleseg azonosítóra rovar.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#eleseg\s*\{[^}]*list-style-image\s*:\s*url\([^)]*rovar\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-eleseg-margin",
+      label: "29. CSS: Az eleseg azonosító bal külső margója 25px",
+      check: (doc, html, css) => css && /#eleseg\s*\{[^}]*margin-left\s*:\s*25px/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "18. HTML validálás képernyőképe feltöltve",
+      label: "30. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "31. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -1663,6 +2041,7 @@ hullok: {
     { name: "forras.txt", label: "Pávaszemes gyík szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Új táblázatsor (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -1848,9 +2227,86 @@ hullok: {
       },
     },
     {
+      id: "css-body-font",
+      label: "22. CSS: Az oldal betűtípusa Rubik",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*rubik/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-width",
+      label: "23. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-felirat-bold",
+      label: "24. CSS: A felirat azonosítóra félkövér betűstílus van beállítva",
+      check: (doc, html, css) => css && /#felirat\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "25. CSS: A navigáció listaelemére 3px vastag, pontozott, #39FF14 színű jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*#39FF14/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-padding",
+      label: "26. CSS: A navigáció listaelemének vízszintes belső margója 15px",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-dd-italic",
+      label: "27. CSS: A dd elemre dőlt betűstílus van beállítva",
+      check: (doc, html, css) => css && /dd\s*\{[^}]*font-style\s*:\s*italic/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-dd-fontsize",
+      label: "28. CSS: A dd elem betűmérete 0.9em",
+      check: (doc, html, css) => css && /dd\s*\{[^}]*font-size\s*:\s*0\.9em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-hullo-bg",
+      label: "29. CSS: A hullo osztály háttérszíne #d2ffad",
+      check: (doc, html, css) => css && /\.hullo\s*\{[^}]*background(-color)?\s*:\s*#d2ffad/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-nodecor",
+      label: "30. CSS: A lablec osztály hivatkozásánál nincs aláhúzás",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*text-decoration\s*:\s*none/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-hover",
+      label: "31. CSS: Ha a lablec osztály hivatkozása fölé visszük az egeret, nagybetűs",
+      check: (doc, html, css) => css && /\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-gyik-image",
+      label: "32. CSS: A gyik azonosítóra gyik.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#gyik\s*\{[^}]*list-style-image\s*:\s*url\([^)]*gyik\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "33. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "22. HTML validálás képernyőképe feltöltve",
+      label: "34. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "35. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -1869,6 +2325,7 @@ tropusi_gyumolcsok: {
     { name: "forras.txt", label: "Sárkánygyümölcs szöveg (forras.txt)" },
     { name: "tablazat.txt", label: "Táblázat fejléc és sorok (tablazat.txt)" }
   ],
+  maxPoints: 40,
   checks: [
     {
       id: "lang-charset",
@@ -2005,9 +2462,80 @@ tropusi_gyumolcsok: {
       },
     },
     {
+      id: "css-body-font",
+      label: "18. CSS: Az oldal betűtípusa Gill Sans (vagy hasonló)",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*['"]?Gill\s*Sans/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-fejlec-width",
+      label: "19. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
+      check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-h3-color",
+      label: "20. CSS: A h3 betűszíne fekete",
+      check: (doc, html, css) => css && /h3\s*\{[^}]*color\s*:\s*black/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-h3-fontsize",
+      label: "21. CSS: A h3 betűmérete 2.5em",
+      check: (doc, html, css) => css && /h3\s*\{[^}]*font-size\s*:\s*2\.5em/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-border",
+      label: "22. CSS: A navigáció listaelemére 3px vastag, pontozott jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-nav-padding",
+      label: "23. CSS: A navigáció listaelemének vízszintes belső margója 15px",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-bold",
+      label: "24. CSS: A lablec osztály hivatkozása félkövér",
+      check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-lablec-hover",
+      label: "25. CSS: Ha a lablec osztály hivatkozása fölé visszük az egeret, nagybetűs",
+      check: (doc, html, css) => css && /\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-p-justify",
+      label: "26. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-banan-image",
+      label: "27. CSS: A banan azonosítóra banan_ikon.png listaelem kép van beállítva",
+      check: (doc, html, css) => css && /#banan\s*\{[^}]*list-style-image\s*:\s*url\([^)]*banan_ikon\.png/i.test(css),
+      cssCheck: true,
+    },
+    {
+      id: "css-banan-margin",
+      label: "28. CSS: A banan azonosító bal külső margója 25px",
+      check: (doc, html, css) => css && /#banan\s*\{[^}]*margin-left\s*:\s*25px/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "html-validated",
-      label: "18. HTML validálás képernyőképe feltöltve",
+      label: "29. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
+    },
+    {
+      id: "css-validated",
+      label: "30. CSS validálás képernyőképe feltöltve",
+      check: () => validationImages.css !== null,
     },
   ],
 },
@@ -2474,7 +3002,7 @@ function updateGradeBadge(score, max) {
 
 function updateProgressBar(completed, total) {
   if (scoreCurrent) scoreCurrent.textContent = completed;
-  if (scoreTotal) scoreTotal.textContent = total;
+  if (scoreTotal) scoreTotal.textContent = (currentTask && currentTask.maxPoints) ? currentTask.maxPoints : total;
   updateGradeBadge(completed, 40);
   if (!progressBar) return;
 
