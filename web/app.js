@@ -63,6 +63,20 @@ let validationImages = {
   cssFileName: null,
 };
 
+// Strukturális HTML ellenőrző segédfüggvények
+const _ch = {
+  // Ellenőrzi, hogy a <html> tagon van-e lang="hu"
+  langHu: (html) => {
+    const m = html.match(/<html([^>]*)>/i);
+    return m ? /\blang=["']hu["']/i.test(m[1]) : false;
+  },
+  // Ellenőrzi, hogy a minta megtalálható-e a </head> előtti részben
+  inHead: (html, re) => {
+    const i = html.toLowerCase().indexOf('</head>');
+    return i >= 0 ? re.test(html.substring(0, i)) : false;
+  },
+};
+
 // Feladatok konfigurációja
 const availableTasks = {
   bogyos: {
@@ -86,22 +100,20 @@ const availableTasks = {
       {
         id: "lang-charset",
         label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-        check: (doc) => {
-          const meta = doc.querySelector('meta[charset]');
-          const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-          return doc.documentElement.lang === "hu" && hasUtf8;
+        check: (doc, html) => {
+          return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
         },
       },
       {
         id: "title",
         label: "2. Böngésző címsorában megjelenő cím \"Bogyós gyümölcsök\"",
-        check: (doc) => doc.title === "Bogyós gyümölcsök",
+        check: (doc, html) => doc.title === "Bogyós gyümölcsök" && _ch.inHead(html, /<title[^>]*>/i),
       },
       {
         id: "style-link",
         label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
         check: (doc, html) => {
-          return /href=["'][^"']*style\.css["']/i.test(html);
+          return _ch.inHead(html, /href=["'][^"']*style\.css["']/i);
         },
       },
       {
@@ -448,21 +460,19 @@ humanoid: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "style-link",
       label: "2. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "title",
       label: "3. Böngésző címsorában megjelenő cím \"Humanoid robotok\"",
-      check: (doc) => doc.title === "Humanoid robotok",
+      check: (doc, html) => doc.title === "Humanoid robotok" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "h1-felirat",
@@ -747,21 +757,19 @@ baglyok: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Baglyok\"",
-      check: (doc) => doc.title === "Baglyok",
+      check: (doc, html) => doc.title === "Baglyok" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
@@ -1044,21 +1052,19 @@ egijelensegek: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Égi jelenségek\"",
-      check: (doc) => doc.title === "Égi jelenségek",
+      check: (doc, html) => doc.title === "Égi jelenségek" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
@@ -1306,21 +1312,19 @@ evmadarai: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Év madarai\"",
-      check: (doc) => doc.title === "Év madarai",
+      check: (doc, html) => doc.title === "Év madarai" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
@@ -1546,21 +1550,19 @@ gombak: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Gombák\"",
-      check: (doc) => doc.title === "Gombák",
+      check: (doc, html) => doc.title === "Gombák" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
@@ -1802,21 +1804,19 @@ hobbiallatok: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Hobbiállatok\"",
-      check: (doc) => doc.title === "Hobbiállatok",
+      check: (doc, html) => doc.title === "Hobbiállatok" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
@@ -2046,21 +2046,19 @@ hullok: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Hüllők\"",
-      check: (doc) => doc.title === "Hüllők",
+      check: (doc, html) => doc.title === "Hüllők" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
@@ -2330,21 +2328,19 @@ tropusi_gyumolcsok: {
     {
       id: "lang-charset",
       label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
-      check: (doc) => {
-        const meta = doc.querySelector('meta[charset]');
-        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
-        return doc.documentElement.lang === "hu" && hasUtf8;
+      check: (doc, html) => {
+        return _ch.langHu(html) && _ch.inHead(html, /meta[^>]*charset=["']utf-8["']/i);
       },
     },
     {
       id: "title",
       label: "2. Böngésző címsorában megjelenő cím \"Trópusi gyümölcsök\"",
-      check: (doc) => doc.title === "Trópusi gyümölcsök",
+      check: (doc, html) => doc.title === "Trópusi gyümölcsök" && _ch.inHead(html, /<title[^>]*>/i),
     },
     {
       id: "style-link",
       label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
-      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+      check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
       id: "fejlec-img",
