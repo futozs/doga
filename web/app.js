@@ -3432,13 +3432,84 @@ function buildTag(parsed, content, indent = '') {
   return `${openTag}${content}${closeTag}`;
 }
 
+// Wrap beviteli widget (VS Code stílusú, editor tetején)
+function showWrapWidget(editor, onConfirm) {
+  const WIDGET_ID = 'wrap-abbr-input-widget';
+
+  // Ha már van, eltávolítjuk
+  try { editor.removeOverlayWidget({ getId: () => WIDGET_ID }); } catch(e) {}
+
+  const dom = document.createElement('div');
+  dom.style.cssText = [
+    'display:flex;align-items:center;gap:6px',
+    'background:#2d2d2d;border:1px solid #007acc',
+    'border-top:none;padding:5px 10px',
+    'font-family:Consolas,monospace;font-size:13px',
+    'box-shadow:0 2px 8px rgba(0,0,0,0.5)',
+    'min-width:340px',
+  ].join(';');
+
+  const label = document.createElement('span');
+  label.textContent = 'Wrap with Abbreviation:';
+  label.style.cssText = 'color:#cccccc;white-space:nowrap;';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = 'div';
+  input.style.cssText = [
+    'flex:1;background:#3c3c3c;border:1px solid #555',
+    'color:#d4d4d4;padding:2px 6px;font-size:13px',
+    'font-family:Consolas,monospace;outline:none',
+    'min-width:120px',
+  ].join(';');
+
+  dom.appendChild(label);
+  dom.appendChild(input);
+
+  const widget = {
+    getId: () => WIDGET_ID,
+    getDomNode: () => dom,
+    getPosition: () => ({ preference: 0 }), // TOP_RIGHT_CORNER → editor teteje
+  };
+
+  editor.addOverlayWidget(widget);
+  // Középre igazítás CSS-sel
+  dom.parentElement && (dom.parentElement.style.cssText += ';left:0;right:0;display:flex;justify-content:center;');
+
+  setTimeout(() => { input.focus(); input.select(); }, 50);
+
+  function close() {
+    try { editor.removeOverlayWidget(widget); } catch(e) {}
+    editor.focus();
+  }
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const abbr = input.value.trim();
+      close();
+      if (abbr) onConfirm(abbr);
+    } else if (e.key === 'Escape') {
+      close();
+    }
+    e.stopPropagation();
+  });
+
+  // Kattintás az editorra bezárja
+  const disposable = editor.onDidChangeCursorPosition(() => {
+    // csak ha elveszíti a fókuszt az input
+  });
+  input.addEventListener('blur', () => {
+    setTimeout(() => {
+      try { editor.removeOverlayWidget(widget); } catch(e) {}
+    }, 150);
+    disposable.dispose();
+  });
+}
+
 // Wrap with Abbreviation funkció
-function wrapWithAbbreviation(editor, monaco) {
-  // FONTOS: Először mentjük a kijelölést MIELŐTT a prompt megnyílna!
+function wrapWithAbbreviation(editor, monaco, abbreviation) {
   const selection = editor.getSelection();
   const model = editor.getModel();
-
-  // Kijelölt szöveg lekérése ELŐRE
   const selectedText = selection && !selection.isEmpty() ? model.getValueInRange(selection) : '';
 
   if (!selectedText) {
@@ -3446,8 +3517,11 @@ function wrapWithAbbreviation(editor, monaco) {
     return;
   }
 
-  const abbreviation = prompt('Add meg az Emmet rövidítést (pl. div, ul>li*, ol>li*, .container):', 'div');
-  if (!abbreviation) return;
+  // Ha nincs abbreviation megadva, megjelenítjük a widget-et
+  if (!abbreviation) {
+    showWrapWidget(editor, (abbr) => wrapWithAbbreviation(editor, monaco, abbr));
+    return;
+  }
   const lines = selectedText.split('\n').filter(line => line.trim() !== '');
 
   let wrappedText;
