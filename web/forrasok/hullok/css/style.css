@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Snowburst+One&display=swap');
+
+body {
+	
+	background-color: #cccccc;
+    background-image: radial-gradient(rgb(140, 255, 0), rgb(2, 145, 255));
+}
+
+#fejlec {
+	
+	height: 100%;
+}
+
+#felirat {
+	font-family: "Snowburst One";
+	top: 8vw;
+    right: 20vw;
+	font-size: 6vw;
+    position: absolute;
+    text-align: center;
+    color:rgb(13, 1, 81);
+	text-shadow: 0px 2px 5px rgba(255, 213, 130, 1);
+    max-width: 100%;
+	font-variant: small-caps;
+
+}
+
+nav li {
+	
+	
+}
+
+.nav-link {
+	color: #39FF14;
+}
+
+.nav-link:hover {
+	color: #ffff33;
+}
+
+nav li:last-child {
+	border-right: none;
+}
+
+#főcím {
+	font-family: "Snowburst One";
+	text-shadow: 0 0 10px rgb(57, 255, 20);
+}
+
+h2{
+	font-family: "Snowburst One";
+	color: black;
+	text-shadow: 0 0 10px rgb(57, 255, 20);
+	font-variant: small-caps;
+	font-weight: bolder;
+	font-size: 2.5em;
+}
+
+.card-body {
+	background-color: #aaf270;
+	border: 1px solid black;
+}
+
+dd {
+	
+	font-size: 1em;
+	max-width: 95%;
+	margin-left: 1vw;
+}
+
+#utolso {
+	margin-left: -0.5vw;
+}
+
+.hullo{
+	
+	border: 2px solid black;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+th,td {
+	word-wrap: break-word;
+	vertical-align: middle;
+}
+
+tr td:first-child {
+	font-weight: bold;
+}
+
+.lablec {
+	background-color: rgb(255,242,207);
+}
+
+.lablec a {
+	color: #39FF14;
+	font-weight: bold;
+	
+}
+
+.lablec a:hover {
+	
+}
+
+.navbar {
+	font-variant: small-caps;
+	font-size: 1.2em;
+	margin-left: 0;
+}
+
+#gyik {
+	
+	margin-left: 25px;
+}
+

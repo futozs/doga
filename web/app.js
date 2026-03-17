@@ -727,6 +727,1163 @@ humanoid: {
     },
   ],
 },
+
+baglyok: {
+  id: "baglyok",
+  name: "Baglyok",
+  description: "Weboldal kódolása - Baglyok",
+  basePath: "forrasok/baglyok/",
+  htmlFile: "baglyok.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_baglyok.html",
+  previewBase: "forrasok/baglyok/",
+  sampleImage: "baglyok_weboldal.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Hóbagoly szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Táblázat fejléc (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Baglyok\"",
+      check: (doc) => doc.title === "Baglyok",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. Az img mappában található fejlec.jpg képet elhelyezte",
+      check: (doc) => doc.querySelector('img[src*="img/fejlec"]') !== null,
+    },
+    {
+      id: "fejlec-alt-title",
+      label: "5. A fejléc képnél alt és title szövege \"Baglyok\"",
+      check: (doc) => {
+        const img = doc.querySelector('img[src*="img/fejlec"]');
+        return img && img.alt === "Baglyok" && img.title === "Baglyok";
+      },
+    },
+    {
+      id: "fejlec-id",
+      label: "6. A fejléc képre egyedi azonosítót állított fejlec néven",
+      check: (doc) => doc.querySelector('img#fejlec') !== null,
+    },
+    {
+      id: "felirat-h1",
+      label: "7. A \"Baglyok\" szöveg 1-es szintű címsor (h1)",
+      check: (doc) => {
+        const h1 = doc.querySelector('h1#felirat');
+        return h1 !== null;
+      },
+    },
+    {
+      id: "nav-3rd-link",
+      label: "8. Elkészítette a \"Rejtőzködő baglyok\" menüpontot és jó oldalra hivatkozik",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Rejtőzk') &&
+          a.href.includes('erdekesseg.hu')
+        );
+      },
+    },
+    {
+      id: "nav-3rd-blank",
+      label: "9. A \"Rejtőzködő baglyok\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.href.includes('erdekesseg.hu') && a.target === '_blank'
+        );
+      },
+    },
+    {
+      id: "focim-uppercase",
+      label: "10. A főcím \"Baglyok\" szövegre alkalmazza a text-uppercase osztályjelölőt",
+      check: (doc) => {
+        // #főcím tartalmaz text-uppercase span-t
+        const allSpans = doc.querySelectorAll('span.text-uppercase');
+        if (allSpans.length > 0) return true;
+        // fallback: div#leiras ben van span.text-uppercase
+        const leiras = doc.getElementById('leiras');
+        if (!leiras) return false;
+        return leiras.querySelector('span.text-uppercase') !== null;
+      },
+    },
+    {
+      id: "torpekuvik-paragraphs",
+      label: "11. A Törpekuvik szövegrészei bekezdésbe kerültek (legalább 2 p)",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        const torpekuvikH2 = Array.from(h2s).find(h => h.textContent.includes('Törpekuvik'));
+        if (!torpekuvikH2) return false;
+        const container = torpekuvikH2.closest('.col');
+        if (!container) return false;
+        const paragraphs = container.querySelectorAll('p:not(.card-text)');
+        return paragraphs.length >= 2;
+      },
+    },
+    {
+      id: "torpekuvik-bold-italic",
+      label: "12. A törpekuvik neve félkövér, latin neve dőlt",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('törpekuvik'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Glaucidium'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "fuleskuvik-bold-italic",
+      label: "13. A füleskuvik neve félkövér, latin neve dőlt",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('füleskuvik'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Otus scops'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "fuleskuvik-kulonlegessege",
+      label: "14. A Füleskuvik \"Különlegessége:\" szöveg aláhúzott",
+      check: (doc) => {
+        const underlines = doc.querySelectorAll('u');
+        return Array.from(underlines).some(u => u.textContent.includes('Különlegessége'));
+      },
+    },
+    {
+      id: "fulesbagoly-ol",
+      label: "15. Az Erdei fülesbagoly megjelenésének adatai számozott felsorolásban (ol)",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        const fulesbH2 = Array.from(h2s).find(h => h.textContent.includes('Erdei fülesbagoly'));
+        if (!fulesbH2) return false;
+        const container = fulesbH2.closest('.col');
+        if (!container) return false;
+        const ol = container.querySelector('ol');
+        return ol !== null && ol.querySelectorAll('li').length >= 3;
+      },
+    },
+    {
+      id: "uhu-ul-taplalek",
+      label: "16. Az Uhu táplálékai számozatlan felsorolásban (ul#taplalek)",
+      check: (doc) => {
+        return doc.querySelector('ul#taplalek') !== null &&
+          doc.querySelector('ul#taplalek li') !== null;
+      },
+    },
+    {
+      id: "hobagoly-h2",
+      label: "17. A Hóbagoly részben van 2-es szintű címsor",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        return Array.from(h2s).some(h => h.textContent.includes('Hóbagoly'));
+      },
+    },
+    {
+      id: "hobagoly-img",
+      label: "18. A Hóbagoly kép forrása img/hobagoly.jpg",
+      check: (doc) => {
+        const img = doc.querySelector('img[src*="hobagoly"]');
+        return img !== null && img.src.includes('hobagoly.jpg');
+      },
+    },
+    {
+      id: "table-th-headers",
+      label: "19. A táblázat fejlécében elkészítette a 6 fejléc cellát",
+      check: (doc) => {
+        const ths = doc.querySelectorAll('thead th');
+        return ths.length >= 6;
+      },
+    },
+    {
+      id: "table-bordered-center",
+      label: "20. A táblázaton alkalmazza a table-bordered és text-center osztályjelölőket",
+      check: (doc) => {
+        const table = doc.querySelector('table');
+        return table &&
+          table.classList.contains('table-bordered') &&
+          table.classList.contains('text-center');
+      },
+    },
+    {
+      id: "nokturn-col-md-6",
+      label: "21. A Nokturnalitás részben mindkét oszlop col-md-6 méretű",
+      check: (doc, html) => {
+        const nokturn = doc.querySelector('#nokturn');
+        if (!nokturn) return false;
+        const cols = nokturn.querySelectorAll('[class*="col-md-6"]');
+        return cols.length >= 2;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "22. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "23. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
+
+egijelensegek: {
+  id: "egijelensegek",
+  name: "Égi jelenségek",
+  description: "Weboldal kódolása - Égi jelenségek",
+  basePath: "forrasok/egijelensegek/",
+  htmlFile: "egijelensegek.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_egijelensegek.html",
+  previewBase: "forrasok/egijelensegek/",
+  sampleImage: "égi_jelenségek.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Sas-köd szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Új táblázatsorok (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Égi jelenségek\"",
+      check: (doc) => doc.title === "Égi jelenségek",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. Az img mappában található fejlec.jpg képet elhelyezte",
+      check: (doc) => doc.querySelector('img[src*="img/fejlec"]') !== null,
+    },
+    {
+      id: "fejlec-alt-title",
+      label: "5. A fejléc kép alt és title szövege \"Világegyetem\"",
+      check: (doc) => {
+        const img = doc.querySelector('img[src*="img/fejlec"]');
+        return img && img.alt === "Világegyetem" && img.title === "Világegyetem";
+      },
+    },
+    {
+      id: "felirat-h1",
+      label: "6. Az \"Égi jelenségek\" szöveg 1-es szintű címsor (h1)",
+      check: (doc) => doc.querySelector('h1#felirat') !== null,
+    },
+    {
+      id: "nav-3rd-link",
+      label: "7. Elkészítette a \"Világegyetem\" menüpontot és jó oldalra hivatkozik",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Világegyetem') && a.href.includes('wikipedia.org')
+        );
+      },
+    },
+    {
+      id: "nav-3rd-blank",
+      label: "8. A \"Világegyetem\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.href.includes('wikipedia.org') && a.textContent.includes('Világegyetem') && a.target === '_blank'
+        );
+      },
+    },
+    {
+      id: "napfogyatkozas-ul",
+      label: "9. A napfogyatkozás típusai számozatlan felsorolásban (ul#nap)",
+      check: (doc) => {
+        return doc.querySelector('ul#nap') !== null && doc.querySelector('ul#nap li') !== null;
+      },
+    },
+    {
+      id: "napfogyatkozas-underline",
+      label: "10. A \"A napfogyatkozás típusai:\" szöveg aláhúzott",
+      check: (doc) => {
+        const underlines = doc.querySelectorAll('u');
+        return Array.from(underlines).some(u => u.textContent.includes('napfogyatkozás típusai'));
+      },
+    },
+    {
+      id: "verhold-ol",
+      label: "11. A telihold ősi nevei számozott felsorolásban (ol, 12 elem)",
+      check: (doc) => {
+        const ols = doc.querySelectorAll('ol');
+        return Array.from(ols).some(ol => ol.querySelectorAll('li').length >= 10);
+      },
+    },
+    {
+      id: "saskod-h2",
+      label: "12. A Sas-köd részben van 2-es szintű címsor",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        return Array.from(h2s).some(h => h.textContent.includes('Sas-köd'));
+      },
+    },
+    {
+      id: "saskod-bold-italic",
+      label: "13. A Sas-köd neve félkövér, az alternatív neve dőlt",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.includes('Sas-köd'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Messier'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "saskod-img",
+      label: "14. A Sas-köd kép forrása img/saskod.jpg",
+      check: (doc) => doc.querySelector('img[src*="saskod"]') !== null,
+    },
+    {
+      id: "table-classes",
+      label: "15. A táblázaton alkalmazza a table, table-bordered és table-responsive osztályokat",
+      check: (doc) => {
+        const table = doc.querySelector('table');
+        return table &&
+          table.classList.contains('table') &&
+          table.classList.contains('table-bordered') &&
+          table.classList.contains('table-responsive');
+      },
+    },
+    {
+      id: "table-th-w25",
+      label: "16. A táblázat fejléc celláin alkalmazza a w-25 osztályjelölőt",
+      check: (doc) => {
+        const ths = doc.querySelectorAll('thead th.w-25');
+        return ths.length >= 3;
+      },
+    },
+    {
+      id: "table-new-rows",
+      label: "17. A táblázatba bekerültek az új sorok (Plútó, Xena)",
+      check: (doc) => {
+        const tds = doc.querySelectorAll('tbody td');
+        const text = Array.from(tds).map(td => td.textContent).join(' ');
+        return text.includes('Plútó') || text.includes('Xena');
+      },
+    },
+    {
+      id: "egyuttallas-col-md-6",
+      label: "18. A Bolygó együttállás részben mindkét oszlop col-md-6 méretű",
+      check: (doc) => {
+        const egyuttallas = doc.querySelector('#egyuttallas');
+        if (!egyuttallas) return false;
+        const cols = egyuttallas.querySelectorAll('[class*="col-md-6"]');
+        return cols.length >= 2;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "19. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "20. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
+
+evmadarai: {
+  id: "evmadarai",
+  name: "Év madarai",
+  description: "Weboldal kódolása - Év madarai",
+  basePath: "forrasok/evmadarai/",
+  htmlFile: "evmadarai.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_evmadarai.html",
+  previewBase: "forrasok/evmadarai/",
+  sampleImage: "év_madarai.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Zöld küllő szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Új táblázatsorok (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Év madarai\"",
+      check: (doc) => doc.title === "Év madarai",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. A fejlec.jpg képet elhelyezte, alt és title szövege \"Év madarai\"",
+      check: (doc) => {
+        const img = doc.querySelector('img#fejlec');
+        return img && img.alt === "Év madarai" && img.title === "Év madarai";
+      },
+    },
+    {
+      id: "felirat-h1",
+      label: "5. Az \"Év madarai\" szöveg 1-es szintű címsor (h1)",
+      check: (doc) => doc.querySelector('h1#felirat') !== null,
+    },
+    {
+      id: "nav-3rd-link",
+      label: "6. Elkészítette a \"Magyarország madarai\" menüpontot és jó oldalra hivatkozik",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Magyarország madarai') && a.href.includes('mme.hu')
+        );
+      },
+    },
+    {
+      id: "nav-3rd-blank",
+      label: "7. A \"Magyarország madarai\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a => a.href.includes('mme.hu') && a.target === '_blank');
+      },
+    },
+    {
+      id: "vandorsolyom-bold-italic",
+      label: "8. A vándorsólyom neve félkövér, latin neve dőlt; szövege bekezdésekbe kerültek",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('vándorsólyom'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Falco'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "golyatocs-underline",
+      label: "9. A Gólyatöcs \"Jellemvonásaik:\" szöveg aláhúzott",
+      check: (doc) => {
+        const underlines = doc.querySelectorAll('u');
+        return Array.from(underlines).some(u => u.textContent.includes('Jellemvonásaik'));
+      },
+    },
+    {
+      id: "fulesbagoly-ol",
+      label: "10. Az Erdei fülesbagoly megjelenésének adatai számozott felsorolásban",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        const fbH2 = Array.from(h2s).find(h => h.textContent.includes('Erdei fülesbagoly'));
+        if (!fbH2) return false;
+        const container = fbH2.closest('.col');
+        return container && container.querySelector('ol') !== null;
+      },
+    },
+    {
+      id: "ciganycsuk-ul",
+      label: "11. A Cigánycsuk táplálékai számozatlan felsorolásban (ul#taplalek)",
+      check: (doc) => doc.querySelector('ul#taplalek') !== null,
+    },
+    {
+      id: "zoldkullo-h2",
+      label: "12. A Zöld küllő részben van 2-es szintű címsor",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        return Array.from(h2s).some(h => h.textContent.includes('Zöld küllő'));
+      },
+    },
+    {
+      id: "zoldkullo-img",
+      label: "13. A Zöld küllő kép forrása img/zoldkullo.jpg",
+      check: (doc) => doc.querySelector('img[src*="zoldkullo"]') !== null,
+    },
+    {
+      id: "barkoscinege-bold-italic",
+      label: "14. A barkóscinege neve félkövér, latin neve dőlt",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('barkóscinege'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Panurus'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "table-classes",
+      label: "15. A táblázaton alkalmazza a table-striped és table-warning osztályokat",
+      check: (doc) => {
+        const table = doc.querySelector('table');
+        return table &&
+          table.classList.contains('table-striped') &&
+          table.classList.contains('table-warning');
+      },
+    },
+    {
+      id: "table-new-rows",
+      label: "16. A táblázatba bekerültek az új sorok (rétisas, kerecsensólyom)",
+      check: (doc) => {
+        const tds = doc.querySelectorAll('tbody td');
+        const text = Array.from(tds).map(td => td.textContent).join(' ');
+        return text.includes('rétisas') || text.includes('kerecsensólyom');
+      },
+    },
+    {
+      id: "evmadara-col-md-6",
+      label: "17. Az Év madara program részben mindkét oszlop col-md-6 méretű",
+      check: (doc) => {
+        const evmadara = doc.querySelector('#evmadara');
+        if (!evmadara) return false;
+        return evmadara.querySelectorAll('[class*="col-md-6"]').length >= 2;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "18. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "19. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
+
+gombak: {
+  id: "gombak",
+  name: "Gombák",
+  description: "Weboldal kódolása - Gombák",
+  basePath: "forrasok/gombak/",
+  htmlFile: "gombak.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_gombak.html",
+  previewBase: "forrasok/gombak/",
+  sampleImage: "gombák.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Gyilkos galóca szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Táblázat fejléc (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Gombák\"",
+      check: (doc) => doc.title === "Gombák",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. A fejlec.jpg képet elhelyezte, alt és title szövege \"Gombák\"",
+      check: (doc) => {
+        const img = doc.querySelector('img#fejlec');
+        return img && img.alt === "Gombák" && img.title === "Gombák";
+      },
+    },
+    {
+      id: "nav-4th-link",
+      label: "5. Elkészítette a \"Gyógygombák\" menüpontot és jó oldalra hivatkozik",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Gyógygombák') && a.href.includes('gyogygombak.net')
+        );
+      },
+    },
+    {
+      id: "nav-4th-blank",
+      label: "6. A \"Gyógygombák\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a => a.href.includes('gyogygombak.net') && a.target === '_blank');
+      },
+    },
+    {
+      id: "focim-h1",
+      label: "7. A főcím szöveg 1-es szintű címsor (h1)",
+      check: (doc) => {
+        const h1s = doc.querySelectorAll('h1');
+        return Array.from(h1s).some(h => h.textContent.includes('GOMBÁK'));
+      },
+    },
+    {
+      id: "muholdszoveg-p",
+      label: "8. A \"Gombából műhold\" szöveg bekezdésekbe (p) kerültek",
+      check: (doc) => {
+        const erdei = doc.querySelector('#erdei');
+        if (!erdei) return false;
+        const ps = erdei.querySelectorAll('p');
+        return ps.length >= 2;
+      },
+    },
+    {
+      id: "csiperke-bold-italic",
+      label: "9. A csiperke neve félkövér, latin neve dőlt",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('csiperke'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Agaricus'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "laskagomba-ul",
+      label: "10. A laskagomba receptek számozatlan felsorolásban (ul#kaja)",
+      check: (doc) => doc.querySelector('ul#kaja') !== null,
+    },
+    {
+      id: "gyilkos-galoca-h3",
+      label: "11. A Gyilkos galóca részben van 3-as szintű címsor",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        return Array.from(h3s).some(h => h.textContent.includes('Gyilkos galóca'));
+      },
+    },
+    {
+      id: "gyilkos-galoca-img",
+      label: "12. A Gyilkos galóca kép forrása img/gyilkos_galoca.jpg",
+      check: (doc) => doc.querySelector('img[src*="gyilkos_galoca"]') !== null,
+    },
+    {
+      id: "megelozese-ol",
+      label: "13. A gombamérgezés megelőzése szöveg számozott felsorolásban (ol)",
+      check: (doc) => {
+        const jotanacs = doc.querySelector('#jotanacs');
+        if (!jotanacs) return false;
+        return jotanacs.querySelector('ol') !== null;
+      },
+    },
+    {
+      id: "table-th",
+      label: "14. A táblázat fejlécében elkészítette az 5 fejléc cellát",
+      check: (doc) => {
+        const ths = doc.querySelectorAll('thead th');
+        return ths.length >= 5;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "15. A láblécben van hivatkozás a \"fejlec\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#fejlec"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "16. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
+
+hobbiallatok: {
+  id: "hobbiallatok",
+  name: "Hobbiállatok",
+  description: "Weboldal kódolása - Hobbiállatok",
+  basePath: "forrasok/hobbiallatok/",
+  htmlFile: "hobbiallatok.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_hobbiallatok.html",
+  previewBase: "forrasok/hobbiallatok/",
+  sampleImage: "hobbiállatok.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Törpesün szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Tartási költségek táblázat (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Hobbiállatok\"",
+      check: (doc) => doc.title === "Hobbiállatok",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. A fejlec.jpg képet elhelyezte, alt és title szövege \"Hobbiállatok\"",
+      check: (doc) => {
+        const img = doc.querySelector('img#fejlec');
+        return img && img.alt === "Hobbiállatok" && img.title === "Hobbiállatok";
+      },
+    },
+    {
+      id: "felirat-h1",
+      label: "5. A \"Hobbiállatok\" szöveg 1-es szintű címsor (h1)",
+      check: (doc) => doc.querySelector('h1#felirat') !== null,
+    },
+    {
+      id: "nav-3rd-link",
+      label: "6. Elkészítette a \"Felelős állattartás\" menüpontot",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Felelős') && a.href.includes('wikipedia.org')
+        );
+      },
+    },
+    {
+      id: "nav-3rd-blank",
+      label: "7. A \"Felelős állattartás\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Felelős') && a.target === '_blank'
+        );
+      },
+    },
+    {
+      id: "kutya-ul",
+      label: "8. A kutya tulajdonságai számozatlan felsorolásban (ul)",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        const kutyaH3 = Array.from(h3s).find(h => h.textContent.trim() === 'Kutya');
+        if (!kutyaH3) return false;
+        const container = kutyaH3.closest('.col');
+        return container && container.querySelector('ul:not(.navbar-nav)') !== null;
+      },
+    },
+    {
+      id: "macska-ol",
+      label: "9. A világ legnépszerűbb macskái számozott felsorolásban (ol)",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        const macH3 = Array.from(h3s).find(h => h.textContent.trim() === 'Macska');
+        if (!macH3) return false;
+        const container = macH3.closest('.col');
+        return container && container.querySelector('ol') !== null;
+      },
+    },
+    {
+      id: "torpesun-h3",
+      label: "10. A Törpesün részben van 3-as szintű címsor",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        return Array.from(h3s).some(h => h.textContent.includes('Törpesün'));
+      },
+    },
+    {
+      id: "torpesun-bold-italic",
+      label: "11. A törpesün neve félkövér/strong, latin neve dőlt/em",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('törpesün'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Atelerix'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "torpesun-img",
+      label: "12. A Törpesün kép forrása img/torpesun.jpg",
+      check: (doc) => doc.querySelector('img[src*="torpesun"]') !== null,
+    },
+    {
+      id: "kameleon-underline",
+      label: "13. A kaméleon \"Kedvenc táplálékai:\" szöveg aláhúzott",
+      check: (doc) => {
+        const underlines = doc.querySelectorAll('u');
+        return Array.from(underlines).some(u => u.textContent.includes('Kedvenc táplálékai'));
+      },
+    },
+    {
+      id: "tartasi-table",
+      label: "14. A tartási költségek táblázata elkészült (colspan/rowspan fejléccel)",
+      check: (doc) => {
+        const koltsegek = doc.querySelector('#koltsegek');
+        if (!koltsegek) return false;
+        const table = koltsegek.querySelector('table');
+        if (!table) return false;
+        return table.querySelector('th[colspan]') !== null || table.querySelector('th[rowspan]') !== null;
+      },
+    },
+    {
+      id: "hatas-col-md",
+      label: "15. Az egészségügyi hatások részben az oszlopok col-md-4 és col-md-8 méretűek",
+      check: (doc) => {
+        const hatas = doc.querySelector('#hatas');
+        if (!hatas) return false;
+        return hatas.querySelector('[class*="col-md-4"]') !== null &&
+          hatas.querySelector('[class*="col-md-8"]') !== null;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "16. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "17. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
+
+hullok: {
+  id: "hullok",
+  name: "Hüllők",
+  description: "Weboldal kódolása - Hüllők",
+  basePath: "forrasok/hullok/",
+  htmlFile: "hullok.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_hullok.html",
+  previewBase: "forrasok/hullok/",
+  sampleImage: "hüllők.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Pávaszemes gyík szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Új táblázatsor (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Hüllők\"",
+      check: (doc) => doc.title === "Hüllők",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. A fejlec.jpg képet elhelyezte, alt és title szövege \"Hüllő\"",
+      check: (doc) => {
+        const img = doc.querySelector('img#fejlec');
+        return img && img.alt === "Hüllő" && img.title === "Hüllő";
+      },
+    },
+    {
+      id: "felirat-h1",
+      label: "5. A \"Hüllők\" szöveg 1-es szintű címsor (h1)",
+      check: (doc) => doc.querySelector('h1#felirat') !== null,
+    },
+    {
+      id: "nav-4th-link",
+      label: "6. Elkészítette a \"További információ\" menüpontot",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('További') && a.href.includes('wikipedia.org')
+        );
+      },
+    },
+    {
+      id: "nav-4th-blank",
+      label: "7. A \"További információ\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('További') && a.target === '_blank'
+        );
+      },
+    },
+    {
+      id: "parduc-kameleon-bold-italic",
+      label: "8. A párduc kaméleon neve félkövér, latin neve dőlt; szöveg bekezdésekbe kerültek",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('párduc kaméleon'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Furcifer'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "aranyporos-ul",
+      label: "9. A gekkó színei számozatlan felsorolásban (ul#gyik)",
+      check: (doc) => doc.querySelector('ul#gyik') !== null,
+    },
+    {
+      id: "leguan-ol",
+      label: "10. A zöld leguán táplálékai számozott felsorolásban (ol)",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        const leguanH2 = Array.from(h2s).find(h => h.textContent.includes('Zöld leguán'));
+        if (!leguanH2) return false;
+        const container = leguanH2.closest('.col');
+        return container && container.querySelector('ol') !== null;
+      },
+    },
+    {
+      id: "pavaszem-h2",
+      label: "11. A Pávaszemes gyík részben van 2-es szintű címsor",
+      check: (doc) => {
+        const h2s = doc.querySelectorAll('h2');
+        return Array.from(h2s).some(h => h.textContent.includes('Pávaszemes gyík'));
+      },
+    },
+    {
+      id: "pavaszem-img",
+      label: "12. A Pávaszemes gyík kép forrása img/pavaszem.jpg",
+      check: (doc) => doc.querySelector('img[src*="pavaszem"]') !== null,
+    },
+    {
+      id: "table-classes",
+      label: "13. A táblázaton alkalmazza a table-bordered és text-center osztályokat",
+      check: (doc) => {
+        const table = doc.querySelector('.row.m-4.table-responsive-sm table, table.table-bordered');
+        return table &&
+          table.classList.contains('table-bordered') &&
+          table.classList.contains('text-center');
+      },
+    },
+    {
+      id: "table-new-row",
+      label: "14. A táblázatba bekerült a Komodói varánusz sor",
+      check: (doc) => {
+        const tds = doc.querySelectorAll('tbody td');
+        const text = Array.from(tds).map(td => td.textContent).join(' ');
+        return text.includes('Komodói varánusz');
+      },
+    },
+    {
+      id: "erdekes-col-md-6",
+      label: "15. A \"7+1 érdekes tény\" részben mindkét oszlop col-md-6 méretű",
+      check: (doc) => {
+        const erdekes = doc.querySelector('#erdekes');
+        if (!erdekes) return false;
+        return erdekes.querySelectorAll('[class*="col-md-6"]').length >= 2;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "16. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "17. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
+
+tropusi_gyumolcsok: {
+  id: "tropusi_gyumolcsok",
+  name: "Trópusi gyümölcsök",
+  description: "Weboldal kódolása - Trópusi gyümölcsök",
+  basePath: "forrasok/tropusi_gyumolcsok/",
+  htmlFile: "tropusi_gyumolcsok.html",
+  cssFile: "css/style.css",
+  taskDescFile: "weboldal_kodolas_tropusi_gyumolcsok.html",
+  previewBase: "forrasok/tropusi_gyumolcsok/",
+  sampleImage: "trópusi_gyümölcsök.png",
+  sourceFiles: [
+    { name: "forras.txt", label: "Sárkánygyümölcs szöveg (forras.txt)" },
+    { name: "tablazat.txt", label: "Táblázat fejléc és sorok (tablazat.txt)" }
+  ],
+  checks: [
+    {
+      id: "lang-charset",
+      label: "1. Weboldal nyelve magyar, karakterkódolása UTF-8",
+      check: (doc) => {
+        const meta = doc.querySelector('meta[charset]');
+        const hasUtf8 = meta && meta.getAttribute('charset').trim().toLowerCase() === 'utf-8';
+        return doc.documentElement.lang === "hu" && hasUtf8;
+      },
+    },
+    {
+      id: "title",
+      label: "2. Böngésző címsorában megjelenő cím \"Trópusi gyümölcsök\"",
+      check: (doc) => doc.title === "Trópusi gyümölcsök",
+    },
+    {
+      id: "style-link",
+      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      check: (doc, html) => /href=["'][^"']*style\.css["']/i.test(html),
+    },
+    {
+      id: "fejlec-img",
+      label: "4. A fejlec képet elhelyezte, alt és title szövege \"Trópusi gyümölcsök\"",
+      check: (doc) => {
+        const img = doc.querySelector('img#fejlec');
+        return img && img.alt === "Trópusi gyümölcsök" && img.title === "Trópusi gyümölcsök";
+      },
+    },
+    {
+      id: "nav-3rd-link",
+      label: "5. Elkészítette a \"Noni\" menüpontot",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a =>
+          a.textContent.includes('Noni') && a.href.includes('wikipedia.org')
+        );
+      },
+    },
+    {
+      id: "nav-3rd-blank",
+      label: "6. A \"Noni\" link új lapon nyílik meg",
+      check: (doc) => {
+        const links = doc.querySelectorAll('nav a, .navbar a');
+        return Array.from(links).some(a => a.textContent.includes('Noni') && a.target === '_blank');
+      },
+    },
+    {
+      id: "focim-h1",
+      label: "7. A főcím szöveg 1-es szintű címsor (h1)",
+      check: (doc) => {
+        const h1s = doc.querySelectorAll('h1');
+        return Array.from(h1s).some(h => h.textContent.includes('TRÓPUSI'));
+      },
+    },
+    {
+      id: "deli-gyumolcsok-p",
+      label: "8. A \"Déli gyümölcsök\" szöveg bekezdésekbe (p) kerültek",
+      check: (doc) => {
+        const erdei = doc.querySelector('#erdei');
+        if (!erdei) return false;
+        return erdei.querySelectorAll('p').length >= 2;
+      },
+    },
+    {
+      id: "ananasz-bold-italic",
+      label: "9. Az ananász neve félkövér, latin neve dőlt",
+      check: (doc) => {
+        const bolds = doc.querySelectorAll('b, strong');
+        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('ananász'));
+        const italics = doc.querySelectorAll('i, em');
+        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Ananas'));
+        return hasBold && hasItalic;
+      },
+    },
+    {
+      id: "banan-ul",
+      label: "10. A banán receptek számozatlan felsorolásban (ul#banan)",
+      check: (doc) => doc.querySelector('ul#banan') !== null,
+    },
+    {
+      id: "sarkanygyumolcs-h3",
+      label: "11. A Sárkánygyümölcs részben van 3-as szintű címsor",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        return Array.from(h3s).some(h => h.textContent.includes('Sárkánygyümölcs'));
+      },
+    },
+    {
+      id: "sarkanygyumolcs-img",
+      label: "12. A Sárkánygyümölcs kép forrása img/pitaja.jpg",
+      check: (doc) => doc.querySelector('img[src*="pitaja"]') !== null,
+    },
+    {
+      id: "granatama-ol",
+      label: "13. A gránátalma előnyei számozott felsorolásban (ol)",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        const granatH3 = Array.from(h3s).find(h => h.textContent.includes('Gránátalma'));
+        if (!granatH3) return false;
+        const container = granatH3.closest('.col-sm-12');
+        return container && container.querySelector('ol') !== null;
+      },
+    },
+    {
+      id: "table-th",
+      label: "14. A táblázat fejlécében elkészítette az 5 fejléc cellát",
+      check: (doc) => {
+        const ths = doc.querySelectorAll('#tablazat thead th');
+        return ths.length >= 5;
+      },
+    },
+    {
+      id: "table-rows",
+      label: "15. A táblázatba bekerültek az adatsorok (Ananász, Banán, stb.)",
+      check: (doc) => {
+        const tds = doc.querySelectorAll('#tablazat tbody td');
+        return tds.length >= 4;
+      },
+    },
+    {
+      id: "footer-link",
+      label: "16. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      check: (doc) => {
+        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        return link && link.textContent.includes('Ugrás az elejére');
+      },
+    },
+    {
+      id: "html-validated",
+      label: "17. HTML validálás képernyőképe feltöltve",
+      check: () => validationImages.html !== null,
+    },
+  ],
+},
 };
 
 let currentTask = null;

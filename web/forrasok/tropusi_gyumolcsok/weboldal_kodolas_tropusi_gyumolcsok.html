@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Calibri, 'Segoe UI', sans-serif; font-size: 11pt; line-height: 1.5; color: #1a1a1a; margin: 12px 16px; padding: 0; }
+    .fejezet { font-size: 10pt; color: #555; margin-bottom: 2px; }
+    h1.feladat-cim { font-size: 14pt; font-weight: bold; margin: 4px 0 10px 0; }
+    p { margin: 4px 0 6px 0; text-align: justify; }
+    p.utasitas { margin: 4px 0 10px 0; }
+    ol.fo { margin: 6px 0; padding-left: 22px; }
+    ol.fo > li { margin: 5px 0; padding-left: 2px; text-align: justify; }
+    ol.al { list-style-type: lower-alpha; margin: 4px 0; padding-left: 22px; }
+    ol.al > li { margin: 3px 0; text-align: justify; }
+    b { font-weight: bold; } i { font-style: italic; } u { text-decoration: underline; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <p class="fejezet">A. Weboldalak kódolása</p>
+  <h1 class="feladat-cim">Trópusi gyümölcsök</h1>
+  <p>A következő feladatban egy weboldalt kell készítenie a trópusi gyümölcsök rövid bemutatására a feladatleírás és a minta szerint!</p>
+  <p>Nagyobb felbontású, színes mintát a kész weboldalról a <b>trópusi_gyümölcsök.png</b> fájlban találja.</p>
+  <p class="utasitas">Nyissa meg a <b>tropusi_gyumolcsok.html</b> állományt és szerkessze annak tartalmát az alábbiak szerint:</p>
+  <hr>
+  <ol class="fo">
+    <li>A weboldal nyelvezete legyen <b>magyar</b>, a karakterkódolása pedig <b>UTF-8</b>!</li>
+    <li>A böngésző címsorában megjelenő cím „<b>Trópusi gyümölcsök</b>" legyen!</li>
+    <li>A weboldal fejrészében helyezzen el hivatkozást a <b>css</b> könyvtárban található <b>style.css</b> stíluslapra!</li>
+    <li>A <i>„Fejléc"</i> részben helyezze el az <b>img/fejlec.avif</b> képet! Alt és title szövege „<b>Trópusi gyümölcsök</b>" legyen! Állítson be <b>fejlec</b> egyedi azonosítót!</li>
+    <li><u>A navigációs menüben készítsen egy új, harmadik menüpontot:</u>
+      <ol class="al">
+        <li>Az új menüpont neve „<b>Noni</b>" legyen!</li>
+        <li>A menüpont a <b>https://hu.wikipedia.org/wiki/Noni</b> weboldalra mutasson, <b>új lapon</b> nyíljon meg!</li>
+      </ol>
+    </li>
+    <li>A <i>„Főcím"</i> részben a „TRÓPUSI GYÜMÖLCSÖK" szöveget alakítsa <b>1-es szintű címsorrá</b>!</li>
+    <li>A <i>„Déli gyümölcsök"</i> részben a három szövegrészt alakítsa <b>bekezdéssé</b>! Minden bekezdésre alkalmazza a <b>my-3</b> Bootstrap osztályjelölőt!</li>
+    <li><u>A trópusi gyümölcsök részben végezze el az alábbi feladatokat:</u>
+      <ol class="al">
+        <li>Az <i>„Ananász"</i>, <i>„Banán"</i>, <i>„Papaya"</i>, <i>„Licsi"</i> és <i>„Gránátalma"</i> oszlopelrendezését módosítsa: az oszlopok legyenek <b>col-lg-4</b> méretűek (3 oszlopos elrendezés nagy képernyőn)!</li>
+        <li>Az <i>„Ananász"</i>, <i>„Banán"</i>, <i>„Papaya"</i>, <i>„Licsi"</i> és <i>„Gránátalma"</i> első bekezdéseiben a gyümölcs nevét emelje ki <b>félkövéren</b>, latin nevét <b>dőlt</b> stílussal!</li>
+        <li>A <i>„Banán"</i> részben az „5 legjobb banános finomság:" alatti szövegből készítsen <b>számozatlan felsorolást</b> és alkalmazza rá a <b>banan</b> egyedi azonosítót!</li>
+        <li>A <i>„Gránátalma"</i> részben a „A gránátalma fogyasztás 5 előnye:" alatti szövegből készítsen <b>számozott felsorolást</b>!</li>
+      </ol>
+    </li>
+    <li><u>A <i>„Sárkánygyümölcs"</i> rész hiányos. Egészítse ki a minta alapján! A szükséges szöveg a <b>forras.txt</b> állományban található.</u>
+      <ol class="al">
+        <li>Készítse el a <b>3-as szintű címsort</b>!</li>
+        <li>A szövegből alakítson ki <b>bekezdéseket</b>! A „<b>sárkánygyümölcs</b>" szöveget emelje ki <b>félkövéren</b>, latin nevét <b>dőlt</b> stílussal!</li>
+        <li>Állítsa be a kép forrását az <b>img/pitaja.jpg</b> képre! Alt és title szövege „<b>Sárkánygyümölcs</b>" legyen!</li>
+      </ol>
+    </li>
+    <li><u>A <i>„Déli gyümölcsök tápértéke"</i> táblázat fejléce és sorai hiányoznak. A szükséges adatok a <b>tablazat.txt</b> állományban találhatóak.</u>
+      <ol class="al">
+        <li>Készítse el az 5 fejléc cellát (<b>Déli gyümölcs neve</b>, <b>Szénhidrát</b>, <b>C-vitamin</b>, <b>Kalcium</b>, <b>Kálium</b>)! A fejléc sor osztálya legyen <b>text-uppercase align-middle</b>!</li>
+        <li>Adja hozzá az összes adatsort (Ananász, Banán, Citrom, Gránátalma)!</li>
+      </ol>
+    </li>
+    <li>A <i>„Lábléc"</i> részben készítsen egy hivatkozást a „<b>leiras</b>" azonosítóra, szövege „<b>Ugrás az elejére</b>" legyen!</li>
+    <li>A HTML oldalt validálja a <b>https://validator.w3.org/</b> oldalon! Az eredményről készítsen pillanatképet <b><i>tropusiValidalas</i></b> néven!</li>
+  </ol>
+</body>
+</html>

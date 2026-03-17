@@ -1,0 +1,44 @@
+<table class="table-warning table-bordered text-center mx-auto hobbi" style="width: 50%">
+			<thead>
+				<tr>
+					<th rowspan="2">Állatfaj</th>
+					<th colspan="2">Költségek</th>
+				</tr>
+				<tr>
+					<th>Élelem</th>
+					<th>Ápolás</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Kutya</td>
+					<td>2.600 - 35.000 Ft</td>
+					<td>1.800 - 5.200 Ft</td>
+				</tr>
+				<tr>
+					<td>Macska</td>
+					<td>1.300 - 5.200 Ft</td>
+					<td>1.300 - 5.200 Ft</td>
+				</tr>
+				<tr>
+					<td>Papagáj</td>
+					<td>650 - 1.300 Ft</td>
+					<td>kb. 2000 Ft</td>
+				</tr>
+				<tr>
+					<td>Nyúl</td>
+					<td>300 - 600 Ft</td>
+					<td>kb. 1000 Ft</td>
+				</tr>
+				<tr>
+					<td>Sün</td>
+					<td>1.000 - 2.000 Ft</td>
+					<td>kb. 1000 Ft</td>
+				</tr>
+				<tr>
+					<td>Kaméleon</td>
+					<td>2.000 - 5.000 Ft</td>
+					<td>kb. 1000 Ft</td>
+				</tr>
+			</tbody>
+		</table>

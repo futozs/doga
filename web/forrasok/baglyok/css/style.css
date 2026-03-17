@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
+body {
+	
+	background-image: radial-gradient(rgb(110, 83, 66), rgb(212, 174, 125));
+}
+
+#fejlec {
+	
+	height: 100%;
+}
+
+#felirat {
+	top: 40px;
+    left: 22vh;
+    font-size: 5vw;
+    position: absolute;
+    text-align: left;
+    color:rgb(13, 1, 81);
+	text-shadow: 0px 2px 5px rgb(233, 206, 160);
+    max-width: 100%;
+	
+	
+}
+
+nav li {
+	
+	padding: 0 15px;
+}
+
+nav li:last-child {
+	border-right: none;
+}
+
+#főcím {
+	text-shadow: 5px 5px 10px rgb(185, 93, 0);
+}
+
+h2{
+	color: black;
+	text-shadow: 5px 5px 10px rgb(185, 93, 0);
+	font-variant: small-caps;
+	font-weight: bold;
+	font-size: 1em;
+}
+
+ol li {
+	margin-left: 25px;
+}
+
+.bagoly {
+	
+	border: 2px solid black;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+tr td:first-child {
+	font-weight: bold;
+}
+
+.lablec a {
+	
+	font-weight: bold;
+	
+}
+
+.lablec a:hover {
+	text-transform: uppercase;
+}
+
+.navbar {
+	font-variant: small-caps;
+	font-size: 1.2em;
+	margin-left: 0;
+}
+
+#taplalek {
+	
+	margin-left: 25px;
+}
