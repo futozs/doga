@@ -4013,19 +4013,96 @@ function openTaskDesc() {
   window.open(currentTask.basePath + currentTask.taskDescFile, '_blank');
 }
 
-function openSampleImg() {
-  if (!currentTask || !currentTask.sampleImage) return;
-  const modal = document.getElementById('sample-img-modal');
-  const img = document.getElementById('sample-img-modal-img');
-  img.src = currentTask.basePath + currentTask.sampleImage;
-  modal.style.display = 'flex';
-}
+// Minta kép modal – zoom + drag
+(function() {
+  let scale = 1, offX = 0, offY = 0;
+  let dragging = false, dragX0 = 0, dragY0 = 0, offX0 = 0, offY0 = 0;
+  let didDrag = false;
 
-function closeSampleImgModal() {
-  const modal = document.getElementById('sample-img-modal');
-  modal.style.display = 'none';
-  document.getElementById('sample-img-modal-img').src = '';
-}
+  function applyTransform() {
+    const img = document.getElementById('sample-img-modal-img');
+    if (img) img.style.transform = `translate(${offX}px,${offY}px) scale(${scale})`;
+    const lbl = document.getElementById('sample-img-zoom-label');
+    if (lbl) lbl.textContent = `${Math.round(scale * 100)}% · görgő: nagyítás · húzás: mozgatás · ESC: bezár`;
+  }
+
+  function resetView() {
+    const img = document.getElementById('sample-img-modal-img');
+    if (!img || !img.naturalWidth) return;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const fitScale = Math.min((vw * 0.92) / img.naturalWidth, (vh * 0.92) / img.naturalHeight, 1);
+    scale = fitScale;
+    offX = (vw - img.naturalWidth * scale) / 2;
+    offY = (vh - img.naturalHeight * scale) / 2;
+    applyTransform();
+    img.style.cursor = 'grab';
+  }
+
+  window.openSampleImg = function() {
+    if (!currentTask || !currentTask.sampleImage) return;
+    const modal = document.getElementById('sample-img-modal');
+    const img = document.getElementById('sample-img-modal-img');
+    img.onload = resetView;
+    img.src = currentTask.basePath + currentTask.sampleImage;
+    modal.style.display = 'block';
+  };
+
+  window.closeSampleImgModal = function() {
+    const modal = document.getElementById('sample-img-modal');
+    if (modal) modal.style.display = 'none';
+    const img = document.getElementById('sample-img-modal-img');
+    if (img) img.src = '';
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('sample-img-modal');
+    const img   = document.getElementById('sample-img-modal-img');
+    if (!modal || !img) return;
+
+    // Görgős nagyítás (egér pozíció körül)
+    modal.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      const rect = img.getBoundingClientRect();
+      const mouseX = e.clientX, mouseY = e.clientY;
+      const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+      const newScale = Math.min(Math.max(scale * factor, 0.2), 10);
+      // Skálázás az egér pozíciója körül
+      offX = mouseX - (mouseX - offX) * (newScale / scale);
+      offY = mouseY - (mouseY - offY) * (newScale / scale);
+      scale = newScale;
+      applyTransform();
+    }, { passive: false });
+
+    // Húzás mozgatáshoz
+    img.addEventListener('mousedown', function(e) {
+      if (e.button !== 0) return;
+      dragging = true; didDrag = false;
+      dragX0 = e.clientX; dragY0 = e.clientY;
+      offX0 = offX; offY0 = offY;
+      img.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      const dx = e.clientX - dragX0, dy = e.clientY - dragY0;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didDrag = true;
+      offX = offX0 + dx; offY = offY0 + dy;
+      applyTransform();
+    });
+
+    document.addEventListener('mouseup', function(e) {
+      if (!dragging) return;
+      dragging = false;
+      img.style.cursor = 'grab';
+      // Ha nem volt húzás és a háttérre kattintottak → bezár
+      if (!didDrag && e.target === modal) closeSampleImgModal();
+    });
+
+    // Dupla kattintás: visszaállítás eredeti nézetbe
+    img.addEventListener('dblclick', resetView);
+  });
+})();
 
 let sourcesVisible = false;
 

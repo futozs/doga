@@ -171,8 +171,10 @@
     <script src="app.js?v=20"></script>
 
 <!-- Minta kép modal -->
-<div id="sample-img-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;align-items:center;justify-content:center;cursor:zoom-out;" onclick="closeSampleImgModal()">
-  <img id="sample-img-modal-img" src="" alt="Minta weboldal" style="max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.7);cursor:default;" onclick="event.stopPropagation()">
+<div id="sample-img-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9000;overflow:hidden;">
+  <img id="sample-img-modal-img" src="" alt="Minta weboldal" style="position:absolute;transform-origin:0 0;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,0.7);user-select:none;-webkit-user-drag:none;">
+  <button onclick="closeSampleImgModal()" style="position:fixed;top:14px;right:18px;background:rgba(30,41,59,0.9);border:1px solid #475569;color:#e2e8f0;font-size:1.4rem;line-height:1;width:36px;height:36px;border-radius:50%;cursor:pointer;z-index:1;">×</button>
+  <span id="sample-img-zoom-label" style="position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.85);color:#94a3b8;font-size:0.78rem;padding:3px 12px;border-radius:20px;pointer-events:none;">100% · görgő: nagyítás · húzás: mozgatás · ESC: bezár</span>
 </div>
 
 <!-- Anti-cheat figyelmeztetés overlay -->
