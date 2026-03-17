@@ -2335,7 +2335,7 @@ function openPreviewInNewTab() {
   </body>
 </html>`;
 
-  const previewWindow = window.open('', '_blank');
+  const previewWindow = window.open('', 'preview', 'width=1200,height=800,resizable=yes,scrollbars=yes');
   previewWindow.document.write(fullHtml);
   previewWindow.document.close();
 }
