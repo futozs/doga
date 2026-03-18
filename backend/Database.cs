@@ -84,6 +84,13 @@ public class Database
                 created_at   TEXT DEFAULT (datetime('now','localtime')),
                 UNIQUE(email, feladat_nev, tipus)
             );
+            CREATE TABLE IF NOT EXISTS user_state (
+                email       TEXT NOT NULL,
+                state_key   TEXT NOT NULL,
+                state_value TEXT,
+                updated_at  TEXT DEFAULT (datetime('now','localtime')),
+                PRIMARY KEY (email, state_key)
+            );
         ");
         try { Exec(conn, "ALTER TABLE submissions ADD COLUMN subject TEXT"); } catch { }
         try { Exec(conn, "ALTER TABLE progress ADD COLUMN mode TEXT DEFAULT 'gyakorlo'"); } catch { }
@@ -842,6 +849,33 @@ public class Database
         while (r.Read())
             list.Add((r.GetString(0), r.GetString(1), r.GetInt32(2)));
         return list;
+    }
+
+    // ── User State ────────────────────────────────────────────────────────────
+
+    public string? GetUserState(string email, string key)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT state_value FROM user_state WHERE email = $email AND state_key = $key";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$key",   key);
+        var result = cmd.ExecuteScalar();
+        return result is DBNull or null ? null : (string)result;
+    }
+
+    public void SetUserState(string email, string key, string value)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT INTO user_state (email, state_key, state_value, updated_at)
+            VALUES ($email, $key, $value, datetime('now','localtime'))
+            ON CONFLICT(email, state_key) DO UPDATE SET state_value = $value, updated_at = datetime('now','localtime')";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$key",   key);
+        cmd.Parameters.AddWithValue("$value", value);
+        cmd.ExecuteNonQuery();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

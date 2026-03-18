@@ -404,6 +404,27 @@ app.MapGet("/api/leaderboard/rank/{email}", (string email, Database db) =>
     return Results.Ok(db.GetStudentRank(decoded));
 });
 
+// Tanuló állapot lekérése / mentése (pl. utolsó kör feladatszámai) – nyilvános, email alapú
+app.MapGet("/api/user-state/{email}/{key}", (string email, string key, Database db) =>
+{
+    var decoded = Uri.UnescapeDataString(email);
+    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    var value = db.GetUserState(decoded, key);
+    return Results.Ok(new { value });
+});
+
+app.MapPut("/api/user-state/{email}/{key}", async (string email, string key, HttpContext ctx, Database db) =>
+{
+    var decoded = Uri.UnescapeDataString(email);
+    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    using var reader = new StreamReader(ctx.Request.Body);
+    var body = await reader.ReadToEndAsync();
+    var doc = System.Text.Json.JsonDocument.Parse(body);
+    var value = doc.RootElement.GetProperty("value").GetString() ?? "";
+    db.SetUserState(decoded, key, value);
+    return Results.Ok(new { success = true });
+});
+
 // Saját jelszó módosítása (tanuló – ideiglenes jelszó után kötelező)
 app.MapPost("/api/auth/change-own-password", (ChangeOwnPasswordRequest req, Database db) =>
 {
