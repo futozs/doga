@@ -468,6 +468,7 @@
             <button class="tab-btn" onclick="switchTab('felhasznalok', this)"><i class="fas fa-users"></i> Felhasználók</button>
             <button class="tab-btn" onclick="switchTab('haladas', this)"><i class="fas fa-chart-line"></i> Haladás</button>
             <button class="tab-btn" onclick="switchTab('rangsor', this)"><i class="fas fa-ranking-star"></i> Rangsor</button>
+            <button class="tab-btn" onclick="switchTab('visszajelzesek', this)"><i class="fas fa-face-smile"></i> Visszajelzések</button>
         </div>
 
         <!-- Config Panel -->
@@ -534,7 +535,7 @@
         </div>
 
         <!-- Visszajelzések -->
-        <div class="panel" data-tab="vezerlot">
+        <div class="panel" data-tab="visszajelzesek" style="display:none;">
             <h2><i class="fas fa-star"></i> Visszajelzések</h2>
             <div style="margin-bottom:1rem;">
                 <button onclick="loadFeedbackStats()" style="padding:8px 18px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#1a4a8a'" onmouseout="this.style.background='#0f3460'">
@@ -979,6 +980,7 @@
             localStorage.setItem('admin_tab', name);
             if (name === 'haladas' && haladásData.length === 0) loadProgress();
             if (name === 'rangsor' && leaderboardData.length === 0) loadLeaderboard();
+            if (name === 'visszajelzesek') loadFeedbackStats();
         }
 
         // Check auth on page load
