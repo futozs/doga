@@ -219,7 +219,7 @@ app.MapGet("/api/stats", (HttpContext ctx, Database db) =>
 });
 
 // Regisztráció (tanulók + oktatók)
-app.MapPost("/api/auth/register", (RegisterRequest req, Database db) =>
+app.MapPost("/api/auth/register", async (RegisterRequest req, Database db) =>
 {
     // Email normalizálás és validálás
     var email = req.Email.ToLower().Trim();
