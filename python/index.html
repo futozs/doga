@@ -1724,30 +1724,13 @@
                         // Feladatnevek kinyerése – mind a 3 feladathoz
                         let taskNames = [];
 
-                        // 1. kísérlet: window.selectedTasks tömb (pl. [{cim:...}, ...] vagy [{name:...}])
-                        const sel = window.selectedTasks || window.assignedTasks || window.currentTasks;
+                        // Feladatok kinyerése – window._kandoSelectedTasks-ból (python_teszt.js teszi ki)
+                        const sel = window._kandoSelectedTasks || window.selectedTasks || window.assignedTasks;
                         if (Array.isArray(sel) && sel.length) {
-                            taskNames = sel.map(t => t.cim || t.name || t.title || t.feladat || '').filter(Boolean);
-                        }
-
-                        // 2. kísérlet: window.taskList vagy window.tasks szűrve az aktuálisakra
-                        if (!taskNames.length && Array.isArray(window.taskList)) {
-                            taskNames = window.taskList.map(t => t.cim || t.name || '').filter(Boolean);
-                        }
-
-                        // 3. kísérlet: DOM-ból – feladat fejlécek a végeredmény panelben
-                        if (!taskNames.length) {
-                            document.querySelectorAll('[data-task-name], .task-title, .feladat-nev').forEach(el => {
-                                const n = el.dataset.taskName || el.textContent.trim();
-                                if (n && !taskNames.includes(n)) taskNames.push(n);
-                            });
-                        }
-
-                        // 4. kísérlet: egyetlen currentTask fallback
-                        if (!taskNames.length) {
-                            const n = (window.currentTaskName) ||
-                                      (window.currentTask && (window.currentTask.cim || window.currentTask.name));
-                            if (n) taskNames = [n];
+                            taskNames = sel.map(t =>
+                                t.cim || t.name || t.title ||
+                                (t.number ? t.number + '. feladat (' + (t.points || '?') + ' pont)' : '')
+                            ).filter(Boolean);
                         }
 
                         if (taskNames.length) window._showReactionPopup(taskNames);
