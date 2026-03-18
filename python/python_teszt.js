@@ -617,7 +617,7 @@ async function startTest() {
         if (testMode === 'live' || testMode === 'vizsga') {
             submitLabel.textContent = 'Számonkérés beadása';
         } else {
-            submitLabel.textContent = 'Feladat beadása';
+            submitLabel.textContent = 'Kész';
         }
     }
 
