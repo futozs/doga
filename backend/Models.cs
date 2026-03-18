@@ -186,6 +186,8 @@ public record StudentRankResult(
 
 // ── Task Ratings / Feedback ────────────────────────────────────────────────
 
+public record UpdateScoresRequest(string Scores, string MaxScores, int TotalScore, int MaxTotal);
+
 public record FeedbackRequest(string Email, string FeladatNev, string Tipus, int Ertek);
 
 public class TaskRatingStat {

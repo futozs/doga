@@ -5,6 +5,7 @@
   <style>
     body { font-family: Calibri, 'Segoe UI', sans-serif; font-size: 11pt; line-height: 1.5; color: #1a1a1a; margin: 12px 16px; padding: 0; }
     .fejezet { font-size: 10pt; color: #555; margin-bottom: 2px; }
+    .pontszam { font-size: 10pt; color: #555; float: right; }
     h1.feladat-cim { font-size: 14pt; font-weight: bold; margin: 4px 0 10px 0; }
     p { margin: 4px 0 6px 0; text-align: justify; }
     p.utasitas { margin: 4px 0 10px 0; }
@@ -17,48 +18,89 @@
   </style>
 </head>
 <body>
-  <p class="fejezet">A. Weboldalak kódolása</p>
+  <p class="fejezet">A. Weboldalak kódolása <span class="pontszam">40 pont</span></p>
   <h1 class="feladat-cim">Trópusi gyümölcsök</h1>
-  <p>A következő feladatban egy weboldalt kell készítenie a trópusi gyümölcsök rövid bemutatására a feladatleírás és a minta szerint!</p>
+  <p>A következő feladatban egy weboldalt kell készítenie a trópusi gyümölcsök jótékony hatásának rövid bemutatására a feladatleírás és a minta alapján! Ahol a feladat stílus formázási beállításokat kér, ott az új szelektorokat az állomány végén helyezze el! A feladat szövegében található részek megnevezései a HTML fájlban találhatóak megjegyzés formában.</p>
   <p>Nagyobb felbontású, színes mintát a kész weboldalról a <b>trópusi_gyümölcsök.png</b> fájlban találja.</p>
-  <p class="utasitas">Nyissa meg a <b>tropusi_gyumolcsok.html</b> állományt és szerkessze annak tartalmát az alábbiak szerint:</p>
+  <p>Az elkészült oldalt HTML-validáló eszközzel ellenőrizni kell!</p>
+  <p class="utasitas">Nyissa meg a <b>tropusi_gyumolcsok.html</b> és <b>style.css</b> fájlokat és szerkessze azokat az alábbiak szerint:</p>
   <hr>
   <ol class="fo">
     <li>A weboldal nyelvezete legyen <b>magyar</b>, a karakterkódolása pedig <b>UTF-8</b>!</li>
+    <li>A weboldal fejrészében helyezzen el hivatkozást a <b>css</b> könyvtárban található <b>style.css</b> stíluslapra a Bootstrap stíluslapra történő hivatkozása alá!</li>
     <li>A böngésző címsorában megjelenő cím „<b>Trópusi gyümölcsök</b>" legyen!</li>
-    <li>A weboldal fejrészében helyezzen el hivatkozást a <b>css</b> könyvtárban található <b>style.css</b> stíluslapra!</li>
-    <li>A <i>„Fejléc"</i> részben helyezze el az <b>img/fejlec.avif</b> képet! Alt és title szövege „<b>Trópusi gyümölcsök</b>" legyen! Állítson be <b>fejlec</b> egyedi azonosítót!</li>
-    <li><u>A navigációs menüben készítsen egy új, harmadik menüpontot:</u>
+    <li><u>A <i>„Fejléc"</i> részben végezze el az alábbi feladatokat:</u>
       <ol class="al">
-        <li>Az új menüpont neve „<b>Noni</b>" legyen!</li>
-        <li>A menüpont a <b>https://hu.wikipedia.org/wiki/Noni</b> weboldalra mutasson, <b>új lapon</b> nyíljon meg!</li>
+        <li>Hiányzik a fejléc képe, ezért helyezze a <b>fejlec.avif</b> fájlt a megfelelő helyre!</li>
+        <li>Ha a kép nem jelenik meg, vagy ha a kép fölé visszük az egér kurzort, akkor a „<b>Trópusi gyümölcsök</b>" szöveg jelenjen meg!</li>
+        <li>A képnek állítson be egyedi azonosítót „<b>fejlec</b>" néven!</li>
       </ol>
     </li>
-    <li>A <i>„Főcím"</i> részben a „TRÓPUSI GYÜMÖLCSÖK" szöveget alakítsa <b>1-es szintű címsorrá</b>!</li>
-    <li>A <i>„Déli gyümölcsök"</i> részben a három szövegrészt alakítsa <b>bekezdéssé</b>! Minden bekezdésre alkalmazza a <b>my-3</b> Bootstrap osztályjelölőt!</li>
-    <li><u>A trópusi gyümölcsök részben végezze el az alábbi feladatokat:</u>
+    <li><u>A weboldalon készítsen egy új menüpontot az alábbi leírás és a minta alapján:</u>
       <ol class="al">
-        <li>Az <i>„Ananász"</i>, <i>„Banán"</i>, <i>„Papaya"</i>, <i>„Licsi"</i> és <i>„Gránátalma"</i> oszlopelrendezését módosítsa: az oszlopok legyenek <b>col-lg-4</b> méretűek (3 oszlopos elrendezés nagy képernyőn)!</li>
-        <li>Az <i>„Ananász"</i>, <i>„Banán"</i>, <i>„Papaya"</i>, <i>„Licsi"</i> és <i>„Gránátalma"</i> első bekezdéseiben a gyümölcs nevét emelje ki <b>félkövéren</b>, latin nevét <b>dőlt</b> stílussal!</li>
-        <li>A <i>„Banán"</i> részben az „5 legjobb banános finomság:" alatti szövegből készítsen <b>számozatlan felsorolást</b> és alkalmazza rá a <b>banan</b> egyedi azonosítót!</li>
-        <li>A <i>„Gránátalma"</i> részben a „A gránátalma fogyasztás 5 előnye:" alatti szövegből készítsen <b>számozott felsorolást</b>!</li>
+        <li>Az új menüpont a „Déli gyümölcsök tápértéke" menüpont <b>alatt</b> helyezkedjen el és „<b>Noni</b>" legyen a neve!</li>
+        <li>Az új menüpont a <b>https://hu.wikipedia.org/wiki/Noni</b> weboldalra mutasson úgy, hogy a linkre kattintva <b>az oldal új lapon jelenjen meg</b> a böngészőben!</li>
       </ol>
     </li>
-    <li><u>A <i>„Sárkánygyümölcs"</i> rész hiányos. Egészítse ki a minta alapján! A szükséges szöveg a <b>forras.txt</b> állományban található.</u>
+    <li>A <i>„Trópusi gyümölcsök főcím"</i> részben alakítson <b>a szövegből</b> <b>1-es szintű címsort</b>!</li>
+    <li><u>Az <i>„Trópusi gyümölcsök"</i> részben végezze el az alábbi feladatokat a minta alapján:</u>
       <ol class="al">
-        <li>Készítse el a <b>3-as szintű címsort</b>!</li>
-        <li>A szövegből alakítson ki <b>bekezdéseket</b>! A „<b>sárkánygyümölcs</b>" szöveget emelje ki <b>félkövéren</b>, latin nevét <b>dőlt</b> stílussal!</li>
-        <li>Állítsa be a kép forrását az <b>img/pitaja.jpg</b> képre! Alt és title szövege „<b>Sárkánygyümölcs</b>" legyen!</li>
+        <li>Készítsen a címsor alatt található szövegből bekezdéseket (3db)!</li>
+        <li>Alkalmazza az összes bekezdésre az <b>my-3</b> Bootstrap osztályjelölőt!</li>
       </ol>
     </li>
-    <li><u>A <i>„Déli gyümölcsök tápértéke"</i> táblázat fejléce és sorai hiányoznak. A szükséges adatok a <b>tablazat.txt</b> állományban találhatóak.</u>
+    <li><u>A <i>„Banán"</i> részben végezze el az alábbi feladatokat:</u>
       <ol class="al">
-        <li>Készítse el az 5 fejléc cellát (<b>Déli gyümölcs neve</b>, <b>Szénhidrát</b>, <b>C-vitamin</b>, <b>Kalcium</b>, <b>Kálium</b>)! A fejléc sor osztálya legyen <b>text-uppercase align-middle</b>!</li>
-        <li>Adja hozzá az összes adatsort (Ananász, Banán, Citrom, Gránátalma)!</li>
+        <li>Az <i>„5 legjobb banános finomság:"</i> bekezdés szövegét alakítsa HTML tagek segítségével <b>aláhúzottá</b>!</li>
+        <li>Az <i>„5 legjobb banános finomság"</i> bekezdés alatti szövegből készítsen <b>számozatlan felsorolást</b> és alkalmazza rá a <b>banan</b> egyedi azonosítót!</li>
       </ol>
     </li>
-    <li>A <i>„Lábléc"</i> részben készítsen egy hivatkozást a „<b>leiras</b>" azonosítóra, szövege „<b>Ugrás az elejére</b>" legyen!</li>
-    <li>A HTML oldalt validálja a <b>https://validator.w3.org/</b> oldalon! Az eredményről készítsen pillanatképet <b><i>tropusiValidalas</i></b> néven!</li>
+    <li>A <i>„Sárkánygyümölcs"</i> rész sajnos kimaradt a gyümölcsök közül. Alakítsa ki a tartalmat a minta alapján! A szükséges szövegek a <b><i>forras.txt</i></b> állományban találhatóak.
+      <ol class="al">
+        <li>A <b>címsort</b> a minta alapján alakítsa ki <b>hármas</b> szintűvé!</li>
+        <li>A szövegrész <b>bekezdéseit</b> a minta alapján alakítsa ki!</li>
+        <li>Állítsa be a kép tag forrását az <b>img</b> könyvtárban található <b>pitaja.jpg</b>-re! Ha a kép nem jelenik meg vagy ha a kép fölé visszük az egeret, akkor a „<b>Sárkánygyümölcs</b>" szöveg jelenjen meg!</li>
+        <li>Írja be a képaláíráshoz, hogy <b>Sárkánygyümölcs</b>, majd alkalmazza rá az <b>fw-bold</b> és a <b>h5</b> Bootstrap osztályjelölőket!</li>
+      </ol>
+    </li>
+    <li>A <i>„Gránátalma"</i> részben <i>„A gránátalma fogyasztás 5 előnye:"</i> bekezdés alatti szövegből készítsen <b>számozott felsorolást</b>!</li>
+    <li>A „<i>Trópusi gyümölcsök</i>" részben az oszlopelrendezést, a <b>nagyméretű eszközöknél</b> állítsa 2 oszloposból <b>3 oszlopos</b> elrendezésűvé!</li>
+    <li>A „<i>Trópusi gyümölcsök</i>" részben a gyümölcsök első bekezdésében található gyümölcs nevet HTML tag segítségével emelje ki <b>félkövérré</b>, majd a mellette található zárójelben lévő latin kifejezést <b>dőltté</b>. (6 helyen)</li>
+    <li><u>A <i>„Táblázat"</i> részben végezze el az alábbi feladatokat:</u>
+      <ol class="al">
+        <li>Kimaradtak a táblázat fejlécéből <i>(thead)</i> a <b>fejléc cellák</b>, valamint a táblázat törzséből <i>(tbody)</i> az <b>adat cellák</b>. A szükséges szöveg a „<b>tablazat.txt</b>" fájlban található. Készítse el a táblázat hiányzó tartalmát a minta alapján!</li>
+        <li>Alkalmazza a táblázat fejlécének első sorára a <b>text-uppercase</b> és az <b>align-middle</b> Bootstrap osztályjelölőket!</li>
+      </ol>
+    </li>
+    <li><u>Módosítsa a <i>„Lábléc"</i> beállításait az alábbi leírás alapján:</u>
+      <ol class="al">
+        <li>Készítsen egy hivatkozást, amely a weboldalon belül a „<b>leiras</b>" egyedi azonosítójú keretre hivatkozzon!</li>
+        <li>A hivatkozás szövege „<b>Ugrás az elejére</b>" legyen!</li>
+      </ol>
+    </li>
+  </ol>
+  <hr>
+  <p class="utasitas">A következő beállításokat, módosításokat a <b>style.css</b> külső stíluslap állományon végezze el:</p>
+  <ol class="fo" start="15">
+    <li>Az <b>oldal</b> betűtípusa legyen <b>Calibri</b>!</li>
+    <li>A <b>„fejlec"</b> egyedi azonosítóhoz tartozó elemkijelölő <b>szélességét</b> állítsa <b>100%</b>-ra!</li>
+    <li>Készítsen elemkijelölőt az <b>összes bekezdéshez</b> és állítsa be, hogy az <b>igazítás sorkizárt legyen</b>!</li>
+    <li>A <b>hármas szintű címsor</b> szelektorának legyen a <b>betűszíne fekete</b> és a <b>betűmérete 2,5-szer nagyobb</b>, mint az alapértelmezett betűméret.</li>
+    <li>A <b>navigáció listaelemére</b> állítson be <b>jobb oldali szegélyt</b>, amely <b>3 képpont vastag, pontozott vonalú, (255,132,0) RGB</b> színkódú, valamint <b>belső margót</b>, amely <b>vízszintesen 15px függőlegesen 0 px</b> méretű!</li>
+    <li>A „<b>lablec</b>" osztályjelölő <b>hivatkozásának</b> stílusa legyen <b>félkövér</b>!</li>
+    <li>Ha a <b>„lablec"</b> osztályjelölőben lévő hivatkozás <b>fölé visszük az egér kurzort</b>, akkor a szöveg legyen <b>nagybetűs</b>!</li>
+    <li>A „<b>banan</b>" egyedi azonosítóhoz tartozó elemkijelölőben végezze el az alábbi beállításokat:
+      <ol class="al">
+        <li>Állítsa a <b>listaelem stílus képét</b> az <b>img</b> könyvtárban található <b>banan_ikon.png</b>-re!</li>
+        <li>Állítsa a <b>bal margót (külső) 25 képpont</b> nagyságúra!</li>
+      </ol>
+    </li>
+  </ol>
+  <hr>
+  <p><b>Ellenőrizze munkáját!</b></p>
+  <ol class="fo" start="23">
+    <li>A HTML oldalt validálja a <b>https://validator.w3.org/</b> oldalon! Az eredményről készítsen pillanatképet, amelyet mentsen el <b><i>tropusigyumolcsokValidalas</i></b> néven!</li>
+    <li>A stíluslapot ellenőrizze <b>https://jigsaw.w3.org/css-validator/</b> oldalon! Az eredményről készítsen pillanatképet és mentse el <b><i>styleValidalas</i></b> néven!</li>
   </ol>
 </body>
 </html>

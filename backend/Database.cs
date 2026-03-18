@@ -176,6 +176,19 @@ public class Database
         return ReadSubmissions(cmd, includeCode: true).FirstOrDefault();
     }
 
+    public bool UpdateSubmissionScores(int id, string scores, string maxScores, int totalScore, int maxTotal)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE submissions SET scores = $scores, max_scores = $maxScores, total_score = $totalScore, max_total = $maxTotal WHERE id = $id";
+        cmd.Parameters.AddWithValue("$id", id);
+        cmd.Parameters.AddWithValue("$scores", scores);
+        cmd.Parameters.AddWithValue("$maxScores", maxScores);
+        cmd.Parameters.AddWithValue("$totalScore", totalScore);
+        cmd.Parameters.AddWithValue("$maxTotal", maxTotal);
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
     public void DeleteSubmission(int id)
     {
         using var conn = Open();

@@ -1236,7 +1236,6 @@ else:
     print("A jegy ára: 900 Ft")
 
 20. feladat
-Cim: Pizza rendelés
 
 Írj programot, amely bekéri a megrendelt pizza méretét, majd kiírja az árat!
 kis méret: 1500 Ft
@@ -1283,7 +1282,6 @@ else:
     print("Ismeretlen méret!")
 
 21. feladat
-Cim: Dolgozat pontszám → jegy
 
 Írj programot, amely bekér egy dolgozat pontszámát (0-100 között), majd kiírja az érdemjegyet!
 0-39 pont: Elégtelen (1)
@@ -1333,7 +1331,6 @@ else:
     print("Érdemjegy: Jeles (5)")
 
 22. feladat
-Cim: Taxi ár
 
 Írj programot, amely kiszámolja egy taxiút árát!
 Az alap díj: 500 Ft.
@@ -1375,7 +1372,6 @@ if km > 20:
 print(f"Fizetendő: {ar} Ft")
 
 23. feladat
-Cim: Szállodai szoba
 
 Írj programot, amely kiszámítja egy szállodai tartózkodás árát!
 Az éjszakák számát és a szoba típusát kérd be a felhasználótól!

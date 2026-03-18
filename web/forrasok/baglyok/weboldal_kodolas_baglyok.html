@@ -3,155 +3,90 @@
 <head>
   <meta charset="utf-8">
   <style>
-    body {
-      font-family: Calibri, 'Segoe UI', sans-serif;
-      font-size: 11pt;
-      line-height: 1.5;
-      color: #1a1a1a;
-      margin: 12px 16px;
-      padding: 0;
-    }
-    .fejezet {
-      font-size: 10pt;
-      color: #555;
-      margin-bottom: 2px;
-    }
-    h1.feladat-cim {
-      font-size: 14pt;
-      font-weight: bold;
-      margin: 4px 0 10px 0;
-    }
-    p {
-      margin: 4px 0 6px 0;
-      text-align: justify;
-    }
-    p.utasitas {
-      margin: 4px 0 10px 0;
-    }
-    ol.fo {
-      margin: 6px 0 6px 0;
-      padding-left: 22px;
-    }
-    ol.fo > li {
-      margin: 5px 0;
-      padding-left: 2px;
-      text-align: justify;
-    }
-    ol.al {
-      list-style-type: lower-alpha;
-      margin: 4px 0 4px 0;
-      padding-left: 22px;
-    }
-    ol.al > li {
-      margin: 3px 0;
-      text-align: justify;
-    }
-    ul.al {
-      margin: 4px 0 4px 0;
-      padding-left: 22px;
-    }
-    ul.al > li {
-      margin: 3px 0;
-      text-align: justify;
-    }
-    b { font-weight: bold; }
-    i { font-style: italic; }
-    u { text-decoration: underline; }
-    hr {
-      border: none;
-      border-top: 1px solid #ccc;
-      margin: 10px 0;
-    }
+    body { font-family: Calibri, 'Segoe UI', sans-serif; font-size: 11pt; line-height: 1.5; color: #1a1a1a; margin: 12px 16px; padding: 0; }
+    .fejezet { font-size: 10pt; color: #555; margin-bottom: 2px; }
+    .pontszam { font-size: 10pt; color: #555; float: right; }
+    h1.feladat-cim { font-size: 14pt; font-weight: bold; margin: 4px 0 10px 0; }
+    p { margin: 4px 0 6px 0; text-align: justify; }
+    p.utasitas { margin: 4px 0 10px 0; }
+    ol.fo { margin: 6px 0; padding-left: 22px; }
+    ol.fo > li { margin: 5px 0; padding-left: 2px; text-align: justify; }
+    ol.al { list-style-type: lower-alpha; margin: 4px 0; padding-left: 22px; }
+    ol.al > li { margin: 3px 0; text-align: justify; }
+    b { font-weight: bold; } i { font-style: italic; } u { text-decoration: underline; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
   </style>
 </head>
 <body>
-
-  <p class="fejezet">A. Weboldalak kódolása</p>
+  <p class="fejezet">A. Weboldalak kódolása <span class="pontszam">40 pont</span></p>
   <h1 class="feladat-cim">Baglyok</h1>
-
-  <p>A következő feladatban egy weboldalt kell készítenie a magyarországi bagolyfajok rövid bemutatására a feladatleírás és a minta szerint! A feladat szövegében található rész megnevezések a HTML fájlban találhatóak megjegyzés formában.</p>
-
-  <p>Nagyobb felbontású, színes mintát a kész weboldalról a <b>baglyok_weboldal.png</b> fájlban találja.</p>
-
+  <p>A következő feladatban egy weboldalt kell készítenie az év madarai rövid bemutatására a feladatleírás és a minta szerint! Ahol a feladat másként nem kéri, a formázási beállításokat a style.css stílusállományban végezze el úgy, hogy az új szelektorokat az állomány végén helyezze el! A feladat szövegében található részek megnevezései a HTML fájlban találhatóak <u>megjegyzés</u> formában.</p>
+  <p>Nagyobb felbontású, színes mintát a kész weboldalról az <b>baglyok_weboldal.png</b> fájlban találja.</p>
   <p>Az elkészült oldalt HTML-validáló eszközzel ellenőrizni kell!</p>
-
-  <p class="utasitas">Nyissa meg a <b>baglyok.html</b> állományt és szerkessze annak tartalmát az alábbiak szerint:</p>
-
+  <p class="utasitas">Nyissa meg az <b>baglyok.html</b> és <b>css\style.css</b> állományokat és szerkessze azoknak a tartalmát az alábbiak szerint:</p>
   <hr>
-
   <ol class="fo">
     <li>A weboldal nyelvezete legyen <b>magyar</b>, a karakterkódolása pedig <b>UTF-8</b>!</li>
-
-    <li>A böngésző címsorában megjelenő cím „<b>Baglyok</b>" legyen!</li>
-
     <li>A weboldal fejrészében helyezzen el hivatkozást a <b>css</b> könyvtárban található <b>style.css</b> stíluslapra a Bootstrap stíluslapra történő hivatkozása alá!</li>
-
+    <li>A böngésző címsorában megjelenő cím „<b>Baglyok</b>" legyen!</li>
     <li><u>A <i>„Fejléc"</i> részben végezze el az alábbi feladatokat:</u>
       <ol class="al">
-        <li>Hiányzik a fejléc képe, ezért helyezze az <b>img</b> könyvtárban található <b>fejlec.jpg-t</b> a megfelelő helyre!</li>
-        <li>Ha a kép nem jelenik meg, vagy ha a kép fölé visszük az egér kurzort, akkor a „<b>Baglyok</b>" szöveg jelenjen meg!</li>
-        <li>A képnek állítson be egyedi azonosítót „<b>fejlec</b>" néven!</li>
-        <li>A „<b>Baglyok</b>" szövegből készítsen <b>1-es szintű címsort</b>! (A meglévő bekezdés tag-et cserélje le h1 tag-re!)</li>
+        <li>A „Baglyok" bekezdést alakítsa <b>1-es szintű címsorrá</b>!</li>
+        <li>Helyezze el a <b>fejlec.jpg</b> képet a <b>címsor elé</b>! Ha a kép nem jelenik meg, vagy ha a kép fölé visszük az egér kurzort, akkor a „<b>Baglyok</b>" szöveg jelenjen meg! A képnek állítson be egyedi azonosítót „<b>fejlec</b>" néven!</li>
       </ol>
     </li>
-
-    <li><u>A navigációs menüben készítsen egy új, harmadik menüpontot az alábbi leírás szerint:</u>
+    <li><u>A <i>„Navigációs menü"</i> részben készítsen egy új menüpontot az alábbi leírás és a minta alapján:</u>
       <ol class="al">
-        <li>Az új menüpont neve „<b>Rejtőzködő baglyok</b>" legyen!</li>
-        <li>A menüpont a <b>https://www.erdekesseg.hu/rejtozkodo-baglyok/</b> weboldalra mutasson úgy, hogy a linkre kattintva az oldal <b>új lapon</b> jelenjen meg!</li>
+        <li>Az új menüpont a „<i>Nokturnalitás</i>" menüpont <b>alatt</b> helyezkedjen el és „<b>Rejtőzködő baglyok</b>" legyen a neve!</li>
+        <li>Az új menüpont a <b>https://www.erdekesseg.hu/rejtozkodo-baglyok</b> weboldalra mutasson úgy, hogy a linkre kattintva az oldal, <b>új lapon jelenjen meg</b> a böngészőben!</li>
       </ol>
     </li>
-
-    <li>A <i>„Főcím"</i> részben a „Baglyok" szövegre alkalmazza a <b>text-uppercase</b> Bootstrap osztályjelölőt!</li>
-
-    <li><u>A <i>„Törpekuvik"</i> részben végezze el az alábbi feladatokat:</u>
+    <li>A <i>„Főcím"</i> részben a „<i>Baglyok</i>" szöveget <b>tegye nagybetűssé Bootstrap stílus segítségével</b>!</li>
+    <li>A <i>„Törpekuvik"</i> részben a címsor alatti szövegrészekből alakítson ki <b>bekezdéseket</b> a minta alapján!</li>
+    <li>A <i>„Füleskuvik"</i> részben a második bekezdésben található „<u>Különlegessége:</u>" szót, HTML tag segítségével tegye <b>aláhúzottá</b>!</li>
+    <li>Az <i>„Erdei fülesbagoly"</i> részben a <i>„Megjelenése:"</i> bekezdés alatt található szövegből készítsen <b>számozott felsorolást</b>!</li>
+    <li>A <i>„Uhu - Nagy fülesbagoly"</i> részben a <i>„Táplálékai:"</i> bekezdés alatt található szövegből készítsen <b>számozatlan felsorolást</b> és alkalmazza rá a <b>„taplalek"</b> egyedi azonosítót!</li>
+    <li>A <i>„Hóbagoly"</i> rész sajnos kimaradt a weboldalról! Tegye a hiányzó tartalmat az <i>„Uhu - Nagy fülesbagoly"</i> és a <i>„Gyöngybagoly"</i> részek közé!  A szükséges szövegek a forras.txt állományban találhatóak.
       <ol class="al">
-        <li>A két szövegrészt alakítsa <b>bekezdéssé</b>!</li>
-        <li>Az első bekezdésben a „<b>törpekuvik</b>" szót emelje ki <b>félkövéren</b>, latin nevét – <i>(Glaucidium passerinum)</i> – <b>dőlt</b> stílussal!</li>
+        <li>A <b>címsort</b> a minta alapján alakítsa <b>kettes</b> szintűvé!</li>
+        <li>A szövegrész <b>bekezdéseit</b> a minta alapján alakítsa ki!</li>
+        <li>Állítsa be a kép tag forrását az <b>img</b> könyvtárban található <b>hobagoly.jpg</b>-re! Ha a kép nem jelenik meg, vagy ha a kép fölé visszük az egeret, akkor a „<b>Hóbagoly</b>" szöveg jelenjen meg!</li>
+        <li>Alkalmazza a képaláírásnál a <b>text-center</b> és az <b>fw-bold</b> osztályjelölőket!</li>
       </ol>
     </li>
-
-    <li><u>A <i>„Füleskuvik"</i> részben végezze el az alábbi feladatokat:</u>
-      <ol class="al">
-        <li>Az első bekezdésben a „<b>füleskuvik</b>" szót emelje ki <b>félkövéren</b>, latin nevét – <i>(Otus scops)</i> – <b>dőlt</b> stílussal!</li>
-        <li>A második bekezdésben a „<b>Különlegessége:</b>" szöveget alakítsa <b>aláhúzottá</b>!</li>
-      </ol>
-    </li>
-
-    <li>Az <i>„Erdei fülesbagoly"</i> részben a <i>„Megjelenése:"</i> cím alatti szövegből készítsen <b>számozott felsorolást</b>!</li>
-
-    <li>Az <i>„Uhu"</i> részben a <i>„Táplálékai:"</i> cím alatti szövegből készítsen <b>számozatlan felsorolást</b> és alkalmazza rá a <b>taplalek</b> egyedi azonosítót!</li>
-
-    <li><u>A <i>„Hóbagoly"</i> részt egészítse ki a minta alapján! A szükséges szövegek a <b>forras.txt</b> állományban találhatóak.</u>
-      <ol class="al">
-        <li>Készítse el a <b>2-es szintű címsort</b> „Hóbagoly" névvel!</li>
-        <li>A szövegből alakítson ki <b>bekezdéseket</b>!</li>
-        <li>Állítsa be a kép tag forrását az <b>img</b> könyvtárban található <b>hobagoly.jpg</b>-re! Ha a kép nem jelenik meg, vagy ha a kép fölé visszük az egér kurzort, akkor a „<b>Hóbagoly</b>" szöveg jelenjen meg!</li>
-      </ol>
-    </li>
-
+    <li>A „<i>Baglyok</i>" részben a madarak bemutatásának első bekezdésében található madár nevet HTML tag segítségével emelje ki <b>félkövérré</b>, majd a mellette található zárójelben lévő latin kifejezést <b>dőltté</b>. (6 helyen)</li>
     <li><u>A <i>„Táblázat"</i> részben végezze el az alábbi feladatokat:</u>
       <ol class="al">
-        <li>Sajnos a táblázat fejlécének első sorából kimaradtak a <b>fejléc cellák</b>. A szükséges szöveg a <b>tablazat.txt</b> állományban található. Készítse el a táblázat fejlécében a hiányzó tartalmat a minta alapján!</li>
-        <li>A táblázaton alkalmazza a <b>table-bordered</b> és a <b>text-center</b> Bootstrap osztályjelölőket!</li>
+        <li>A táblázatból hiányoznak a <b>fejléc cellák</b>! Készítse el a hiányzó cellákat, amelyhez az adatokat a „<b>tablazat.txt</b>" állományban találja.</li>
+        <li>A táblázat megjelenítéséhez egészítse ki az osztályjelölőket további <b>Bootstrap</b> stílusokkal, amely <b>szegélyezetté</b> teszik a táblázatot és a <b>szöveget középre helyezi</b> vízszintesen!</li>
       </ol>
     </li>
-
-    <li>A <i>„Nokturnalitás"</i> részben módosítsa az oszlopelrendezést: mindkét oszlop legyen <b>col-md-6</b> méretű (jelenleg 8 és 4)!</li>
-
-    <li><u>Módosítsa a <i>„Lábléc"</i> tartalmát az alábbi leírás alapján:</u>
+    <li>A <i>„Nokturnalitás"</i> részben található rácsszerkezetet, állítsa a <b>közepesméretű</b> eszközöknél 2/3-1/3 osztásról <b>1/2-1/2</b> osztásra!</li>
+    <li><u>A <i>„Lábléc"</i> részben az alábbi módosításokat végezze el:</u>
       <ol class="al">
-        <li>Készítsen egy hivatkozást, amely a weboldalon belül a „<b>leiras</b>" egyedi azonosítójú részre hivatkozzon!</li>
+        <li>Készítsen egy hivatkozást, amely a weboldalon belül a „<b>leiras</b>" egyedi azonosítójú keretre hivatkozik!</li>
         <li>A hivatkozás szövege „<b>Ugrás az elejére</b>" legyen!</li>
       </ol>
     </li>
-
-    <li><u>Ellenőrizze munkáját!</u>
-      <ol class="al">
-        <li>A HTML oldalt validálja a <b>https://validator.w3.org/</b> oldalon! Az eredményről készítsen pillanatképet, amelyet mentsen el <b><i>baglyokValidalas</i></b> néven!</li>
-      </ol>
-    </li>
   </ol>
-
+  <hr>
+  <p class="utasitas">A következő beállításokat, módosításokat a <b>style.css</b> külső stíluslap állományon végezze el:</p>
+  <ol class="fo" start="16">
+    <li>Az <b>oldal</b> betűtípusa legyen <b>'Rubik'</b>!</li>
+    <li>A „<b>fejlec</b>" egyedi azonosítójú elemkijelölő <b>szélességét</b> állítsa <b>100%</b>-ra!</li>
+    <li>A „<b>felirat</b>" egyedi azonosítójú elemkijelölőben legyenek a betűk <b>kiskapitálisak</b> és <b>félkövérek</b>!</li>
+    <li>A navigáció listaelemének <b>jobb szegélye</b> legyen <b>3 képpont nagyságú, pontozott vonalú, narancssárga színű</b>!</li>
+    <li>A <b>kettes szintű címsor</b> elemkijelölőnél állítsa be a <b>betűméretet</b> úgy, hogy <b>az 2,5-szer nagyobb legyen, mint az alapértelmezett betűméret</b>!</li>
+    <li>A <b>bagoly</b> osztályazonosítójú elemkijelölő <b>háttérszíne</b> legyen <b>#f0edd1</b> kódú!</li>
+    <li>A <b>„lablec"</b> osztályazonosítójú elemkijelölő <b>hivatkozásához</b> állítsa be a stílusbeállítást úgy, hogy a hivatkozás <b>betűszíne fehér</b> és legyen <b>aláhúzás nélküli</b>!</li>
+    <li>A „<b>taplalek</b>" egyedi azonosítóhoz tartozó elemkijelölőnél állítsa a <b>listaelem stílus képét</b> az <b>img</b> könyvtárban található <b>bagoly.png</b>-re!</li>
+    <li>Készítsen elemkijelölőt az <b>összes bekezdéshez</b> és állítsa be, hogy az <b>igazítás sorkizárt legyen</b>!</li>
+  </ol>
+  <hr>
+  <p><b>Ellenőrizze munkáját!</b></p>
+  <ol class="fo" start="25">
+    <li>A HTML oldalt validálja a <b>https://validator.w3.org/</b> oldalon! Az eredményről készítsen pillanatképet, amelyet mentsen el <b><i>baglyokValidalas</i></b> néven!</li>
+    <li>A stíluslapot ellenőrizze <b>https://jigsaw.w3.org/css-validator/</b> oldalon! Az eredményről készítsen pillanatképet és mentse el <b><i>styleValidalas</i></b> néven!</li>
+  </ol>
 </body>
 </html>

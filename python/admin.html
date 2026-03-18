@@ -1232,6 +1232,141 @@
             alert(`${deleted} beadás törölve.`);
         }
 
+        // ── Beadás részletes nézet: tanári javítás + kritérium ellenőrzés ──────
+
+        let _currentDetail = null;
+        let _adminTasksCache = null;
+
+        async function getAdminTasks() {
+            if (_adminTasksCache) return _adminTasksCache;
+            try {
+                const res = await fetch('feladatok.txt');
+                const text = await res.text();
+                _adminTasksCache = parseAdminFeladatok(text);
+            } catch(e) { _adminTasksCache = {}; }
+            return _adminTasksCache;
+        }
+
+        function parseAdminFeladatok(text) {
+            const tasks = {};
+            const lines = text.split('\n');
+            let taskNum = null, inPontozas = false, critLines = [];
+            for (const line of lines) {
+                const m = line.match(/^Feladat:\s*(\d+)/);
+                if (m) {
+                    if (taskNum !== null && critLines.length) tasks[taskNum] = parseCritAdmin(critLines);
+                    taskNum = parseInt(m[1]); inPontozas = false; critLines = [];
+                    continue;
+                }
+                if (line.trim() === 'Pontozas:') { inPontozas = true; continue; }
+                if (line.trim() === 'Tippek:' || line.trim() === 'Megoldas:') { inPontozas = false; continue; }
+                if (inPontozas && line.trim()) critLines.push(line.trim());
+            }
+            if (taskNum !== null && critLines.length) tasks[taskNum] = parseCritAdmin(critLines);
+            return tasks;
+        }
+
+        function parseCritAdmin(lines) {
+            return lines.map(line => {
+                const parts = line.split('|');
+                if (parts.length < 2) return null;
+                const spec = parts[0];
+                const label = parts[1].trim();
+                const ci = spec.indexOf(':');
+                if (ci === -1) return { type: spec.trim(), args: null, label };
+                return { type: spec.substring(0, ci).trim(), args: spec.substring(ci + 1), label };
+            }).filter(Boolean);
+        }
+
+        function evalCritAdmin(code, c) {
+            const { type, args } = c;
+            if (['if','elif','else','for','while','def','return'].includes(type))
+                return new RegExp(`\\b${type}\\b`).test(code);
+            if (type === 'input') return (code.match(/\binput\s*\(/g)||[]).length >= (parseInt(args)||1);
+            if (type === 'int_float') return (code.match(/\b(int|float)\s*\(/g)||[]).length >= (parseInt(args)||1);
+            if (type === 'tartalmaz') return code.includes(args);
+            if (type === 'import') return new RegExp(`(^|\\n)\\s*import\\s+${args}\\b|(^|\\n)\\s*from\\s+${args}\\s+import`,'i').test(code);
+            if (type === 'bekeres') {
+                const esc = args.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+                return new RegExp(`\\binput\\s*\\(\\s*f?["']${esc}["']\\s*\\)`).test(code);
+            }
+            if (type === 'teszt') return null;
+            return false;
+        }
+
+        async function runAdminCriteriaCheck(taskIds, codeTasks) {
+            const allTasks = await getAdminTasks();
+            taskIds.forEach((tid, i) => {
+                const num = parseInt(tid);
+                const criteria = allTasks[num];
+                const code = (codeTasks.find(t => t.task == num)?.code || '').trim();
+                const dotsEl = document.getElementById(`crit-dots-${i}`);
+                if (!dotsEl || !criteria || !criteria.length || !code) return;
+                const dots = criteria.map(c => {
+                    const r = evalCritAdmin(code, c);
+                    const color = r === null ? '#f59e0b' : r ? '#27ae60' : '#e74c3c';
+                    const title = r === null ? `▶ ${c.label} (futtatás szükséges)` : r ? `✓ ${c.label}` : `✗ ${c.label}`;
+                    return `<span title="${title.replace(/"/g,'&quot;')}" style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color};cursor:default;flex-shrink:0"></span>`;
+                }).join('');
+                dotsEl.innerHTML = dots;
+                const structPassed = criteria.filter(c => evalCritAdmin(code, c) === true).length;
+                const inp = document.getElementById(`score-input-${i}`);
+                const maxPts = parseInt(inp?.max) || 0;
+                if (inp && structPassed > parseInt(inp.value)) {
+                    inp.value = Math.min(structPassed, maxPts);
+                    inp.style.border = '1px solid #f59e0b';
+                    inp.title = 'Kritérium-ellenőrzés alapján javasolt érték (teszt: kritériumok nélkül)';
+                    updateDetailGrade();
+                }
+            });
+        }
+
+        function updateDetailGrade() {
+            if (!_currentDetail) return;
+            const { maxScores, taskIds } = _currentDetail;
+            let total = 0, maxTotal = 0;
+            taskIds.forEach((_, i) => {
+                const v = Math.min(parseInt(document.getElementById(`score-input-${i}`)?.value)||0, maxScores[i]||0);
+                total += v; maxTotal += maxScores[i]||0;
+            });
+            const g = calcGrade(total, maxTotal);
+            const gEl = document.getElementById('detail-grade');
+            const sEl = document.getElementById('detail-score');
+            if (gEl) { gEl.textContent = g; gEl.style.color = gradeColor(g); }
+            if (sEl) sEl.textContent = `${total} / ${maxTotal} pont`;
+        }
+
+        async function saveDetailScores() {
+            if (!_currentDetail) return;
+            const { submissionId, maxScores, taskIds } = _currentDetail;
+            const scores = taskIds.map((_, i) =>
+                Math.min(Math.max(0, parseInt(document.getElementById(`score-input-${i}`)?.value)||0), maxScores[i]||14)
+            );
+            const totalScore = scores.reduce((s,v) => s+v, 0);
+            const maxTotal = maxScores.reduce((s,v) => s+v, 0);
+            const btn = document.getElementById('detail-save-btn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Mentés...'; }
+            try {
+                const res = await fetch(`${RAILWAY_URL}/api/submissions/${submissionId}/scores`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                    body: JSON.stringify({ scores: scores.join(','), maxScores: maxScores.join(','), totalScore, maxTotal })
+                });
+                if (res.ok) {
+                    const sub = submissionsCache.find(s => s.id === submissionId);
+                    if (sub) { sub.scores = scores.join(','); sub.totalScore = totalScore; sub.maxTotal = maxTotal; renderSubmissionsPage(); }
+                    if (btn) { btn.textContent = '✓ Mentve!'; btn.style.background = '#059669'; }
+                    setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = '💾 Pontok mentése'; btn.style.background = ''; } }, 2000);
+                } else {
+                    if (btn) { btn.disabled = false; btn.textContent = '💾 Pontok mentése'; }
+                    alert('Hiba a mentéskor!');
+                }
+            } catch(e) {
+                if (btn) { btn.disabled = false; btn.textContent = '💾 Pontok mentése'; }
+                alert('Hálózati hiba!');
+            }
+        }
+
         // Jegy számítás (magyar 1-5 skála)
         function calcGrade(score, max) {
             if (!max) return '-';
@@ -1343,51 +1478,61 @@
 
                 const content = document.getElementById('submission-details-content');
                 const duration = Math.round((data.duration || 0) / 60);
-                const taskIds = (data.taskIds || '').split(',');
-                const scores = (data.scores || '').split(',');
-                const maxScores = (data.maxScores || '').split(',');
+                const taskIds = (data.taskIds || '').split(',').map(t => t.trim());
+                const scores = (data.scores || '').split(',').map(Number);
+                const maxScores = (data.maxScores || '').split(',').map(Number);
+                const totalScore = data.totalScore || 0;
+                const maxTotal = data.maxTotal || 0;
+                const grade = calcGrade(totalScore, maxTotal);
 
-                const scoreHtml = taskIds.map((tid, i) =>
-                    `<div><strong>${i+1}. feladat (${tid.trim()}):</strong> ${scores[i] || 0} / ${maxScores[i] || 0} pont</div>`
-                ).join('');
+                _currentDetail = { submissionId, taskIds, maxScores };
 
-                content.innerHTML = `
-                    <div><strong>Név:</strong> ${data.name || ''}</div>
-                    <div><strong>Email:</strong> ${data.email || ''}</div>
-                    <div><strong>Osztály:</strong> ${data.osztaly || ''}</div>
-                    <div><strong>Időtartam:</strong> ${duration} perc</div>
-                    <div><strong>Mód:</strong> ${data.mode === 'live' ? 'Éles' : 'Gyakorló'}</div>
-                    ${(() => {
-                        let snap = null;
-                        try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
-                        const jumps = snap && typeof snap.suspiciousJumps === 'number' ? snap.suspiciousJumps : null;
-                        const warnings = data.cheatWarnings || 0;
-                        if (jumps === null && warnings === 0) return '';
-                        const flagColor = (jumps >= 2 || warnings >= 3) ? '#e94560' : '#ffc107';
-                        return `<div style="margin-top:8px;padding:6px 10px;border-radius:6px;border:1px solid ${flagColor};background:rgba(233,69,96,0.08);color:${flagColor};font-size:0.88rem;">
-                            <i class="fas fa-triangle-exclamation"></i> Figyelmeztetések: <strong>${warnings}/3</strong> &nbsp;|&nbsp; Gyanús kódugrás: <strong>${jumps ?? 0}</strong>
-                            ${(jumps >= 2 || warnings >= 3) ? ' &nbsp;<strong style="color:#e94560;"><i class="fas fa-ban"></i> GYANÚS BEADÁS</strong>' : ''}
-                        </div>`;
-                    })()}
-                    <div style="margin-top:10px"><strong>Pontok:</strong></div>
-                    ${scoreHtml}
-                    ${(() => {
-                        let snap = null;
-                        try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
-                        const logs = snap && Array.isArray(snap.eventLog) ? snap.eventLog : null;
-                        if (!logs || logs.length === 0) return '';
-                        const cheatEvents = ['Cheat warning', 'Tab hidden', 'Window lost focus', 'Fullscreen exited', 'Paste blocked', 'Suspicious code jump', 'DevTools detected', 'Cheating detected'];
-                        const rows = logs.map(e => {
-                            const isCheat = cheatEvents.some(c => e.event && e.event.startsWith(c));
-                            const time = e.timestamp ? new Date(e.timestamp).toLocaleTimeString('hu-HU') : '';
-                            const extra = Object.entries(e).filter(([k]) => !['timestamp','event'].includes(k)).map(([k,v]) => `${k}: ${v}`).join(' | ');
-                            return `<tr style="${isCheat ? 'background:rgba(233,69,96,0.12);color:#e94560;' : ''}">
-                                <td style="padding:3px 8px;font-size:0.8rem;white-space:nowrap">${time}</td>
-                                <td style="padding:3px 8px;font-size:0.8rem">${isCheat ? '<i class="fas fa-triangle-exclamation"></i> ' : ''}${escapeHtml(e.event || '')}</td>
-                                <td style="padding:3px 8px;font-size:0.8rem;color:#aaa">${escapeHtml(extra)}</td>
-                            </tr>`;
-                        }).join('');
-                        return `<div style="margin-top:12px"><strong>Eseménynapló:</strong></div>
+                let snap = null;
+                try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
+                const codeTasks = snap && Array.isArray(snap.tasks) ? snap.tasks : [];
+                const jumps = snap && typeof snap.suspiciousJumps === 'number' ? snap.suspiciousJumps : null;
+                const warnings = data.cheatWarnings || 0;
+                const isSuspicious = jumps >= 2 || warnings >= 3;
+
+                const cheatHtml = (jumps !== null || warnings > 0) ? `
+                    <div style="margin-top:8px;padding:6px 10px;border-radius:6px;border:1px solid ${isSuspicious ? '#e94560' : '#ffc107'};background:rgba(233,69,96,0.08);color:${isSuspicious ? '#e94560' : '#ffc107'};font-size:0.88rem;">
+                        <i class="fas fa-triangle-exclamation"></i> Figyelmeztetések: <strong>${warnings}/3</strong> &nbsp;|&nbsp; Gyanús kódugrás: <strong>${jumps ?? 0}</strong>
+                        ${isSuspicious ? ' &nbsp;<strong><i class="fas fa-ban"></i> GYANÚS BEADÁS</strong>' : ''}
+                    </div>` : '';
+
+                const scoresAreaHtml = taskIds.map((tid, i) => `
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding:7px 10px;background:#0d0d1a;border-radius:8px;border:1px solid #222;flex-wrap:wrap">
+                        <span style="flex:1;font-size:0.9rem;min-width:100px"><strong>${i+1}. feladat</strong> <span style="color:#555;font-size:0.8rem">#${tid}</span></span>
+                        <div id="crit-dots-${i}" style="display:flex;gap:3px;flex-wrap:wrap;align-items:center"></div>
+                        <div style="display:flex;align-items:center;gap:4px">
+                            <input type="number" id="score-input-${i}" value="${scores[i] || 0}" min="0" max="${maxScores[i] || 14}"
+                                style="width:50px;padding:4px;background:#1a1a2e;border:1px solid #444;border-radius:4px;color:white;font-size:0.95rem;text-align:center"
+                                oninput="updateDetailGrade()" />
+                            <span style="color:#aaa;font-size:0.85rem">/ ${maxScores[i] || 0} pont</span>
+                        </div>
+                    </div>`).join('');
+
+                const codeHtml = (() => {
+                    if (!codeTasks.length) return `<textarea readonly style="width:100%;min-height:200px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #333;background:#0d0d1a;color:#e0e0e0;white-space:pre;margin-top:6px">${escapeHtml(data.codeSnapshot || '')}</textarea>`;
+                    return codeTasks.map(t => `<div style="margin-top:8px;font-size:0.85rem;color:#aaa">Feladat ${t.task}:</div>
+                        <textarea readonly style="width:100%;min-height:120px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #333;background:#0d0d1a;color:#e0e0e0;white-space:pre;margin-top:4px">${escapeHtml(t.code || '')}</textarea>`).join('');
+                })();
+
+                const logs = snap && Array.isArray(snap.eventLog) ? snap.eventLog : null;
+                const eventLogHtml = (() => {
+                    if (!logs || !logs.length) return '';
+                    const cheatEvents = ['Cheat warning','Tab hidden','Window lost focus','Fullscreen exited','Paste blocked','Suspicious code jump','DevTools detected','Cheating detected'];
+                    const rows = logs.map(e => {
+                        const isCheat = cheatEvents.some(c => e.event && e.event.startsWith(c));
+                        const time = e.timestamp ? new Date(e.timestamp).toLocaleTimeString('hu-HU') : '';
+                        const extra = Object.entries(e).filter(([k]) => !['timestamp','event'].includes(k)).map(([k,v]) => `${k}: ${v}`).join(' | ');
+                        return `<tr style="${isCheat ? 'background:rgba(233,69,96,0.12);color:#e94560;' : ''}">
+                            <td style="padding:3px 8px;font-size:0.8rem;white-space:nowrap">${time}</td>
+                            <td style="padding:3px 8px;font-size:0.8rem">${isCheat ? '<i class="fas fa-triangle-exclamation"></i> ' : ''}${escapeHtml(e.event || '')}</td>
+                            <td style="padding:3px 8px;font-size:0.8rem;color:#aaa">${escapeHtml(extra)}</td>
+                        </tr>`;
+                    }).join('');
+                    return `<div style="margin-top:16px"><strong>Eseménynapló:</strong></div>
                         <div style="max-height:220px;overflow-y:auto;margin-top:6px;border:1px solid #333;border-radius:6px;">
                             <table style="width:100%;border-collapse:collapse;">
                                 <thead><tr style="background:#1a1a2e;position:sticky;top:0">
@@ -1398,19 +1543,40 @@
                                 <tbody>${rows}</tbody>
                             </table>
                         </div>`;
-                    })()}
-                    <div style="margin-top:12px"><strong>Beadott kód:</strong></div>
-                    ${(() => {
-                        let snap = null;
-                        try { snap = JSON.parse(data.codeSnapshot || ''); } catch(e) {}
-                        const tasks = snap && Array.isArray(snap.tasks) ? snap.tasks : null;
-                        if (!tasks) return `<textarea readonly style="width:100%;min-height:200px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #ddd;white-space:pre;margin-top:6px">${escapeHtml(data.codeSnapshot || '')}</textarea>`;
-                        return tasks.map(t => `<div style="margin-top:8px;font-size:0.85rem;color:#aaa">Feladat ${t.task}:</div>
-                            <textarea readonly style="width:100%;min-height:120px;font-family:monospace;padding:8px;border-radius:6px;border:1px solid #333;background:#0d0d1a;color:#e0e0e0;white-space:pre;margin-top:4px">${escapeHtml(t.code || '')}</textarea>`).join('');
-                    })()}
+                })();
+
+                content.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+                        <div style="line-height:1.7">
+                            <div><strong>Név:</strong> ${escapeHtml(data.name || '')}</div>
+                            <div><strong>Email:</strong> ${escapeHtml(data.email || '')}</div>
+                            <div><strong>Osztály:</strong> ${escapeHtml(data.osztaly || '')}</div>
+                            <div><strong>Időtartam:</strong> ${duration} perc &nbsp;|&nbsp; <strong>Mód:</strong> ${data.mode === 'live' ? 'Éles' : 'Gyakorló'}</div>
+                        </div>
+                        <div style="text-align:center;padding:14px 22px;border-radius:14px;border:2px solid ${gradeColor(grade)};background:rgba(0,0,0,0.25);min-width:110px">
+                            <div style="font-size:0.75rem;color:#aaa;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Érdemjegy</div>
+                            <div id="detail-grade" style="font-size:3.2rem;font-weight:900;color:${gradeColor(grade)};line-height:1">${grade}</div>
+                            <div id="detail-score" style="font-size:0.85rem;color:#aaa;margin-top:4px">${totalScore} / ${maxTotal} pont</div>
+                        </div>
+                    </div>
+                    ${cheatHtml}
+                    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+                        <strong>Pontok – tanári javítás:</strong>
+                        <span style="font-size:0.78rem;color:#64748b"><i class="fas fa-circle" style="color:#27ae60"></i> teljesít &nbsp;<i class="fas fa-circle" style="color:#e74c3c"></i> nem teljesít &nbsp;<i class="fas fa-circle" style="color:#f59e0b"></i> fut. szükséges</span>
+                    </div>
+                    ${scoresAreaHtml}
+                    <button id="detail-save-btn" onclick="saveDetailScores()"
+                        style="margin-top:10px;padding:7px 18px;background:#1d4ed8;border:none;border-radius:8px;color:white;font-weight:700;cursor:pointer;font-size:0.9rem">
+                        <i class="fas fa-floppy-disk"></i> Pontok mentése
+                    </button>
+                    <div style="margin-top:16px"><strong>Beadott kód:</strong></div>
+                    ${codeHtml}
+                    ${eventLogHtml}
                 `;
 
                 openSubmissionModal();
+                runAdminCriteriaCheck(taskIds, codeTasks);
+
             } catch (error) {
                 console.error('Hiba a submission részleteinek betöltésekor:', error);
             }

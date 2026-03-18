@@ -162,6 +162,13 @@ app.MapGet("/api/submissions/{id:int}", (HttpContext ctx, int id, Database db) =
 });
 
 // Egy beadás törlése (admin)
+app.MapPatch("/api/submissions/{id:int}/scores", (HttpContext ctx, int id, UpdateScoresRequest req, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var ok = db.UpdateSubmissionScores(id, req.Scores, req.MaxScores, req.TotalScore, req.MaxTotal);
+    return ok ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
 app.MapDelete("/api/submissions/{id:int}", (HttpContext ctx, int id, Database db) =>
 {
     if (!ValidateOktato(ctx)) return Results.Unauthorized();
