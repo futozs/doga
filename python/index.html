@@ -1685,8 +1685,8 @@
 
             // Sorok felépítése
             rows.innerHTML = taskNames.map(nev => `
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-                    <span style="color:#cbd5e1; font-size:0.8rem; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${nev}">${nev}</span>
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:6px;">
+                    <span style="color:#cbd5e1; font-size:0.8rem; flex:1; white-space:normal; word-break:break-word; padding-top:3px;">${nev}</span>
                     <span style="display:flex; gap:2px; flex-shrink:0;">
                         ${[['😍',4],['👍',3],['😐',2],['👎',1]].map(([em,val]) =>
                             `<button class="reaction-emoji-btn" data-feladat="${nev.replace(/"/g,'&quot;')}" data-ertek="${val}" title="${em}">${em}</button>`
@@ -1764,7 +1764,7 @@
                         }
 
                         if (taskNames.length) window._showReactionPopup(taskNames);
-                    }, 1200);
+                    }, 0);
                 } else if (!isVisible) {
                     lastShown = false;
                 }
