@@ -2532,26 +2532,36 @@ tropusi_gyumolcsok: {
       },
     },
     {
-      id: "title",
-      label: "2. Böngésző címsorában megjelenő cím \"Trópusi gyümölcsök\"",
-      check: (doc, html) => doc.title === "Trópusi gyümölcsök" && _ch.inHead(html, /<title[^>]*>/i),
-    },
-    {
       id: "style-link",
-      label: "3. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
+      label: "2. Hivatkozást helyezett el a css mappában található style.css stíluslapra",
       check: (doc, html) => _ch.inHead(html, /href=["'][^"']*style\.css["']/i),
     },
     {
+      id: "title",
+      label: "3. Böngésző címsorában megjelenő cím \"Trópusi gyümölcsök\"",
+      check: (doc, html) => doc.title === "Trópusi gyümölcsök" && _ch.inHead(html, /<title[^>]*>/i),
+    },
+    {
       id: "fejlec-img",
-      label: "4. A fejlec képet elhelyezte, alt és title szövege \"Trópusi gyümölcsök\"",
+      label: "4. A fejléc képet elhelyezte",
+      check: (doc) => doc.querySelector('img[src*="fejlec"]') !== null,
+    },
+    {
+      id: "fejlec-alt-title",
+      label: "5. A fejléc kép alt és title szövege \"Trópusi gyümölcsök\"",
       check: (doc) => {
-        const img = doc.querySelector('img#fejlec');
+        const img = doc.querySelector('img[src*="fejlec"]');
         return img && img.alt === "Trópusi gyümölcsök" && img.title === "Trópusi gyümölcsök";
       },
     },
     {
+      id: "fejlec-id",
+      label: "6. A fejléc képre egyedi azonosítót állított fejlec néven",
+      check: (doc) => doc.querySelector('img#fejlec') !== null,
+    },
+    {
       id: "nav-3rd-link",
-      label: "5. Elkészítette a \"Noni\" menüpontot",
+      label: "7. Elkészítette a \"Noni\" menüpontot és jó oldalra hivatkozik",
       check: (doc) => {
         const links = doc.querySelectorAll('nav a, .navbar a');
         return Array.from(links).some(a =>
@@ -2561,7 +2571,7 @@ tropusi_gyumolcsok: {
     },
     {
       id: "nav-3rd-blank",
-      label: "6. A \"Noni\" link új lapon nyílik meg",
+      label: "8. A \"Noni\" link új lapon nyílik meg",
       check: (doc) => {
         const links = doc.querySelectorAll('nav a, .navbar a');
         return Array.from(links).some(a => a.textContent.includes('Noni') && a.target === '_blank');
@@ -2569,15 +2579,24 @@ tropusi_gyumolcsok: {
     },
     {
       id: "focim-h1",
-      label: "7. A főcím szöveg 1-es szintű címsor (h1)",
+      label: "9. A főcím szöveg 1-es szintű címsor (h1)",
       check: (doc) => {
         const h1s = doc.querySelectorAll('h1');
         return Array.from(h1s).some(h => h.textContent.includes('TRÓPUSI'));
       },
     },
     {
-      id: "deli-gyumolcsok-p",
-      label: "8. A \"Déli gyümölcsök\" szöveg bekezdésekbe kerültek és alkalmazza a my-3 osztályjelölőt",
+      id: "intro-paragraphs",
+      label: "10. A bevezetés szövege legalább 3 bekezdésbe kerültek",
+      check: (doc) => {
+        const erdei = doc.querySelector('#erdei');
+        if (!erdei) return false;
+        return erdei.querySelectorAll('p').length >= 3;
+      },
+    },
+    {
+      id: "intro-my3",
+      label: "11. A bevezetés bekezdésekre alkalmazza a my-3 osztályjelölőt",
       check: (doc) => {
         const erdei = doc.querySelector('#erdei');
         if (!erdei) return false;
@@ -2585,151 +2604,197 @@ tropusi_gyumolcsok: {
       },
     },
     {
-      id: "ananasz-bold-italic",
-      label: "9. Az ananász neve félkövér, latin neve dőlt",
+      id: "banan-underline",
+      label: "12. A banán receptek szövege aláhúzott",
       check: (doc) => {
-        const bolds = doc.querySelectorAll('b, strong');
-        const hasBold = Array.from(bolds).some(b => b.textContent.toLowerCase().includes('ananász'));
-        const italics = doc.querySelectorAll('i, em');
-        const hasItalic = Array.from(italics).some(i => i.textContent.includes('Ananas'));
-        return hasBold && hasItalic;
-      },
-    },
-    {
-      id: "col-lg-4",
-      label: "10. Az Ananász/Banán/Papaya/Licsi/Gránátalma oszlopok col-lg-4 méretűek (3 oszlopos elrendezés)",
-      check: (doc) => {
-        const cols = doc.querySelectorAll('.col-lg-4');
-        return cols.length >= 5;
+        const underlines = doc.querySelectorAll('u');
+        return Array.from(underlines).some(u => u.textContent.toLowerCase().includes('recept') || u.textContent.toLowerCase().includes('banán'));
       },
     },
     {
       id: "banan-ul",
-      label: "11. A banán receptek számozatlan felsorolásban (ul#banan)",
-      check: (doc) => doc.querySelector('ul#banan') !== null && doc.querySelector('ul#banan li') !== null,
+      label: "13. A banán receptek számozatlan felsorolásban (ul, li elemekkel)",
+      check: (doc) => doc.querySelector('ul#banan li') !== null,
+    },
+    {
+      id: "banan-id",
+      label: "14. A banán receptek ul egyedi azonosítója banan",
+      check: (doc) => doc.querySelector('ul#banan') !== null,
     },
     {
       id: "sarkanygyumolcs-h3",
-      label: "12. A Sárkánygyümölcs részben van 3-as szintű címsor",
+      label: "15. A Sárkánygyümölcs részben van 3-as szintű címsor",
       check: (doc) => {
         const h3s = doc.querySelectorAll('h3');
         return Array.from(h3s).some(h => h.textContent.includes('Sárkánygyümölcs'));
       },
     },
     {
+      id: "sarkanygyumolcs-paragraphs",
+      label: "16. A Sárkánygyümölcs szövegrészei bekezdésbe kerültek (legalább 2 p)",
+      check: (doc) => {
+        const h3s = doc.querySelectorAll('h3');
+        const sH3 = Array.from(h3s).find(h => h.textContent.includes('Sárkánygyümölcs'));
+        if (!sH3) return false;
+        const container = sH3.closest('.col') || sH3.parentElement;
+        return container && container.querySelectorAll('p:not(.card-text)').length >= 2;
+      },
+    },
+    {
       id: "sarkanygyumolcs-img",
-      label: "13. A Sárkánygyümölcs kép forrása img/pitaja.jpg",
+      label: "17. A Sárkánygyümölcs kép forrása img/pitaja.jpg",
       check: (doc) => doc.querySelector('img[src*="pitaja"]') !== null,
     },
     {
+      id: "sarkanygyumolcs-alt-title",
+      label: "18. A Sárkánygyümölcs képnél alt és title szövege \"Sárkánygyümölcs\"",
+      check: (doc) => {
+        const img = doc.querySelector('img[src*="pitaja"]');
+        return img && img.alt === "Sárkánygyümölcs" && img.title === "Sárkánygyümölcs";
+      },
+    },
+    {
+      id: "caption-classes",
+      label: "19. A képaláírásokon alkalmazza a fw-bold és h5 osztályjelölőket (legalább 6)",
+      check: (doc) => doc.querySelectorAll('p.fw-bold.h5').length >= 6,
+    },
+    {
       id: "granatama-ol",
-      label: "14. A gránátalma előnyei számozott felsorolásban (ol)",
+      label: "20. A gránátalma előnyei számozott felsorolásban (ol)",
       check: (doc) => {
         const h3s = doc.querySelectorAll('h3');
         const granatH3 = Array.from(h3s).find(h => h.textContent.includes('Gránátalma'));
         if (!granatH3) return false;
-        const container = granatH3.closest('.col-sm-12');
+        const container = granatH3.closest('[class*="col"]') || granatH3.parentElement;
         return container && container.querySelector('ol li') !== null;
       },
     },
     {
-      id: "table-th",
-      label: "15. A táblázat fejlécében elkészítette az 5 fejléc cellát",
+      id: "col-lg-4",
+      label: "21. Az Ananász/Banán/stb. oszlopok col-lg-4 méretűek (legalább 5 oszlop)",
+      check: (doc) => doc.querySelectorAll('.col-lg-4').length >= 5,
+    },
+    {
+      id: "bold-combined",
+      label: "22. A gyümölcsnevek félkövérek (legalább 6 helyen)",
+      check: (doc) => doc.querySelectorAll('b, strong').length >= 6,
+    },
+    {
+      id: "italic-combined",
+      label: "23. A latin nevek dőltek (legalább 6 helyen)",
+      check: (doc) => doc.querySelectorAll('i, em').length >= 6,
+    },
+    {
+      id: "table-th-rows",
+      label: "24. A táblázat fejlécét és adatsorait elkészítette",
       check: (doc) => {
-        const ths = doc.querySelectorAll('#tablazat thead th');
-        return ths.length >= 5;
+        const ths = doc.querySelectorAll('thead th');
+        const tds = doc.querySelectorAll('tbody td');
+        return ths.length >= 5 && tds.length >= 4;
       },
     },
     {
-      id: "table-rows",
-      label: "16. A táblázatba bekerültek az adatsorok (Ananász, Banán, stb.)",
+      id: "table-uppercase-align",
+      label: "25. A táblázat fejléce nagybetűs (text-uppercase) és a tartalom középre igazított (align-middle)",
       check: (doc) => {
-        const tds = doc.querySelectorAll('#tablazat tbody td');
-        return tds.length >= 4;
+        const thead = doc.querySelector('thead');
+        const hasUppercase = thead && (
+          thead.classList.contains('text-uppercase') ||
+          thead.querySelector('.text-uppercase') !== null ||
+          doc.querySelector('table .text-uppercase') !== null
+        );
+        const hasAlign = doc.querySelector('table.align-middle') !== null ||
+          doc.querySelector('.align-middle') !== null;
+        return hasUppercase && hasAlign;
       },
     },
     {
-      id: "footer-link",
-      label: "17. A láblécben van hivatkozás a \"leiras\" azonosítóra \"Ugrás az elejére\" szöveggel",
+      id: "footer-href",
+      label: "26. A láblécben van hivatkozás a \"leiras\" azonosítóra",
+      check: (doc) => doc.querySelector('.lablec a[href="#leiras"]') !== null,
+    },
+    {
+      id: "footer-text",
+      label: "27. A lábléc hivatkozás szövege \"Ugrás az elejére\"",
       check: (doc) => {
-        const link = doc.querySelector('.lablec a[href="#leiras"]');
+        const link = doc.querySelector('.lablec a');
         return link && link.textContent.includes('Ugrás az elejére');
       },
     },
     {
       id: "css-body-font",
-      label: "18. CSS: Az oldal betűtípusa Gill Sans (vagy hasonló)",
-      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*['"]?Gill\s*Sans/i.test(css),
+      label: "28. CSS: Az oldal betűtípusa Calibri",
+      check: (doc, html, css) => css && /body\s*\{[^}]*font-family\s*:\s*[^;]*calibri/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-fejlec-width",
-      label: "19. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
+      label: "29. CSS: A fejlec azonosítóra 100%-os szélesség van beállítva",
       check: (doc, html, css) => css && /#fejlec\s*\{[^}]*width\s*:\s*100%/i.test(css),
       cssCheck: true,
     },
     {
+      id: "css-p-justify",
+      label: "30. CSS: A bekezdések sorkizártak",
+      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
+      cssCheck: true,
+    },
+    {
       id: "css-h3-color",
-      label: "20. CSS: A h3 betűszíne fekete",
+      label: "31. CSS: A h3 betűszíne fekete",
       check: (doc, html, css) => css && /h3\s*\{[^}]*color\s*:\s*black/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-h3-fontsize",
-      label: "21. CSS: A h3 betűmérete 2.5em",
+      label: "32. CSS: A h3 betűmérete 2.5em",
       check: (doc, html, css) => css && /h3\s*\{[^}]*font-size\s*:\s*2\.5em/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-nav-border",
-      label: "22. CSS: A navigáció listaelemére 3px vastag, pontozott jobb szegélyt állított",
-      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted/i.test(css),
+      label: "33. CSS: A navigáció listaelemére 3px vastag, pontozott, rgb(255,132,0) jobb szegélyt állított",
+      check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*border(-right)?\s*:[^;]*3px[^;]*dotted[^;]*(?:rgb\s*\(\s*255\s*,\s*132\s*,\s*0\s*\)|orange)/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-nav-padding",
-      label: "23. CSS: A navigáció listaelemének vízszintes belső margója 15px",
+      label: "34. CSS: A navigáció listaelemének vízszintes belső margója 15px",
       check: (doc, html, css) => css && /nav\s+li\s*\{[^}]*padding\s*:\s*0\s*15px/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-lablec-bold",
-      label: "24. CSS: A lablec osztály hivatkozása félkövér",
+      label: "35. CSS: A lablec osztály hivatkozása félkövér",
       check: (doc, html, css) => css && /\.lablec\s+a\s*\{[^}]*font-weight\s*:\s*bold/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-lablec-hover",
-      label: "25. CSS: Ha a lablec osztály hivatkozása fölé visszük az egeret, nagybetűs",
+      label: "36. CSS: Ha a lablec osztály hivatkozása fölé visszük az egeret, nagybetűs",
       check: (doc, html, css) => css && /\.lablec\s+a:hover\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(css),
       cssCheck: true,
     },
     {
-      id: "css-p-justify",
-      label: "26. CSS: A bekezdések sorkizártak",
-      check: (doc, html, css) => css && /p\s*\{[^}]*text-align\s*:\s*justify/i.test(css),
-      cssCheck: true,
-    },
-    {
       id: "css-banan-image",
-      label: "27. CSS: A banan azonosítóra banan_ikon.png listaelem kép van beállítva",
+      label: "37. CSS: A banan azonosítóra banan_ikon.png listaelem kép van beállítva",
       check: (doc, html, css) => css && /#banan\s*\{[^}]*list-style-image\s*:\s*url\([^)]*banan_ikon\.png/i.test(css),
       cssCheck: true,
     },
     {
       id: "css-banan-margin",
-      label: "28. CSS: A banan azonosító bal külső margója 25px",
+      label: "38. CSS: A banan azonosító bal külső margója 25px",
       check: (doc, html, css) => css && /#banan\s*\{[^}]*margin-left\s*:\s*25px/i.test(css),
       cssCheck: true,
     },
     {
       id: "html-validated",
-      label: "29. HTML validálás képernyőképe feltöltve",
+      label: "39. HTML validálás képernyőképe feltöltve",
       check: () => validationImages.html !== null,
     },
     {
       id: "css-validated",
-      label: "30. CSS validálás képernyőképe feltöltve",
+      label: "40. CSS validálás képernyőképe feltöltve",
       check: () => validationImages.css !== null,
     },
   ],
