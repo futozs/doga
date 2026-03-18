@@ -1425,21 +1425,19 @@
     </div>
 
     <!-- Reaction Popup (feladat értékelés beadás után) -->
-    <div id="reaction-popup" style="display:none; position:fixed; bottom:24px; right:24px; z-index:15000; background:#1e2d3d; border:1px solid #2d5986; border-radius:14px; padding:1rem 1.2rem; box-shadow:0 8px 32px rgba(0,0,0,0.6); max-width:300px; text-align:center; animation:slideUpFade 0.35s ease;">
+    <div id="reaction-popup" style="display:none; position:fixed; bottom:24px; right:24px; z-index:15000; background:#1e2d3d; border:1px solid #2d5986; border-radius:14px; padding:1.1rem 1.3rem; box-shadow:0 8px 32px rgba(0,0,0,0.6); min-width:280px; max-width:340px; animation:slideUpFade 0.35s ease;">
         <style>
             @keyframes slideUpFade { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+            .reaction-emoji-btn { font-size:1.45rem; background:none; border:2px solid transparent; border-radius:8px; cursor:pointer; padding:3px 6px; transition:all 0.15s; opacity:0.5; }
+            .reaction-emoji-btn:hover { opacity:1; }
+            .reaction-emoji-btn.selected { opacity:1; border-color:#536dfe; background:rgba(83,109,254,0.15); }
         </style>
         <div id="reaction-popup-content">
-            <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:0.3rem;">Hogy tetszett ez a feladat?</div>
-            <div id="reaction-task-name" style="color:#e2e8f0; font-weight:700; font-size:0.9rem; margin-bottom:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-            <div style="display:flex; gap:0.5rem; justify-content:center;">
-                <button class="reaction-btn" data-ertek="4" title="Imádom!" style="font-size:1.6rem; background:none; border:2px solid transparent; border-radius:10px; cursor:pointer; padding:4px 8px; transition:all 0.15s;">😍</button>
-                <button class="reaction-btn" data-ertek="3" title="Tetszett" style="font-size:1.6rem; background:none; border:2px solid transparent; border-radius:10px; cursor:pointer; padding:4px 8px; transition:all 0.15s;">👍</button>
-                <button class="reaction-btn" data-ertek="2" title="Átlagos" style="font-size:1.6rem; background:none; border:2px solid transparent; border-radius:10px; cursor:pointer; padding:4px 8px; transition:all 0.15s;">😐</button>
-                <button class="reaction-btn" data-ertek="1" title="Nem tetszett" style="font-size:1.6rem; background:none; border:2px solid transparent; border-radius:10px; cursor:pointer; padding:4px 8px; transition:all 0.15s;">👎</button>
-            </div>
+            <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:0.7rem; text-align:center;">Hogy tetszettek a feladatok?</div>
+            <div id="reaction-rows" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.8rem;"></div>
+            <button id="reaction-send-btn" style="width:100%; padding:7px; background:#536dfe; border:none; border-radius:8px; color:white; font-weight:700; font-size:0.88rem; cursor:pointer;">Küldés</button>
         </div>
-        <div id="reaction-thankyou" style="display:none; color:#4ade80; font-size:0.95rem; font-weight:600; padding:0.5rem 0;">Köszönjük! 🎉</div>
+        <div id="reaction-thankyou" style="display:none; color:#4ade80; font-size:0.95rem; font-weight:600; padding:0.5rem 0; text-align:center;">Köszönjük! 🎉</div>
     </div>
 
     <!-- Debug Panel (alapból rejtett) -->
@@ -1729,47 +1727,65 @@
             loadMyVotes();
         })();
 
-        // Reaction popup megjelenítése beadás után
-        window._showReactionPopup = function(feladatNev) {
+        // Reaction popup megjelenítése beadás után – mind a 3 feladathoz
+        window._showReactionPopup = function(taskNames) {
+            if (!taskNames || !taskNames.length) return;
             const saved = sessionStorage.getItem('kandoUser');
             if (!saved) return;
             let userEmail = '', userToken = '';
-            try {
-                const u = JSON.parse(saved);
-                userEmail = u.email || '';
-                userToken = u.token || '';
-            } catch(e) { return; }
+            try { const u = JSON.parse(saved); userEmail = u.email||''; userToken = u.token||''; } catch(e) { return; }
 
-            const popup = document.getElementById('reaction-popup');
-            const nameEl = document.getElementById('reaction-task-name');
+            const popup   = document.getElementById('reaction-popup');
+            const rows    = document.getElementById('reaction-rows');
             const content = document.getElementById('reaction-popup-content');
-            const thankyou = document.getElementById('reaction-thankyou');
-            if (!popup || !nameEl) return;
+            const thankyou= document.getElementById('reaction-thankyou');
+            const sendBtn = document.getElementById('reaction-send-btn');
+            if (!popup || !rows) return;
 
-            nameEl.textContent = feladatNev;
-            content.style.display = 'block';
-            thankyou.style.display = 'none';
-            popup.style.display = 'block';
+            // Állapot: feladatnév → kiválasztott érték
+            const selections = {};
 
-            // Gombok kattintás
-            popup.querySelectorAll('.reaction-btn').forEach(btn => {
+            // Sorok felépítése
+            rows.innerHTML = taskNames.map(nev => `
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                    <span style="color:#cbd5e1; font-size:0.8rem; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${nev}">${nev}</span>
+                    <span style="display:flex; gap:2px; flex-shrink:0;">
+                        ${[['😍',4],['👍',3],['😐',2],['👎',1]].map(([em,val]) =>
+                            `<button class="reaction-emoji-btn" data-feladat="${nev.replace(/"/g,'&quot;')}" data-ertek="${val}" title="${em}">${em}</button>`
+                        ).join('')}
+                    </span>
+                </div>`).join('');
+
+            // Emoji kattintás
+            rows.querySelectorAll('.reaction-emoji-btn').forEach(btn => {
                 btn.onclick = function() {
-                    const ertek = parseInt(btn.dataset.ertek);
+                    const f = btn.dataset.feladat;
+                    selections[f] = parseInt(btn.dataset.ertek);
+                    // Kiemel a sorban
+                    rows.querySelectorAll(`.reaction-emoji-btn[data-feladat="${CSS.escape(f)}"]`).forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                };
+            });
+
+            // Küldés
+            sendBtn.onclick = function() {
+                Object.entries(selections).forEach(([feladatNev, ertek]) => {
                     if (userEmail && userToken) {
                         fetch(`${RAILWAY_URL_FB}/api/feedback`, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${userToken}`
-                            },
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
                             body: JSON.stringify({ email: userEmail, feladatNev, tipus: 'reaction', ertek })
                         }).catch(() => {});
                     }
-                    content.style.display = 'none';
-                    thankyou.style.display = 'block';
-                    setTimeout(() => { popup.style.display = 'none'; }, 2000);
-                };
-            });
+                });
+                content.style.display = 'none';
+                thankyou.style.display = 'block';
+                setTimeout(() => { popup.style.display = 'none'; }, 2000);
+            };
+
+            content.style.display = 'block';
+            thankyou.style.display = 'none';
+            popup.style.display = 'block';
         };
 
         // MutationObserver: figyeljük mikor jelenik meg az end-section
@@ -1784,24 +1800,37 @@
                                   endSection.offsetParent !== null;
                 if (isVisible && !lastShown) {
                     lastShown = true;
-                    // Feladat neve: az obfuszkált JS-ben window.currentTask vagy hasonló
                     setTimeout(() => {
-                        let feladatNev = '';
-                        // Próbálunk feladatnevet kinyerni különböző lehetséges globálisokból
-                        if (typeof window.currentTaskName === 'string' && window.currentTaskName) {
-                            feladatNev = window.currentTaskName;
-                        } else if (typeof window.currentTask === 'object' && window.currentTask && window.currentTask.name) {
-                            feladatNev = window.currentTask.name;
-                        } else if (typeof window.currentTask === 'object' && window.currentTask && window.currentTask.cim) {
-                            feladatNev = window.currentTask.cim;
-                        } else {
-                            // Utolsó esély: title-ből vagy end-title-ből
-                            const endTitle = document.getElementById('end-title');
-                            if (endTitle && endTitle.textContent && endTitle.textContent !== 'Feladat beadva') {
-                                feladatNev = endTitle.textContent;
-                            }
+                        // Feladatnevek kinyerése – mind a 3 feladathoz
+                        let taskNames = [];
+
+                        // 1. kísérlet: window.selectedTasks tömb (pl. [{cim:...}, ...] vagy [{name:...}])
+                        const sel = window.selectedTasks || window.assignedTasks || window.currentTasks;
+                        if (Array.isArray(sel) && sel.length) {
+                            taskNames = sel.map(t => t.cim || t.name || t.title || t.feladat || '').filter(Boolean);
                         }
-                        if (feladatNev) window._showReactionPopup(feladatNev);
+
+                        // 2. kísérlet: window.taskList vagy window.tasks szűrve az aktuálisakra
+                        if (!taskNames.length && Array.isArray(window.taskList)) {
+                            taskNames = window.taskList.map(t => t.cim || t.name || '').filter(Boolean);
+                        }
+
+                        // 3. kísérlet: DOM-ból – feladat fejlécek a végeredmény panelben
+                        if (!taskNames.length) {
+                            document.querySelectorAll('[data-task-name], .task-title, .feladat-nev').forEach(el => {
+                                const n = el.dataset.taskName || el.textContent.trim();
+                                if (n && !taskNames.includes(n)) taskNames.push(n);
+                            });
+                        }
+
+                        // 4. kísérlet: egyetlen currentTask fallback
+                        if (!taskNames.length) {
+                            const n = (window.currentTaskName) ||
+                                      (window.currentTask && (window.currentTask.cim || window.currentTask.name));
+                            if (n) taskNames = [n];
+                        }
+
+                        if (taskNames.length) window._showReactionPopup(taskNames);
                     }, 1200);
                 } else if (!isVisible) {
                     lastShown = false;
