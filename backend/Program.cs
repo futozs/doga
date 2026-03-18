@@ -426,19 +426,25 @@ app.MapPost("/api/progress", (ProgressRequest req, Database db) =>
     return Results.Ok(new { success = true });
 });
 
-// Saját haladás lekérése (email alapú, nyilvános)
-app.MapGet("/api/progress/{email}", (string email, Database db) =>
+// Saját haladás lekérése (saját token szükséges, vagy oktató)
+app.MapGet("/api/progress/{email}", (string email, HttpContext ctx, Database db) =>
 {
     var decoded = Uri.UnescapeDataString(email);
     if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    // Oktató mindent láthat, diák csak a sajátját
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    bool isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
+    if (!isOktato && !payload.StartsWith(decoded + "|") && !payload.StartsWith(decoded + ":"))
+        return Results.Forbid();
     var progress = db.GetStudentProgress(decoded);
     return Results.Ok(progress);
 });
 
-// Összes tanuló összesítése (csak admin)
+// Összes tanuló összesítése (csak oktató/admin)
 app.MapGet("/api/progress", (HttpContext ctx, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     return Results.Ok(db.GetAllProgressSummary());
 });
 
@@ -460,11 +466,16 @@ app.MapGet("/api/leaderboard/rank/{email}", (string email, Database db) =>
     return Results.Ok(db.GetStudentRank(decoded));
 });
 
-// Tanuló állapot lekérése / mentése (pl. utolsó kör feladatszámai) – nyilvános, email alapú
-app.MapGet("/api/user-state/{email}/{key}", (string email, string key, Database db) =>
+// Tanuló állapot lekérése / mentése (saját token vagy oktató szükséges)
+app.MapGet("/api/user-state/{email}/{key}", (string email, string key, HttpContext ctx, Database db) =>
 {
     var decoded = Uri.UnescapeDataString(email);
     if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    bool isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
+    if (!isOktato && !payload.StartsWith(decoded + "|") && !payload.StartsWith(decoded + ":"))
+        return Results.Forbid();
     var value = db.GetUserState(decoded, key);
     return Results.Ok(new { value });
 });
@@ -473,6 +484,11 @@ app.MapPut("/api/user-state/{email}/{key}", async (string email, string key, Htt
 {
     var decoded = Uri.UnescapeDataString(email);
     if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    bool isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
+    if (!isOktato && !payload.StartsWith(decoded + "|") && !payload.StartsWith(decoded + ":"))
+        return Results.Forbid();
     using var reader = new StreamReader(ctx.Request.Body);
     var body = await reader.ReadToEndAsync();
     var doc = System.Text.Json.JsonDocument.Parse(body);
@@ -517,12 +533,16 @@ app.MapGet("/api/feedback/stats", (HttpContext ctx, Database db) =>
     return Results.Ok(db.GetRatingStats());
 });
 
-// Saját visszajelzések lekérése (bejelentkezett felhasználó)
+// Saját visszajelzések lekérése (email a tokenből jön, nem query paramból)
 app.MapGet("/api/feedback/my", (HttpContext ctx, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
-    var email = ctx.Request.Query["email"].FirstOrDefault() ?? "";
-    var list = db.GetMyRatings(email);
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    // Email kinyerése a tokenből (nem a query paraméterből – injection védelem)
+    var parts = payload.Split(':');
+    var emailPart = parts[0]; // format: "email|szerep:timestamp" or "username:timestamp"
+    if (emailPart.Contains('|')) emailPart = emailPart.Split('|')[0];
+    var list = db.GetMyRatings(emailPart);
     return Results.Ok(list.Select(x => new { feladatNev = x.FeladatNev, tipus = x.Tipus, ertek = x.Ertek }));
 });
 
