@@ -1,8 +1,29 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.RateLimiting;
 using KandoTest;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Rate Limiter beállítása (IP alapú)
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("auth", httpContext =>
+    {
+        // IP cím alapján particionálunk (vagy 'global' ha nem elérhető)
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "global";
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: clientIp,
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 60,           // 60 kérés
+                Window = TimeSpan.FromMinutes(1) // percenként
+            });
+    });
+});
 
 // CORS – GitHub Pages + helyi fejlesztés
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
@@ -21,6 +42,7 @@ builder.Services.AddSingleton(db);
 
 var app = builder.Build();
 app.UseCors();
+app.UseRateLimiter(); // Ráhelyezzük a rate limitert a pipeline-ra
 
 // Adatbázis inicializálás
 db.Initialize();
@@ -47,56 +69,53 @@ if (!string.IsNullOrEmpty(seedEmail) && !string.IsNullOrEmpty(seedJelszo))
 
 // ── Token kezelés ─────────────────────────────────────────────────────────────
 
-string CreateToken(string username)
+string CreateToken(string payloadData)
 {
-    var payload = $"{username}:{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+    var payload = $"{payloadData}:{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
     using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey));
     var sig = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(payload)));
     return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{payload}.{sig}"));
 }
 
-bool ValidateToken(HttpContext ctx)
+(bool Valid, string Payload) InspectToken(HttpContext ctx)
 {
     var auth = ctx.Request.Headers["Authorization"].FirstOrDefault();
-    if (auth == null || !auth.StartsWith("Bearer ")) return false;
+    if (auth == null || !auth.StartsWith("Bearer ")) return (false, "");
     try
     {
         var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(auth[7..]));
         var dot = decoded.LastIndexOf('.');
+        if (dot == -1) return (false, "");
         var payload = decoded[..dot];
         var sig = decoded[(dot + 1)..];
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey));
         var expected = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(payload)));
-        if (sig != expected) return false;
-        var ts = long.Parse(payload.Split(':')[1]);
-        return DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts < 86400; // 24 óra
+        if (sig != expected) return (false, "");
+        var parts = payload.Split(':');
+        if (parts.Length < 2) return (false, "");
+        var ts = long.Parse(parts[^1]);
+        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts >= 86400) return (false, ""); // 24 óra
+        return (true, payload);
     }
-    catch { return false; }
+    catch { return (false, ""); }
 }
+
+bool ValidateToken(HttpContext ctx) => InspectToken(ctx).Valid;
 
 bool ValidateOktato(HttpContext ctx)
 {
-    var auth = ctx.Request.Headers["Authorization"].FirstOrDefault();
-    if (auth == null || !auth.StartsWith("Bearer ")) return false;
-    try
-    {
-        var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(auth[7..]));
-        var dot = decoded.LastIndexOf('.');
-        var payload = decoded[..dot];
-        var sig = decoded[(dot + 1)..];
-        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey));
-        var expected = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(payload)));
-        if (sig != expected) return false;
-        var ts = long.Parse(payload.Split(':')[1]);
-        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts >= 86400) return false;
-        // Admin token (no pipe) OR oktato user token
-        return !payload.Contains('|') || payload.Contains("|oktato");
-    }
-    catch { return false; }
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return false;
+    return !payload.Contains('|') || payload.Contains("|oktato") || payload.Contains("|admin");
 }
 
 // Oktatói regisztrációs kód (env változóból)
-var teacherCode = app.Configuration["TEACHER_CODE"] ?? "kandooktato";
+var teacherCode = app.Configuration["TEACHER_CODE"];
+if (string.IsNullOrEmpty(teacherCode))
+{
+    teacherCode = Guid.NewGuid().ToString("N")[..12];
+    Console.WriteLine($"[SECURITY] No TEACHER_CODE found. Generated temporary code: {teacherCode}");
+}
 
 // ── Végpontok ─────────────────────────────────────────────────────────────────
 
@@ -111,7 +130,8 @@ app.MapPost("/api/auth/login", (LoginRequest req, Database db) =>
         return Results.Unauthorized();
     var token = CreateToken(req.Username);
     return Results.Ok(new { success = true, token });
-});
+})
+.RequireRateLimiting("auth");
 
 // Konfiguráció lekérése (mindenki)
 app.MapGet("/api/config", (Database db) =>
@@ -188,10 +208,10 @@ app.MapDelete("/api/submissions", (HttpContext ctx, Database db) =>
     return Results.Ok(new { success = true, deleted = count });
 });
 
-// Statisztikák (admin)
+// Statisztikák (admin/oktató)
 app.MapGet("/api/stats", (HttpContext ctx, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     return Results.Ok(db.GetStats());
 });
 
@@ -217,8 +237,11 @@ app.MapPost("/api/auth/register", (RegisterRequest req, Database db) =>
     if (req.Jelszo != req.JelszoMegerosites)
         return Results.BadRequest(new { error = "A két jelszó nem egyezik!" });
 
-    if (req.Szerep == "oktato" && req.OktatoiKod != teacherCode)
-        return Results.BadRequest(new { error = "Hibás oktatói kód!" });
+    if (req.Szerep == "oktato")
+    {
+        if (string.IsNullOrEmpty(teacherCode) || req.OktatoiKod != teacherCode)
+            return Results.BadRequest(new { error = "Hibás oktatói kód!" });
+    }
 
     var hash = BCrypt.Net.BCrypt.HashPassword(req.Jelszo);
     var normalizedReq = req with { Email = email };
@@ -228,7 +251,8 @@ app.MapPost("/api/auth/register", (RegisterRequest req, Database db) =>
         return Results.BadRequest(new { error = "Ez az email cím már regisztrálva van!" });
 
     return Results.Ok(new { success = true, message = "Sikeres regisztráció!" });
-});
+})
+.RequireRateLimiting("auth");
 
 // Felhasználói bejelentkezés (tanulók + oktatók)
 app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
@@ -253,27 +277,28 @@ app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
         csoport             = user.Csoport,
         mustChangePassword  = user.MustChangePassword
     });
-});
+})
+.RequireRateLimiting("auth");
 
-// Felhasználók listája (csak admin)
+// Felhasználók listája (csak admin/oktató)
 app.MapGet("/api/users", (HttpContext ctx, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     return Results.Ok(db.GetAllUsers());
 });
 
-// Felhasználó törlése admin által
+// Felhasználó törlése admin/oktató által
 app.MapDelete("/api/users/{email}", (HttpContext ctx, string email, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     var deleted = db.DeleteUser(Uri.UnescapeDataString(email));
     return deleted ? Results.Ok(new { success = true }) : Results.NotFound();
 });
 
-// Felhasználó jelszavának visszaállítása admin által
+// Felhasználó jelszavának visszaállítása admin/oktató által
 app.MapPost("/api/users/reset-password", (HttpContext ctx, ResetPasswordRequest req, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     if (req.NewPassword.Length < 6)
         return Results.BadRequest(new { error = "A jelszó legalább 6 karakter legyen!" });
     var hash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
@@ -293,7 +318,8 @@ app.MapPost("/api/auth/delete-account", (DeleteAccountRequest req, Database db) 
 
     var deleted = db.DeleteUser(email);
     return deleted ? Results.Ok(new { success = true }) : Results.NotFound();
-});
+})
+.RequireRateLimiting("auth");
 
 // Admin jelszó csere
 app.MapPost("/api/auth/change-password", (HttpContext ctx,
@@ -305,7 +331,8 @@ app.MapPost("/api/auth/change-password", (HttpContext ctx,
         return Results.BadRequest(new { error = "Hibás jelszó" });
     db.UpsertTeacher(req.Username, BCrypt.Net.BCrypt.HashPassword(req.NewPassword));
     return Results.Ok(new { success = true });
-});
+})
+.RequireRateLimiting("auth");
 
 // ── Task Sets ─────────────────────────────────────────────────────────────
 
@@ -438,7 +465,8 @@ app.MapPost("/api/auth/change-own-password", (ChangeOwnPasswordRequest req, Data
     var hash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
     db.UpdatePassword(email, hash);
     return Results.Ok(new { success = true });
-});
+})
+.RequireRateLimiting("auth");
 
 // ── Feedback / Task Ratings ────────────────────────────────────────────────
 
