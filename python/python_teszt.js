@@ -32,6 +32,7 @@ let cheatDetected = false;
 let cheatReason = '';
 let cheatWarningCount = 0;
 let cheatPenalty = false;
+let suppressNextBlur = false; // W3Schools popup megnyitásakor az első blur-t elnyomjuk
 let lastCheatWarningTime = 0;
 let fullscreenEnforced = false;
 let fullscreenGraceUntil = 0;
@@ -42,6 +43,7 @@ let megoldasok = {}; // { "1": { solution, hints: [] }, ... }
 let tippIndex = []; // per task: how many hints shown
 let selectedTaskType = 'random'; // 'random' | 'csak8' | 'csak14'
 let solutionViewedTasks = []; // taskIndex-ek ahol megoldást nézett ebben a körben
+let lastRoundTaskNumbers = new Set(); // előző kör feladatszámai – elkerüljük az ismétlést
 
 // Pyodide singleton – csak egyszer töltjük be, utána újrahasználjuk
 let pyodideInstance = null;
@@ -118,6 +120,8 @@ async function initializeApp() {
         // Gyakorló és éles/vizsga mód: megjelenítjük a start képernyőt
         const startEl = document.getElementById('start-section');
         if (startEl) startEl.classList.remove('hidden');
+        const backBtn = document.getElementById('back-to-menu-btn');
+        if (backBtn) backBtn.classList.remove('hidden');
         updateStartSection();
     }
 
@@ -162,6 +166,61 @@ async function loadTestMode() {
 }
 
 // Backend-re való beküldés
+// Beadás előtti automatikus pontozás – csak ahol van kód de earnedPoints == 0
+async function autoScoreUnscoredTasks() {
+    for (let i = 0; i < selectedTasks.length; i++) {
+        const answer = taskAnswers[i];
+        if (!answer || answer.earnedPoints > 0) continue;
+        const code = (answer.answer || '').trim();
+        if (!code) continue;
+        const task = selectedTasks[i];
+        if (!task || !task.criteria || task.criteria.length === 0) continue;
+
+        debugLog(`⏳ Automatikus pontozás: ${task.number}. feladat`);
+
+        const results = task.criteria.map(criterion => {
+            if (criterion.type === 'teszt') {
+                return { criterion, passed: false, _needsRun: true };
+            }
+            return { criterion, passed: evaluateCriterion(code, criterion) };
+        });
+
+        for (let j = 0; j < results.length; j++) {
+            if (!results[j]._needsRun) continue;
+            const criterion = results[j].criterion;
+            const firstColon = criterion.args.indexOf(':');
+            if (firstColon === -1) {
+                results[j] = { criterion, passed: false };
+                continue;
+            }
+            const inputsStr = criterion.args.substring(0, firstColon);
+            const expected = criterion.args.substring(firstColon + 1);
+            const inputs = inputsStr.split(',');
+            try {
+                const res = await runCodeWithMockInputs(code, inputs);
+                results[j] = {
+                    criterion,
+                    passed: !res.pyodideFailed && res.success &&
+                            res.output.toLowerCase().includes(expected.toLowerCase())
+                };
+            } catch (e) {
+                results[j] = { criterion, passed: false };
+            }
+        }
+
+        const earned = Math.min(
+            results.filter(r => r.passed === true).length,
+            task.points || results.length
+        );
+        taskAnswers[i].earnedPoints = earned;
+        taskAnswers[i].scoringResults = results.map(r => ({
+            label: r.criterion.label,
+            passed: r.passed
+        }));
+        debugLog(`✅ Automatikus pontozás kész: ${task.number}. feladat → ${earned} pont`);
+    }
+}
+
 async function submitToBackend() {
     // Practice módban nincs szükség backend hívásra – lokálisan mentődik
     if (testMode === 'practice') {
@@ -402,7 +461,7 @@ function parseTasks(text) {
                 currentTask.solution = megoldasLines.join('\n').trim();
                 tasks.push(currentTask);
             }
-            currentTask = { number: parseInt(taskMatch[1]), description: '', example: '', points: 8, criteria: [], hints: [], solution: '' };
+            currentTask = { number: parseInt(taskMatch[1]), cim: '', description: '', example: '', points: 8, criteria: [], hints: [], solution: '' };
             resetSections();
             exampleLines = []; criteriaLines = []; tippLines = []; megoldasLines = [];
             continue;
@@ -410,6 +469,9 @@ function parseTasks(text) {
 
         const pointMatch = line.match(/^Pont:\s*(\d+)/i);
         if (pointMatch && currentTask) { currentTask.points = parseInt(pointMatch[1]); continue; }
+
+        const cimMatch = line.match(/^Cim:\s*(.+)/i);
+        if (cimMatch && currentTask) { currentTask.cim = cimMatch[1].trim(); continue; }
 
         if (line.trim() === 'Pontozas:')  { resetSections(); inCriteria = true; continue; }
         if (line.trim() === 'Tippek:')    { resetSections(); inTippek   = true; continue; }
@@ -566,6 +628,16 @@ async function startTest() {
 
     setTimeout(() => {
         currentTaskIndex = 0;
+
+        // Timer kijelző azonnali frissítése (ne várjon az első tick-re)
+        const timerEl = document.getElementById('global-timer');
+        if (timerEl) {
+            const m = Math.floor(globalTimeRemaining / 60);
+            const s = globalTimeRemaining % 60;
+            timerEl.textContent = `Hátralévő idő: ${m}:${s.toString().padStart(2, '0')}`;
+            timerEl.classList.remove('warning');
+        }
+
         startGlobalTimer();
         startAutoSaveInterval();
         showTask(currentTaskIndex);
@@ -583,28 +655,52 @@ async function startTest() {
     }, 100);
 }
 
-// Véletlenszerű feladatok kiválasztása
+// Véletlenszerű feladatok kiválasztása – előző kör feladatait kizárja ha lehet
 function selectRandomTasks() {
     const tasks8 = tasks.filter(t => t.points === 8);
     const tasks14 = tasks.filter(t => t.points === 14);
 
-    const shuffled8 = [...tasks8].sort(() => 0.5 - Math.random());
-    const shuffled14 = [...tasks14].sort(() => 0.5 - Math.random());
+    // Előző kör betöltése localStorage-ból (email alapján) – oldal újratöltés után is megmarad
+    const lsKey = 'kandoLastTasks_' + (studentData.email || 'anon');
+    try {
+        const saved = JSON.parse(localStorage.getItem(lsKey) || '[]');
+        if (saved.length > 0) lastRoundTaskNumbers = new Set(saved);
+    } catch(e) {}
+
+    // Előző körben nem szereplő feladatok (ha van elég belőlük, azokat részesítjük előnyben)
+    const fresh8 = tasks8.filter(t => !lastRoundTaskNumbers.has(t.number));
+    const fresh14 = tasks14.filter(t => !lastRoundTaskNumbers.has(t.number));
+
+    const shuffle = arr => [...arr].sort(() => 0.5 - Math.random());
 
     if (selectedTaskType === 'csak8') {
-        selectedTasks = shuffled8.slice(0, 3);
+        const pool = fresh8.length >= 3 ? fresh8 : tasks8;
+        selectedTasks = shuffle(pool).slice(0, 3);
     } else if (selectedTaskType === 'csak14') {
-        selectedTasks = shuffled14.slice(0, 3);
+        const pool = fresh14.length >= 3 ? fresh14 : tasks14;
+        selectedTasks = shuffle(pool).slice(0, 3);
     } else {
         // random: 2×8 + 1×14
-        selectedTasks = [...shuffled8.slice(0, 2), ...shuffled14.slice(0, 1)].sort(() => 0.5 - Math.random());
+        const pool8 = fresh8.length >= 2 ? fresh8 : tasks8;
+        const pool14 = fresh14.length >= 1 ? fresh14 : tasks14;
+        selectedTasks = [...shuffle(pool8).slice(0, 2), ...shuffle(pool14).slice(0, 1)].sort(() => 0.5 - Math.random());
     }
+
+    // Aktuális kör feladatait eltároljuk a következő kör kizárásához (memóriában és localStorage-ban)
+    lastRoundTaskNumbers = new Set(selectedTasks.map(t => t.number));
+    try {
+        const lsKey = 'kandoLastTasks_' + (studentData.email || 'anon');
+        localStorage.setItem(lsKey, JSON.stringify([...lastRoundTaskNumbers]));
+    } catch(e) {}
 
     tippIndex = selectedTasks.map(() => 0);
 
     logEvent('Tasks selected', {
         tasks: selectedTasks.map(t => ({ number: t.number, points: t.points }))
     });
+
+    // Feladatok elérhetővé tétele a visszajelzés popup számára
+    window._kandoSelectedTasks = selectedTasks;
 }
 
 // ─── PONTOZÓ MOTOR ────────────────────────────────────────────────────────────
@@ -687,6 +783,16 @@ async function runCodeWithMockInputs(code, inputs) {
     try {
         const pyodide = await getPyodide();
         pyodideLoaded = true;
+
+        // Előző futtatás globális névterének törlése
+        pyodide.runPython(`
+_kando_keep = {'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__builtins__', 'sys', 'builtins', 'js', '_kando_keep'}
+for _k in list(globals().keys()):
+    if _k not in _kando_keep:
+        try: del globals()[_k]
+        except: pass
+del _kando_keep
+`);
 
         pyodide.runPython(`
 import sys
@@ -794,7 +900,7 @@ async function checkScoring() {
     scoringRunning = false;
 
     // Progress mentése a backendre (csak ha van pont és portálos bejelentkezés)
-    const earned = results.filter(r => r.passed === true).length;
+    const earned = Math.min(results.filter(r => r.passed === true).length, task.points || results.length);
     const total  = results.length;
     if (earned > 0) maybePostPythonProgress(task, earned, total);
 }
@@ -831,10 +937,10 @@ function maybePostPythonProgress(task, earned, total) {
 // Pontozási eredmények megjelenítése – lámpa stílus
 function updateScoringUI(results) {
     const content = document.getElementById('scoring-content');
-    const earned = results.filter(r => r.passed === true).length;
-    const total = results.length;
     const task = selectedTasks[currentTaskIndex];
+    const total = results.length;
     const maxPts = task ? task.points : total;
+    const earned = Math.min(results.filter(r => r.passed === true).length, maxPts);
 
     const scoreColor = earned === total ? '#27ae60' : earned > 0 ? '#e67e22' : '#e74c3c';
 
@@ -872,10 +978,12 @@ function updateScoringUI(results) {
             (taskAnswers[currentTaskIndex].scoringResults || [])
                 .filter(r => r.passed).map(r => r.label)
         );
-        const newlyPassed = results.filter(r => r.passed === true && !prevPassed.has(r.criterion.label) && r.criterion.reaction);
-        newlyPassed.forEach((r, i) => {
-            setTimeout(() => showReactionToast(r.criterion.reaction), i * 1600);
-        });
+        if (testMode === 'practice') {
+            const newlyPassed = results.filter(r => r.passed === true && !prevPassed.has(r.criterion.label) && r.criterion.reaction);
+            newlyPassed.forEach((r, i) => {
+                setTimeout(() => showReactionToast(r.criterion.reaction), i * 1600);
+            });
+        }
 
         taskAnswers[currentTaskIndex].earnedPoints = earned;
         taskAnswers[currentTaskIndex].scoringResults = results.map(r => ({
@@ -884,6 +992,11 @@ function updateScoringUI(results) {
         }));
         updateLiveScore();
     }
+}
+
+function openW3Schools() {
+    suppressNextBlur = true;
+    window.open('https://www.w3schools.com/python/', 'w3schools', 'width=1100,height=750,resizable=yes,scrollbars=yes');
 }
 
 function showReactionToast(text) {
@@ -917,6 +1030,14 @@ function showReactionToast(text) {
 
 // Code Editor inicializálása (Monaco, textarea fallback ha nem tölt be)
 async function initializeCodeEditor() {
+    // Régi editor felszabadítása újraindításkor
+    if (codeEditor && typeof codeEditor.dispose === 'function') {
+        codeEditor.dispose();
+        codeEditor = null;
+    }
+    const containerPre = document.getElementById('code-editor');
+    if (containerPre) containerPre.innerHTML = '';
+
     try {
         const timeout = new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Monaco betöltési időtúllépés (12s)')), 12000)
@@ -979,6 +1100,15 @@ function initFallbackEditor() {
 
 // Terminál inicializálása
 function initTerminal() {
+    // Régi terminál felszabadítása újraindításkor
+    if (term) {
+        if (typeof term.dispose === 'function') term.dispose();
+        term = null;
+        terminalReady = false;
+    }
+    const terminalElementPre = document.getElementById('terminal');
+    if (terminalElementPre) terminalElementPre.innerHTML = '';
+
     const isNagyModTerm = document.body.classList.contains('nagy-mod');
     term = new Terminal({
         cursorBlink: true,
@@ -1046,7 +1176,18 @@ function showTask(index) {
     document.getElementById('scoring-content').innerHTML = '';
     if (task.criteria && task.criteria.length > 0) {
         scoringPanel.classList.remove('hidden');
-        setTimeout(autoCheckStructural, 300);
+        const savedResults = answer.scoringResults;
+        if (savedResults && savedResults.length > 0) {
+            // Mentett eredmények visszaállítása: criterion objektumot a task.criteria-ból vesszük
+            const restored = task.criteria.map((criterion, i) => {
+                const saved = savedResults.find(r => r.label === criterion.label) || savedResults[i];
+                if (!saved) return { criterion, passed: false, needsRun: true };
+                return { criterion, passed: saved.passed };
+            });
+            updateScoringUI(restored);
+        } else {
+            setTimeout(autoCheckStructural, 300);
+        }
     } else {
         scoringPanel.classList.add('hidden');
     }
@@ -1262,6 +1403,16 @@ async function runPythonCode() {
         globalThis.js_input = customPythonInput;
         globalThis.js_print = (text) => { term.write(String(text)); };
 
+        // Előző futtatás globális névterének törlése
+        pyodide.runPython(`
+_kando_keep = {'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__builtins__', 'sys', 'builtins', 'js', '_kando_keep'}
+for _k in list(globals().keys()):
+    if _k not in _kando_keep:
+        try: del globals()[_k]
+        except: pass
+del _kando_keep
+`);
+
         pyodide.runPython(`
 import sys
 from io import StringIO
@@ -1474,9 +1625,22 @@ function transformInputCallsToAwait(code) {
                 k += 1;
             }
             if (code[k] === '(' && !hasAwaitBefore(code, i)) {
-                out += 'await input';
-                out += code.slice(i + 5, k + 1);
-                i = k + 1;
+                // Megkeressük a matching ')' -t
+                let depth = 1;
+                let j = k + 1;
+                while (j < code.length && depth > 0) {
+                    if (code[j] === '(') depth++;
+                    else if (code[j] === ')') depth--;
+                    j++;
+                }
+                // Megnézzük van-e metódus lánc utána (pl. .lower())
+                const afterParen = code[j] === '.' || code[j] === '[';
+                if (afterParen) {
+                    out += '(await input' + code.slice(i + 5, j) + ')';
+                } else {
+                    out += 'await input' + code.slice(i + 5, j);
+                }
+                i = j;
                 continue;
             }
         }
@@ -1639,6 +1803,10 @@ async function submitTest() {
     if (cheatDetected) {
         logEvent('Cheating detected', { reason: cheatReason });
     }
+
+    // Beadás előtt: automatikusan lepontozza azokat a feladatokat,
+    // ahol van kód de még nem futott le a checkScoring (pl. tanuló nem kattintott "Kód futtatása"-ra)
+    await autoScoreUnscoredTasks();
 
     const result = await submitToBackend();
 
@@ -1851,6 +2019,11 @@ function handleWindowBlur() {
     }
     if (sessionStorage.getItem('kandTeacherMode') === 'true') return;
 
+    if (suppressNextBlur) {
+        suppressNextBlur = false;
+        return;
+    }
+
     if (!quizSection.classList.contains('hidden')) {
         logEvent('Window lost focus');
         fullscreenPrompt.style.display = 'flex';
@@ -1869,6 +2042,7 @@ function handleWindowFocus() {
 
 // Fókusz ellenőrzés indítása (csak logol, nem figyelmeztet – blur/visibility kezeli azt)
 function startFocusCheck() {
+    if (focusCheckInterval) { clearInterval(focusCheckInterval); focusCheckInterval = null; }
     focusCheckInterval = setInterval(() => {
         if (!document.hasFocus() && !quizSection.classList.contains('hidden') && (testMode === 'live' || testMode === 'vizsga')) {
             logEvent('Focus check: window still unfocused');
@@ -1907,12 +2081,11 @@ function startFullscreenCheck() {
                             document.mozFullScreenElement ||
                             document.msFullscreenElement;
         if (!isFullscreen) {
-            if (Date.now() < fullscreenGraceUntil) {
-                return;
-            }
-            if (!fullscreenEnforced) {
-                return;
-            }
+            if (Date.now() < fullscreenGraceUntil) return;
+            if (!fullscreenEnforced) return;
+            // Ha a handleFullscreenChange már elindított egy 3 mp-es grace timert,
+            // ne indítsuk el újra a figyelmeztetést – az interval csak backup
+            if (fsCheatDelayTimer !== null) return;
             showCheatWarning('Kiléptél a fullscreen módból');
         }
     }, 1000);
@@ -2205,8 +2378,26 @@ function restartPractice() {
     taskAnswers = [];
     currentTaskIndex = 0;
     cheatDetected = false;
+    cheatPenalty = false;
+    cheatReason = '';
     cheatWarningCount = 0;
+    lastCheatWarningTime = 0;
+    suspiciousJumps = 0;
+    lastCodeLengths = [];
     solutionViewedTasks = [];
+    pythonCodeRunning = false;
+    scoringRunning = false;
+    terminalInputResolver = null;
+    terminalInputBuffer = '';
+    if (currentInputDisposable) { currentInputDisposable.dispose(); currentInputDisposable = null; }
+    _pythonProgressPosted.clear();
+
+    // Intervalok leállítása
+    if (focusCheckInterval) { clearInterval(focusCheckInterval); focusCheckInterval = null; }
+    if (fullscreenCheckInterval) { clearInterval(fullscreenCheckInterval); fullscreenCheckInterval = null; }
+    if (focusLossTimeout) { clearTimeout(focusLossTimeout); focusLossTimeout = null; }
+    if (fsCountdownTimer) { clearInterval(fsCountdownTimer); fsCountdownTimer = null; }
+    if (fsCheatDelayTimer) { clearTimeout(fsCheatDelayTimer); fsCheatDelayTimer = null; }
 
     // End section elrejtése, live buttons visszaállítása a következő körre
     endSection.classList.add('hidden');
