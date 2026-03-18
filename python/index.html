@@ -1716,8 +1716,7 @@
             let lastShown = false;
             const observer = new MutationObserver(() => {
                 const isVisible = !endSection.classList.contains('hidden') &&
-                                  endSection.style.display !== 'none' &&
-                                  endSection.offsetParent !== null;
+                                  endSection.style.display !== 'none';
                 if (isVisible && !lastShown) {
                     lastShown = true;
                     setTimeout(() => {
