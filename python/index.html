@@ -136,15 +136,25 @@
             background: #16213e;
             border: 2px solid #0f3460;
             border-radius: 18px;
-            padding: 0.6rem 1.2rem;
+            padding: 0.6rem 1.2rem 0.6rem 1.2rem;
             max-width: 900px;
             width: 100%;
             max-height: calc(100vh - 44px);
-            overflow-y: auto;
-            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 0 60px rgba(83,109,254,0.2);
         }
-        .start-box::-webkit-scrollbar { display: none; }
+        .start-box-scroll {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            min-height: 0;
+        }
+        .start-box-scroll::-webkit-scrollbar { display: none; }
+        .start-box-footer {
+            flex-shrink: 0;
+            padding-top: 0.4rem;
+        }
 
         .start-box h2 {
             color: #e0e0e0;
@@ -1200,95 +1210,100 @@
         <!-- Start overlay (kezdetben rejtett – JS mutatja meg éles/vizsga módban, vagy azonnal rejti el gyakorló módban) -->
         <div id="start-section" class="hidden">
             <div class="start-box">
-                <h2><i class="fab fa-python"></i> Python Programozási Teszt</h2>
+                <!-- Scrollozható felső rész -->
+                <div class="start-box-scroll">
+                    <h2><i class="fab fa-python"></i> Python Programozási Teszt</h2>
 
-                <!-- Test Mode Badge -->
-                <div id="test-mode-badge" style="padding: 0.5rem 1rem; border-radius: 8px; text-align: center; margin-bottom: 0.6rem; font-weight: 600; font-size: 0.9rem; display: none;">
-                    <span id="test-mode-text"></span>
-                </div>
-
-                <!-- Feladattípus választó (csak gyakorló módban látszik) -->
-                <div id="practice-task-type" style="display:none; margin-bottom:0.8rem;">
-                    <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:0.5rem;">Milyen feladatokat szeretnél gyakorolni?</p>
-                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                        <button class="task-type-btn active" data-type="random" onclick="setTaskType('random', this)">🎲 Vegyes</button>
-                        <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)">8 pontos × 3</button>
-                        <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)">14 pontos × 3</button>
-                        <button class="task-type-btn" disabled>18 pontos (hamarosan)</button>
+                    <!-- Test Mode Badge -->
+                    <div id="test-mode-badge" style="padding: 0.5rem 1rem; border-radius: 8px; text-align: center; margin-bottom: 0.6rem; font-weight: 600; font-size: 0.9rem; display: none;">
+                        <span id="test-mode-text"></span>
                     </div>
-                </div>
 
-                <!-- Feladat breakdown (mindig látszik) -->
-                <div class="task-breakdown" id="task-breakdown">
-                    <p id="task-breakdown-title">Véletlenszerűen kiosztott feladatok:</p>
-                    <div id="task-breakdown-rows">
-                        <div class="task-row">
-                            <span class="task-badge pt8">8 pont × 2</span>
-                            <span class="task-row-desc">Egyszerűbb feladatok</span>
-                            <span class="task-row-time">8–15 perc/feladat</span>
-                        </div>
-                        <div class="task-row">
-                            <span class="task-badge pt14">14 pont × 1</span>
-                            <span class="task-row-desc">Összetettebb feladat</span>
-                            <span class="task-row-time">~25 perc</span>
+                    <!-- Feladattípus választó (csak gyakorló módban látszik) -->
+                    <div id="practice-task-type" style="display:none; margin-bottom:0.8rem;">
+                        <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:0.5rem;">Milyen feladatokat szeretnél gyakorolni?</p>
+                        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                            <button class="task-type-btn active" data-type="random" onclick="setTaskType('random', this)">🎲 Vegyes</button>
+                            <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)">8 pontos × 3</button>
+                            <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)">14 pontos × 3</button>
+                            <button class="task-type-btn" disabled>18 pontos (hamarosan)</button>
                         </div>
                     </div>
-                    <div class="task-total" id="task-breakdown-total">Összesen: <strong style="color:#e0e0e0;">30 pont</strong> &nbsp;|&nbsp; ~45 perc</div>
-                </div>
 
-                <!-- ════════════════════════════════════════════════════════
-                     ÚJ FELADATOK POST-IT – HETENTE FRISSÍTSD!
-                     Csak a felsorolt feladatokat és a dátumot cseréld.
-                     ════════════════════════════════════════════════════════ -->
-                <div id="friss-feladatok-box" style="background:#fefce8; border:1px solid #fde68a; border-left:4px solid #f59e0b; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#78350f;">
-                    <div style="font-weight:700; margin-bottom:0.6rem;">🆕 Friss feladatok <span style="font-weight:400; font-size:0.78rem; color:#a16207;">(2026. március 17–21.)</span></div>
-                    <div style="margin-bottom:0.5rem;">
-                        <div style="font-weight:600; margin-bottom:0.3rem;">🔄 Cserélt feladatok:</div>
-                        <div class="vote-task-list" style="display:flex;flex-wrap:wrap;gap:5px;" data-tasks="Kő-papír-olló,Nettó-bruttó kalkulátor,Sebességkategória,Jegyértékelő,Étterem értékelő"></div>
-                    </div>
-                    <div style="margin-bottom:0.5rem;">
-                        <div style="font-weight:600; margin-bottom:0.3rem;">🟢 Új 8 pontosak:</div>
-                        <div class="vote-task-list" style="display:flex;flex-wrap:wrap;gap:5px;" data-tasks="Mozijegy ára,Pizza rendelés,Dolgozat pontszám → jegy,Taxi ár,Szállodai szoba"></div>
-                    </div>
-                    <div>
-                        <div style="font-weight:600; margin-bottom:0.3rem;">🟡 Új 14 pontosak:</div>
-                        <div class="vote-task-list" style="display:flex;flex-wrap:wrap;gap:5px;" data-tasks="Italautomata,Iskolai büfé"></div>
-                    </div>
-                </div>
-
-                <!-- Practice time picker (csak gyakorló módban látszik) -->
-                <div id="practice-time-picker" style="display:none; background:#0a1a0a; border:1px solid #2ed573; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem;">
-                    <label style="font-weight:600; color:#2ed573; margin-right:12px;">⏱ Saját időkorlát:</label>
-                    <input type="number" id="custom-time-input" value="45" min="5" max="120" style="width:72px; padding:5px 8px; background:#16213e; border:1px solid #2ed573; border-radius:6px; color:#e0e0e0; font-size:1rem;">
-                    <span style="color:#888; margin-left:8px; font-size:0.85rem;">perc</span>
-                </div>
-
-                <!-- Éles módban látszik a szabályok -->
-                <div id="start-live-rules" style="display:none;">
-                    <div class="warning-box" style="padding:0.6rem 1rem; font-size:0.87rem; line-height:1.55; color:#ddd;">
-                        <div style="font-weight:700; margin-bottom:0.3rem; color:#ddd;"><i class="fas fa-triangle-exclamation"></i> Vizsgaszabályok (Éles mód)</div>
-                        <div style="color:#ddd;">A vizsga alatt az alábbi tevékenységek szabályszegésnek minősülnek:</div>
-                        <div style="margin:0.2rem 0 0.2rem 0.8rem; color:#ddd;">
-                            – Ablakváltás: másik fülre/programra váltás vagy kikattintás.<br>
-                            – Kilépés a teljes képernyős módból.<br>
-                            – Fejlesztői eszközök megnyitása.
+                    <!-- Feladat breakdown (mindig látszik) -->
+                    <div class="task-breakdown" id="task-breakdown">
+                        <p id="task-breakdown-title">Véletlenszerűen kiosztott feladatok:</p>
+                        <div id="task-breakdown-rows">
+                            <div class="task-row">
+                                <span class="task-badge pt8">8 pont × 2</span>
+                                <span class="task-row-desc">Egyszerűbb feladatok</span>
+                                <span class="task-row-time">8–15 perc/feladat</span>
+                            </div>
+                            <div class="task-row">
+                                <span class="task-badge pt14">14 pont × 1</span>
+                                <span class="task-row-desc">Összetettebb feladat</span>
+                                <span class="task-row-time">~25 perc</span>
+                            </div>
                         </div>
-                        <div style="color:#ddd;"><strong style="color:#ffc107;">Következmények:</strong> Az első két alkalommal figyelmeztetést kapsz, a harmadik szabályszegés után azonban az oktató azonnali értesítést kap, és a vizsgajegyedből automatikusan levonásra kerül egy osztályzat.</div>
+                        <div class="task-total" id="task-breakdown-total">Összesen: <strong style="color:#e0e0e0;">30 pont</strong> &nbsp;|&nbsp; ~45 perc</div>
+                    </div>
+
+                    <!-- ════════════════════════════════════════════════════════
+                         ÚJ FELADATOK POST-IT – HETENTE FRISSÍTSD!
+                         Csak a felsorolt feladatokat és a dátumot cseréld.
+                         ════════════════════════════════════════════════════════ -->
+                    <div id="friss-feladatok-box" style="background:#fefce8; border:1px solid #fde68a; border-left:4px solid #f59e0b; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#78350f;">
+                        <div style="font-weight:700; margin-bottom:0.6rem;">🆕 Friss feladatok <span style="font-weight:400; font-size:0.78rem; color:#a16207;">(2026. március 17–21.)</span></div>
+                        <div style="margin-bottom:0.5rem;">
+                            <div style="font-weight:600; margin-bottom:0.3rem;">🔄 Cserélt feladatok:</div>
+                            <div class="vote-task-list" style="display:flex;flex-wrap:wrap;gap:5px;" data-tasks="Kő-papír-olló,Nettó-bruttó kalkulátor,Sebességkategória,Jegyértékelő,Étterem értékelő"></div>
+                        </div>
+                        <div style="margin-bottom:0.5rem;">
+                            <div style="font-weight:600; margin-bottom:0.3rem;">🟢 Új 8 pontosak:</div>
+                            <div class="vote-task-list" style="display:flex;flex-wrap:wrap;gap:5px;" data-tasks="Mozijegy ára,Pizza rendelés,Dolgozat pontszám → jegy,Taxi ár,Szállodai szoba"></div>
+                        </div>
+                        <div>
+                            <div style="font-weight:600; margin-bottom:0.3rem;">🟡 Új 14 pontosak:</div>
+                            <div class="vote-task-list" style="display:flex;flex-wrap:wrap;gap:5px;" data-tasks="Italautomata,Iskolai büfé"></div>
+                        </div>
+                    </div>
+
+                    <!-- Practice time picker (csak gyakorló módban látszik) -->
+                    <div id="practice-time-picker" style="display:none; background:#0a1a0a; border:1px solid #2ed573; border-radius:8px; padding:0.8rem 1rem; margin-bottom:1rem;">
+                        <label style="font-weight:600; color:#2ed573; margin-right:12px;">⏱ Saját időkorlát:</label>
+                        <input type="number" id="custom-time-input" value="45" min="5" max="120" style="width:72px; padding:5px 8px; background:#16213e; border:1px solid #2ed573; border-radius:6px; color:#e0e0e0; font-size:1rem;">
+                        <span style="color:#888; margin-left:8px; font-size:0.85rem;">perc</span>
+                    </div>
+
+                    <!-- Éles módban látszik a szabályok -->
+                    <div id="start-live-rules" style="display:none;">
+                        <div class="warning-box" style="padding:0.6rem 1rem; font-size:0.87rem; line-height:1.55; color:#ddd;">
+                            <div style="font-weight:700; margin-bottom:0.3rem; color:#ddd;"><i class="fas fa-triangle-exclamation"></i> Vizsgaszabályok (Éles mód)</div>
+                            <div style="color:#ddd;">A vizsga alatt az alábbi tevékenységek szabályszegésnek minősülnek:</div>
+                            <div style="margin:0.2rem 0 0.2rem 0.8rem; color:#ddd;">
+                                – Ablakváltás: másik fülre/programra váltás vagy kikattintás.<br>
+                                – Kilépés a teljes képernyős módból.<br>
+                                – Fejlesztői eszközök megnyitása.
+                            </div>
+                            <div style="color:#ddd;"><strong style="color:#ffc107;">Következmények:</strong> Az első két alkalommal figyelmeztetést kapsz, a harmadik szabályszegés után azonban az oktató azonnali értesítést kap, és a vizsgajegyedből automatikusan levonásra kerül egy osztályzat.</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Felhasználói kártya (pre-fill script tölti fel) -->
-                <div id="user-info-card"></div>
+                <!-- Mindig látható alsó rész: user kártya + indítás gomb -->
+                <div class="start-box-footer">
+                    <!-- Felhasználói kártya (pre-fill script tölti fel) -->
+                    <div id="user-info-card"></div>
 
-                <button class="btn btn-primary" id="start-btn" style="width:100%; margin-top:0.4rem; background: linear-gradient(135deg, #e94560, #c0392b); border:none; border-radius:10px; padding:0.75rem; font-size:1rem; letter-spacing:0.5px;">
-                    Elfogadom a szabályokat – Teszt indítása
-                </button>
+                    <button class="btn btn-primary" id="start-btn" style="width:100%; margin-top:0.4rem; background: linear-gradient(135deg, #e94560, #c0392b); border:none; border-radius:10px; padding:0.75rem; font-size:1rem; letter-spacing:0.5px;">
+                        Elfogadom a szabályokat – Teszt indítása
+                    </button>
 
-                <!-- Rejtett form mezők (JS-nek kellenek) -->
-                <input type="hidden" id="name">
-                <input type="hidden" id="email">
-                <input type="hidden" id="class">
-
+                    <!-- Rejtett form mezők (JS-nek kellenek) -->
+                    <input type="hidden" id="name">
+                    <input type="hidden" id="email">
+                    <input type="hidden" id="class">
+                </div>
             </div>
         </div>
 
