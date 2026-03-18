@@ -613,11 +613,14 @@ async function startTest() {
 
     // Submit gomb felirat mód szerint
     const submitLabel = document.getElementById('submit-btn-label');
+    const submitHint = document.getElementById('submit-hint');
     if (submitLabel) {
         if (testMode === 'live' || testMode === 'vizsga') {
             submitLabel.textContent = 'Számonkérés beadása';
+            if (submitHint) submitHint.style.display = 'none';
         } else {
             submitLabel.textContent = 'Kész';
+            if (submitHint) submitHint.style.display = 'block';
         }
     }
 
