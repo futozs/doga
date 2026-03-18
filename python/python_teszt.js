@@ -582,6 +582,8 @@ async function startTest() {
 
     // Start overlay elrejtése
     startSection.classList.add('hidden');
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    if (backToMenuBtn) backToMenuBtn.classList.add('hidden');
     quizSection.classList.remove('hidden');
 
     await initializeCodeEditor();
