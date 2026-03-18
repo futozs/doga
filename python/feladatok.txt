@@ -1,4 +1,5 @@
 1. feladat
+Cim: Két szám összehasonlítása
 
 Írj programot, amelyben bekérsz a felhasználótól két egész számot, majd a program döntse el, hogy melyik a nagyobb.
 Ha a két szám egyenlő, írja ki, hogy: A két szám egyenlő!
@@ -35,6 +36,7 @@ else:
     print("A két szám egyenlő!")
 
 2. feladat
+Cim: Kő-papír-olló
 
 Írj programot, amelyben kő-papír-olló játékot játszhat a felhasználó a géppel!
 A játékos adja meg a választását (kő, papír vagy olló), majd a gép véletlenszerűen választ a három lehetőség közül.
@@ -93,6 +95,7 @@ else:
     print("A gép nyert!")
 
 3. feladat
+Cim: Nettó-bruttó kalkulátor
 
 Készíts egy programot, amely kiszámítja a havi nettó bért a bruttó bérből!
 A számításhoz használj konstansokat a kód elején:
@@ -138,6 +141,7 @@ print(f"TB-járulék (18.5%): {tb_osszeg:.0f} Ft")
 print(f"Nettó bér: {netto_ber:.0f} Ft")
 
 4. feladat
+Cim: Napszak köszöntő
 
 Készíts egy programot, amely köszön a felhasználónak a napszaknak megfelelően.
 Kérd be a nevét és azt, hogy hány óra van (egész óra).
@@ -178,6 +182,7 @@ else:
 print(f"{koszones}, {nev}!")
 
 5. feladat
+Cim: Lázmérő
 
 Hozz létre egy programot, amely bekéri a felhasználótól a jelenlegi testhőmérsékletét, majd kiírja a diagnózist!
 Testhőmérsékletek:
@@ -228,6 +233,7 @@ else:
     print("Nagyon magas lázad van.")
 
 6. feladat
+Cim: Sebességkategória
 
 Készíts egy programot, amely bekéri egy autó sebességét km/h-ban, majd kiírja, hogy milyen úton haladhat ilyen sebességgel!
 0-50 km/h: Lakott területen haladhatsz.
@@ -277,6 +283,7 @@ else:
     print("Ki vagy te Villám McQueen?!")
 
 7. feladat
+Cim: Bolt nyitvatartás
 
 Egy bolt pontban reggel 8 órakor nyit, és pontban délután 16 órakor zár be – azaz 8:00-kor már nyitva van és 16:00-kor már nincs nyitva.
 Írj programot, amelyben bekérsz egy egész órát jelző számot a felhasználótól, majd írja ki a program, hogy a megadott időpontban nyitva van-e a bolt!
@@ -325,6 +332,7 @@ else:
     print("A bolt zárva van.")
 
 8. feladat
+Cim: Évszakok
 
 Írj programot, amelyben bekérsz a felhasználótól a hónapoknak megfelelően egy számot 1-12 között, majd írja ki a program, hogy milyen évszak van!
 A program kezelje azon eseteket is amelyek a tartományon kívül esnek.
@@ -384,6 +392,7 @@ else:
     print("Nincs ilyen hónap!")
 
 9. feladat
+Cim: Jegyértékelő
 
 Készíts programot, amely bekér egy dolgozat pontszámát (0-100), majd kiírja a megfelelő érdemjegyet!
 0-19 pont: Elégtelen (1)
@@ -441,6 +450,7 @@ else:
     print("Érvénytelen pontszám!")
 
 10. feladat
+Cim: BMI kalkulátor
 
 Írj programot, amelyben bekéred a felhasználó testsúlyát kilogramm-ban és magasságát méterben, majd számítsd ki és írd ki a BMI értékét két tizedesjegyre kerekítve! A program írjon rövid választ a felhasználónak, hogy melyik kategóriába tartozik: Sovány / Normál testsúlyú / Túlsúlyos / Elhízott vagy! szöveggel.
 A BMI képlete: testsúly / (magasság * magasság)
@@ -489,6 +499,7 @@ else:
     print("Elhízott vagy.")
 
 11. feladat
+Cim: Jegy átlag
 
 Írj programot, amelyben bekérsz a felhasználótól 3 érdemjegyet 1 és 5 között, majd számíts átlagot két tizedesjegyre kerekítve, valamint írd ki azt, hogy megfelelt-e.
 (Megfelelt az átlag: 2.0 és afelett)!
@@ -538,6 +549,7 @@ else:
     print("Nem felelt meg.")
 
 12. feladat
+Cim: Étterem értékelő
 
 Készíts programot, amely bekér egy éttermi értékelést 1-10 között, majd kiírja a véleményt!
 1-2 pont: Szörnyű! Ide többet nem megyek.
@@ -593,6 +605,7 @@ else:
 
 13. feladat
 Pont: 14
+Cim: Posta kasszagép
 
 Egy postahivatalban a csekkbefizetések után a rendszernek azonnal ki kell számolnia a kezelési költséget, és a nap végén összesítenie kell a posta ebből származó bevételét.
 
@@ -662,6 +675,7 @@ print(f"A posta teljes bevétele a költségekből: {osszes_bevetel} Ft")
 
 14. feladat
 Pont: 14
+Cim: Könyvtári bírság
 
 A könyvtárban a késések utáni bírságot szeretnénk gyorsan kiszámolni. A programodnak nem kell tárolnia az adatokat, csak folyamatosan összeadnia a bevételt.
 
@@ -740,6 +754,7 @@ print(f"A teljes beszedett bírság: {bevetel} Ft")
 
 15. feladat
 Pont: 14
+Cim: Lépésszám tracker
 
 Egy okosóra adatait szeretnénk feldolgozni. A programnak nem kell eltárolnia az adatokat, csak értékelnie kell a napokat, és megszámolnia, hányszor sikerült a kitűzött cél.
 
@@ -819,6 +834,7 @@ print(f"A héten {sikeres_napok} napon sikerült a cél!")
 
 16. feladat
 Pont: 14
+Cim: Magasugrás verseny
 
 Egy magasugró versenyen vagyunk. A versenyző 6 kísérletet tesz. A te feladatod egy programot írni, ami értékeli az ugrásokat, és megjegyzi, mi volt a legnagyobb magasság, amivel a sportoló megpróbálkozott.
 
@@ -897,6 +913,7 @@ print(f"A legnagyobb próbálkozás: {legnagyobb} cm")
 
 17. feladat
 Pont: 14
+Cim: Italautomata
 
 Készíts programot, amely egy italautomata működését szimulálja!
 
@@ -1025,6 +1042,7 @@ else:
 
 18. feladat
 Pont: 14
+Cim: Iskolai büfé
 
 Az iskolai büfében önkiszolgáló kasszát vezettek be. A programnak először meg kell kérdeznie, hány dolgot vesz a diák, majd pontosan annyiszor kell bekérnie a termékek kódját, ahány terméket vásárol. A vásárolt tételeket egy listában kell gyűjteni.
 
@@ -1174,6 +1192,7 @@ if vegosszeg >= 2500:
 print(f"Fizetendő összeg: {vegosszeg} Ft")
 
 19. feladat
+Cim: Mozijegy ára
 
 Írj programot, amely bekéri a mozilátogató életkorát, majd kiírja a jegy árát!
 Gyerekjegy (14 év alatt): 1200 Ft
@@ -1217,6 +1236,7 @@ else:
     print("A jegy ára: 900 Ft")
 
 20. feladat
+Cim: Pizza rendelés
 
 Írj programot, amely bekéri a megrendelt pizza méretét, majd kiírja az árat!
 kis méret: 1500 Ft
@@ -1263,6 +1283,7 @@ else:
     print("Ismeretlen méret!")
 
 21. feladat
+Cim: Dolgozat pontszám → jegy
 
 Írj programot, amely bekér egy dolgozat pontszámát (0-100 között), majd kiírja az érdemjegyet!
 0-39 pont: Elégtelen (1)
@@ -1312,6 +1333,7 @@ else:
     print("Érdemjegy: Jeles (5)")
 
 22. feladat
+Cim: Taxi ár
 
 Írj programot, amely kiszámolja egy taxiút árát!
 Az alap díj: 500 Ft.
@@ -1353,6 +1375,7 @@ if km > 20:
 print(f"Fizetendő: {ar} Ft")
 
 23. feladat
+Cim: Szállodai szoba
 
 Írj programot, amely kiszámítja egy szállodai tartózkodás árát!
 Az éjszakák számát és a szoba típusát kérd be a felhasználótól!
