@@ -826,6 +826,9 @@ builtins.input = input
 function autoCheckStructural() {
     const task = selectedTasks[currentTaskIndex];
     if (!task || !task.criteria || task.criteria.length === 0) return;
+    // Ha már van teljes mentett eredmény (nincs needsRun), ne írjuk felül
+    const saved = taskAnswers[currentTaskIndex] && taskAnswers[currentTaskIndex].scoringResults;
+    if (saved && saved.length > 0) return;
     const code = codeEditor ? codeEditor.getValue().trim() : '';
     const panel = document.getElementById('scoring-panel');
     if (panel) panel.classList.remove('hidden');
@@ -840,6 +843,7 @@ function autoCheckStructural() {
 
 // Pontozás ellenőrzése az aktuális feladatnál
 let scoringRunning = false;
+let autoCheckTimeout = null;
 
 async function checkScoring() {
     if (scoringRunning) return;
@@ -1172,6 +1176,10 @@ function showTask(index) {
     document.getElementById('task-example').textContent = task.example;
 
     // Pontozás panel kezelése feladatváltáskor
+    if (autoCheckTimeout !== null) {
+        clearTimeout(autoCheckTimeout);
+        autoCheckTimeout = null;
+    }
     const scoringPanel = document.getElementById('scoring-panel');
     document.getElementById('scoring-content').innerHTML = '';
     if (task.criteria && task.criteria.length > 0) {
@@ -1186,7 +1194,7 @@ function showTask(index) {
             });
             updateScoringUI(restored);
         } else {
-            setTimeout(autoCheckStructural, 300);
+            autoCheckTimeout = setTimeout(() => { autoCheckTimeout = null; autoCheckStructural(); }, 300);
         }
     } else {
         scoringPanel.classList.add('hidden');
