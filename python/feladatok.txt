@@ -1283,54 +1283,54 @@ else:
     print("Ismeretlen méret!")
 
 21. feladat
-Cim: Érdemjegy számító
+Cim: Ruhaméret
 
-Írj programot, amely bekér egy dolgozat pontszámát (0-100 között), majd kiírja az érdemjegyet!
-0-39 pont: Elégtelen (1)
-40-54 pont: Elégséges (2)
-55-69 pont: Közepes (3)
-70-84 pont: Jó (4)
-85-100 pont: Jeles (5)
+Írj programot, amely bekéri a mellbőséget cm-ben, majd kiírja a megfelelő ruháméretet!
+XS: kisebb mint 80 cm
+S: 80–87 cm
+M: 88–95 cm
+L: 96–103 cm
+XL: 104 cm vagy több
 
 Minta kód:
 
 ```
-Add meg a pontszámot (0-100): 20
-Érdemjegy: Elégtelen (1)
+Add meg a mellbőségedet (cm): 85
+Méreted: S
 
-Add meg a pontszámot (0-100): 75
-Érdemjegy: Jó (4)
+Add meg a mellbőségedet (cm): 100
+Méreted: L
 
-Add meg a pontszámot (0-100): 90
-Érdemjegy: Jeles (5)
+Add meg a mellbőségedet (cm): 72
+Méreted: XS
 
 ```
 
 Pontozas:
-bekeres:Add meg a pontszámot (0-100): |Bekérés szövege: "Add meg a pontszámot (0-100): "|Pontosan kell a szöveg a zárójelekkel együtt! 📝|✅ A bekérés szövege tökéletesen egyezik!
-int_float:1|Számmá alakítja a pontszámot|A pontszám szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A pontszám számként vizsgálható!
-if|Elágazást használ|Öt kategória van – melyik kulcsszóval indítod az elágazást? 📚|📚 Az elágazás megvan – az osztályzó rendszer dolgozik!
-elif|Több kategóriát kezel (elif)|Az if után mi jön a következő ponthatárhoz? 🔀|🔀 Minden ponthatárnak megvan a saját ága!
-teszt:20:Elégtelen|0-39 pontnál Elégtelen|20 pont – elégtelen. Mit ír ki a programod? 😬|😬 Elégtelen! Többet kell tanulni!
-teszt:45:Elégséges|40-54 pontnál Elégséges|45 pont – elégséges. Melyik ágon fut? 😐|😐 Elégséges! Lehetett volna jobb is!
-teszt:75:Jó|70-84 pontnál Jó|75 pont – jó. Kijön ez a programodból? 😊|😊 Jó! Szép munka!
-teszt:90:Jeles|85-100 pontnál Jeles|90 pont – jeles. Megkapja a programod az ötöst? ⭐|⭐ Jeles! Gratulálok – a program is kitűnő!
+bekeres:Add meg a mellbőségedet (cm): |Bekérés szövege: "Add meg a mellbőségedet (cm): "|Pontosan kell a szöveg a kettősponttal és szóközzel! 👕|✅ A bekérés szövege tökéletesen egyezik!
+int_float:1|Számmá alakítja a méretet|A mellbőség szövegként érkezik – mivel alakítod számmá? 🔢|🔢 A méretet számmá alakítottad – a próbafülke nyitva!
+if|Elágazást használ|5 méret van – melyik kulcsszóval indítod az elágazást? 👕|👕 Az elágazás megvan – a méretek között válogathatsz!
+teszt:75:XS|XS méretet ad (< 80 cm)|75 cm – ez XS. Kijön a programodból? 👚|👚 XS méret felismerve – kicsi, de tökéletes!
+teszt:84:S|S méretet ad (80–87 cm)|84 cm – ez S. Melyik ágon fut? 👕|👕 S méret felismerve!
+teszt:92:M|M méretet ad (88–95 cm)|92 cm – ez M. Kijön ez a programodból? 👔|👔 M méret felismerve – a legjobb méret!
+teszt:100:L|L méretet ad (96–103 cm)|100 cm – ez L. Felismeri a programod? 🧥|🧥 L méret felismerve – jól áll majd!
+teszt:110:XL|XL méretet ad (≥ 104 cm)|110 cm – ez XL. Megkapja az XL-t? 🧣|🧣 XL méret felismerve – kényelmes lesz!
 
 Tippek:
 
 Megoldas:
-pont = int(input("Add meg a pontszámot (0-100): "))
+mellboseg = int(input("Add meg a mellbőségedet (cm): "))
 
-if pont <= 39:
-    print("Érdemjegy: Elégtelen (1)")
-elif pont <= 54:
-    print("Érdemjegy: Elégséges (2)")
-elif pont <= 69:
-    print("Érdemjegy: Közepes (3)")
-elif pont <= 84:
-    print("Érdemjegy: Jó (4)")
+if mellboseg < 80:
+    print("Méreted: XS")
+elif mellboseg <= 87:
+    print("Méreted: S")
+elif mellboseg <= 95:
+    print("Méreted: M")
+elif mellboseg <= 103:
+    print("Méreted: L")
 else:
-    print("Érdemjegy: Jeles (5)")
+    print("Méreted: XL")
 
 22. feladat
 Cim: Taxi ár kalkulátor
