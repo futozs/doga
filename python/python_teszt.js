@@ -2330,6 +2330,8 @@ function updateTestModeBadge() {
     const isLive = (testMode === 'live' || testMode === 'vizsga') && !isTeacher;
     const rulesDiv = document.getElementById('start-live-rules');
     if (rulesDiv) rulesDiv.style.display = isLive ? 'block' : 'none';
+    const frissBox = document.getElementById('friss-feladatok-box');
+    if (frissBox) frissBox.style.display = isLive ? 'none' : 'block';
 
     // Gomb szöveg éles módban
     const startBtn = document.getElementById('start-btn');
