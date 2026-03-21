@@ -4024,7 +4024,7 @@ function updateStudentDisplay() {
           const isLive   = data.test_mode === 'live' || isVizsga;
           if (!isLive && switchBtn) switchBtn.style.display = 'inline-block';
           setModeBadge(isLive);
-          if (!isLive) initKeszBtn();
+          if (!isLive) { initKeszBtn(); showModeSelector(); }
           if (isLive) {
             liveModeDetected = true;
             Object.keys(availableTasks).forEach(id => clearLocalStorage(id));
@@ -4049,6 +4049,18 @@ function updateStudentDisplay() {
   } else if (switchBtn) {
     switchBtn.style.display = 'none';
   }
+}
+
+function showModeSelector() {
+  const modal = document.getElementById('mode-selector-modal');
+  if (modal) { modal.style.display = 'flex'; }
+}
+function goToPractice() {
+  location.href = 'practice.html';
+}
+function goToExam() {
+  const modal = document.getElementById('mode-selector-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 function logoutStudent() {
