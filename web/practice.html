@@ -160,6 +160,25 @@
       gap: 4px;
     }
     .btn-hint:hover { background: #1d4ed8; color: #fff; }
+    .btn-insert-snippet {
+      margin-top: 6px;
+      padding: 4px 12px;
+      background: #14532d;
+      border: 1px solid #22c55e;
+      border-radius: 6px;
+      color: #86efac;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: monospace;
+      word-break: break-all;
+      white-space: normal;
+      text-align: left;
+      line-height: 1.4;
+    }
+    .btn-insert-snippet:hover { background: #166534; color: #fff; }
 
     /* Solution button */
     .btn-solution {
@@ -1244,9 +1263,9 @@ const tasks = [
     starterHtml: S1,
     starterCss: '',
     checks: [
-      { label: 'Bootstrap CSS csatolva', explanation: 'A Bootstrap CDN linkje így néz ki: href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"', fn: (html) => /cdn\.jsdelivr\.net\/npm\/bootstrap/i.test(html) },
-      { label: 'Font Awesome csatolva', explanation: 'A Font Awesome CDN: href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"', fn: (html) => /font-awesome|fontawesome/i.test(html) },
-      { label: 'Saját CSS: css/style.css', explanation: 'A saját stíluslapot így csatold: <link rel="stylesheet" href="css/style.css">', fn: (html) => /href=["']css\/style\.css["']/i.test(html) },
+      { label: 'Bootstrap CSS csatolva', explanation: 'A Bootstrap CDN linkje így néz ki: href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"', snippet: '  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">', fn: (html) => /cdn\.jsdelivr\.net\/npm\/bootstrap/i.test(html) },
+      { label: 'Font Awesome csatolva', explanation: 'A Font Awesome CDN: href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"', snippet: '  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">', fn: (html) => /font-awesome|fontawesome/i.test(html) },
+      { label: 'Saját CSS: css/style.css', explanation: 'A saját stíluslapot így csatold: <link rel="stylesheet" href="css/style.css">', snippet: '  <link rel="stylesheet" href="css/style.css">', fn: (html) => /href=["']css\/style\.css["']/i.test(html) },
     ],
     solution: S2,
     solutionCss: '',
@@ -1780,6 +1799,26 @@ function updatePreview() {
 // CHECKS
 // =====================================================================
 
+function insertSnippetHtml(snippet) {
+  const editor = state.editors.html;
+  if (!editor) return;
+  const model = editor.getModel();
+  const content = model.getValue();
+  const headClose = content.toLowerCase().lastIndexOf('</head>');
+  if (headClose >= 0) {
+    // Beillesztés közvetlenül a </head> elé, új sorba
+    const pos = model.getPositionAt(headClose);
+    editor.executeEdits('snippet-insert', [{
+      range: new window.monaco.Range(pos.lineNumber, 1, pos.lineNumber, 1),
+      text: snippet + '\n',
+    }]);
+  } else {
+    // Ha nincs </head>, a kurzor pozíciójára szúrjuk be
+    editor.trigger('keyboard', 'type', { text: snippet });
+  }
+  editor.focus();
+}
+
 function runChecks() {
   const task = tasks[state.currentTask];
   const html = state.editors.html.getValue();
@@ -1874,6 +1913,15 @@ function renderChecklist(results) {
         exp.className = 'check-exp visible';
         exp.innerHTML = ch.explanation;
         textWrap.appendChild(exp);
+
+        if (ch.snippet) {
+          const insBtn = document.createElement('button');
+          insBtn.className = 'btn-insert-snippet';
+          insBtn.title = 'Kattints a beillesztéshez';
+          insBtn.innerHTML = '📋 ' + ch.snippet.trim();
+          insBtn.onclick = () => insertSnippetHtml(ch.snippet);
+          textWrap.appendChild(insBtn);
+        }
       }
     }
 
