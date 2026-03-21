@@ -231,6 +231,6 @@ public class AdminUzenetItem {
     public string Szoveg { get; set; } = "";
     public string CreatedAt { get; set; } = "";
     public int OsszTesztelő { get; set; }
-    public List<string> Olvastak { get; set; } = [];
-    public List<string> NemOlvastak { get; set; } = [];
+    public List<string> Olvastak { get; set; } = new List<string>();
+    public List<string> NemOlvastak { get; set; } = new List<string>();
 }

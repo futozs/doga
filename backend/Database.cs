@@ -1124,8 +1124,8 @@ public class Database
                 };
                 var olvEmail = r.IsDBNull(3) ? "" : r.GetString(3);
                 item.Olvastak = olvEmail.Length > 0
-                    ? [.. olvEmail.Split(',').Select(e => e.Trim()).Where(e => e.Length > 0)]
-                    : [];
+                    ? olvEmail.Split(',').Select(e => e.Trim()).Where(e => e.Length > 0).ToList()
+                    : new List<string>();
                 dict[item.Id] = item;
             }
         // Jelenlegi tesztelők
@@ -1139,7 +1139,7 @@ public class Database
             item.OsszTesztelő = tesztelok.Count;
             item.NemOlvastak  = tesztelok.Where(e => !item.Olvastak.Contains(e)).ToList();
         }
-        return [.. dict.Values];
+        return dict.Values.ToList();
     }
 
     public void MarkTeszteloiUzenetOlvasott(int uzenetId, string email)
