@@ -103,7 +103,7 @@
     </footer>
 
     <!-- Módválasztó modal -->
-    <div id="mode-selector-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;">
+    <div id="mode-selector-modal" style="display:none;position:fixed;inset:0;background:#0b1120;z-index:99999;align-items:center;justify-content:center;flex-direction:column;">
       <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:40px 36px;max-width:480px;width:90%;text-align:center;">
         <img src="kandologo2.png" alt="Kandó" style="height:48px;margin-bottom:20px;">
         <h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:8px;">WEB feladat</h2>
@@ -119,6 +119,10 @@
           </button>
         </div>
       </div>
+      <button onclick="location.replace('../portal.html')" style="margin-top:20px;padding:8px 20px;background:transparent;border:1px solid #374151;border-radius:8px;color:#6b7280;font-size:0.85rem;cursor:pointer;"
+        onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#6b7280'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#374151'">
+        ← Vissza a főmenübe
+      </button>
     </div>
 
     <!-- Tanuló adatai modal -->
