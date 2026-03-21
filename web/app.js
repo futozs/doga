@@ -3990,6 +3990,7 @@ function updateStudentDisplay() {
   }
 
   if (sessionStorage.getItem('kandoUser') && studentData.name) {
+    showModeSelector(); // azonnal takar, mielőtt az API válaszol
     if (kandoUser.szerep === 'oktato') {
       if (switchBtn) switchBtn.style.display = 'inline-block';
       // Oktató is látja a valódi módot, de anti-cheat nem indul
@@ -4054,7 +4055,8 @@ function updateStudentDisplay() {
 }
 
 function showModeSelector() {
-  // A modal már display:flex-szel indul az oldalon – itt nem kell semmit tenni
+  const modal = document.getElementById('mode-selector-modal');
+  if (modal) modal.style.display = 'flex';
 }
 function hideModeSelector() {
   const modal = document.getElementById('mode-selector-modal');
