@@ -1554,6 +1554,7 @@ else:
     print("Büntetés: Gyorshajtás!")
 
 26. feladat
+Pont: 14
 Cim: Űrhajó Rakomány
 Tipus: függvény,for
 
@@ -1690,6 +1691,7 @@ else:
     print(f"Nagy túllépés! Fizetendő: {fizetendo} Ft")
 
 28. feladat
+Pont: 14
 Cim: Alkimista Varázsital
 Tipus: függvény,for
 
