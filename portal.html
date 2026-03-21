@@ -262,16 +262,26 @@
             flex-shrink: 0;
         }
 
-        /* ── Ötlet Láda ── */
-        .otlet-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            margin-top: 18px; padding: 10px 20px;
-            background: #1a1a2e; border: 1.5px solid #4f46e5;
-            border-radius: 30px; color: #a5b4fc;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            transition: all .2s; width: 100%; justify-content: center;
+        /* ── Ötlet Láda FAB gombok ── */
+        .otlet-fab-wrap {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+            z-index: 500;
         }
-        .otlet-btn:hover { background: rgba(79,70,229,.15); border-color: #818cf8; color: #c7d2fe; }
+        .otlet-btn {
+            display: none; align-items: center; gap: 8px;
+            padding: 11px 20px;
+            background: #4f46e5; border: none;
+            border-radius: 30px; color: #fff;
+            font-size: 0.88rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 18px rgba(79,70,229,.45);
+            transition: transform .15s, box-shadow .15s;
+            white-space: nowrap;
+        }
+        .otlet-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(79,70,229,.6); }
+        #hiba-btn { background: #dc2626; box-shadow: 0 4px 18px rgba(220,38,38,.4); }
+        #hiba-btn:hover { box-shadow: 0 6px 24px rgba(220,38,38,.6); }
 
         .tesztelő-badge {
             display: inline-flex; align-items: center; gap: 4px;
@@ -677,14 +687,6 @@
         <div id="teszteloi-uzenetek-lista"></div>
     </div>
 
-    <!-- Ötlet Láda gomb (minden diáknak) -->
-    <button class="otlet-btn" id="otlet-btn" style="display:none" onclick="openOtletModal()">
-        💡 Ötlet Láda – küldj fejlesztési javaslatot
-    </button>
-    <!-- Hibajelentés gomb (csak tesztelőknek) -->
-    <button class="otlet-btn" id="hiba-btn" style="display:none;border-color:#e94560;color:#fca5a5;" onclick="openHibaModal()">
-        🐛 Hibajelentés – tesztelési anomália beküldése
-    </button>
 
     <!-- Oktatói nézet -->
     <div id="teacher-portal" style="display:none">
@@ -897,12 +899,14 @@
         isTeacherPreview = !isTeacherView;
         const changelog = document.getElementById('changelog-box');
         const otletBtn  = document.getElementById('otlet-btn');
+        const hibaBtn2  = document.getElementById('hiba-btn');
         const megvBox   = document.getElementById('megvalasult-box');
         if (isTeacherView) {
             teacher.style.display = 'block';
             student.style.display = 'none';
             if (changelog) changelog.style.display = 'none';
             if (otletBtn) otletBtn.style.display = 'none';
+            if (hibaBtn2) hibaBtn2.style.display = 'none';
             if (megvBox) megvBox.style.display = 'none';
             sub.textContent = 'Mit szeretnél csinálni?';
             btn.textContent = 'Tanulói nézet';
@@ -1573,6 +1577,16 @@
     </div>
 </div>
 
-<div style="position:fixed;bottom:8px;right:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
+<!-- Lebegő Ötlet Láda / Hibajelentés gombok (jobb alsó sarok) -->
+<div class="otlet-fab-wrap">
+    <button class="otlet-btn" id="hiba-btn" onclick="openHibaModal()">
+        🐛 Hibajelentés
+    </button>
+    <button class="otlet-btn" id="otlet-btn" onclick="openOtletModal()">
+        💡 Ötlet Láda
+    </button>
+</div>
+
+<div style="position:fixed;bottom:8px;left:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
 </body>
 </html>
