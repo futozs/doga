@@ -469,6 +469,7 @@
             <button class="tab-btn" onclick="switchTab('haladas', this)"><i class="fas fa-chart-line"></i> Haladás</button>
             <button class="tab-btn" onclick="switchTab('rangsor', this)"><i class="fas fa-ranking-star"></i> Rangsor</button>
             <button class="tab-btn" onclick="switchTab('visszajelzesek', this)"><i class="fas fa-face-smile"></i> Visszajelzések</button>
+            <button class="tab-btn" onclick="switchTab('otlet-lada', this)"><i class="fas fa-lightbulb"></i> Ötlet Láda</button>
         </div>
 
         <!-- Config Panel -->
@@ -586,6 +587,43 @@
             </div>
 
             <div id="feedback-empty" style="display:none;color:#555;font-style:italic;font-size:0.9rem;">Még nincs visszajelzés.</div>
+        </div>
+
+        <!-- Ötlet Láda -->
+        <div class="panel" data-tab="otlet-lada" style="display:none;">
+            <h2><i class="fas fa-lightbulb"></i> Ötlet Láda</h2>
+
+            <!-- Tesztelők kezelése -->
+            <div style="background:#0f1e35;border:1px solid #1a3a5c;border-radius:10px;padding:16px 18px;margin-bottom:22px;">
+                <div style="font-weight:700;color:#a5b4fc;margin-bottom:12px;font-size:0.92rem;"><i class="fas fa-flask"></i> 🔬 Tesztelők kezelése</div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                    <input type="text" id="tesztelő-email-input" placeholder="tanuló@kkszki.hu" style="flex:1;min-width:200px;background:#0a1628;border:1px solid #1f3460;border-radius:7px;color:#e0e0e0;padding:7px 12px;font-size:0.88rem;">
+                    <button onclick="addTesztelő()" style="padding:7px 16px;background:#4f46e5;border:none;border-radius:7px;color:#fff;font-weight:600;cursor:pointer;font-size:0.88rem;">+ Hozzáadás</button>
+                    <button onclick="loadTesztelők()" style="padding:7px 14px;background:#1e3a5f;border:1px solid #2a4a7f;border-radius:7px;color:#94a3b8;cursor:pointer;font-size:0.85rem;"><i class="fas fa-rotate"></i></button>
+                </div>
+                <div id="tesztelők-lista" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+                <div style="margin-top:16px;border-top:1px solid #1a3a5c;padding-top:14px;">
+                    <div style="font-weight:600;color:#94a3b8;font-size:0.85rem;margin-bottom:8px;">📨 Üzenet küldése tesztelőknek</div>
+                    <textarea id="teszteloi-uzenet-input" rows="2" placeholder="pl. Kérlek teszteld az Ötlet Láda funkciót és jelezz vissza!" style="width:100%;background:#0a1628;border:1px solid #1f3460;border-radius:7px;color:#e0e0e0;padding:8px 12px;font-size:0.87rem;resize:vertical;font-family:inherit;margin-bottom:8px;"></textarea>
+                    <button onclick="sendTeszteloiUzenet()" style="padding:7px 18px;background:#6366f1;border:none;border-radius:7px;color:#fff;font-weight:600;cursor:pointer;font-size:0.87rem;">Küldés tesztelőknek</button>
+                    <span id="teszteloi-uzenet-ok" style="display:none;margin-left:10px;color:#4ade80;font-size:0.83rem;">✓ Elküldve</span>
+                </div>
+            </div>
+
+            <!-- Beküldött ötletek -->
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
+                <button class="btn-refresh" onclick="loadOtletek()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <span id="otlet-count-badge" style="background:#1e3a5f;border:1px solid #2a4a7f;border-radius:20px;padding:2px 12px;font-size:0.8rem;color:#94a3b8;"></span>
+            </div>
+            <div id="otlet-loading" style="display:none;color:#94a3b8;font-style:italic;margin-bottom:1rem;">Betöltés...</div>
+            <div id="otlet-error-box" style="display:none;background:rgba(233,69,96,0.1);border:1px solid #e94560;color:#ff8fa3;padding:8px 12px;border-radius:8px;margin-bottom:1rem;"></div>
+            <div id="otlet-lista"></div>
+            <div id="otlet-empty" style="display:none;color:#555;font-style:italic;font-size:0.9rem;">Még nincs beküldött ötlet.</div>
+
+            <!-- Kép modal -->
+            <div id="otlet-kep-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;" onclick="this.style.display='none'">
+                <img id="otlet-kep-modal-img" style="max-width:90vw;max-height:90vh;border-radius:8px;" alt="Screenshot">
+            </div>
         </div>
 
         <!-- Felhasználók -->
@@ -984,6 +1022,7 @@
             if (name === 'haladas' && haladásData.length === 0) loadProgress();
             if (name === 'rangsor' && leaderboardData.length === 0) loadLeaderboard();
             if (name === 'visszajelzesek') loadFeedbackStats();
+            if (name === 'otlet-lada') { loadOtletek(); loadTesztelők(); }
         }
 
         // Check auth on page load
@@ -1237,7 +1276,7 @@
 
         // ── Beadás részletes nézet: tanári javítás + kritérium ellenőrzés ──────
 
-        let _currentDetail = null;
+        let _currentDetail = null;  // { submissionId, taskIds, maxScores }
         let _adminTasksCache = null;
 
         async function getAdminTasks() {
@@ -1293,7 +1332,7 @@
                 const esc = args.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
                 return new RegExp(`\\binput\\s*\\(\\s*f?["']${esc}["']\\s*\\)`).test(code);
             }
-            if (type === 'teszt') return null;
+            if (type === 'teszt') return null; // futtatás szükséges
             return false;
         }
 
@@ -1305,13 +1344,16 @@
                 const code = (codeTasks.find(t => t.task == num)?.code || '').trim();
                 const dotsEl = document.getElementById(`crit-dots-${i}`);
                 if (!dotsEl || !criteria || !criteria.length || !code) return;
+                let passedCount = 0;
                 const dots = criteria.map(c => {
                     const r = evalCritAdmin(code, c);
+                    if (r === true) passedCount++;
                     const color = r === null ? '#f59e0b' : r ? '#27ae60' : '#e74c3c';
                     const title = r === null ? `▶ ${c.label} (futtatás szükséges)` : r ? `✓ ${c.label}` : `✗ ${c.label}`;
-                    return `<span title="${title.replace(/"/g,'&quot;')}" style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color};cursor:default;flex-shrink:0"></span>`;
+                    return `<span title="${title.replace(/"/g,'&quot;')}" style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${color};cursor:default;flex-shrink:0" ></span>`;
                 }).join('');
                 dotsEl.innerHTML = dots;
+                // Ha a kritérium ellenőrzés több pontot javasol mint ami el van mentve, frissítsük az inputot
                 const structPassed = criteria.filter(c => evalCritAdmin(code, c) === true).length;
                 const inp = document.getElementById(`score-input-${i}`);
                 const maxPts = parseInt(inp?.max) || 0;
@@ -1578,6 +1620,8 @@
                 `;
 
                 openSubmissionModal();
+
+                // Kritérium ellenőrzés futtatása a megjelenítés után
                 runAdminCriteriaCheck(taskIds, codeTasks);
 
             } catch (error) {
@@ -2296,6 +2340,160 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                 errorEl.style.display = 'block';
             } finally {
                 loadingEl.style.display = 'none';
+            }
+        }
+
+        // ── Ötlet Láda ────────────────────────────────────────────────────────
+
+        const STATUSZ_LABEL = { uj: '🆕 Új', olvasott: '👁 Olvasott', megvalasult: '✅ Megvalósult' };
+        const STATUSZ_COLOR = { uj: '#fbbf24', olvasott: '#94a3b8', megvalasult: '#4ade80' };
+
+        async function loadOtletek() {
+            const loadEl = document.getElementById('otlet-loading');
+            const errEl  = document.getElementById('otlet-error-box');
+            const lista  = document.getElementById('otlet-lista');
+            const emptyEl = document.getElementById('otlet-empty');
+            const badge  = document.getElementById('otlet-count-badge');
+            loadEl.style.display = 'block';
+            errEl.style.display = 'none';
+            emptyEl.style.display = 'none';
+            lista.innerHTML = '';
+            try {
+                const res = await authFetch(`${RAILWAY_URL}/api/otlet`);
+                if (!res.ok) throw new Error(res.status);
+                const data = await res.json();
+                loadEl.style.display = 'none';
+                const ujak = data.filter(d => d.statusz === 'uj').length;
+                badge.textContent = `${data.length} beküldés · ${ujak} új`;
+                if (data.length === 0) { emptyEl.style.display = 'block'; return; }
+                lista.innerHTML = data.map(o => `
+                    <div id="otlet-card-${o.id}" style="background:#0f1e35;border:1px solid #1a3a5c;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                            <div>
+                                <span style="font-weight:700;color:#e0e0e0;">${escHtml(o.nev)}</span>
+                                ${o.osztaly ? `<span style="color:#94a3b8;font-size:0.8rem;margin-left:6px;">${escHtml(o.osztaly)}</span>` : ''}
+                                <span style="color:#475569;font-size:0.75rem;margin-left:8px;">${o.createdAt}</span>
+                            </div>
+                            <span style="background:rgba(30,58,92,.6);border:1px solid #2a4a7f;border-radius:20px;padding:2px 10px;font-size:0.78rem;font-weight:700;color:${STATUSZ_COLOR[o.statusz] || '#94a3b8'};">${STATUSZ_LABEL[o.statusz] || o.statusz}</span>
+                        </div>
+                        <div style="color:#cbd5e1;font-size:0.88rem;margin:10px 0;white-space:pre-wrap;">${escHtml(o.szoveg)}</div>
+                        ${o.hasKep ? `<button onclick="loadOtletKep(${o.id})" style="background:#1e3a5f;border:1px solid #2a4a7f;border-radius:6px;color:#93c5fd;padding:4px 12px;cursor:pointer;font-size:0.8rem;margin-bottom:10px;"><i class="fas fa-image"></i> Screenshot megtekintése</button>` : ''}
+                        ${o.adminValasz ? `<div style="background:rgba(79,70,229,.1);border:1px solid rgba(79,70,229,.3);border-radius:7px;padding:8px 12px;font-size:0.83rem;color:#c7d2fe;margin-bottom:10px;">💬 Válasz: ${escHtml(o.adminValasz)}</div>` : ''}
+                        <details style="margin-top:8px;">
+                            <summary style="color:#6366f1;font-size:0.82rem;cursor:pointer;user-select:none;">Kezelés / válasz</summary>
+                            <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+                                <select onchange="otletStatuszValtas(${o.id}, this.value)" style="background:#0a1628;border:1px solid #1f3460;border-radius:6px;color:#e0e0e0;padding:5px 8px;font-size:0.85rem;">
+                                    <option value="uj"       ${o.statusz==='uj'?'selected':''}>🆕 Új</option>
+                                    <option value="olvasott" ${o.statusz==='olvasott'?'selected':''}>👁 Olvasott</option>
+                                    <option value="megvalasult" ${o.statusz==='megvalasult'?'selected':''}>✅ Megvalósult</option>
+                                </select>
+                                <input type="text" id="admin-valasz-${o.id}" value="${escHtml(o.adminValasz||'')}" placeholder="Válasz a tanulónak (nem publikus)..." style="background:#0a1628;border:1px solid #1f3460;border-radius:6px;color:#e0e0e0;padding:6px 10px;font-size:0.85rem;">
+                                <input type="text" id="megv-szoveg-${o.id}" value="${escHtml(o.megvalositvaSzoveg||'')}" placeholder="Megvalósult fejlesztés leírása (publikus lesz!)..." style="background:#0a1628;border:1px solid #1f3460;border-radius:6px;color:#e0e0e0;padding:6px 10px;font-size:0.85rem;">
+                                <div style="display:flex;gap:8px;">
+                                    <button onclick="mentOtlet(${o.id})" style="padding:5px 14px;background:#4f46e5;border:none;border-radius:6px;color:#fff;font-size:0.83rem;cursor:pointer;font-weight:600;">Mentés</button>
+                                    <button onclick="torloOtlet(${o.id})" style="padding:5px 12px;background:transparent;border:1px solid #e94560;border-radius:6px;color:#e94560;font-size:0.83rem;cursor:pointer;">Törlés</button>
+                                    <span id="otlet-save-ok-${o.id}" style="display:none;color:#4ade80;font-size:0.8rem;align-self:center;">✓ Mentve</span>
+                                </div>
+                            </div>
+                        </details>
+                    </div>`).join('');
+            } catch(e) {
+                loadEl.style.display = 'none';
+                errEl.textContent = 'Hiba: ' + e.message;
+                errEl.style.display = 'block';
+            }
+        }
+
+        async function loadOtletKep(id) {
+            try {
+                const res = await authFetch(`${RAILWAY_URL}/api/otlet/${id}/kep`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const modal = document.getElementById('otlet-kep-modal');
+                document.getElementById('otlet-kep-modal-img').src = data.kepBase64;
+                modal.style.display = 'flex';
+            } catch {}
+        }
+
+        async function otletStatuszValtas(id, statusz) {
+            const adminValasz = document.getElementById(`admin-valasz-${id}`)?.value || null;
+            const megvSzoveg  = document.getElementById(`megv-szoveg-${id}`)?.value || null;
+            await authFetch(`${RAILWAY_URL}/api/otlet/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ statusz, adminValasz, megvalositvaSzoveg: megvSzoveg })
+            });
+        }
+
+        async function mentOtlet(id) {
+            const statusz    = document.querySelector(`#otlet-card-${id} select`)?.value || 'olvasott';
+            const adminValasz = document.getElementById(`admin-valasz-${id}`)?.value || null;
+            const megvSzoveg  = document.getElementById(`megv-szoveg-${id}`)?.value || null;
+            const res = await authFetch(`${RAILWAY_URL}/api/otlet/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ statusz, adminValasz, megvalositvaSzoveg: megvSzoveg || null })
+            });
+            if (res.ok) {
+                const okEl = document.getElementById(`otlet-save-ok-${id}`);
+                if (okEl) { okEl.style.display = 'inline'; setTimeout(() => okEl.style.display = 'none', 2000); }
+            }
+        }
+
+        async function torloOtlet(id) {
+            if (!confirm('Biztosan törlöd ezt az ötletet?')) return;
+            const res = await authFetch(`${RAILWAY_URL}/api/otlet/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                const card = document.getElementById(`otlet-card-${id}`);
+                if (card) card.remove();
+            }
+        }
+
+        // ── Tesztelők ─────────────────────────────────────────────────────────
+
+        async function loadTesztelők() {
+            const res = await authFetch(`${RAILWAY_URL}/api/tesztelok`);
+            if (!res.ok) return;
+            const lista = await res.json();
+            const el = document.getElementById('tesztelők-lista');
+            if (!el) return;
+            el.innerHTML = lista.length === 0
+                ? '<span style="color:#555;font-size:0.83rem;">Még nincs tesztelő hozzáadva.</span>'
+                : lista.map(email => `
+                    <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(79,70,229,.12);border:1px solid rgba(79,70,229,.3);border-radius:20px;padding:3px 12px;font-size:0.82rem;color:#c7d2fe;">
+                        🔬 ${escHtml(email)}
+                        <button onclick="removeTesztelő('${escHtml(email)}')" style="background:none;border:none;color:#e94560;cursor:pointer;font-size:0.9rem;padding:0;line-height:1;">✕</button>
+                    </span>`).join('');
+        }
+
+        async function addTesztelő() {
+            const email = document.getElementById('tesztelő-email-input')?.value.trim();
+            if (!email) return;
+            const res = await authFetch(`${RAILWAY_URL}/api/tesztelok`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            if (res.ok) { document.getElementById('tesztelő-email-input').value = ''; loadTesztelők(); }
+        }
+
+        async function removeTesztelő(email) {
+            const res = await authFetch(`${RAILWAY_URL}/api/tesztelok/${encodeURIComponent(email)}`, { method: 'DELETE' });
+            if (res.ok) loadTesztelők();
+        }
+
+        async function sendTeszteloiUzenet() {
+            const szoveg = document.getElementById('teszteloi-uzenet-input')?.value.trim();
+            if (!szoveg) return;
+            const res = await authFetch(`${RAILWAY_URL}/api/teszteloi-uzenetek`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ szoveg })
+            });
+            if (res.ok) {
+                document.getElementById('teszteloi-uzenet-input').value = '';
+                const okEl = document.getElementById('teszteloi-uzenet-ok');
+                if (okEl) { okEl.style.display = 'inline'; setTimeout(() => okEl.style.display = 'none', 3000); }
             }
         }
     </script>

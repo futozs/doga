@@ -197,3 +197,30 @@ public class TaskRatingStat {
     public int Ertek { get; set; }
     public int Db { get; set; }
 }
+
+// ── Ötlet Láda ────────────────────────────────────────────────────────────
+
+public record IdeaRequest(string Email, string Nev, string? Osztaly, string Szoveg, string? KepBase64);
+
+public record IdeaUpdateRequest(string Statusz, string? AdminValasz, string? MegvalositvaSzoveg);
+
+public class IdeaItem {
+    public int Id { get; set; }
+    public string Email { get; set; } = "";
+    public string Nev { get; set; } = "";
+    public string? Osztaly { get; set; }
+    public string Szoveg { get; set; } = "";
+    public bool HasKep { get; set; }
+    public string? KepBase64 { get; set; }   // csak explicit kérésnél töltjük
+    public string Statusz { get; set; } = "uj"; // uj / olvasott / megvalasult
+    public string? AdminValasz { get; set; }
+    public string? MegvalositvaSzoveg { get; set; }
+    public string CreatedAt { get; set; } = "";
+}
+
+public class TeszteloiUzenetItem {
+    public int Id { get; set; }
+    public string Szoveg { get; set; } = "";
+    public string CreatedAt { get; set; } = "";
+    public bool Olvasott { get; set; }
+}

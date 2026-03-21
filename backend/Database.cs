@@ -91,6 +91,33 @@ public class Database
                 updated_at  TEXT DEFAULT (datetime('now','localtime')),
                 PRIMARY KEY (email, state_key)
             );
+            CREATE TABLE IF NOT EXISTS otlet_lada (
+                id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                email               TEXT NOT NULL,
+                nev                 TEXT NOT NULL,
+                osztaly             TEXT,
+                szoveg              TEXT NOT NULL,
+                kep_base64          TEXT,
+                statusz             TEXT NOT NULL DEFAULT 'uj',
+                admin_valasz        TEXT,
+                megvalositva_szoveg TEXT,
+                created_at          TEXT DEFAULT (datetime('now','localtime')),
+                updated_at          TEXT DEFAULT (datetime('now','localtime'))
+            );
+            CREATE TABLE IF NOT EXISTS tesztelok (
+                email      TEXT PRIMARY KEY,
+                added_at   TEXT DEFAULT (datetime('now','localtime'))
+            );
+            CREATE TABLE IF NOT EXISTS teszteloi_uzenetek (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                szoveg     TEXT NOT NULL,
+                created_at TEXT DEFAULT (datetime('now','localtime'))
+            );
+            CREATE TABLE IF NOT EXISTS teszteloi_uzenet_olvasott (
+                uzenet_id  INTEGER NOT NULL,
+                email      TEXT NOT NULL,
+                PRIMARY KEY (uzenet_id, email)
+            );
         ");
         try { Exec(conn, "ALTER TABLE submissions ADD COLUMN subject TEXT"); } catch { }
         try { Exec(conn, "ALTER TABLE progress ADD COLUMN mode TEXT DEFAULT 'gyakorlo'"); } catch { }
@@ -875,6 +902,213 @@ public class Database
         cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
         cmd.Parameters.AddWithValue("$key",   key);
         cmd.Parameters.AddWithValue("$value", value);
+        cmd.ExecuteNonQuery();
+    }
+
+    // ── Ötlet Láda ────────────────────────────────────────────────────────────
+
+    public int SaveIdea(string email, string nev, string? osztaly, string szoveg, string? kepBase64)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT INTO otlet_lada (email, nev, osztaly, szoveg, kep_base64)
+            VALUES ($email, $nev, $osztaly, $szoveg, $kep)
+            RETURNING id";
+        cmd.Parameters.AddWithValue("$email",   email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$nev",     nev);
+        cmd.Parameters.AddWithValue("$osztaly", (object?)osztaly ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$szoveg",  szoveg);
+        cmd.Parameters.AddWithValue("$kep",     (object?)kepBase64 ?? DBNull.Value);
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public List<IdeaItem> GetIdeas(bool includeKep = false)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT id, email, nev, osztaly, szoveg,
+                   (kep_base64 IS NOT NULL) as has_kep,
+                   statusz, admin_valasz, megvalositva_szoveg, created_at
+            FROM otlet_lada ORDER BY
+                CASE statusz WHEN 'uj' THEN 0 WHEN 'olvasott' THEN 1 ELSE 2 END,
+                created_at DESC";
+        var list = new List<IdeaItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new IdeaItem {
+                Id = r.GetInt32(0), Email = r.GetString(1), Nev = r.GetString(2),
+                Osztaly = r.IsDBNull(3) ? null : r.GetString(3),
+                Szoveg = r.GetString(4), HasKep = r.GetInt32(5) == 1,
+                Statusz = r.GetString(6),
+                AdminValasz = r.IsDBNull(7) ? null : r.GetString(7),
+                MegvalositvaSzoveg = r.IsDBNull(8) ? null : r.GetString(8),
+                CreatedAt = r.GetString(9)
+            });
+        return list;
+    }
+
+    public string? GetIdeaKep(int id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT kep_base64 FROM otlet_lada WHERE id = $id";
+        cmd.Parameters.AddWithValue("$id", id);
+        var r = cmd.ExecuteScalar();
+        return r is DBNull or null ? null : (string)r;
+    }
+
+    public bool UpdateIdea(int id, string statusz, string? adminValasz, string? megvalositvaSzoveg)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            UPDATE otlet_lada
+            SET statusz = $statusz, admin_valasz = $valasz,
+                megvalositva_szoveg = $megv, updated_at = datetime('now','localtime')
+            WHERE id = $id";
+        cmd.Parameters.AddWithValue("$id",      id);
+        cmd.Parameters.AddWithValue("$statusz", statusz);
+        cmd.Parameters.AddWithValue("$valasz",  (object?)adminValasz ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$megv",    (object?)megvalositvaSzoveg ?? DBNull.Value);
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public void DeleteIdea(int id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM otlet_lada WHERE id = $id";
+        cmd.Parameters.AddWithValue("$id", id);
+        cmd.ExecuteNonQuery();
+    }
+
+    public List<IdeaItem> GetMyIdeas(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT id, nev, osztaly, szoveg,
+                   (kep_base64 IS NOT NULL) as has_kep,
+                   statusz, admin_valasz, megvalositva_szoveg, created_at
+            FROM otlet_lada WHERE email = $email ORDER BY created_at DESC";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        var list = new List<IdeaItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new IdeaItem {
+                Id = r.GetInt32(0), Email = email, Nev = r.GetString(1),
+                Osztaly = r.IsDBNull(2) ? null : r.GetString(2),
+                Szoveg = r.GetString(3), HasKep = r.GetInt32(4) == 1,
+                Statusz = r.GetString(5),
+                AdminValasz = r.IsDBNull(6) ? null : r.GetString(6),
+                MegvalositvaSzoveg = r.IsDBNull(7) ? null : r.GetString(7),
+                CreatedAt = r.GetString(8)
+            });
+        return list;
+    }
+
+    public List<object> GetPublicIdeas()
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT nev, osztaly, megvalositva_szoveg, created_at
+            FROM otlet_lada WHERE statusz = 'megvalasult'
+            ORDER BY updated_at DESC LIMIT 20";
+        var list = new List<object>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new {
+                nev = r.GetString(0),
+                osztaly = r.IsDBNull(1) ? null : r.GetString(1),
+                megvalositvaSzoveg = r.IsDBNull(2) ? null : r.GetString(2),
+                createdAt = r.GetString(3)
+            });
+        return list;
+    }
+
+    // ── Tesztelők ─────────────────────────────────────────────────────────────
+
+    public void AddTesztelő(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "INSERT OR IGNORE INTO tesztelok (email) VALUES ($email)";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        cmd.ExecuteNonQuery();
+    }
+
+    public void RemoveTesztelő(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM tesztelok WHERE email = $email";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        cmd.ExecuteNonQuery();
+    }
+
+    public List<string> GetTesztelők()
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT email FROM tesztelok ORDER BY added_at DESC";
+        var list = new List<string>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read()) list.Add(r.GetString(0));
+        return list;
+    }
+
+    public bool IsTesztelő(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM tesztelok WHERE email = $email";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+    }
+
+    // ── Tesztelői üzenetek ────────────────────────────────────────────────────
+
+    public int SaveTeszteloiUzenet(string szoveg)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "INSERT INTO teszteloi_uzenetek (szoveg) VALUES ($szoveg) RETURNING id";
+        cmd.Parameters.AddWithValue("$szoveg", szoveg);
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    public List<TeszteloiUzenetItem> GetTeszteloiUzenetek(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT u.id, u.szoveg, u.created_at,
+                   (SELECT COUNT(*) FROM teszteloi_uzenet_olvasott o
+                    WHERE o.uzenet_id = u.id AND o.email = $email) as olvasott
+            FROM teszteloi_uzenetek u ORDER BY u.created_at DESC";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        var list = new List<TeszteloiUzenetItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new TeszteloiUzenetItem {
+                Id = r.GetInt32(0), Szoveg = r.GetString(1),
+                CreatedAt = r.GetString(2), Olvasott = r.GetInt32(3) > 0
+            });
+        return list;
+    }
+
+    public void MarkTeszteloiUzenetOlvasott(int uzenetId, string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT OR IGNORE INTO teszteloi_uzenet_olvasott (uzenet_id, email)
+            VALUES ($uid, $email)";
+        cmd.Parameters.AddWithValue("$uid",   uzenetId);
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
         cmd.ExecuteNonQuery();
     }
 

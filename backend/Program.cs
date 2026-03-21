@@ -546,6 +546,141 @@ app.MapGet("/api/feedback/my", (HttpContext ctx, Database db) =>
     return Results.Ok(list.Select(x => new { feladatNev = x.FeladatNev, tipus = x.Tipus, ertek = x.Ertek }));
 });
 
+// ── Ötlet Láda ────────────────────────────────────────────────────────────
+
+// Ötlet beküldése (bárki, email kötelező)
+app.MapPost("/api/otlet", (IdeaRequest req, Database db) =>
+{
+    if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Nev) || string.IsNullOrWhiteSpace(req.Szoveg))
+        return Results.BadRequest(new { error = "Hiányzó adat (email, nev, szoveg kötelező)" });
+    // Képméret limit: ~1.5 MB base64
+    if (req.KepBase64 != null && req.KepBase64.Length > 2_000_000)
+        return Results.BadRequest(new { error = "A kép túl nagy (max ~1.5 MB)" });
+    var id = db.SaveIdea(req.Email, req.Nev, req.Osztaly, req.Szoveg, req.KepBase64);
+    return Results.Ok(new { success = true, id });
+});
+
+// Összes ötlet listázása (csak oktató)
+app.MapGet("/api/otlet", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    return Results.Ok(db.GetIdeas());
+});
+
+// Kép lekérése (csak oktató)
+app.MapGet("/api/otlet/{id}/kep", (int id, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var kep = db.GetIdeaKep(id);
+    if (kep == null) return Results.NotFound();
+    return Results.Ok(new { kepBase64 = kep });
+});
+
+// Ötlet státusz frissítése (csak oktató)
+app.MapPatch("/api/otlet/{id}", (int id, IdeaUpdateRequest req, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var valid = new[] { "uj", "olvasott", "megvalasult" };
+    if (!valid.Contains(req.Statusz)) return Results.BadRequest(new { error = "Érvénytelen státusz" });
+    var ok = db.UpdateIdea(id, req.Statusz, req.AdminValasz, req.MegvalositvaSzoveg);
+    return ok ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
+// Ötlet törlése (csak oktató)
+app.MapDelete("/api/otlet/{id}", (int id, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    db.DeleteIdea(id);
+    return Results.Ok(new { success = true });
+});
+
+// Nyilvános megvalósult ötletek (mindenki láthatja)
+app.MapGet("/api/otlet/public", (Database db) =>
+    Results.Ok(db.GetPublicIdeas())
+);
+
+// Saját ötletek lekérése (bejelentkezett felhasználó)
+app.MapGet("/api/otlet/my", (HttpContext ctx, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var email = payload.Split(':')[0];
+    if (email.Contains('|')) email = email.Split('|')[0];
+    return Results.Ok(db.GetMyIdeas(email));
+});
+
+// ── Tesztelők ─────────────────────────────────────────────────────────────
+
+// Tesztelők listája (csak oktató)
+app.MapGet("/api/tesztelok", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    return Results.Ok(db.GetTesztelők());
+});
+
+// Tesztelő hozzáadása (csak oktató)
+app.MapPost("/api/tesztelok", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    using var reader = new System.IO.StreamReader(ctx.Request.Body);
+    var body = reader.ReadToEndAsync().Result;
+    var email = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(body)
+        .GetProperty("email").GetString() ?? "";
+    if (string.IsNullOrWhiteSpace(email)) return Results.BadRequest(new { error = "email kötelező" });
+    db.AddTesztelő(email);
+    return Results.Ok(new { success = true });
+});
+
+// Tesztelő eltávolítása (csak oktató)
+app.MapDelete("/api/tesztelok/{email}", (string email, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    db.RemoveTesztelő(email);
+    return Results.Ok(new { success = true });
+});
+
+// Tesztelő ellenőrzése (bárki, portal-on badge-hez)
+app.MapGet("/api/tesztelok/check", (string email, Database db) =>
+    Results.Ok(new { isTesztelő = db.IsTesztelő(email) })
+);
+
+// ── Tesztelői üzenetek ────────────────────────────────────────────────────
+
+// Üzenet küldése tesztelőknek (csak oktató)
+app.MapPost("/api/teszteloi-uzenetek", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    using var reader = new System.IO.StreamReader(ctx.Request.Body);
+    var body = reader.ReadToEndAsync().Result;
+    var szoveg = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(body)
+        .GetProperty("szoveg").GetString() ?? "";
+    if (string.IsNullOrWhiteSpace(szoveg)) return Results.BadRequest(new { error = "szoveg kötelező" });
+    var id = db.SaveTeszteloiUzenet(szoveg);
+    return Results.Ok(new { success = true, id });
+});
+
+// Tesztelői üzenetek lekérése (csak tesztelő, token alapján)
+app.MapGet("/api/teszteloi-uzenetek/my", (HttpContext ctx, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var email = payload.Split(':')[0];
+    if (email.Contains('|')) email = email.Split('|')[0];
+    if (!db.IsTesztelő(email)) return Results.Unauthorized();
+    return Results.Ok(db.GetTeszteloiUzenetek(email));
+});
+
+// Üzenet olvasottnak jelölése
+app.MapPost("/api/teszteloi-uzenetek/{id}/olvas", (int id, HttpContext ctx, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var email = payload.Split(':')[0];
+    if (email.Contains('|')) email = email.Split('|')[0];
+    db.MarkTeszteloiUzenetOlvasott(id, email);
+    return Results.Ok(new { success = true });
+});
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
 

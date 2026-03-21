@@ -262,6 +262,106 @@
             flex-shrink: 0;
         }
 
+        /* ── Ötlet Láda ── */
+        .otlet-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 18px; padding: 10px 20px;
+            background: #1a1a2e; border: 1.5px solid #4f46e5;
+            border-radius: 30px; color: #a5b4fc;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            transition: all .2s; width: 100%; justify-content: center;
+        }
+        .otlet-btn:hover { background: rgba(79,70,229,.15); border-color: #818cf8; color: #c7d2fe; }
+
+        .tesztelő-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(234,179,8,.12); border: 1px solid rgba(234,179,8,.4);
+            border-radius: 20px; padding: 1px 8px;
+            font-size: 0.7rem; font-weight: 700; color: #fbbf24;
+            vertical-align: middle; margin-left: 6px;
+        }
+
+        .megvalasult-box {
+            margin-top: 16px;
+            background: #16213e; border: 1px solid #1e3a5f;
+            border-radius: 12px; padding: 16px 20px;
+        }
+        .megvalasult-title {
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+            color: #22c55e; text-transform: uppercase; margin-bottom: 12px;
+        }
+        .megvalasult-item {
+            background: rgba(34,197,94,.06); border: 1px solid rgba(34,197,94,.2);
+            border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 0.83rem;
+        }
+        .megvalasult-item:last-child { margin-bottom: 0; }
+        .megvalasult-who { color: #86efac; font-weight: 700; }
+        .megvalasult-text { color: #b0b8c8; margin-top: 3px; }
+
+        .teszteloi-uzenet-box {
+            margin-top: 16px;
+            background: #1a1a2e; border: 1.5px solid #4f46e5;
+            border-radius: 12px; padding: 16px 20px;
+        }
+        .teszteloi-uzenet-title {
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+            color: #818cf8; text-transform: uppercase; margin-bottom: 10px;
+        }
+        .teszteloi-uzenet-item {
+            background: rgba(79,70,229,.08); border: 1px solid rgba(79,70,229,.3);
+            border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
+            font-size: 0.83rem; color: #c7d2fe; cursor: pointer; transition: background .2s;
+        }
+        .teszteloi-uzenet-item.olvasott { opacity: .55; }
+        .teszteloi-uzenet-item:hover { background: rgba(79,70,229,.18); }
+        .teszteloi-uzenet-datum { font-size: 0.72rem; color: #6366f1; margin-top: 4px; }
+
+        /* Ötlet Láda modal */
+        .otlet-modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,.7); z-index: 1000;
+            align-items: center; justify-content: center;
+        }
+        .otlet-modal-overlay.open { display: flex; }
+        .otlet-modal-box {
+            background: #16213e; border: 1.5px solid #4f46e5;
+            border-radius: 16px; padding: 28px 28px 24px;
+            width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+        }
+        .otlet-modal-box h3 { color: #e0e0e0; font-size: 1.1rem; margin-bottom: 6px; }
+        .otlet-modal-box p  { color: #888; font-size: 0.85rem; margin-bottom: 18px; }
+        .otlet-modal-box textarea {
+            width: 100%; min-height: 120px; background: #0f1e3c;
+            border: 1px solid #1f3460; border-radius: 8px;
+            color: #e0e0e0; font-size: 0.9rem; padding: 10px 12px;
+            resize: vertical; font-family: inherit; margin-bottom: 14px;
+        }
+        .otlet-modal-box textarea:focus { outline: none; border-color: #4f46e5; }
+        .otlet-file-label {
+            display: flex; align-items: center; gap: 8px;
+            background: #0f1e3c; border: 1px dashed #1f3460;
+            border-radius: 8px; padding: 10px 14px; cursor: pointer;
+            color: #888; font-size: 0.85rem; margin-bottom: 16px; transition: border-color .2s;
+        }
+        .otlet-file-label:hover { border-color: #4f46e5; color: #a5b4fc; }
+        .otlet-file-preview {
+            max-width: 100%; border-radius: 8px; margin-bottom: 14px;
+            border: 1px solid #1f3460; display: none;
+        }
+        .otlet-modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+        .otlet-send-btn {
+            padding: 8px 22px; background: #4f46e5; border: none;
+            border-radius: 8px; color: #fff; font-size: 0.9rem;
+            font-weight: 600; cursor: pointer; transition: background .2s;
+        }
+        .otlet-send-btn:hover { background: #4338ca; }
+        .otlet-send-btn:disabled { opacity: .5; cursor: default; }
+        .otlet-cancel-btn {
+            padding: 8px 18px; background: transparent;
+            border: 1px solid #374151; border-radius: 8px;
+            color: #9ca3af; font-size: 0.9rem; cursor: pointer;
+        }
+
         .option-card {
             background: #16213e;
             border: 2px solid #0f3460;
@@ -565,6 +665,23 @@
         </div>
     </div>
 
+    <!-- Megvalósult ötletek doboz (mindenki látja, diák és tanár tanulói nézetben) -->
+    <div id="megvalasult-box" class="megvalasult-box" style="display:none">
+        <div class="megvalasult-title">🏆 Megvalósult ötletek</div>
+        <div id="megvalasult-lista"></div>
+    </div>
+
+    <!-- Tesztelői üzenetek (csak tesztelőknek) -->
+    <div id="teszteloi-uzenetek-box" class="teszteloi-uzenet-box" style="display:none">
+        <div class="teszteloi-uzenet-title">🔬 Tesztelői üzenetek</div>
+        <div id="teszteloi-uzenetek-lista"></div>
+    </div>
+
+    <!-- Ötlet Láda gomb (diákok és tanulói nézetben látható) -->
+    <button class="otlet-btn" id="otlet-btn" style="display:none" onclick="openOtletModal()">
+        💡 Ötlet Láda – küldj javaslatot vagy hibajelentést
+    </button>
+
     <!-- Oktatói nézet -->
     <div id="teacher-portal" style="display:none">
         <div class="options-grid">
@@ -699,6 +816,26 @@
     </div>
 </div>
 
+<!-- Ötlet Láda modal -->
+<div class="otlet-modal-overlay" id="otlet-modal">
+    <div class="otlet-modal-box">
+        <h3>💡 Ötlet Láda</h3>
+        <p>Írj javaslatot, jelentj be hibát, vagy ossz meg fejlesztési ötletet! A jó ötletek megvalósulnak és a neved is megjelenik az oldalon.</p>
+        <textarea id="otlet-szoveg" placeholder="Írd le az ötletedet vagy a talált hibát..."></textarea>
+        <label class="otlet-file-label" for="otlet-kep-input">
+            <i class="fas fa-image"></i> Kép csatolása (opcionális – pl. screenshot)
+        </label>
+        <input type="file" id="otlet-kep-input" accept="image/*" style="display:none" onchange="otletKepSelected(this)">
+        <img id="otlet-kep-preview" class="otlet-file-preview" alt="Előnézet">
+        <div id="otlet-error" style="color:#e94560;font-size:0.83rem;margin-bottom:10px;display:none;"></div>
+        <div id="otlet-success" style="color:#4ade80;font-size:0.83rem;margin-bottom:10px;display:none;"></div>
+        <div class="otlet-modal-btns">
+            <button class="otlet-cancel-btn" onclick="closeOtletModal()">Mégse</button>
+            <button class="otlet-send-btn" id="otlet-send-btn" onclick="sendOtlet()">Küldés</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const stored = sessionStorage.getItem('kandoUser');
     if (!stored) {
@@ -722,6 +859,10 @@
             document.getElementById('portal-sub').textContent = 'Válassz ágazati alapvizsga feladatot!';
             const eredmBtn = document.getElementById('btn-eredmenyek-topbar');
             if (eredmBtn) eredmBtn.style.display = 'inline-block';
+            // Ötlet Láda gomb, megvalósult ötletek, tesztelő badge
+            document.getElementById('otlet-btn').style.display = 'flex';
+            loadMegvalasultOtletek();
+            loadTeszteloInfo(user);
         }
     }
 
@@ -736,10 +877,14 @@
         isTeacherView = !isTeacherView;
         isTeacherPreview = !isTeacherView;
         const changelog = document.getElementById('changelog-box');
+        const otletBtn  = document.getElementById('otlet-btn');
+        const megvBox   = document.getElementById('megvalasult-box');
         if (isTeacherView) {
             teacher.style.display = 'block';
             student.style.display = 'none';
             if (changelog) changelog.style.display = 'none';
+            if (otletBtn) otletBtn.style.display = 'none';
+            if (megvBox) megvBox.style.display = 'none';
             sub.textContent = 'Mit szeretnél csinálni?';
             btn.textContent = 'Tanulói nézet';
             if (eredmBtn) eredmBtn.style.display = 'none';
@@ -747,6 +892,8 @@
             teacher.style.display = 'none';
             student.style.display = 'grid';
             if (changelog) changelog.style.display = 'block';
+            if (otletBtn) otletBtn.style.display = 'flex';
+            loadMegvalasultOtletek();
             sub.textContent = 'Válassz ágazati alapvizsga feladatot!';
             btn.textContent = 'Oktatói felület';
             if (eredmBtn) eredmBtn.style.display = 'inline-block';
@@ -1178,6 +1325,150 @@
             errEl.textContent = 'Nem sikerült kapcsolódni a szerverhez.';
             errEl.style.display = 'block';
         }
+    }
+
+    // ── Ötlet Láda ────────────────────────────────────────────────────────────
+    const API_BASE = 'https://agazati.up.railway.app';
+    let otletKepBase64 = null;
+
+    function openOtletModal() {
+        document.getElementById('otlet-szoveg').value = '';
+        document.getElementById('otlet-kep-preview').style.display = 'none';
+        document.getElementById('otlet-kep-input').value = '';
+        document.getElementById('otlet-error').style.display = 'none';
+        document.getElementById('otlet-success').style.display = 'none';
+        document.getElementById('otlet-send-btn').disabled = false;
+        document.getElementById('otlet-send-btn').textContent = 'Küldés';
+        otletKepBase64 = null;
+        document.getElementById('otlet-modal').classList.add('open');
+    }
+
+    function closeOtletModal() {
+        document.getElementById('otlet-modal').classList.remove('open');
+    }
+
+    function otletKepSelected(input) {
+        const file = input.files[0];
+        if (!file) return;
+        if (file.size > 2_000_000) {
+            document.getElementById('otlet-error').textContent = 'A kép túl nagy! Max 2 MB.';
+            document.getElementById('otlet-error').style.display = 'block';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+            otletKepBase64 = e.target.result;
+            const preview = document.getElementById('otlet-kep-preview');
+            preview.src = otletKepBase64;
+            preview.style.display = 'block';
+            document.getElementById('otlet-error').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function sendOtlet() {
+        const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+        const szoveg = document.getElementById('otlet-szoveg').value.trim();
+        const errEl  = document.getElementById('otlet-error');
+        const okEl   = document.getElementById('otlet-success');
+        errEl.style.display = 'none';
+        okEl.style.display  = 'none';
+        if (!szoveg) { errEl.textContent = 'Kérlek írj valamit!'; errEl.style.display = 'block'; return; }
+
+        const btn = document.getElementById('otlet-send-btn');
+        btn.disabled = true; btn.textContent = 'Küldés...';
+
+        try {
+            const res = await fetch(`${API_BASE}/api/otlet`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: user.email || '',
+                    nev: user.nev || user.email || '',
+                    osztaly: user.osztaly || null,
+                    szoveg,
+                    kepBase64: otletKepBase64
+                })
+            });
+            if (res.ok) {
+                okEl.textContent = '🎉 Köszönjük! Az ötletedet megkaptuk.';
+                okEl.style.display = 'block';
+                btn.textContent = 'Elküldve ✓';
+                setTimeout(closeOtletModal, 2000);
+            } else {
+                const d = await res.json().catch(() => ({}));
+                errEl.textContent = 'Hiba: ' + (d.error || res.status);
+                errEl.style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Küldés';
+            }
+        } catch {
+            errEl.textContent = 'Nem sikerült elküldeni. Ellenőrizd az internetkapcsolatot!';
+            errEl.style.display = 'block';
+            btn.disabled = false; btn.textContent = 'Küldés';
+        }
+    }
+
+    async function loadMegvalasultOtletek() {
+        try {
+            const res = await fetch(`${API_BASE}/api/otlet/public`);
+            if (!res.ok) return;
+            const lista = await res.json();
+            const box  = document.getElementById('megvalasult-box');
+            const cont = document.getElementById('megvalasult-lista');
+            if (!lista || lista.length === 0) { box.style.display = 'none'; return; }
+            cont.innerHTML = lista.map(o => `
+                <div class="megvalasult-item">
+                    <div class="megvalasult-who">
+                        🙌 ${escHtml(o.nev)}${o.osztaly ? ` <span style="font-weight:400;color:#86efac;">(${escHtml(o.osztaly)})</span>` : ''} javaslatára:
+                    </div>
+                    <div class="megvalasult-text">${escHtml(o.megvalositvaSzoveg || '')}</div>
+                </div>`).join('');
+            box.style.display = 'block';
+        } catch {}
+    }
+
+    async function loadTeszteloInfo(user) {
+        if (!user.token) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            if (!data.isTesztelő) return;
+            // Tesztelő badge a névnél
+            const nameEl = document.getElementById('user-name');
+            if (nameEl && !nameEl.querySelector('.tesztelő-badge')) {
+                nameEl.insertAdjacentHTML('beforeend', '<span class="tesztelő-badge">🔬 Tesztelő</span>');
+            }
+            // Tesztelői üzenetek betöltése
+            const uRes = await fetch(`${API_BASE}/api/teszteloi-uzenetek/my`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (!uRes.ok) return;
+            const uzenetek = await uRes.json();
+            if (!uzenetek || uzenetek.length === 0) return;
+            const box  = document.getElementById('teszteloi-uzenetek-box');
+            const lista = document.getElementById('teszteloi-uzenetek-lista');
+            lista.innerHTML = uzenetek.map(u => `
+                <div class="teszteloi-uzenet-item${u.olvasott ? ' olvasott' : ''}" onclick="markUzenetOlvasott(${u.id}, this, '${user.token}')">
+                    <div>${escHtml(u.szoveg)}</div>
+                    <div class="teszteloi-uzenet-datum">${u.createdAt}</div>
+                </div>`).join('');
+            box.style.display = 'block';
+        } catch {}
+    }
+
+    async function markUzenetOlvasott(id, el, token) {
+        el.classList.add('olvasott');
+        try {
+            await fetch(`${API_BASE}/api/teszteloi-uzenetek/${id}/olvas`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+        } catch {}
+    }
+
+    function escHtml(s) {
+        return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 </script>
 
