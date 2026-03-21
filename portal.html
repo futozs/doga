@@ -733,15 +733,18 @@
         const eredmBtn = document.getElementById('btn-eredmenyek-topbar');
         isTeacherView = !isTeacherView;
         isTeacherPreview = !isTeacherView;
+        const changelog = document.getElementById('changelog-box');
         if (isTeacherView) {
             teacher.style.display = 'block';
             student.style.display = 'none';
+            if (changelog) changelog.style.display = 'none';
             sub.textContent = 'Mit szeretnél csinálni?';
             btn.textContent = 'Tanulói nézet';
             if (eredmBtn) eredmBtn.style.display = 'none';
         } else {
             teacher.style.display = 'none';
             student.style.display = 'grid';
+            if (changelog) changelog.style.display = 'block';
             sub.textContent = 'Válassz ágazati alapvizsga feladatot!';
             btn.textContent = 'Oktatói felület';
             if (eredmBtn) eredmBtn.style.display = 'inline-block';
