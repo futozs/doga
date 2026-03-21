@@ -474,7 +474,7 @@
 
 <!-- MONACO LOADER -->
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/emmet-monaco-es/dist/emmet-monaco.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emmet-monaco-es@5.1.2/dist/emmet-monaco.min.js"></script>
 
 <script>
 'use strict';
@@ -494,7 +494,7 @@ const BASE_HTML = `<!DOCTYPE html>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
+  <!--STARTER-->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"><\/script>
 </body>
 </html>`;
@@ -518,7 +518,8 @@ const tasks = [
   {
     id: 2, emoji: '🖼️', title: 'Fejléc kép',
     description: 'Helyezd el a fejléc képet a weboldalon!<ul><li>A kép forrása: <b>img/fejlec.jpg</b></li><li>Ha a kép nem jeleníthető meg, vagy ha az egeret felé visszük, a <b>„Bogyós gyümölcsök"</b> szöveg jelenjen meg (alt és title attribútum)</li><li>A képre állíts be <b>fejlec</b> egyedi azonosítót (<code>id="fejlec"</code>)</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <!-- Ide kerül a fejléc kép -->'),
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', '
+  <!-- Ide kerül a fejléc kép -->'),
     starterCss: '',
     checks: [
       { label: 'img tag szerepel az oldalon', explanation: 'Képet az <img> taggel helyezhetsz el. Önzáró tag: <img src="..." alt="...">', fn: (html, css, doc) => doc.querySelector('img') !== null },
@@ -527,7 +528,7 @@ const tasks = [
       { label: 'title szöveg megadva', explanation: 'A title szöveg az egér felé vitelkor (tooltip) jelenik meg a kép fölött.', fn: (html, css, doc) => { const img = doc.querySelector('img'); return img && img.hasAttribute('title') && img.getAttribute('title').trim().length > 0; } },
       { label: 'id="fejlec" beállítva a képen', explanation: 'Az egyedi azonosítóval a CSS-ben hivatkozhatsz a képre: #fejlec { width: 100%; }', fn: (html) => /id=["']fejlec["']/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <img src="img/fejlec.jpg" alt="Bogyós gyümölcsök" title="Bogyós gyümölcsök" id="fejlec">'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <img src="img/fejlec.jpg" alt="Bogyós gyümölcsök" title="Bogyós gyümölcsök" id="fejlec">'),
     solutionCss: '',
   },
   {
@@ -541,13 +542,13 @@ const tasks = [
       { label: 'Legalább 2 bekezdés (p tag)', explanation: 'A szövegeket bekezdés (<p>) elemekbe kell tagolni. Legalább 2 bekezdés szükséges.', fn: (html, css, doc) => doc.querySelectorAll('p').length >= 2 },
       { label: 'Bootstrap margó osztály (my-3 vagy my-4) alkalmazva bekezdésen', explanation: 'A Bootstrap my-3 / my-4 osztály függőleges margót ad – az oldal levegősebbnek tűnik tőle. Pl.: <p class="my-3">...', fn: (html, css, doc) => doc.querySelector('p.my-3, p.my-4, [class*="my-3"], [class*="my-4"]') !== null },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <h1>Bogyós gyümölcsök</h1>\n  <h2>Erdei gyümölcsök</h2>\n  <p class="my-3">Az erdei bogyós gyümölcsök rendkívül egészségesek és finomak.</p>\n  <p class="my-3">Magyarországon sokféle bogyós gyümölcs terem a természetben.</p>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <h1>Bogyós gyümölcsök</h1>\n  <h2>Erdei gyümölcsök</h2>\n  <p class="my-3">Az erdei bogyós gyümölcsök rendkívül egészségesek és finomak.</p>\n  <p class="my-3">Magyarországon sokféle bogyós gyümölcs terem a természetben.</p>'),
     solutionCss: '',
   },
   {
     id: 4, emoji: '✏️', title: 'Szövegformázás',
     description: 'Formázd meg az alábbi szövegrészeket a kódban!<ul><li>A <b>„Kandó"</b> szó legyen <b>félkövér</b> (<code>&lt;b&gt;</code> vagy <code>&lt;strong&gt;</code>)</li><li>A <b>„neves"</b> szó legyen <b>dőlt</b> (<code>&lt;em&gt;</code> vagy <code>&lt;i&gt;</code>)</li><li>A <b>„minőségi"</b> szó legyen <b>aláhúzott</b> (<code>&lt;u&gt;</code>)</li><li>Tégy be egy <b>sortörést</b> (<code>&lt;br&gt;</code>) valahova a szövegbe</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <p>A Kandó Kálmán Szakgimnázium és Szakközépiskola egy neves budapesti iskola.
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <p>A Kandó Kálmán Szakgimnázium és Szakközépiskola egy neves budapesti iskola.
     Az iskola elkötelezett a minőségi oktatás iránt.</p>
   <p>A diákok számos tantárgyat tanulnak az iskolában.
     A technológiai képzés különösen erős a Kandóban.</p>`),
@@ -558,13 +559,13 @@ const tasks = [
       { label: 'Aláhúzott szöveg (<u>)', explanation: 'Az aláhúzott szöveghez az <u> tagot kell használni. Pl.: <u>aláhúzott rész</u>', fn: (html, css, doc) => doc.querySelector('u') !== null },
       { label: 'Sortörés (<br>)', explanation: 'A sortörés <br> taggel oldható meg – ez tördelés nélkül visz új sorba.', fn: (html) => /<br\s*\/?>/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <p>A <b>Kandó</b> Kálmán Szakgimnázium és Szakközépiskola egy <em>neves</em> budapesti iskola.\n    Az iskola elkötelezett a <u>minőségi</u> oktatás iránt.<br>\n    A diákok számos tantárgyat tanulnak az iskolában.</p>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <p>A <b>Kandó</b> Kálmán Szakgimnázium és Szakközépiskola egy <em>neves</em> budapesti iskola.\n    Az iskola elkötelezett a <u>minőségi</u> oktatás iránt.<br>\n    A diákok számos tantárgyat tanulnak az iskolában.</p>'),
     solutionCss: '',
   },
   {
     id: 5, emoji: '🔗', title: 'Menüpont és link',
     description: 'Egészítsd ki a navigációt egy menüponttal!<ul><li>A menüpont szövege: <b>Goji bogyó</b></li><li>Hivatkozzon erre az oldalra: <b>goji.html</b></li><li>A link <b>új lapon</b> nyíljon meg (<code>target="_blank"</code>)</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <nav>
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <nav>
     <ul>
       <!-- Ide kerülnek a menüpontok -->
     </ul>
@@ -575,7 +576,7 @@ const tasks = [
       { label: 'Hivatkozás (a href) megvan', explanation: 'A linkek <a href="url">szöveg</a> formában készülnek. A href-ben az URL kerül.', fn: (html, css, doc) => doc.querySelector('a[href]') !== null },
       { label: 'Új lapon nyílik meg (target="_blank")', explanation: 'Ha a link új lapon kell megnyíljon, a target="_blank" attribútumot kell hozzáadni: <a href="..." target="_blank">', fn: (html) => /target=["']_blank["']/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <nav>\n    <ul>\n      <li><a href="goji.html" target="_blank">Goji bogyó</a></li>\n    </ul>\n  </nav>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <nav>\n    <ul>\n      <li><a href="goji.html" target="_blank">Goji bogyó</a></li>\n    </ul>\n  </nav>'),
     solutionCss: '',
   },
   {
@@ -590,13 +591,13 @@ const tasks = [
       { label: 'ul-on van egyedi azonosító (id)', explanation: 'Az id attribútummal tudsz a CSS-ben hivatkozni az elemre: <ul id="etelek"> → CSS: #etelek { ... }', fn: (html, css, doc) => { const ul = doc.querySelector('ul'); return ul && ul.hasAttribute('id'); } },
       { label: 'ol-on van egyedi azonosító (id)', explanation: 'Az ol-ra is kell id – <ol id="lepesek"> → CSS: #lepesek { list-style-image: url(\'img/ikon.png\'); }', fn: (html, css, doc) => { const ol = doc.querySelector('ol'); return ol && ol.hasAttribute('id'); } },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <ul id="gyumolcsok">\n    <li>Eper</li>\n    <li>Málna</li>\n    <li>Áfonya</li>\n  </ul>\n  <ol id="lepesek">\n    <li>Gyümölcsöt megmosni</li>\n    <li>Cukorral összekeverni</li>\n    <li>Befőttesüvegbe tölteni</li>\n  </ol>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <ul id="gyumolcsok">\n    <li>Eper</li>\n    <li>Málna</li>\n    <li>Áfonya</li>\n  </ul>\n  <ol id="lepesek">\n    <li>Gyümölcsöt megmosni</li>\n    <li>Cukorral összekeverni</li>\n    <li>Befőttesüvegbe tölteni</li>\n  </ol>'),
     solutionCss: '',
   },
   {
     id: 7, emoji: '📸', title: 'Képek tartalomban',
     description: 'Helyezz el egy képet a tartalom közé!<ul><li>A kép forrása: <b>img/afonya.jpg</b></li><li>Ha a kép nem jeleníthető meg vagy egérrel fölé visszük, jelenjen meg: <b>„Áfonya"</b> (alt és title)</li><li>A kép legyen <b>reszponzív</b> – alkalmazd rá a Bootstrap <code>img-fluid</code> osztályt</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <!-- Ide kerülnek a tartalom képek -->'),
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', '  <!-- Ide kerülnek a tartalom képek -->'),
     starterCss: '',
     checks: [
       { label: 'src helyes (img/ mappából)', explanation: 'A kép forrása az img mappában van: src="img/kepnev.jpg"', fn: (html) => /src=["'][^"']*img\//i.test(html) },
@@ -604,13 +605,13 @@ const tasks = [
       { label: 'title szöveg megadva', explanation: 'A title tooltip-ként jelenik meg az egér felé vitelkor.', fn: (html, css, doc) => doc.querySelector('img[title]') !== null },
       { label: 'img-fluid osztály alkalmazva (reszponzív kép)', explanation: 'A Bootstrap img-fluid osztály nélkül a kép kinyúlhat a konténeréből! Mindig add hozzá: <img class="img-fluid" ...>', fn: (html) => /class=["'][^"']*img-fluid/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <img src="img/afonya.jpg" alt="Áfonya" title="Áfonya" class="img-fluid">'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <img src="img/afonya.jpg" alt="Áfonya" title="Áfonya" class="img-fluid">'),
     solutionCss: '',
   },
   {
     id: 8, emoji: '🎨', title: 'Bootstrap szöveg osztályok',
     description: 'A képaláírásra és szövegekre alkalmazd a Bootstrap osztályokat!<ul><li>A <code>&lt;figcaption&gt;</code>-re add a <b>fw-bold</b> (félkövér) osztályt</li><li>A képaláírás legyen <b>középre igazítva</b> – <code>text-center</code></li><li>Valamelyik szövegen használd a <b>text-uppercase</b> (nagybetűs) osztályt</li><li>Egy bekezdésre alkalmazd a <b>my-3</b> vagy <b>my-4</b> margót</li><li>A képaláírás mérete legyen <b>h5</b> Bootstrap osztállyal</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <figure>
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <figure>
     <img src="img/kep.jpg" alt="Kép" title="Leírás">
     <!-- Ide jön a figcaption Bootstrap osztályokkal -->
   </figure>`),
@@ -622,7 +623,7 @@ const tasks = [
       { label: 'my-3 vagy my-4 margó osztály alkalmazva', explanation: 'A my-3 / my-4 osztályok felső és alsó margót adnak az elemnek. my-3 = 1rem, my-4 = 1.5rem.', fn: (html) => /class=["'][^"']*my-[34]/i.test(html) },
       { label: 'h5 osztály alkalmazva (figcaption vagy p elemen)', explanation: 'A Bootstrap h5 osztály h5-szintű betűméretet állít be bármely elemre – pl. <figcaption class="h5 fw-bold text-center">', fn: (html) => /class=["'][^"']*\bh5\b/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <figure>\n    <img src="img/kep.jpg" alt="Kép" title="Leírás">\n    <figcaption class="text-center fw-bold h5">Bogyós gyümölcs</figcaption>\n  </figure>\n  <p class="my-4 text-uppercase">Friss és egészséges</p>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <figure>\n    <img src="img/kep.jpg" alt="Kép" title="Leírás">\n    <figcaption class="text-center fw-bold h5">Bogyós gyümölcs</figcaption>\n  </figure>\n  <p class="my-4 text-uppercase">Friss és egészséges</p>'),
     solutionCss: '',
   },
   {
@@ -636,7 +637,7 @@ const tasks = [
       { label: 'Képaláírás: text-center és fw-bold osztályok', explanation: 'A képaláíráson alkalmazni kell: class="text-center fw-bold h5" – középre igazítja és félkövérré teszi.', fn: (html) => /figcaption[^>]*class=["'][^"']*(text-center|fw-bold)/i.test(html) },
       { label: 'Kép középre helyezve (d-block mx-auto vagy text-center szülőn)', explanation: 'Kép középre igazítása Bootstrap-pel: add az img-re a d-block és mx-auto osztályokat: <img class="d-block mx-auto img-fluid" ...> VAGY tedd a szülőre: <div class="text-center">', fn: (html) => /class=["'][^"']*(d-block[^"']*mx-auto|mx-auto[^"']*d-block)/i.test(html) || /<div[^>]*text-center[^>]*>[\s\S]*?<img/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <figure>\n    <img src="img/malna.jpg" alt="Málna" title="Málna" class="d-block mx-auto img-fluid">\n    <figcaption class="text-center fw-bold h5">Málna</figcaption>\n  </figure>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <figure>\n    <img src="img/malna.jpg" alt="Málna" title="Málna" class="d-block mx-auto img-fluid">\n    <figcaption class="text-center fw-bold h5">Málna</figcaption>\n  </figure>'),
     solutionCss: '',
   },
   {
@@ -651,13 +652,13 @@ const tasks = [
       { label: 'col-md vagy col-lg méretspecifikus osztály', explanation: 'A col-md-* (medium) és col-lg-* (large) osztályok csak adott képernyőméreten lépnek életbe. Kisebb képernyőn az elemek egymás alá kerülnek.', fn: (html) => /class=["'][^"']*col-(md|lg)-\d/i.test(html) },
       { label: 'Legalább 3 tartalom az oszlopokban', explanation: 'A grid akkor hasznos, ha legalább 2-3 oszlop van tartalommal egymás mellett.', fn: (html, css, doc) => doc.querySelectorAll('[class*="col-"]').length >= 3 },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <div class="container">\n    <div class="row">\n      <div class="col-md-4"><h3>Eper</h3><p>Piros, édes bogyó.</p></div>\n      <div class="col-md-4"><h3>Málna</h3><p>Lédús, illatos gyümölcs.</p></div>\n      <div class="col-md-4"><h3>Áfonya</h3><p>Kék, antioxidáns gazdag.</p></div>\n    </div>\n  </div>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <div class="container">\n    <div class="row">\n      <div class="col-md-4"><h3>Eper</h3><p>Piros, édes bogyó.</p></div>\n      <div class="col-md-4"><h3>Málna</h3><p>Lédús, illatos gyümölcs.</p></div>\n      <div class="col-md-4"><h3>Áfonya</h3><p>Kék, antioxidáns gazdag.</p></div>\n    </div>\n  </div>'),
     solutionCss: '',
   },
   {
     id: 11, emoji: '📊', title: 'Táblázat alap',
     description: 'Egészítsd ki a táblázatot a hiányzó részekkel!<ul><li>A táblázatnak legyen <b>fejléc része</b> (<code>&lt;thead&gt;</code>) 3 fejléc cellával: <b>Gyümölcs | Szín | Szezon</b></li><li>Legyen <b>törzs része</b> (<code>&lt;tbody&gt;</code>) legalább 2 adatsorral (<code>&lt;tr&gt;</code> és <code>&lt;td&gt;</code>)</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <table>
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <table>
     <!-- Ide jön a táblázat struktúra -->
   </table>`),
     starterCss: '',
@@ -669,13 +670,13 @@ const tasks = [
       { label: 'th (fejléc cella) megvan a thead-ben', explanation: 'A fejléc cellák <th> elemek – ezek alapból félkövérek és középre igazítottak.', fn: (html, css, doc) => doc.querySelector('thead th') !== null },
       { label: 'td (adatcella) megvan a tbody-ban', explanation: 'Az adatcellák <td> (table data) elemek a tbody sorokban.', fn: (html, css, doc) => doc.querySelector('tbody td') !== null },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <table>\n    <thead>\n      <tr>\n        <th>Gyümölcs</th>\n        <th>Szín</th>\n        <th>Szezon</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Eper</td>\n        <td>Piros</td>\n        <td>Június</td>\n      </tr>\n      <tr>\n        <td>Áfonya</td>\n        <td>Kék</td>\n        <td>Augusztus</td>\n      </tr>\n    </tbody>\n  </table>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <table>\n    <thead>\n      <tr>\n        <th>Gyümölcs</th>\n        <th>Szín</th>\n        <th>Szezon</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Eper</td>\n        <td>Piros</td>\n        <td>Június</td>\n      </tr>\n      <tr>\n        <td>Áfonya</td>\n        <td>Kék</td>\n        <td>Augusztus</td>\n      </tr>\n    </tbody>\n  </table>'),
     solutionCss: '',
   },
   {
     id: 12, emoji: '📊', title: 'Táblázat Bootstrap stílusok',
     description: 'Tedd szebbé a táblázatot Bootstrap osztályokkal!<ul><li>A <code>&lt;table&gt;</code> tagre add a <b>table</b> osztályt (ez az alap Bootstrap stílus)</li><li>Legyen <b>szegélyes</b> (<code>table-bordered</code>) vagy <b>csíkos</b> (<code>table-striped</code>)</li><li>A fejléc cellák (<code>&lt;th&gt;</code>) legyenek <b>nagybetűsek</b>: <code>text-uppercase</code></li><li>Alkalmazd a <b>text-center</b> vagy <b>align-middle</b> igazítást</li><li>A fejléc cellák szélessége legyen <b>egyforma</b>: <code>w-25</code> osztály</li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <table>
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <table>
     <thead>
       <tr>
         <th>Neve</th>
@@ -704,13 +705,13 @@ const tasks = [
       { label: 'text-center vagy align-middle igazítás', explanation: 'text-center = vízszintesen középre, align-middle = függőlegesen középre. Pl.: <td class="text-center align-middle">', fn: (html) => /class=["'][^"']*(text-center|align-middle)/i.test(html) },
       { label: 'w-25 osztály a fejléc cellákon', explanation: 'A w-25 Bootstrap osztály 25%-os szélességet állít be – ezzel egyforma szélességű oszlopok hozhatók létre: <th class="w-25">', fn: (html) => /class=["'][^"']*\bw-25\b/i.test(html) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <table class="table table-bordered">\n    <thead>\n      <tr>\n        <th class="text-uppercase w-25 text-center">Neve</th>\n        <th class="text-uppercase w-25 text-center">Kora</th>\n        <th class="text-uppercase w-25 text-center">Városa</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td class="align-middle text-center">Kovács Péter</td>\n        <td class="align-middle text-center">17</td>\n        <td class="align-middle text-center">Budapest</td>\n      </tr>\n      <tr>\n        <td class="align-middle text-center">Nagy Anna</td>\n        <td class="align-middle text-center">16</td>\n        <td class="align-middle text-center">Debrecen</td>\n      </tr>\n    </tbody>\n  </table>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <table class="table table-bordered">\n    <thead>\n      <tr>\n        <th class="text-uppercase w-25 text-center">Neve</th>\n        <th class="text-uppercase w-25 text-center">Kora</th>\n        <th class="text-uppercase w-25 text-center">Városa</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td class="align-middle text-center">Kovács Péter</td>\n        <td class="align-middle text-center">17</td>\n        <td class="align-middle text-center">Budapest</td>\n      </tr>\n      <tr>\n        <td class="align-middle text-center">Nagy Anna</td>\n        <td class="align-middle text-center">16</td>\n        <td class="align-middle text-center">Debrecen</td>\n      </tr>\n    </tbody>\n  </table>'),
     solutionCss: '',
   },
   {
     id: 13, emoji: '🔻', title: 'Lábléc link',
     description: 'Készítsd el a lábléc hivatkozást!<ul><li>Tegyél egy <code>&lt;footer&gt;</code> elemet az oldal aljára</li><li>Benne legyen egy hivatkozás, ami az oldal elejére (<code>id="leiras"</code>) ugrik: <code>href="#leiras"</code></li><li>A hivatkozás szövege pontosan ennyi legyen: <b>Ugrás az elejére</b></li></ul><small>💡 A # jel azt jelenti: ugrik arra az elemre, aminek az id-je "leiras"</small>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <div id="leiras">
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <div id="leiras">
     <h1>Oldal teteje</h1>
     <p>Ez az oldal eleje. Görgess le és kattints a lábléc linkjére!</p>
   </div>
@@ -722,13 +723,13 @@ const tasks = [
       { label: 'Oldalon belüli hivatkozás (a href="#azonosito")', explanation: 'Az oldalon belüli ugráshoz # jelet kell a href elé írni: <a href="#leiras"> – az id="leiras" elemre ugrik.', fn: (html) => /href=["']#\w+["']/i.test(html) },
       { label: 'Hivatkozás szövege "Ugrás az elejére"', explanation: 'A lábléc hivatkozás szövege legyen pontosan: Ugrás az elejére (ezt kérik a vizsgán).', fn: (html, css, doc) => { const links = doc.querySelectorAll('footer a'); return [...links].some(a => a.textContent.includes('Ugrás az elejére')); } },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <div id="leiras">\n    <h1>Oldal teteje</h1>\n    <p>Ez az oldal eleje. Görgess le és kattints a lábléc linkjére!</p>\n  </div>\n  <br><br><br><br><br><br><br><br><br><br>\n  <footer>\n    <a href="#leiras">Ugrás az elejére</a>\n  </footer>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <div id="leiras">\n    <h1>Oldal teteje</h1>\n    <p>Ez az oldal eleje. Görgess le és kattints a lábléc linkjére!</p>\n  </div>\n  <br><br><br><br><br><br><br><br><br><br>\n  <footer>\n    <a href="#leiras">Ugrás az elejére</a>\n  </footer>'),
     solutionCss: '',
   },
   {
     id: 14, emoji: '🎨', title: 'CSS: Betűtípus és szöveg',
     description: 'Írd meg a CSS stílusokat a jobb oldali CSS fülön!<ul><li>Az oldal betűtípusa legyen <b>Verdana</b>: <code>body { font-family: Verdana, sans-serif; }</code></li><li>A bekezdések legyenek <b>sorkizártak</b>: <code>p { text-align: justify; }</code></li><li>Valamelyik elemre állíts be betűméretet <b>em-ben vagy %-ban</b> (pl. <code>font-size: 1.2em</code> vagy <code>90%</code>)</li><li>A <code>.felirat</code> osztályra állíts be <b>kiskapitális</b> betűt: <code>font-variant: small-caps</code></li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <h1>Kandó KSZKI</h1>
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <h1>Kandó KSZKI</h1>
   <p>A Kandó Kálmán Szakgimnázium és Szakközépiskola egy neves budapesti iskola. Az intézmény elkötelezett a minőségi szakmai oktatás iránt.</p>
   <p class="felirat">Ez egy kiskapitális felirat</p>`),
     starterCss: '/* Írd ide a CSS kódot! */',
@@ -738,13 +739,13 @@ const tasks = [
       { label: 'font-size em-ben vagy %-ban', explanation: 'A betűméretet megadhatod em-ben (1.2em = 20%-kal nagyobb) vagy %-ban (90% = 10%-kal kisebb az alapértelmezettől).', fn: (html, css) => /font-size\s*:\s*[\d.]+\s*(em|%)/i.test(css) },
       { label: 'font-variant: small-caps (kiskapitális)', explanation: 'A kiskapitális betű: a kisbetűk úgy néznek ki mint a nagyok, de kisebbek. CSS: .felirat { font-variant: small-caps; }', fn: (html, css) => /font-variant\s*:\s*small-caps/i.test(css) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <h1>Kandó KSZKI</h1>\n  <p>A Kandó Kálmán Szakgimnázium és Szakközépiskola egy neves budapesti iskola. Az intézmény elkötelezett a minőségi szakmai oktatás iránt.</p>\n  <p class="felirat">Ez egy kiskapitális felirat</p>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <h1>Kandó KSZKI</h1>\n  <p>A Kandó Kálmán Szakgimnázium és Szakközépiskola egy neves budapesti iskola. Az intézmény elkötelezett a minőségi szakmai oktatás iránt.</p>\n  <p class="felirat">Ez egy kiskapitális felirat</p>'),
     solutionCss: 'body {\n  font-family: Verdana, sans-serif;\n}\np {\n  text-align: justify;\n  font-size: 1.1em;\n}\n.felirat {\n  font-variant: small-caps;\n}',
   },
   {
     id: 15, emoji: '🎨', title: 'CSS: Navigáció stílus',
     description: 'Formázd meg CSS-sel a navigáció listaelemeit! (A CSS fülön dolgozz!)<ul><li>A navigáció listaelemére (<code>nav li</code>) állíts be <b>jobb oldali szegélyt</b>: <code>border-right: 3px dotted red</code></li><li>Ugyanarra adj <b>belső margót</b>: <code>padding: 0 15px</code> (vízszintesen 15px, függőlegesen 0)</li><li>A navigáció hivatkozásainak (<code>nav a</code>) a <b>betűszíne</b> legyen fehér: <code>color: white</code></li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <nav>
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <nav>
     <ul>
       <li><a href="#">Kezdőlap</a></li>
       <li><a href="#">Rólunk</a></li>
@@ -757,13 +758,13 @@ const tasks = [
       { label: 'nav li belső margó (padding) beállítva', explanation: 'A padding a tartalom és a szegély közötti távolság. Pl.: nav li { padding: 0 15px; } – vízszintesen 15px, függőlegesen 0.', fn: (html, css) => /nav\s+li[^{]*\{[^}]*padding/i.test(css) },
       { label: 'nav a (link) színe beállítva', explanation: 'A navigáció hivatkozásainak színét CSS-sel állítsd be: nav a { color: white; } – különben marad az alapértelmezett kék.', fn: (html, css) => /nav\s+a[^{]*\{[^}]*color/i.test(css) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <nav>\n    <ul>\n      <li><a href="#">Kezdőlap</a></li>\n      <li><a href="#">Rólunk</a></li>\n      <li><a href="#">Kapcsolat</a></li>\n    </ul>\n  </nav>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <nav>\n    <ul>\n      <li><a href="#">Kezdőlap</a></li>\n      <li><a href="#">Rólunk</a></li>\n      <li><a href="#">Kapcsolat</a></li>\n    </ul>\n  </nav>'),
     solutionCss: 'nav li {\n  border-right: 3px dotted red;\n  padding: 0 15px;\n  list-style: none;\n  display: inline-block;\n}\nnav a {\n  color: white;\n  text-decoration: none;\n}',
   },
   {
     id: 16, emoji: '🎨', title: 'CSS: Lablec osztály',
     description: 'Formázd meg CSS-sel a lábléc (<code>.lablec</code> osztály) hivatkozásait!<ul><li>A <code>.lablec a</code> hivatkozás <b>betűszíne</b> legyen fehér</li><li>Legyen <b>félkövér</b>: <code>font-weight: bold</code></li><li>Szüntesd meg az <b>aláhúzást</b>: <code>text-decoration: none</code></li><li>Ha <b>az egér fölé kerül</b> (<code>.lablec a:hover</code>), legyen <b>nagybetűs</b>: <code>text-transform: uppercase</code></li></ul>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <footer class="lablec">
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <footer class="lablec">
     <a href="#leiras">Ugrás az elejére</a>
   </footer>`),
     starterCss: '/* .lablec stílusok ide kerülnek */',
@@ -773,13 +774,13 @@ const tasks = [
       { label: '.lablec a aláhúzás megszüntetve (text-decoration: none)', explanation: 'Alapból a hivatkozások alá vannak húzva. A lábléc linkjénél ezt meg kell szüntetni: .lablec a { text-decoration: none; }', fn: (html, css) => /\.lablec[^{]*a[^{]*\{[^}]*text-decoration\s*:\s*none/i.test(css) || /\.lablec\s+a[^{]*\{[^}]*text-decoration\s*:\s*none/i.test(css) },
       { label: '.lablec a:hover nagybetűs (text-transform: uppercase)', explanation: 'A hover hatás: amikor az egér fölé kerül, nagybetűssé válik. .lablec a:hover { text-transform: uppercase; }', fn: (html, css) => /\.lablec\s+a\s*:\s*hover[^{]*\{[^}]*text-transform\s*:\s*uppercase/i.test(css) },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <footer class="lablec">\n    <a href="#leiras">Ugrás az elejére</a>\n  </footer>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <footer class="lablec">\n    <a href="#leiras">Ugrás az elejére</a>\n  </footer>'),
     solutionCss: '.lablec a {\n  color: white;\n  font-weight: bold;\n  text-decoration: none;\n}\n.lablec a:hover {\n  text-transform: uppercase;\n}',
   },
   {
     id: 17, emoji: '🎨', title: 'CSS: Listaelem kép',
     description: 'Állíts be egyedi képet a lista jelölőjeként CSS-sel! (A CSS fülön dolgozz!)<ul><li>A <code>#lista</code> azonosítójú elemre állítsd be: <code>list-style-image: url(\'img/bogyo.png\')</code></li><li>Adj hozzá bal oldali margót is: <code>margin-left: 25px</code></li></ul><small>💡 Így a lista előtt egy kis kép fog megjelenni a pontok helyett!</small>',
-    starterHtml: BASE_HTML.replace('  <!-- ide kerül a kód -->', `  <ul id="lista">
+    starterHtml: BASE_HTML.replace('<!--STARTER-->', `  <ul id="lista">
     <li>Alma</li>
     <li>Barack</li>
     <li>Cseresznye</li>
@@ -791,7 +792,7 @@ const tasks = [
       { label: 'url() függvény használva', explanation: "A kép elérési útját url() függvénybe kell írni: list-style-image: url('img/ikon.png') – a (' és ') közé kerül az útvonal.", fn: (html, css) => /list-style-image\s*:\s*url\s*\(/i.test(css) },
       { label: 'margin-left beállítva az elemkijelölőre', explanation: 'A listaelem balra is be kell igazítani: #lista { margin-left: 25px; } – ezt általában mindig kérik a list-style-image mellett.', fn: (html, css) => { const idMatch = css.match(/#\w+\s*\{([^}]+)\}/g); if (!idMatch) return false; return idMatch.some(rule => /list-style-image/i.test(rule) && /margin-left/i.test(rule)); } },
     ],
-    solution: BASE_HTML.replace('  <!-- ide kerül a kód -->', '  <ul id="lista">\n    <li>Alma</li>\n    <li>Barack</li>\n    <li>Cseresznye</li>\n    <li>Dió</li>\n  </ul>'),
+    solution: BASE_HTML.replace('<!--STARTER-->', '  <ul id="lista">\n    <li>Alma</li>\n    <li>Barack</li>\n    <li>Cseresznye</li>\n    <li>Dió</li>\n  </ul>'),
     solutionCss: '#lista {\n  list-style-image: url(\'img/bogyo.png\');\n  margin-left: 25px;\n}',
   },
 ];
