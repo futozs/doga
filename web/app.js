@@ -4000,6 +4000,7 @@ function updateStudentDisplay() {
           setModeBadge(isLive);
           if (!isLive) { initKeszBtn(); showModeSelector(); }
           if (isLive) {
+            hideModeSelector();
             liveModeDetected = true;
             Object.keys(availableTasks).forEach(id => clearLocalStorage(id));
             // Timer visszaállítása 60 percre (korábbi gyakorló értéket töröljük)
@@ -4026,6 +4027,7 @@ function updateStudentDisplay() {
           setModeBadge(isLive);
           if (!isLive) { initKeszBtn(); showModeSelector(); }
           if (isLive) {
+            hideModeSelector();
             liveModeDetected = true;
             Object.keys(availableTasks).forEach(id => clearLocalStorage(id));
             // Timer visszaállítása 60 percre (korábbi gyakorló értéket töröljük)
@@ -4052,15 +4054,17 @@ function updateStudentDisplay() {
 }
 
 function showModeSelector() {
+  // A modal már display:flex-szel indul az oldalon – itt nem kell semmit tenni
+}
+function hideModeSelector() {
   const modal = document.getElementById('mode-selector-modal');
-  if (modal) { modal.style.display = 'flex'; }
+  if (modal) modal.style.display = 'none';
 }
 function goToPractice() {
   location.href = 'practice.html';
 }
 function goToExam() {
-  const modal = document.getElementById('mode-selector-modal');
-  if (modal) modal.style.display = 'none';
+  hideModeSelector();
 }
 
 function logoutStudent() {
