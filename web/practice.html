@@ -395,6 +395,33 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+    /* ===== COMPLETION MODAL ===== */
+    .completion-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,.8); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .completion-overlay.visible { display: flex; }
+    .completion-box {
+      background: var(--bg2); border: 1px solid #22c55e;
+      border-radius: 12px; padding: 36px 32px; max-width: 440px; width: 94%;
+      text-align: center;
+    }
+    .completion-box .completion-emoji { font-size: 3rem; margin-bottom: 12px; }
+    .completion-box h2 { margin: 0 0 10px; font-size: 1.3rem; color: #22c55e; }
+    .completion-box p { margin: 0 0 24px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; }
+    .completion-buttons { display: flex; gap: 10px; justify-content: center; }
+    .btn-completion-restart {
+      padding: 10px 22px; background: var(--accent); color: #000;
+      font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+    }
+    .btn-completion-restart:hover { background: #facc15; }
+    .btn-completion-close {
+      padding: 10px 22px; background: transparent; color: #94a3b8;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+    }
+    .btn-completion-close:hover { color: #f1f5f9; border-color: #64748b; }
+
     /* ===== WELCOME MODAL ===== */
     .welcome-overlay {
       display: none; position: fixed; inset: 0; z-index: 2000;
@@ -475,6 +502,19 @@
     <i class="fas fa-book-open"></i> 📖 Segédlet
   </button>
 </header>
+
+<!-- COMPLETION MODAL -->
+<div class="completion-overlay" id="completion-modal">
+  <div class="completion-box">
+    <div class="completion-emoji">🏆</div>
+    <h2>Gratulálunk! Mind a 25 feladat kész!</h2>
+    <p>Sikeresen felépítetted az Espresso Sarok Kávézó weboldalát – pontosan úgy, ahogy a vizsgán is kell. Szeretnéd újra begyakorolni?</p>
+    <div class="completion-buttons">
+      <button class="btn-completion-restart" onclick="restartPractice()">🔄 Újrakezdés</button>
+      <button class="btn-completion-close" onclick="document.getElementById('completion-modal').classList.remove('visible')">Bezár</button>
+    </div>
+  </div>
+</div>
 
 <!-- WELCOME MODAL -->
 <div class="welcome-overlay" id="welcome-modal">
@@ -872,6 +912,7 @@ function runChecks() {
     if (!state.completedOnce[state.currentTask]) {
       state.completedOnce[state.currentTask] = true;
       triggerConfetti();
+      checkAllComplete();
     }
   } else if (!allPass) {
     if (state.taskStatus[state.currentTask] !== 'done') {
@@ -989,6 +1030,7 @@ function runChecksLive() {
     if (!state.completedOnce[state.currentTask]) {
       state.completedOnce[state.currentTask] = true;
       triggerConfetti();
+      checkAllComplete();
       document.getElementById('score-display').innerHTML =
         '<span style="color:#22c55e">🎉 ' + passed + ' / ' + total + '</span> – minden teljesítve!';
     }
@@ -1026,6 +1068,15 @@ function showSolution() {
 // =====================================================================
 // CONFETTI
 // =====================================================================
+
+function checkAllComplete() {
+  const allDone = state.taskStatus.every(s => s === 'done');
+  if (allDone) {
+    setTimeout(() => {
+      document.getElementById('completion-modal').classList.add('visible');
+    }, 800);
+  }
+}
 
 function triggerConfetti() {
   const el = document.getElementById('confetti');
