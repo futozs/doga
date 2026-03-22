@@ -394,6 +394,64 @@
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ===== WELCOME MODAL ===== */
+    .welcome-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .welcome-overlay.visible { display: flex; }
+    .welcome-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 32px; max-width: 560px; width: 94%;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .welcome-box h2 { margin: 0 0 12px; font-size: 1.3rem; color: var(--accent); }
+    .welcome-box p { margin: 0 0 10px; font-size: 0.9rem; color: var(--fg); line-height: 1.6; }
+    .welcome-box ul { margin: 0 0 12px; padding-left: 20px; font-size: 0.88rem; color: var(--fg); line-height: 1.8; }
+    .welcome-preview {
+      border-radius: 8px; overflow: hidden; margin: 14px 0;
+      border: 1px solid var(--border);
+    }
+    .welcome-preview iframe { width: 100%; height: 230px; border: none; background: #fff; display: block; pointer-events: none; }
+    .welcome-preview p { margin: 0; padding: 5px 8px; font-size: 0.75rem; color: #94a3b8; background: var(--bg1); text-align: center; }
+    .btn-start {
+      display: block; width: 100%; padding: 12px;
+      background: var(--accent); color: #000; font-weight: 700;
+      font-size: 1rem; border: none; border-radius: 8px; cursor: pointer;
+      margin-top: 16px; transition: background .2s;
+    }
+    .btn-start:hover { background: #facc15; }
+
+    /* ===== RESTART BUTTON ===== */
+    .btn-restart {
+      padding: 4px 10px; background: transparent; border: 1px solid var(--border);
+      border-radius: 6px; color: #94a3b8; font-size: 0.75rem; cursor: pointer;
+      display: flex; align-items: center; gap: 4px; transition: all .2s; white-space: nowrap;
+    }
+    .btn-restart:hover { border-color: #ef4444; color: #ef4444; }
+
+    /* ===== TUTOR SECTION IN REF PANEL ===== */
+    .tutor-section {
+      padding: 14px 16px; border-bottom: 1.5px solid var(--border);
+      background: #0f172a;
+    }
+    .tutor-section h3 {
+      margin: 0 0 10px; font-size: 0.78rem; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--accent);
+    }
+    .tutor-section p { margin: 0 0 8px; font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; }
+    .tutor-section p:last-child { margin-bottom: 0; }
+    .tutor-section ul { margin: 4px 0 8px; padding-left: 18px; }
+    .tutor-section ul li { font-size: 0.85rem; color: #cbd5e1; line-height: 1.7; }
+    .tutor-section code { background: #1e293b; color: #93c5fd; padding: 1px 4px; border-radius: 3px; font-size: 0.82rem; }
+    .tutor-section strong { color: #f1f5f9; }
+    .tutor-section em { color: #a5b4fc; font-style: italic; }
+    .ref-sections-label {
+      padding: 8px 16px 4px; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: .08em; color: #64748b;
+    }
   </style>
 </head>
 <body>
@@ -412,10 +470,32 @@
   <div id="streak-counter" style="display:flex;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;margin-left:4px;"></div>
   <div class="pills-wrapper" id="pills-wrapper"></div>
   <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 25 feladat</div>
+  <button class="btn-restart" onclick="restartPractice()" title="Összes feladat törlése és újrakezdés">🔄 Újrakezd</button>
   <button class="btn-ref-toggle" id="btn-ref-toggle" title="Tanulási segédlet – kódpéldák és magyarázatok">
     <i class="fas fa-book-open"></i> 📖 Segédlet
   </button>
 </header>
+
+<!-- WELCOME MODAL -->
+<div class="welcome-overlay" id="welcome-modal">
+  <div class="welcome-box">
+    <h2>🏗️ HTML/CSS Gyakorló – Espresso Sarok Kávézó</h2>
+    <p>Ebben a gyakorlóban <strong>lépésről lépésre felépítesz egy kávézó weboldalt</strong> – pontosan úgy, ahogy a valódi ágazati vizsgán is kell.</p>
+    <p>25 feladaton keresztül megtanulod:</p>
+    <ul>
+      <li>az oldal alapszerkezetét (HTML váz, meta adatok, Bootstrap)</li>
+      <li>navigáció, képek, listák, táblázatok elhelyezését</li>
+      <li>Bootstrap rácsrendszert és stílusosztályokat</li>
+      <li>CSS-t: betűtípus, méretek, színek, pszeudoelemek</li>
+    </ul>
+    <p>A <strong>📖 Segédlet</strong> gombnál minden feladatnál megtalálod a tananyag magyarázatát és kódpéldákat.</p>
+    <div class="welcome-preview">
+      <iframe id="welcome-iframe" sandbox="allow-same-origin"></iframe>
+      <p>Ilyen lesz a kész weboldal</p>
+    </div>
+    <button class="btn-start" onclick="startPractice()">Irány a gyakorlás! →</button>
+  </div>
+</div>
 
 <!-- MAIN -->
 <div class="layout">
@@ -483,7 +563,7 @@
 <div class="ref-overlay" id="ref-overlay" onclick="closeRef()"></div>
 <div class="ref-panel" id="ref-panel">
   <div class="ref-header">
-    <span>📚 Referencia</span>
+    <span id="ref-title">📚 Segédlet</span>
     <button class="btn-close-ref" onclick="closeRef()"><i class="fas fa-times"></i></button>
   </div>
   <div class="ref-body" id="ref-body"></div>
@@ -558,7 +638,6 @@ require(['vs/editor/editor.main'], function() {
     state.editors.css.onDidChangeModelContent(() => schedulePreview());
 
     buildPills();
-    buildRefPanel();
     const lastTask = parseInt(localStorage.getItem('practice_lastTask') || '0');
     loadTask(Math.min(lastTask, tasks.length - 1));
   });
@@ -649,9 +728,10 @@ function loadTask(index) {
   document.getElementById('score-display').textContent = '–';
   updatePills();
   updatePreview();
+  updateRefPanel(index);
 
   // switch to HTML tab
-  switchTab('html');
+  switchTab(index < 18 ? 'html' : 'css');
 }
 
 function switchTask(index) {
@@ -959,9 +1039,30 @@ function triggerConfetti() {
 // REFERENCE PANEL
 // =====================================================================
 
-function buildRefPanel() {
+function updateRefPanel(taskIndex) {
+  const task = tasks[taskIndex];
   const body = document.getElementById('ref-body');
   body.innerHTML = '';
+
+  // Panel title
+  const titleEl = document.getElementById('ref-title');
+  if (titleEl) titleEl.textContent = '📚 ' + task.emoji + ' ' + task.title;
+
+  // Tutor content (task-specific explanation)
+  const tutor = taskTutors[task.id];
+  if (tutor) {
+    const tutorDiv = document.createElement('div');
+    tutorDiv.className = 'tutor-section';
+    tutorDiv.innerHTML = '<h3>📖 Tananyag</h3>' + tutor;
+    body.appendChild(tutorDiv);
+  }
+
+  // Label for reference sections
+  const label = document.createElement('div');
+  label.className = 'ref-sections-label';
+  label.textContent = 'Kódpéldák';
+  body.appendChild(label);
+
   refSections.forEach(sec => {
     const section = document.createElement('div');
     section.className = 'ref-section';
@@ -1028,6 +1129,50 @@ document.getElementById('btn-ref-toggle').addEventListener('click', () => {
   if (panel.classList.contains('open')) closeRef();
   else openRef();
 });
+
+// =====================================================================
+// WELCOME MODAL
+// =====================================================================
+
+function setupWelcomePreview() {
+  if (typeof S_FINAL === 'undefined' || typeof Css7 === 'undefined') return;
+  let html = S_FINAL;
+  html = html.replace(/src=["']img\/([^"']+)["']/gi, (m, fn) => {
+    const seed = fn.replace(/\.[^.]+$/, '');
+    const isHeader = /fejlec|header|banner/i.test(seed);
+    return `src="https://picsum.photos/seed/${seed}/${isHeader ? 900 : 400}/${isHeader ? 220 : 280}"`;
+  });
+  const patchedCss = Css7.replace(/url\(['"]?img\/([^'")\s]+)['"]?\)/gi, (m, fn) => {
+    const seed = fn.replace(/\.[^.]+$/, '');
+    return `url('https://picsum.photos/seed/${seed}/32/32')`;
+  });
+  html = html.replace('</head>', '<style>' + patchedCss + '</style>\n</head>');
+  document.getElementById('welcome-iframe').srcdoc = html;
+}
+
+function startPractice() {
+  localStorage.setItem('practice_welcomeShown', '1');
+  document.getElementById('welcome-modal').classList.remove('visible');
+}
+
+// Show welcome modal if not shown yet (or after restart)
+if (!localStorage.getItem('practice_welcomeShown')) {
+  document.getElementById('welcome-modal').classList.add('visible');
+  // Setup preview after practice_tasks.js is available (already loaded)
+  setupWelcomePreview();
+}
+
+// =====================================================================
+// RESTART
+// =====================================================================
+
+function restartPractice() {
+  if (!confirm('Biztosan újrakezded? Az összes eddigi haladásod törlődik!')) return;
+  // Clear all practice localStorage keys
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('practice_'));
+  keys.forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
 </script>
 </body>
 </html>
