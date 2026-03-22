@@ -559,7 +559,8 @@ require(['vs/editor/editor.main'], function() {
 
     buildPills();
     buildRefPanel();
-    loadTask(0);
+    const lastTask = parseInt(localStorage.getItem('practice_lastTask') || '0');
+    loadTask(Math.min(lastTask, tasks.length - 1));
   });
 });
 
@@ -622,13 +623,18 @@ function loadTask(index) {
 
   saveCurrentEditors();
   state.currentTask = index;
+  localStorage.setItem('practice_lastTask', index);
   const task = tasks[index];
 
   const savedHtml = localStorage.getItem('practice_task_' + index + '_html');
   const savedCss  = localStorage.getItem('practice_task_' + index + '_css');
 
-  const htmlVal = (savedHtml !== null) ? savedHtml : task.starterHtml;
-  const cssVal  = (savedCss  !== null) ? savedCss  : task.starterCss;
+  const htmlVal = (savedHtml !== null && savedHtml !== '') ? savedHtml
+                : (state.taskStatus[index] === 'done' && task.solution) ? task.solution
+                : task.starterHtml;
+  const cssVal  = (savedCss  !== null && savedCss  !== '') ? savedCss
+                : (state.taskStatus[index] === 'done' && task.solutionCss) ? task.solutionCss
+                : task.starterCss;
 
   state.editors.html.setValue(htmlVal);
   state.editors.css.setValue(cssVal);
