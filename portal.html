@@ -895,6 +895,8 @@
 </div>
 
 <script>
+    const API      = 'https://agazati.up.railway.app';
+    const API_BASE = 'https://agazati.up.railway.app';
     const stored = sessionStorage.getItem('kandoUser');
     if (!stored) {
         window.location.replace('login.html');
@@ -961,8 +963,6 @@
     }
 
     // ── Vizsga mód ellenőrzés ─────────────────────────────────────────────────
-    const API = 'https://agazati.up.railway.app';
-
     let portalExamMode = false;
 
     function openWebExam() {
@@ -1394,7 +1394,6 @@
     }
 
     // ── Ötlet Láda ────────────────────────────────────────────────────────────
-    const API_BASE = 'https://agazati.up.railway.app';
     let hibaKepBase64 = null;
 
     function openOtletModal() {
