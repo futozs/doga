@@ -38,7 +38,7 @@ const S2 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -52,7 +52,7 @@ const S3 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -68,7 +68,7 @@ const S4 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -88,7 +88,7 @@ const S5 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -110,7 +110,7 @@ const S6 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -132,7 +132,7 @@ const S7 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -154,7 +154,7 @@ const S8 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -185,7 +185,7 @@ const S9 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -224,7 +224,7 @@ const S10 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -265,7 +265,7 @@ const S11 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -308,7 +308,7 @@ const S12 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -353,7 +353,7 @@ const S13 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -399,7 +399,7 @@ const S14 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -455,7 +455,7 @@ const S15 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -522,7 +522,7 @@ const S16 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -606,7 +606,7 @@ const S17 = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -690,7 +690,7 @@ const S_FINAL = _H + `<div id="leiras">
 
 <nav>
   <ul>
-    <li><a href="#kaveink">Kávéink</a></li>
+    <li><a href="#kaveink">Kávék</a></li>
     <li><a href="#galeria">Galéria</a></li>
     <li><a href="#arlista">Árlista</a></li>
     <li><a href="https://maps.google.com/maps?q=Budapest" target="_blank">Térkép</a></li>
@@ -1140,7 +1140,7 @@ const taskTutors = {
 // ─── Referencia szekciók ──────────────────────────────────────────────────────
 const refSections = [
   { title: 'HTML váz', code: '<!DOCTYPE html>\n<html lang="hu">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Cím</title>\n  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n\n</body>\n</html>' },
-  { title: 'Navigáció (target="_blank")', code: '<nav>\n  <ul>\n    <li><a href="#kaveink">Kávéink</a></li>\n    <li><a href="https://maps.google.com" target="_blank">Térkép</a></li>\n  </ul>\n</nav>' },
+  { title: 'Navigáció (target="_blank")', code: '<nav>\n  <ul>\n    <li><a href="#kaveink">Kávék</a></li>\n    <li><a href="https://maps.google.com" target="_blank">Térkép</a></li>\n  </ul>\n</nav>' },
   { title: 'img#fejlec (alt + title)', code: '<img id="fejlec" src="img/banner.jpg" alt="Oldal neve" title="Oldal neve">' },
   { title: 'h1#felirat + span.text-uppercase', code: '<h1 id="felirat"><span class="text-uppercase">Első szó</span> többi szó</h1>' },
   { title: 'Bekezdés (p.my-3)', code: '<p class="my-3">Szöveg itt.</p>' },
