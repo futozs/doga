@@ -649,7 +649,7 @@
             <span class="desc">Python programozási feladatok</span>
             <span class="vizsga-status" id="status-python"></span>
         </a>
-        <a class="option-card web" id="card-web" href="web/index.html" onclick="event.preventDefault(); openWebExam()">
+        <a class="option-card web" id="card-web" href="web/index.html" onclick="event.preventDefault(); location.replace('web/index.html')">
             <span class="icon"><i class="fas fa-globe"></i></span>
             <span class="label">WEB</span>
             <span class="desc">HTML, CSS, Bootstrap feladatok</span>
@@ -950,6 +950,11 @@
             const isExam = cfg.test_mode === 'live' || cfg.test_mode === 'vizsga';
             if (isExam) {
                 portalExamMode = true;
+                const cardWeb = document.getElementById('card-web');
+                if (cardWeb) cardWeb.onclick = function(e) {
+                    e.preventDefault();
+                    document.getElementById('web-exam-modal').style.display = 'flex';
+                };
             }
 
             if (cfg.test_mode !== 'vizsga') return;
@@ -1213,8 +1218,9 @@
                 renderSubject(progress.web,    '🌐 WEB feladat',    'ered-bar-web',    'web',    rankData?.web) +
                 renderSubject(progress.python, '🐍 Python feladat', 'ered-bar-python', 'python', rankData?.python) +
                 renderAchievements(progress);
-        } catch {
-            document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.</div>';
+        } catch(err) {
+            console.error('Eredmények betöltési hiba:', err);
+            document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.<br><small style="color:#64748b">' + (err?.message || 'Ismeretlen hiba') + '</small></div>';
         }
     }
 
