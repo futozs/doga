@@ -869,6 +869,31 @@
 
 <div style="position:fixed;bottom:8px;left:12px;font-size:0.7rem;color:rgba(255,255,255,0.22);pointer-events:none;user-select:none;z-index:9999;letter-spacing:0.4px;"><i class="fas fa-keyboard"></i> Tervezte és fejleszti: <strong style="color:rgba(255,255,255,0.32);font-weight:600;">Sándorné Feke Réka</strong></div>
 
+
+<!-- Kötelező jelszócsere modal (ideiglenes jelszó után) -->
+<div class="pw-change-overlay" id="pw-change-overlay">
+    <div class="pw-change-box">
+        <h3><i class="fas fa-lock"></i> Jelszó megváltoztatása</h3>
+        <p>Ideiglenes jelszóval léptél be. A folytatáshoz kötelező megváltoztatni a jelszavadat!</p>
+        <div id="pw-change-error" style="display:none;color:#e94560;background:rgba(233,69,96,0.1);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.85rem;"></div>
+        <div class="form-group">
+            <label>Jelenlegi (ideiglenes) jelszó</label>
+            <input type="password" id="pw-old" placeholder="Abc1234">
+        </div>
+        <div class="form-group">
+            <label>Új jelszó (min. 6 karakter)</label>
+            <input type="password" id="pw-new" placeholder="Új jelszó">
+        </div>
+        <div class="form-group">
+            <label>Új jelszó megerősítése</label>
+            <input type="password" id="pw-new2" placeholder="Új jelszó újra">
+        </div>
+        <button class="pw-change-btn" id="pw-change-btn" onclick="submitPasswordChange()">
+            <i class="fas fa-check"></i> Jelszó mentése
+        </button>
+    </div>
+</div>
+
 <script>
     const stored = sessionStorage.getItem('kandoUser');
     if (!stored) {
@@ -1570,30 +1595,5 @@
         return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 </script>
-
-<!-- Kötelező jelszócsere modal (ideiglenes jelszó után) -->
-<div class="pw-change-overlay" id="pw-change-overlay">
-    <div class="pw-change-box">
-        <h3><i class="fas fa-lock"></i> Jelszó megváltoztatása</h3>
-        <p>Ideiglenes jelszóval léptél be. A folytatáshoz kötelező megváltoztatni a jelszavadat!</p>
-        <div id="pw-change-error" style="display:none;color:#e94560;background:rgba(233,69,96,0.1);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.85rem;"></div>
-        <div class="form-group">
-            <label>Jelenlegi (ideiglenes) jelszó</label>
-            <input type="password" id="pw-old" placeholder="Abc1234">
-        </div>
-        <div class="form-group">
-            <label>Új jelszó (min. 6 karakter)</label>
-            <input type="password" id="pw-new" placeholder="Új jelszó">
-        </div>
-        <div class="form-group">
-            <label>Új jelszó megerősítése</label>
-            <input type="password" id="pw-new2" placeholder="Új jelszó újra">
-        </div>
-        <button class="pw-change-btn" id="pw-change-btn" onclick="submitPasswordChange()">
-            <i class="fas fa-check"></i> Jelszó mentése
-        </button>
-    </div>
-</div>
-
 </body>
 </html>
