@@ -1795,6 +1795,35 @@
             observer.observe(endSection, { attributes: true, attributeFilter: ['class', 'style'] });
         })();
 
+        // ── ÚJ! badge – feladatválasztóban 1 hétig megjelenik az új feladatoknál ──
+        (function() {
+            // Feladat szám → hozzáadás dátuma (ISO formátum)
+            const TASK_DATES = {
+                29: '2026-03-24'
+            };
+            const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+            function addNewBadges() {
+                document.querySelectorAll('.custom-cb').forEach(function(cb) {
+                    const num = parseInt(cb.value);
+                    const dateStr = TASK_DATES[num];
+                    if (!dateStr) return;
+                    if (Date.now() - new Date(dateStr).getTime() >= ONE_WEEK_MS) return;
+                    const label = cb.closest('label');
+                    if (!label || label.querySelector('.custom-new-tag')) return;
+                    const badge = document.createElement('span');
+                    badge.className = 'custom-new-tag';
+                    badge.textContent = 'ÚJ!';
+                    label.appendChild(badge);
+                });
+            }
+
+            const list = document.getElementById('custom-task-list');
+            if (list) {
+                new MutationObserver(addNewBadges).observe(list, { childList: true, subtree: true });
+            }
+        })();
+
         // ── Plusz idő kérés – autoSubmitTest() felülírása ──────────────────────
         window.autoSubmitTest = function() {
             const modal = document.getElementById('plusido-modal');
@@ -1912,6 +1941,11 @@
 .custom-past-tag {
     font-size:0.7rem;color:#22c55e;background:rgba(34,197,94,0.1);
     border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:1px 7px;
+}
+.custom-new-tag {
+    font-size:0.7rem;color:#fbbf24;background:rgba(251,191,36,0.12);
+    border:1px solid rgba(251,191,36,0.4);border-radius:10px;padding:1px 7px;
+    font-weight:700;
 }
 .custom-count-label { font-size:0.8rem;margin-top:4px; }
 .custom-modal-footer {
