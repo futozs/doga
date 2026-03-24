@@ -1405,6 +1405,20 @@ public class Database
     public int StartSession(string email, string page)
     {
         using var conn = Open();
+        // Ha már van aktív session (heartbeat az utóbbi 120 mp-ben), adjuk vissza azt
+        using var checkCmd = conn.CreateCommand();
+        checkCmd.CommandText = @"
+            SELECT id FROM sessions
+            WHERE LOWER(user_email) = LOWER($email) AND page = $page
+              AND logout_at IS NULL
+              AND (julianday('now') - julianday(last_heartbeat)) * 86400 < 120
+            ORDER BY id DESC LIMIT 1";
+        checkCmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        checkCmd.Parameters.AddWithValue("$page",  page);
+        var existing = checkCmd.ExecuteScalar();
+        if (existing != null) return Convert.ToInt32(existing);
+
+        // Nincs aktív session – új létrehozása
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
             INSERT INTO sessions (user_email, page, login_at, last_heartbeat, duration_sec)
