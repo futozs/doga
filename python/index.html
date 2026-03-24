@@ -1483,6 +1483,31 @@
     </div>
 
     <!-- Confirmation Modal -->
+    <!-- Plusz idő modal -->
+    <div id="plusido-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:25000; justify-content:center; align-items:center;">
+        <div style="background:#1e1e2e; border:2px solid #fbbf24; border-radius:16px; padding:2.5rem; max-width:420px; width:90%; text-align:center; box-shadow:0 0 40px rgba(251,191,36,0.3);">
+            <div style="font-size:2.8rem; margin-bottom:0.6rem;">⏰</div>
+            <h2 style="color:#fbbf24; font-size:1.4rem; margin-bottom:0.5rem;">Az idő lejárt!</h2>
+            <p style="color:#94a3b8; font-size:0.95rem; margin-bottom:1.5rem;">Mennyi plusz időt kérsz?</p>
+            <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-bottom:1.5rem;">
+                <input id="plusido-input" type="number" min="1" max="999" value="15"
+                    onkeydown="if(event.key==='Enter') plusidoMegkap()"
+                    style="width:80px; padding:0.6rem 0.4rem; background:#0f172a; border:1.5px solid #fbbf24; border-radius:8px; color:#fbbf24; font-size:1.3rem; font-weight:700; text-align:center; font-family:inherit;">
+                <span style="color:#94a3b8; font-size:1rem;">perc</span>
+            </div>
+            <div style="display:flex; gap:0.75rem; justify-content:center;">
+                <button onclick="plusidoMegkap()"
+                    style="padding:0.75rem 1.6rem; background:#fbbf24; border:none; border-radius:10px; color:#0f172a; font-size:1rem; font-weight:700; cursor:pointer; font-family:inherit;">
+                    ✅ Megkapom a plusz időt
+                </button>
+                <button onclick="plusidoBead()"
+                    style="padding:0.75rem 1.2rem; background:transparent; border:1.5px solid #475569; border-radius:10px; color:#94a3b8; font-size:0.95rem; cursor:pointer; font-family:inherit;">
+                    Beadom amit csináltam
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="submit-modal">
         <div class="modal-content">
             <h3><i class="fas fa-triangle-exclamation"></i> Biztos vagy benne?</h3>
@@ -1769,6 +1794,46 @@
             });
             observer.observe(endSection, { attributes: true, attributeFilter: ['class', 'style'] });
         })();
+
+        // ── Plusz idő kérés – autoSubmitTest() felülírása ──────────────────────
+        window.autoSubmitTest = function() {
+            const modal = document.getElementById('plusido-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                const input = document.getElementById('plusido-input');
+                if (input) { input.value = 15; input.focus(); input.select(); }
+            } else {
+                // Fallback ha a modal nincs betöltve
+                const perc = parseInt(prompt('Az idő lejárt! Mennyi plusz időt kérsz? (percek)') || '0', 10);
+                if (perc > 0 && typeof window.globalTimeRemaining !== 'undefined') {
+                    window.globalTimeRemaining += perc * 60;
+                    if (typeof window.startGlobalTimer === 'function') window.startGlobalTimer();
+                } else {
+                    if (typeof window.submitTest === 'function') window.submitTest();
+                }
+            }
+        };
+
+        function plusidoMegkap() {
+            const perc = parseInt(document.getElementById('plusido-input').value || '0', 10);
+            if (!perc || perc < 1) {
+                document.getElementById('plusido-input').focus();
+                return;
+            }
+            document.getElementById('plusido-modal').style.display = 'none';
+            if (typeof window.globalTimeRemaining !== 'undefined') {
+                window.globalTimeRemaining += perc * 60;
+            }
+            if (typeof window.startGlobalTimer === 'function') {
+                window.startGlobalTimer();
+            }
+        }
+
+        function plusidoBead() {
+            document.getElementById('plusido-modal').style.display = 'none';
+            if (typeof window.submitTest === 'function') window.submitTest();
+        }
+        // ────────────────────────────────────────────────────────────────────────
 
         function triggerPythonDeadline() {
             sessionStorage.setItem('vizsga_python_beadva', '1');

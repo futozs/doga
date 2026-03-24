@@ -2139,9 +2139,17 @@ async function submitTest() {
 }
 
 // Automatikus beküldés idő lejárta esetén
+// (Az index.html felülírja ezt: plusz idő kérés modal jelenik meg)
 function autoSubmitTest() {
-    alert('Az idő lejárt! A teszt automatikusan beküldésre került.');
-    submitTest();
+    const modal = document.getElementById('plusido-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        const input = document.getElementById('plusido-input');
+        if (input) { input.value = 15; input.focus(); input.select(); }
+    } else {
+        alert('Az idő lejárt! A teszt automatikusan beküldésre került.');
+        submitTest();
+    }
 }
 
 // Fullscreen mód bekapcsolása
