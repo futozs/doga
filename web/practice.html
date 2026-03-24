@@ -513,9 +513,9 @@
   <div id="streak-counter" style="display:flex;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;margin-left:4px;"></div>
   <div class="pills-wrapper" id="pills-wrapper"></div>
   <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 25 feladat</div>
-  <button class="btn-restart" onclick="restartPractice()" title="Összes feladat törlése és újrakezdés">🔄 Újrakezd</button>
+  <button class="btn-restart" onclick="restartPractice()" title="Összes feladat törlése és újrakezdés"><i class="fa-solid fa-arrow-rotate-right"></i> Újrakezd</button>
   <button class="btn-ref-toggle" id="btn-ref-toggle" title="Tanulási segédlet – kódpéldák és magyarázatok">
-    <i class="fas fa-book-open"></i> 📖 Segédlet
+    <i class="fa-solid fa-book"></i> Segédlet
   </button>
 </header>
 
@@ -549,7 +549,7 @@
         <li><strong>Bootstrap</strong> – rácsrendszer, stílusosztályok</li>
         <li><strong>CSS</strong> – betűtípus, méretek, színek, pszeudoelemek</li>
       </ul>
-      <p>A <strong>📖 Segédlet</strong> gombban minden feladatnál megtalálod a tananyag magyarázatát és kódpéldákat.</p>
+      <p>A <strong><i class="fa-solid fa-book"></i> Segédlet</strong> gombban minden feladatnál megtalálod a tananyag magyarázatát és kódpéldákat.</p>
       <div class="welcome-preview">
         <iframe id="welcome-iframe" sandbox="allow-same-origin"></iframe>
         <p class="welcome-preview-label">☝️ Görgethető előnézet – ilyen lesz a kész weboldal</p>
@@ -625,7 +625,7 @@
 <div class="ref-overlay" id="ref-overlay" onclick="closeRef()"></div>
 <div class="ref-panel" id="ref-panel">
   <div class="ref-header">
-    <span id="ref-title">📚 Segédlet</span>
+    <span id="ref-title"><i class="fa-solid fa-book"></i> Segédlet</span>
     <button class="btn-close-ref" onclick="closeRef()"><i class="fas fa-times"></i></button>
   </div>
   <div class="ref-body" id="ref-body"></div>
