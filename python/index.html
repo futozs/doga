@@ -1795,34 +1795,24 @@
             observer.observe(endSection, { attributes: true, attributeFilter: ['class', 'style'] });
         })();
 
-        // ── ÚJ! badge – feladatválasztóban 1 hétig megjelenik az új feladatoknál ──
-        (function() {
-            // Feladat szám → hozzáadás dátuma (ISO formátum)
-            const TASK_DATES = {
-                29: '2026-03-24'
-            };
-            const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-
-            function addNewBadges() {
-                document.querySelectorAll('.custom-cb').forEach(function(cb) {
-                    const num = parseInt(cb.value);
-                    const dateStr = TASK_DATES[num];
-                    if (!dateStr) return;
-                    if (Date.now() - new Date(dateStr).getTime() >= ONE_WEEK_MS) return;
-                    const label = cb.closest('label');
-                    if (!label || label.querySelector('.custom-new-tag')) return;
-                    const badge = document.createElement('span');
-                    badge.className = 'custom-new-tag';
-                    badge.textContent = 'ÚJ!';
-                    label.appendChild(badge);
-                });
-            }
-
-            const list = document.getElementById('custom-task-list');
-            if (list) {
-                new MutationObserver(addNewBadges).observe(list, { childList: true, subtree: true });
-            }
-        })();
+        // ÚJ! badge logika – globálisan elérhető, mert a DOM elem (custom-task-list)
+        // csak a script blokk UTÁN jelenik meg az HTML-ben
+        window._ujBadgeDates = { 29: '2026-03-24' };
+        window._ujBadgeMs    = 7 * 24 * 60 * 60 * 1000;
+        window._addUjBadges  = function() {
+            document.querySelectorAll('.custom-cb').forEach(function(cb) {
+                const num = parseInt(cb.value);
+                const dateStr = window._ujBadgeDates[num];
+                if (!dateStr) return;
+                if (Date.now() - new Date(dateStr).getTime() >= window._ujBadgeMs) return;
+                const label = cb.closest('label');
+                if (!label || label.querySelector('.custom-new-tag')) return;
+                const badge = document.createElement('span');
+                badge.className = 'custom-new-tag';
+                badge.textContent = 'ÚJ!';
+                label.appendChild(badge);
+            });
+        };
 
         // ── Plusz idő kérés – autoSubmitTest() felülírása ──────────────────────
         window.autoSubmitTest = function() {
@@ -2022,6 +2012,14 @@ function customTypeFilter(btn) {
     btn.classList.add('active');
     renderCustomTaskList();
 }
+
+// ÚJ! badge – itt fut, mert a #custom-task-list elem itt már létezik a DOM-ban
+(function() {
+    const list = document.getElementById('custom-task-list');
+    if (!list || !window._addUjBadges) return;
+    new MutationObserver(window._addUjBadges).observe(list, { childList: true, subtree: true });
+    window._addUjBadges(); // azonnal is lefut, ha a lista már ki van töltve
+})();
 </script>
 <script src="../special-roles.js"></script>
 </body>
