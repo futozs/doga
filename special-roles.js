@@ -305,7 +305,7 @@
         if (user.szerep === 'oktato') {
             injectCSS();
             injectHTML();
-            document.getElementById('sr-hiba-fab').style.display   = 'flex';
+            if (isPortal()) document.getElementById('sr-hiba-fab').style.display    = 'flex';
             if (isPortal()) document.getElementById('sr-feladat-fab').style.display = 'flex';
             return;
         }
@@ -320,8 +320,8 @@
             if (!isTesztelő && !isFeladatkeszito) return;
             injectCSS();
             injectHTML();
-            if (isTesztelő)                          document.getElementById('sr-hiba-fab').style.display   = 'flex';
-            if (isFeladatkeszito && isPortal())       document.getElementById('sr-feladat-fab').style.display = 'flex';
+            if (isTesztelő       && isPortal()) document.getElementById('sr-hiba-fab').style.display    = 'flex';
+            if (isFeladatkeszito && isPortal()) document.getElementById('sr-feladat-fab').style.display = 'flex';
         } catch {}
     }
 
