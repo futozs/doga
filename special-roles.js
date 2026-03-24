@@ -81,8 +81,8 @@
         const fab = document.createElement('div');
         fab.id = 'sr-fab-wrap';
         fab.innerHTML = `
-            <button class="sr-fab" id="sr-hiba-fab"    onclick="window._srHibaOpen()">🐛 Hibajelentés</button>
-            <button class="sr-fab" id="sr-feladat-fab" onclick="window._srFeladatOpen()">✏️ Feladat küldése</button>
+            <button class="sr-fab" id="sr-hiba-fab"    onclick="window._srHibaOpen()"    style="display:none;">🐛 Hibajelentés</button>
+            <button class="sr-fab" id="sr-feladat-fab" onclick="window._srFeladatOpen()" style="display:none;">✏️ Feladat küldése</button>
         `;
         document.body.appendChild(fab);
 

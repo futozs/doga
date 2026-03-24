@@ -1841,11 +1841,9 @@
                 if (nameEl && !nameEl.querySelector('.feladatkeszito-badge'))
                     nameEl.insertAdjacentHTML('beforeend', '<span class="feladatkeszito-badge">✏️ Feladatkészítő</span>');
                 msgEl.style.color = '#86efac';
-                msgEl.textContent = '✅ Mostantól Feladatkészítő vagy! ✏️ gomb jelenik meg az oldalakon.';
+                msgEl.textContent = '✅ Mostantól Feladatkészítő vagy! Az oldal újratöltődik...';
                 btn.style.display = 'none';
-                // Csatlakozás gomb elrejtése
-                const csBtn = document.getElementById('csatlakozas-btn');
-                if (csBtn) csBtn.style.display = 'none';
+                setTimeout(() => location.reload(), 1500);
             } else {
                 const d = await res.json().catch(() => ({}));
                 msgEl.style.color = '#e94560';
