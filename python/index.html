@@ -1810,7 +1810,9 @@
                 const badge = document.createElement('span');
                 badge.className = 'custom-new-tag';
                 badge.textContent = 'ÚJ!';
-                label.appendChild(badge);
+                const ptsSpan = label.querySelector('.custom-task-pts');
+                if (ptsSpan) label.insertBefore(badge, ptsSpan);
+                else label.appendChild(badge);
             });
         };
 
