@@ -59,7 +59,7 @@ const S3 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 </div>
 ` + _F;
@@ -75,7 +75,7 @@ const S4 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -95,7 +95,7 @@ const S5 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -117,7 +117,7 @@ const S6 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -139,7 +139,7 @@ const S7 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -161,7 +161,7 @@ const S8 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -192,7 +192,7 @@ const S9 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -231,7 +231,7 @@ const S10 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -272,7 +272,7 @@ const S11 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -315,7 +315,7 @@ const S12 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -360,7 +360,7 @@ const S13 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -406,7 +406,7 @@ const S14 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -462,7 +462,7 @@ const S15 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -529,7 +529,7 @@ const S16 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -613,7 +613,7 @@ const S17 = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -697,7 +697,7 @@ const S_FINAL = _H + `<div id="leiras">
   </ul>
 </nav>
 
-<img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
+<img id="fejlec" src="img/fejlec.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó">
 
 <div class="container">
   <h1 id="felirat"><span class="text-uppercase">Espresso</span> Sarok Kávézó</h1>
@@ -860,13 +860,13 @@ const tasks = [
   },
   {
     id: 3, emoji: '🖼️', title: 'Fejléc kép',
-    description: 'Add hozzá a fejléc képet!<br><br>A <code>&lt;nav&gt;</code> után:<br><code>&lt;img id="fejlec" src="img/kavezobanner.jpg" alt="Espresso Sarok Kávézó" title="Espresso Sarok Kávézó"&gt;</code><br><br>💡 <strong>Emmet tipp:</strong> írd be: <code>img</code> majd nyomj <kbd>Tab</kbd> gombot – automatikusan kitölti az attribútumokat!<br><br>⚠️ <strong>Vizsga-csapda:</strong> az <code>alt</code> és <code>title</code> attribútum értéke <em>azonos</em> szöveg, és <strong>mindkettő kötelező</strong>!',
+    description: 'Add hozzá a fejléc képet!<br><br>A <code>&lt;nav&gt;</code> után helyezd el az <code>img</code> mappában található <code>fejlec.jpg</code> képet úgy, hogy ha nem jeleníthető meg a kép, vagy ha fölé visszük az egeret, az <strong>Espresso Sarok Kávézó</strong> szöveg jelenjen meg.',
     starterHtml: S2, starterCss: '',
     checks: [
       { label: '<img id="fejlec">', explanation: 'Kell: <img id="fejlec" ...>', fn: (h,c,d) => !!d.querySelector('img#fejlec') },
-      { label: 'alt attribútum', explanation: 'Az img#fejlec-nek kell alt="..." attribútum', fn: (h,c,d) => { const i=d.querySelector('img#fejlec'); return !!(i&&i.hasAttribute('alt')); } },
-      { label: 'title attribútum', explanation: 'Az img#fejlec-nek kell title="..." is – a vizsgán MINDKETTŐ kötelező!', fn: (h,c,d) => { const i=d.querySelector('img#fejlec'); return !!(i&&i.hasAttribute('title')); } },
-      { label: 'alt és title azonos szöveg', explanation: 'A vizsgán az alt és title értéke azonos szöveg kell legyen', fn: (h,c,d) => { const i=d.querySelector('img#fejlec'); return !!(i&&i.getAttribute('alt')&&i.getAttribute('alt')===i.getAttribute('title')); } },
+      { label: 'src="img/fejlec.jpg"', explanation: 'A kép forrása: src="img/fejlec.jpg"', fn: (h,c,d) => { const i=d.querySelector('img#fejlec'); return !!(i&&i.getAttribute('src')==='img/fejlec.jpg'); } },
+      { label: 'alt="Espresso Sarok Kávézó"', explanation: 'Ha nem jeleníthető meg a kép, ez a szöveg látszik', fn: (h,c,d) => { const i=d.querySelector('img#fejlec'); return !!(i&&i.getAttribute('alt')==='Espresso Sarok Kávézó'); } },
+      { label: 'title="Espresso Sarok Kávézó"', explanation: 'Ha fölé visszük az egeret, ez a szöveg jelenik meg', fn: (h,c,d) => { const i=d.querySelector('img#fejlec'); return !!(i&&i.getAttribute('title')==='Espresso Sarok Kávézó'); } },
     ],
     solution: S3,
   },
