@@ -441,6 +441,45 @@
             border: 1px solid #374151; border-radius: 8px;
             color: #9ca3af; font-size: 0.9rem; cursor: pointer;
         }
+        /* Korábbi ötletek szekció */
+        .otlet-history-section {
+            margin-top: 22px; border-top: 1px solid #1f3460; padding-top: 16px;
+        }
+        .otlet-history-title {
+            font-size: 0.78rem; font-weight: 700; color: #6366f1;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+        }
+        .otlet-history-item {
+            background: #0f1e3c; border-radius: 10px; padding: 12px 14px;
+            margin-bottom: 8px; border-left: 3px solid #1f3460;
+        }
+        .otlet-history-item.has-valasz { border-left-color: #0d9488; }
+        .otlet-history-meta {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
+        }
+        .otlet-status-badge {
+            font-size: 0.72rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .otlet-status-uj       { background: #1e3a5f; color: #93c5fd; }
+        .otlet-status-folyamatban { background: #1c2d1a; color: #86efac; }
+        .otlet-status-megvalasult { background: #1a2a1a; color: #4ade80; }
+        .otlet-status-elutasitva  { background: #2a1a1a; color: #f87171; }
+        .otlet-history-date { font-size: 0.72rem; color: #4b5563; }
+        .otlet-history-szoveg {
+            font-size: 0.84rem; color: #cbd5e1; line-height: 1.5;
+        }
+        .otlet-history-valasz {
+            margin-top: 8px; padding: 8px 10px;
+            background: rgba(13,148,136,.12); border-radius: 7px;
+            border-left: 2px solid #0d9488;
+        }
+        .otlet-history-valasz-label {
+            font-size: 0.72rem; font-weight: 700; color: #2dd4bf;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;
+        }
+        .otlet-history-valasz-szoveg { font-size: 0.83rem; color: #a7f3d0; line-height: 1.5; }
+        .otlet-history-empty { font-size: 0.84rem; color: #4b5563; font-style: italic; }
 
         .option-card {
             background: #16213e;
@@ -915,6 +954,11 @@
         <div class="otlet-modal-btns">
             <button class="otlet-cancel-btn" onclick="closeOtletModal()">Mégse</button>
             <button class="otlet-send-btn" id="otlet-send-btn" onclick="sendOtlet()">Küldés</button>
+        </div>
+        <!-- Korábbi ötletek -->
+        <div class="otlet-history-section" id="otlet-history-section" style="display:none;">
+            <div class="otlet-history-title"><i class="fas fa-history"></i> Korábbi ötleteim</div>
+            <div id="otlet-history-list"></div>
         </div>
     </div>
 </div>
@@ -1626,9 +1670,51 @@
         document.getElementById('otlet-send-btn').disabled = false;
         document.getElementById('otlet-send-btn').textContent = 'Küldés';
         document.getElementById('otlet-modal').classList.add('open');
+        loadOtletHistory();
     }
     function closeOtletModal() {
         document.getElementById('otlet-modal').classList.remove('open');
+    }
+
+    async function loadOtletHistory() {
+        const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+        if (!u.token) return;
+        const section = document.getElementById('otlet-history-section');
+        const list    = document.getElementById('otlet-history-list');
+        try {
+            const res = await fetch(`${API_BASE}/api/otlet/my`, {
+                headers: { 'Authorization': 'Bearer ' + u.token }
+            });
+            if (!res.ok) return;
+            const items = await res.json();
+            if (!items || items.length === 0) return;
+            section.style.display = 'block';
+            const statusLabel = { uj: 'Beérkezett', folyamatban: 'Folyamatban', megvalasult: 'Megvalósult', elutasitva: 'Elutasítva' };
+            const statusClass = { uj: 'otlet-status-uj', folyamatban: 'otlet-status-folyamatban', megvalasult: 'otlet-status-megvalasult', elutasitva: 'otlet-status-elutasitva' };
+            list.innerHTML = items.map(it => {
+                const sc   = statusClass[it.statusz] || 'otlet-status-uj';
+                const sl   = statusLabel[it.statusz] || it.statusz;
+                const date = it.createdAt ? it.createdAt.replace('T', ' ').substring(0, 16) : '';
+                const valaszHtml = it.adminValasz
+                    ? `<div class="otlet-history-valasz">
+                           <div class="otlet-history-valasz-label"><i class="fas fa-reply"></i> Tanári visszajelzés</div>
+                           <div class="otlet-history-valasz-szoveg">${esc(it.adminValasz)}</div>
+                       </div>`
+                    : '';
+                return `<div class="otlet-history-item${it.adminValasz ? ' has-valasz' : ''}">
+                    <div class="otlet-history-meta">
+                        <span class="otlet-status-badge ${sc}">${sl}</span>
+                        <span class="otlet-history-date">${esc(date)}</span>
+                    </div>
+                    <div class="otlet-history-szoveg">${esc(it.szoveg)}</div>
+                    ${valaszHtml}
+                </div>`;
+            }).join('');
+        } catch {}
+    }
+
+    function esc(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function openHibaModal() {
