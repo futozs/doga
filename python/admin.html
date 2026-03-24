@@ -2375,8 +2375,8 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                     const scored = Object.entries(rMap).map(([nev, v]) => {
                         const total = (v[1]||0) + (v[2]||0) + (v[3]||0) + (v[4]||0);
                         const score = total > 0 ? (4*(v[4]||0) + 3*(v[3]||0) + 2*(v[2]||0) + 1*(v[1]||0)) / total : 0;
-                        return { nev, score, total };
-                    }).filter(x => x.total >= 2).sort((a,b) => b.score - a.score);
+                        return { nev, score, total, weighted: score * total };
+                    }).filter(x => x.total >= 3).sort((a,b) => b.weighted - a.weighted);
                     const topFlopEl = document.getElementById('feedback-top-flop');
                     if (scored.length >= 2) {
                         const best = scored[0], worst = scored[scored.length - 1];
