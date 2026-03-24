@@ -22,6 +22,7 @@
         const s = document.createElement('style');
         s.id = 'sr-css';
         s.textContent = `
+            /* Feladat küldése FAB – portál bal alsó sarok */
             #sr-fab-wrap {
                 position: fixed; bottom: 24px; left: 24px;
                 display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
@@ -35,10 +36,24 @@
                 white-space: nowrap;
             }
             .sr-fab:hover { transform: translateY(-2px); }
-            #sr-hiba-fab    { background: #dc2626; box-shadow: 0 4px 18px rgba(220,38,38,.45); }
             #sr-feladat-fab { background: #0d9488; box-shadow: 0 4px 18px rgba(13,148,136,.45); }
-            #sr-hiba-fab:hover    { box-shadow: 0 6px 24px rgba(220,38,38,.6); }
             #sr-feladat-fab:hover { box-shadow: 0 6px 24px rgba(13,148,136,.6); }
+
+            /* Hibajelentés – kis kör ikon, jobb alsó sarok, visszafogott */
+            #sr-hiba-fab {
+                position: fixed; bottom: 14px; right: 14px; z-index: 25000;
+                width: 34px; height: 34px; border-radius: 50%; border: none;
+                background: #7f1d1d; color: #fca5a5;
+                font-size: 0.95rem; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                opacity: 0.38; transition: opacity .2s, transform .15s, box-shadow .15s;
+                box-shadow: 0 2px 8px rgba(0,0,0,.3);
+                padding: 0;
+            }
+            #sr-hiba-fab:hover {
+                opacity: 1; transform: scale(1.12);
+                box-shadow: 0 4px 16px rgba(220,38,38,.5);
+            }
 
             .sr-overlay {
                 display: none; position: fixed; inset: 0;
@@ -81,17 +96,25 @@
         const fab = document.createElement('div');
         fab.id = 'sr-fab-wrap';
         fab.innerHTML = `
-            <button class="sr-fab" id="sr-hiba-fab"    onclick="window._srHibaOpen()"    style="display:none;">🐛 Hibajelentés</button>
             <button class="sr-fab" id="sr-feladat-fab" onclick="window._srFeladatOpen()" style="display:none;">✏️ Feladat küldése</button>
         `;
         document.body.appendChild(fab);
+
+        // Hibajelentés gomb – kis kör ikon, jobb alsó sarok
+        const hibaBtn = document.createElement('button');
+        hibaBtn.id = 'sr-hiba-fab';
+        hibaBtn.title = 'Hibajelentés';
+        hibaBtn.setAttribute('onclick', 'window._srHibaOpen()');
+        hibaBtn.style.display = 'none';
+        hibaBtn.innerHTML = '<i class="fa-solid fa-bug"></i>';
+        document.body.appendChild(hibaBtn);
 
         // Hibajelentés modal
         const hm = document.createElement('div');
         hm.id = 'sr-hiba-modal'; hm.className = 'sr-overlay';
         hm.innerHTML = `
             <div class="sr-box" style="border:1.5px solid #dc2626;">
-                <h3 style="color:#f87171;">🐛 Hibajelentés</h3>
+                <h3 style="color:#f87171;"><i class="fa-solid fa-bug"></i> Hibajelentés</h3>
                 <p>Írj le egy tesztelés közben talált hibát. Csatolhatsz képernyőképet is.</p>
                 <div class="sr-fg">
                     <label>Leírás *</label>
@@ -270,6 +293,11 @@
     };
 
     // ── Init ─────────────────────────────────────────────────────────────────
+    function isPortal() {
+        return /portal\.html$|\/doga\/?$|\/doga\/portal/.test(window.location.pathname)
+            || window.location.pathname.endsWith('/');
+    }
+
     async function init() {
         const user = getUser();
         if (!user.email) return;
@@ -278,7 +306,7 @@
             injectCSS();
             injectHTML();
             document.getElementById('sr-hiba-fab').style.display   = 'flex';
-            document.getElementById('sr-feladat-fab').style.display = 'flex';
+            if (isPortal()) document.getElementById('sr-feladat-fab').style.display = 'flex';
             return;
         }
         if (user.szerep !== 'tanulo') return;
@@ -292,8 +320,8 @@
             if (!isTesztelő && !isFeladatkeszito) return;
             injectCSS();
             injectHTML();
-            if (isTesztelő)       document.getElementById('sr-hiba-fab').style.display    = 'flex';
-            if (isFeladatkeszito) document.getElementById('sr-feladat-fab').style.display  = 'flex';
+            if (isTesztelő)                          document.getElementById('sr-hiba-fab').style.display   = 'flex';
+            if (isFeladatkeszito && isPortal())       document.getElementById('sr-feladat-fab').style.display = 'flex';
         } catch {}
     }
 
