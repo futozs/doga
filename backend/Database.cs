@@ -1068,7 +1068,7 @@ public class Database
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
             SELECT nev, osztaly, megvalositva_szoveg, created_at
-            FROM otlet_lada WHERE statusz = 'megvalasult'
+            FROM otlet_lada WHERE statusz = 'megvalasult' AND tipus = 'otlet'
             ORDER BY updated_at DESC LIMIT 20";
         var list = new List<object>();
         using var r = cmd.ExecuteReader();
