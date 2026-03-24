@@ -770,7 +770,7 @@ print(1 <= a <= 5)       # True`},
   description:`<p>Gyakorolj if/elif/else-t egy valódi példán!</p>
 <p>BMI = testsúly (kg) / (magasság (m))²</p>
 <p>Bekérsz súlyt és magasságot, kiszámolod a BMI-t, majd kiírod:<br>
-<code>&lt; 18.5</code> → <code>Alulsúlyos</code><br>
+<code>&lt; 18.5</code> → <code>Sovány</code><br>
 <code>18.5–24.9</code> → <code>Normális</code><br>
 <code>25–29.9</code> → <code>Túlsúlyos</code><br>
 <code>≥ 30</code> → <code>Elhízott</code></p>
@@ -783,7 +783,7 @@ bmi = suly / mag ** 2
 print(f"BMI: {bmi:.1f}")
 
 if bmi < 18.5:
-    print("Alulsúlyos")
+    print("Sovány")
 elif bmi < 25:
 
 elif bmi < 30:
@@ -796,7 +796,7 @@ mag  = float(input("Magasság (m): "))
 bmi  = suly / mag ** 2
 print(f"BMI: {bmi:.1f}")
 if bmi < 18.5:
-    print("Alulsúlyos")
+    print("Sovány")
 elif bmi < 25:
     print("Normális")
 elif bmi < 30:
