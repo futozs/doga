@@ -271,18 +271,17 @@
         .changelog-section-label.python { color: #3776ab; }
         .changelog-section-label.web    { color: #e44d26; }
         .changelog-item {
-            display: flex;
-            align-items: baseline;
-            gap: 7px;
             font-size: 0.82rem;
             color: #b0b8c8;
             line-height: 1.5;
-            padding: 2px 0;
+            padding: 2px 0 2px 14px;
+            position: relative;
         }
         .changelog-item::before {
             content: '–';
             color: #536dfe;
-            flex-shrink: 0;
+            position: absolute;
+            left: 0;
         }
 
         /* ── Ötlet Láda FAB gombok ── */
