@@ -1177,14 +1177,12 @@
             const d = await r.json();
             _sessionId = d.sessionId;
             setInterval(() => {
-                if (_sessionId) navigator.sendBeacon(`${API}/api/session/heartbeat`,
-                    new Blob([JSON.stringify({ sessionId: _sessionId })], { type: 'application/json' }));
+                if (_sessionId) fetch(`${API}/api/session/heartbeat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: _sessionId }), keepalive: true }).catch(() => {});
             }, 30000);
         } catch {}
     }
     window.addEventListener('beforeunload', () => {
-        if (_sessionId) navigator.sendBeacon(`${API}/api/session/end`,
-            new Blob([JSON.stringify({ sessionId: _sessionId })], { type: 'application/json' }));
+        if (_sessionId) fetch(`${API}/api/session/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: _sessionId }), keepalive: true }).catch(() => {});
     });
     // ──────────────────────────────────────────────────────────────────────────
 

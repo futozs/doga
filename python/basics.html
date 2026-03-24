@@ -260,12 +260,10 @@
     body:JSON.stringify({email:u.email,page:'py-basics'})})
     .then(r=>r.json()).then(d=>{
       sid=d.sessionId;
-      setInterval(()=>{if(sid)navigator.sendBeacon(`${API}/api/session/heartbeat`,
-        new Blob([JSON.stringify({sessionId:sid})],{type:'application/json'}));},30000);
+      setInterval(()=>{if(sid)fetch(`${API}/api/session/heartbeat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:sid}),keepalive:true}).catch(()=>{});},30000);
     }).catch(()=>{});
   window.addEventListener('beforeunload',()=>{
-    if(sid)navigator.sendBeacon(`${API}/api/session/end`,
-      new Blob([JSON.stringify({sessionId:sid})],{type:'application/json'}));
+    if(sid)fetch(`${API}/api/session/end`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:sid}),keepalive:true}).catch(()=>{});
   });
 })();
 

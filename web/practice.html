@@ -655,13 +655,11 @@
   }).then(r => r.json()).then(d => {
     sessionId = d.sessionId;
     setInterval(() => {
-      if (sessionId) navigator.sendBeacon(`${API}/api/session/heartbeat`,
-        new Blob([JSON.stringify({ sessionId })], { type: 'application/json' }));
+      if (sessionId) fetch(`${API}/api/session/heartbeat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }), keepalive: true }).catch(() => {});
     }, 30000);
   }).catch(() => {});
   window.addEventListener('beforeunload', () => {
-    if (sessionId) navigator.sendBeacon(`${API}/api/session/end`,
-      new Blob([JSON.stringify({ sessionId })], { type: 'application/json' }));
+    if (sessionId) fetch(`${API}/api/session/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }), keepalive: true }).catch(() => {});
   });
 })();
 // ──────────────────────────────────────────────────────────────────────────
