@@ -178,6 +178,29 @@
             display: none;
         }
         .toggle-view-btn:hover { background: #536dfe; color: white; }
+        /* Teszt mód visszaváltó sáv */
+        #teszt-mod-banner {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+            background: #92400e; color: #fef3c7;
+            padding: 8px 20px; font-size: 0.85rem; font-weight: 600;
+            align-items: center; justify-content: center; gap: 14px;
+            border-bottom: 2px solid #d97706;
+        }
+        #teszt-mod-banner.active { display: flex; }
+        #teszt-mod-banner button {
+            padding: 4px 14px; background: #d97706; border: none;
+            border-radius: 6px; color: #fff; font-size: 0.82rem;
+            font-weight: 700; cursor: pointer;
+        }
+        #teszt-mod-banner button:hover { background: #b45309; }
+        /* Diák mód kártya a tanári portálban */
+        .option-card.diak-mod {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1.5px solid #d97706;
+        }
+        .option-card.diak-mod .icon { color: #fbbf24; }
+        .option-card.diak-mod:hover { border-color: #f59e0b; transform: translateY(-3px); }
 
         .eredmenyek-btn {
             padding: 6px 14px;
@@ -729,6 +752,12 @@
 </head>
 <body>
 
+<div id="teszt-mod-banner">
+    <i class="fas fa-user-graduate"></i>
+    <span>Diák teszt mód – <strong>Teszt Elek</strong> nézetében vagy</span>
+    <button onclick="exitStudentTestMode()"><i class="fas fa-arrow-left"></i> Vissza az oktatói felületre</button>
+</div>
+
 <div class="topbar">
     <div class="topbar-left">
         <img src="kandologo2.png" alt="Kandó">
@@ -826,6 +855,11 @@
                 <span class="icon"><i class="fas fa-screwdriver-wrench"></i></span>
                 <span class="label">Admin</span>
                 <span class="desc">Mód beállítása, statisztikák, jelszócsere</span>
+            </a>
+            <a class="option-card diak-mod" href="#" onclick="event.preventDefault(); enterStudentTestMode()">
+                <span class="icon"><i class="fas fa-user-graduate"></i></span>
+                <span class="label">Diák mód</span>
+                <span class="desc">Belépés Teszt Elek tanulóként – teljes diáknézet</span>
             </a>
         </div>
     </div>
@@ -1138,6 +1172,11 @@
         const keresztnev = nevReszek[nevReszek.length - 1] || 'felhasználó';
         document.getElementById('portal-title').textContent = `Üdvözöllek, ${keresztnev}!`;
 
+        if (user._tesztMod) {
+            document.getElementById('teszt-mod-banner').classList.add('active');
+            document.body.style.paddingTop = '42px';
+        }
+
         if (user.szerep === 'oktato') {
             document.getElementById('teacher-portal').style.display = 'block';
             document.getElementById('portal-sub').textContent = 'Mit szeretnél csinálni?';
@@ -1154,10 +1193,37 @@
             loadMegvalasultOtletek();
             loadTeszteloInfo(user);
             loadFeladatkeszitoInfo(user);
-            // Session tracking indítása
-            startSessionTracking(user.email, 'portal');
+            // Session tracking csak valódi tanulónál
+            if (!user._tesztMod) startSessionTracking(user.email, 'portal');
         }
     }
+
+    // ── Diák teszt mód ────────────────────────────────────────────────────────
+    function enterStudentTestMode() {
+        const teacherSession = sessionStorage.getItem('kandoUser');
+        if (!teacherSession) return;
+        localStorage.setItem('kandoTeacherBackup', teacherSession);
+        const teacher = JSON.parse(teacherSession);
+        const fakeStudent = {
+            nev:    'Teszt Elek',
+            email:  teacher.email,
+            osztaly: null,
+            szerep: 'tanulo',
+            token:  '',
+            _tesztMod: true
+        };
+        sessionStorage.setItem('kandoUser', JSON.stringify(fakeStudent));
+        location.reload();
+    }
+
+    function exitStudentTestMode() {
+        const backup = localStorage.getItem('kandoTeacherBackup');
+        if (!backup) { location.reload(); return; }
+        sessionStorage.setItem('kandoUser', backup);
+        localStorage.removeItem('kandoTeacherBackup');
+        location.reload();
+    }
+    // ──────────────────────────────────────────────────────────────────────────
 
     let isTeacherView = true;
     let isTeacherPreview = false; // oktató tanulói nézetben van

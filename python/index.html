@@ -1192,6 +1192,13 @@
 </head>
 
 <body>
+    <!-- Teszt mód banner (csak Teszt Elek / _tesztMod esetén) -->
+    <div id="teszt-mod-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#92400e;color:#fef3c7;padding:8px 20px;font-size:0.85rem;font-weight:600;align-items:center;justify-content:center;gap:14px;border-bottom:2px solid #d97706;">
+        <i class="fas fa-user-graduate"></i>
+        <span>Diák teszt mód – <strong>Teszt Elek</strong> nézetében vagy</span>
+        <a href="../portal.html" style="padding:4px 14px;background:#d97706;border:none;border-radius:6px;color:#fff;font-size:0.82rem;font-weight:700;text-decoration:none;">&#8592; Vissza a portálra</a>
+    </div>
+
     <header class="page-topbar">
         <img src="kandologo2.png" alt="Kandó KSZKI">
         <div class="page-topbar-title">
@@ -1572,6 +1579,12 @@
             try {
                 const u = JSON.parse(saved);
                 const isBemutato = new URLSearchParams(window.location.search).has('bemutato');
+
+                // Teszt mód banner
+                if (u._tesztMod) {
+                    const b = document.getElementById('teszt-mod-banner');
+                    if (b) { b.style.display = 'flex'; document.body.style.paddingTop = '42px'; }
+                }
 
                 // kandTeacherMode CSAK bemutató linkről jönve aktív
                 if (u.szerep === 'oktato' && isBemutato) {
