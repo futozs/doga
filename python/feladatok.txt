@@ -1781,3 +1781,55 @@ if osszes_mereg >= 100:
 else:
     print(f"Sikeres főzet! Toxicitás: {osszes_mereg}%")
 
+29. feladat
+Pont: 8
+Cim: Okosotthon fűtés
+Tipus: if
+
+Egy okosotthon fűtésvezérlőjét kell beprogramoznod. A program kérje be a szoba jelenlegi hőmérsékletét, majd a beállított célhőmérsékletet (egész számokként)!
+A program döntse el, hogy kell-e fűteni, és ha igen, milyen fokozaton:
+Ha a jelenlegi hőmérséklet eléri vagy meghaladja a célhőmérsékletet: írja ki: "A fűtés kikapcsolva."
+Ha a jelenlegi hőmérséklet kisebb, mint a célhőmérséklet, számold ki a különbséget!
+Ha a különbség maximum 2 fok (2 vagy annál kevesebb): írja ki: "Enyhe fűtés indítása."
+Ha a különbség több, mint 2 fok: írja ki: "Turbó fűtés indítása!"
+
+Minta kód:
+```
+Jelenlegi hőmérséklet (°C): 20
+Célhőmérséklet (°C): 22
+Enyhe fűtés indítása.
+
+Jelenlegi hőmérséklet (°C): 18
+Célhőmérséklet (°C): 23
+Turbó fűtés indítása!
+
+Jelenlegi hőmérséklet (°C): 22
+Célhőmérséklet (°C): 21
+A fűtés kikapcsolva.
+```
+
+Pontozas:
+bekeres:Jelenlegi hőmérséklet (°C): |Bekérés szövege 1|Pontosan másold a szöveget a szóközökkel együtt! 🌡️|✅ A jelenlegi hőfok bekérése tökéletes!
+int_float:1|Jelenlegi hőt számmá alakítja|A hőt számmá kell alakítani a matekhoz. 🔢|✅ Jelenlegi hőmérséklet számmá alakítva!
+bekeres:Célhőmérséklet (°C): |Bekérés szövege 2|A célhőmérsékletet is pontosan így kérd be! 🎯|✅ A célhőmérséklet bekérése is megvan!
+int_float:2|Célt számmá alakítja|Ezt is át kell alakítani, különben nem tudsz kivonni! 🔢|✅ Cél adat számmá alakítva!
+if|Elágazást használ|El kell dönteni, kell-e egyáltalán fűteni. 🌿|✅ Az elágazás elindult!
+teszt:21,21:kikapcsolva|Fűtés kikapcsolva|Ha a cél megvan, nincs fűtés. Működik? 🛑|✅ A kikapcsolt állapotot jól kezeli!
+teszt:20,22:Enyhe|Enyhe fűtés teszt|Kis különbségnél enyhe fűtés kell. Jó a matekod? 💨|✅ Az enyhe fűtést jól számolja a program!
+teszt:18,23:Turbó|Turbó fűtés teszt|Nagy különbségnél indul a turbó. Működik? 🚀|✅ A turbó fűtést is elkapta a program!
+
+Tippek:
+
+Megoldas:
+jelenlegi = int(input("Jelenlegi hőmérséklet (°C): "))
+cel = int(input("Célhőmérséklet (°C): "))
+
+if jelenlegi >= cel:
+    print("A fűtés kikapcsolva.")
+else:
+    kulonbseg = cel - jelenlegi
+    if kulonbseg <= 2:
+        print("Enyhe fűtés indítása.")
+    else:
+        print("Turbó fűtés indítása!")
+
