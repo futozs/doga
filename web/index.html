@@ -23,7 +23,7 @@
                 if (u.szerep === 'vendeg') { location.replace('../portal.html'); return; }
                 if (u._tesztMod) {
                     const b = document.getElementById('teszt-mod-banner');
-                    if (b) { b.style.display = 'flex'; document.body.style.paddingTop = '42px'; }
+                    if (b) { b.style.display = 'flex'; const _bh = b.offsetHeight || 28; document.querySelector('header.topbar') && (document.querySelector('header.topbar').style.top = _bh + 'px'); document.body.style.paddingTop = (56 + _bh) + 'px'; }
                 }
             } catch {}
         })();

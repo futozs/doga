@@ -1224,8 +1224,11 @@
         document.getElementById('portal-title').textContent = `Üdvözöllek, ${keresztnev}!`;
 
         if (user._tesztMod) {
-            document.getElementById('teszt-mod-banner').classList.add('active');
-            document.body.style.paddingTop = '42px';
+            const _banner = document.getElementById('teszt-mod-banner');
+            _banner.classList.add('active');
+            const _bh = _banner.offsetHeight || 28;
+            document.querySelector('.topbar').style.top = _bh + 'px';
+            document.body.style.paddingTop = (56 + _bh) + 'px';
         }
 
         if (user.szerep === 'oktato') {
