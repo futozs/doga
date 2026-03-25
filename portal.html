@@ -182,18 +182,19 @@
         #teszt-mod-banner {
             display: none;
             position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
-            background: #92400e; color: #fef3c7;
-            padding: 8px 20px; font-size: 0.85rem; font-weight: 600;
-            align-items: center; justify-content: center; gap: 14px;
-            border-bottom: 2px solid #d97706;
+            background: #1a1a2e; color: #94a3b8;
+            padding: 5px 20px; font-size: 0.78rem; font-weight: 500;
+            align-items: center; justify-content: center; gap: 12px;
+            border-bottom: 1px solid #2d3748;
         }
         #teszt-mod-banner.active { display: flex; }
         #teszt-mod-banner button {
-            padding: 4px 14px; background: #d97706; border: none;
-            border-radius: 6px; color: #fff; font-size: 0.82rem;
-            font-weight: 700; cursor: pointer;
+            padding: 3px 12px; background: transparent;
+            border: 1px solid #4a5568; border-radius: 6px;
+            color: #94a3b8; font-size: 0.76rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s;
         }
-        #teszt-mod-banner button:hover { background: #b45309; }
+        #teszt-mod-banner button:hover { border-color: #e94560; color: #e94560; }
         /* Diák mód kártya a tanári portálban */
         .option-card.diak-mod {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
