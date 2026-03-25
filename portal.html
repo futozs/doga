@@ -2026,7 +2026,7 @@
             const isTesztelő      = tRes.ok  && (await tRes.json()).isTesztelő;
             const isFeladatkeszito= fRes.ok  && (await fRes.json()).isFeladatkeszito;
             const btn = document.getElementById('csatlakozas-btn');
-            if (btn && !isTesztelő && !isFeladatkeszito) btn.style.display = 'flex';
+            if (btn && !isFeladatkeszito) btn.style.display = 'flex';
             // Kártyák állapota a modalban
             if (isTesztelő) {
                 const card = document.getElementById('csatl-tesztelő-card');
