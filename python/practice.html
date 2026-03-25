@@ -567,10 +567,11 @@ for nev in osztalyzatok:
     { label: 'Kimenet: jegyek is megjelennek', fn: (c, o) => /\b5\b/.test(o) && /\b4\b/.test(o) && /\b3\b/.test(o) },
   ],
   tutorial: {
-    intro: `<h3>Bejárás for ciklussal</h3>
-<p><code>for kulcs in d:</code> – iterál az összes kulcson.<br>
-<code>for kulcs, ertek in d.items():</code> – kulcs és érték egyszerre.<br>
-<code>for ertek in d.values():</code> – csak az értékek.</p>`,
+    intro: `<h3>Szótár bejárása for ciklussal</h3>
+<p>A for ciklus végigmegy a szótár összes elemén – mint amikor sorban elolvasod egy lista minden sorát.</p>
+<p><code>for kulcs in d:</code> – minden kulcsot sorra vesz (pl. minden nevet).<br>
+<code>for kulcs, ertek in d.items():</code> – egyszerre kapod meg a kulcsot és az értéket.<br>
+<code>for ertek in d.values():</code> – csak az értékeket adja, a kulcsokat nem.</p>`,
     examples: [
       { title: 'Dict bejárása', code: `arak = {"kávé": 450, "tea": 350, "víz": 200}
 
