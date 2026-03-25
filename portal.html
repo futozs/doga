@@ -1835,7 +1835,7 @@
             list.innerHTML = items.map(it => {
                 const sc   = statusClass[it.statusz] || 'otlet-status-uj';
                 const sl   = statusLabel[it.statusz] || it.statusz;
-                const date = it.createdAt ? it.createdAt.replace('T', ' ').substring(0, 16) : '';
+                const date = it.createdAt ? new Date(it.createdAt.endsWith('Z') ? it.createdAt : it.createdAt + 'Z').toLocaleString('hu-HU', { timeZone: 'Europe/Budapest', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '';
                 const valaszHtml = it.adminValasz
                     ? `<div class="otlet-history-valasz">
                            <div class="otlet-history-valasz-label"><i class="fas fa-reply"></i> Tanári visszajelzés</div>
