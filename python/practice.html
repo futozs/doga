@@ -779,9 +779,9 @@ print(type(audi)) # <class '__main__.Auto'>` },
 {
   id: 8, emoji: '⚙️', topicGroup: 'class',
   title: '__init__ és self',
-  description: `<p>A <code>__init__</code> metódus az <strong>inicializáló</strong> – itt adjuk meg az osztály attribútumait.<br>
-A <code>self</code> az aktuális objektumra mutat.</p>
-<p>Bővítsd a <code>Kutya</code> osztályt: legyen <strong>neve</strong> és <strong>kora</strong> attribútuma!<br>
+  description: `<p>Az <code>__init__</code> rész adja meg az objektum adatait – ez fut le automatikusan, amikor létrehozol egy új kutyát.<br>
+A <code>self</code> mindig magát az éppen létrehozott objektumot jelenti – ettől tudja a Python, melyik kutya adatait tölti be.</p>
+<p>Bővítsd a <code>Kutya</code> osztályt: legyen <strong>neve</strong> és <strong>kora</strong>!<br>
 Hozd létre <code>rex</code>-et (Rex, 3 éves) és <code>fifi</code>-t (Fifi, 1 éves), és írd ki mindkettőt!</p>`,
   starterCode: `# 8. feladat: __init__ és self
 class Kutya:
@@ -819,9 +819,9 @@ print(fifi.nev, fifi.kor)`,
   ],
   tutorial: {
     intro: `<h3>__init__ és self</h3>
-<p><strong>__init__</strong>: automatikusan lefut, amikor <code>Kutya("Rex", 3)</code>-at írsz.<br>
-<strong>self</strong>: mindig az első paraméter, az objektumra mutat. Nem kell megadni híváskor.<br>
-<strong>self.nev</strong>: az objektum attribútuma – minden objektumnak saját értéke van.</p>`,
+<p>Amikor <code>Kutya("Rex", 3)</code>-at írsz, Python automatikusan lefuttatja az <code>__init__</code> részt – ez a "kitöltős" rész, ahol beállítod az adatokat.</p>
+<p>A <code>self</code> az első paraméternek látszik, de híváskor nem kell megadni – Python kezeli automatikusan. Mindig magát az éppen létrehozott objektumot jelenti.</p>
+<p>A <code>self.nev = nev</code> sor azt jelenti: <em>"ennek a kutyának a neve legyen az, amit megadtál."</em> Így minden kutyának külön neve és kora lesz.</p>`,
     examples: [
       { title: '__init__ példa', code: `class Tanulo:
     def __init__(self, nev, osztaly):
@@ -840,10 +840,11 @@ print(bela.osztaly) # 12A` },
 {
   id: 9, emoji: '🔧', topicGroup: 'class',
   title: 'Metódusok',
-  description: `<p>A <strong>metódus</strong> egy függvény, amely az osztályon belül van definiálva.<br>
-Az első paramétere mindig <code>self</code>.</p>
+  description: `<p>A metódus olyan, mint egy <strong>képesség, amit az osztályba beépítesz</strong> – minden objektum tudja majd használni.<br>
+Pl. a kutya tud bemutatkozni: ezt írjuk meg a <code>bemutatkozik()</code> metódusban.<br>
+Minden metódus első paramétere <code>self</code> – így fér hozzá az objektum saját adataihoz.</p>
 <p>Adj egy <code>bemutatkozik()</code> metódust a <code>Kutya</code> osztályhoz!<br>
-A metódus írja ki: <code>Szia! Én Rex vagyok és 3 éves.</code></p>`,
+Írja ki: <code>Szia! Én Rex vagyok és 3 éves.</code></p>`,
   starterCode: `# 9. feladat: Metódus
 class Kutya:
     def __init__(self, nev, kor):
@@ -878,9 +879,8 @@ rex.bemutatkozik()`,
   ],
   tutorial: {
     intro: `<h3>Metódusok az osztályban</h3>
-<p>A metódus egy <strong>osztályon belüli függvény</strong>.<br>
-Hívása: <code>objektum.metodus()</code><br>
-A metódus eléri az objektum attribútumait <code>self.attribútum</code> formában.</p>`,
+<p>A metódus az osztályba épített "teendő" – amit minden objektum el tud végezni. Például: <code>rex.bemutatkozik()</code> – a ponttal mondod meg, hogy <em>melyik</em> kutya mutatkozzon be.</p>
+<p>A metóduson belül a <code>self.nev</code> az éppen hívott objektum nevét adja vissza – ezért tudja Rex azt mondani, hogy "Én Rex vagyok", Fifi pedig azt, hogy "Én Fifi vagyok", ugyanattól a kódtól.</p>`,
     examples: [
       { title: 'Osztály metódussal', code: `class Termek:
     def __init__(self, nev, ar):
@@ -952,8 +952,8 @@ for t in tanulok:
   ],
   tutorial: {
     intro: `<h3>Objektumok listában</h3>
-<p>Objektumok listában tárolhatók, és for ciklussal bejárhatók.</p>
-<p>Ez nagyon hasznos, ha sok hasonló objektumot kell kezelni (tanulók, termékek, stb.).</p>`,
+<p>Ha sok objektumod van – például egy egész osztálynyi tanuló –, érdemes őket listában tárolni. Akkor for ciklussal végig tudsz menni rajtuk, és mindegyiknél meghívhatod ugyanazt a metódust.</p>
+<p>Ez pontosan olyan, mintha végigmennél az osztálynaplón, és mindenkinél elvégeznél ugyanazt a műveletet.</p>`,
     examples: [
       { title: 'Objektumok bejárása', code: `class Auto:
     def __init__(self, marka, ev):
@@ -974,10 +974,9 @@ for auto in autok:
 {
   id: 11, emoji: '🧬', topicGroup: 'class',
   title: 'Öröklés',
-  description: `<p>Az <strong>öröklés</strong> (inheritance) lehetővé teszi, hogy egy osztály átvegye egy másik osztály tulajdonságait.</p>
-<p>Szintaxis: <code>class Gyerek(Szulo):</code></p>
-<p>Adott az <code>Allat</code> alaposztály. Hozz létre belőle egy <code>Kutya</code> alosztályt,
-amely örökli az <code>Allat</code> tulajdonságait, és adj hozzá egy <code>ugat()</code> metódust!</p>`,
+  description: `<p>Az öröklés azt jelenti, hogy egy osztály <strong>megkapja egy másik osztály összes képességét</strong> – nem kell mindent újra megírni.</p>
+<p>Pl. a <code>Kutya</code> örökli az <code>Allat</code> osztályt: ezért tudja az <code>eszik()</code> metódust anélkül, hogy mi megírtuk volna. A zárójelbe írod, kitől örököl: <code>class Kutya(Allat):</code></p>
+<p>Adj a <code>Kutya</code> osztályhoz egy <code>ugat()</code> metódust, ami kiírja: <code>Rex ugat: Vau!</code></p>`,
   starterCode: `# 11. feladat: Öröklés
 class Allat:
     def __init__(self, nev):
@@ -1020,10 +1019,9 @@ rex.ugat()`,
     { label: 'Kimenet: "Rex" megjelenik', fn: (c, o) => /Rex/.test(o) },
   ],
   tutorial: {
-    intro: `<h3>Öröklés (inheritance)</h3>
-<p>Az alosztály (<strong>gyerek</strong>) átveszi a szülőosztály összes metódusát és attribútumát.<br>
-Felülírhatja (<strong>override</strong>) a szülő metódusát, ha saját verziót definiál ugyanolyan névvel.</p>
-<p><code>super()</code>-rel meghívhatod a szülő metódusát.</p>`,
+    intro: `<h3>Öröklés</h3>
+<p>Az örökös osztály automatikusan megkapja mindazt, ami a szülő osztályban van – nem kell újra megírni. Gondolj rá úgy, mint egy sablon bővítésére: a kutya mindent tud, amit az állat, plusz még ugat is.</p>
+<p>Ha az örökös osztályban ugyanolyan nevű metódust írsz, az saját verzióként működik – a szülő verziója "felülíródik". A <code>super()</code> segítségével ilyenkor is meghívhatod az eredeti szülő verziót, ha szükséges.</p>`,
     examples: [
       { title: 'Öröklés és override', code: `class Jarmu:
     def __init__(self, marka):
@@ -1111,14 +1109,13 @@ alma.vasarol(3)`,
     { label: 'Kimenet: vásárlás megjelenik', fn: (c, o) => /v[áa]s[áa]rolva|[Öö]sszesen/i.test(o) },
   ],
   tutorial: {
-    intro: `<h3>OOP összefoglaló</h3>
-<p>Eddig megtanultuk:</p>
+    intro: `<h3>Összefoglaló – amit megtanultál</h3>
 <ul>
-<li><code>class Nev:</code> – osztály definíció</li>
-<li><code>__init__(self, ...)</code> – konstruktor</li>
-<li><code>self.attrb</code> – attribútum</li>
-<li><code>def metodus(self):</code> – metódus</li>
-<li><code>class Gyerek(Szulo):</code> – öröklés</li>
+<li><code>class Nev:</code> – sablon, ami meghatározza az objektumok adatait és képességeit</li>
+<li><code>__init__(self, ...)</code> – ez fut le, amikor új objektumot hozol létre; itt adod meg az adatokat</li>
+<li><code>self.valtozo</code> – az adott objektum egyik adata (pl. <code>self.nev</code> az éppen használt objektum neve)</li>
+<li><code>def metodus(self):</code> – az osztályba épített képesség, amit minden objektum el tud végezni</li>
+<li><code>class Gyerek(Szulo):</code> – az örökös osztály átveszi a szülő összes képességét</li>
 </ul>`,
     examples: [
       { title: 'Teljes Termek osztály', code: `class Termek:
