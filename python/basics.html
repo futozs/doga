@@ -14,34 +14,37 @@
       --accent:#22c55e; --accent2:#16a34a; --text:#e2e8f0; --muted:#94a3b8;
       --blue:#3b82f6; --yellow:#f59e0b; --red:#ef4444;
       --font:'Segoe UI',system-ui,sans-serif;
-      --topbar-h:54px; --bottom-h:52px; --left-w:275px; --right-w:330px;
+      --topbar-h:54px; --pillbar-h:38px; --bottom-h:52px; --left-w:275px; --right-w:330px;
     }
     html,body{height:100%;overflow:hidden;}
     body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
 
     /* TOPBAR */
-    .topbar{height:var(--topbar-h);background:var(--bg2);border-bottom:1.5px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0;z-index:100;}
+    .topbar{height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0;z-index:100;}
     .topbar-logo{height:30px;margin-right:4px;}
     .btn-back{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:0.82rem;cursor:pointer;text-decoration:none;white-space:nowrap;transition:border-color .2s,color .2s;}
     .btn-back:hover{border-color:var(--accent);color:var(--accent);}
-    .pills-wrapper{display:flex;align-items:center;gap:3px;overflow-x:auto;flex:1;padding:4px 0;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
-    .pill-group-label{flex-shrink:0;font-size:0.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:0 4px;color:var(--muted);white-space:nowrap;}
+    .topbar-spacer{flex:1;}
+    .progress-label{white-space:nowrap;font-size:0.78rem;color:var(--muted);padding:0 8px;border-left:1.5px solid var(--border);}
+    .progress-label span{color:var(--accent);font-weight:700;}
+    .btn-restart{padding:4px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:0.75rem;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap;}
+    .btn-restart:hover{border-color:var(--red);color:#fca5a5;}
+    /* PILLS BAR */
+    .pills-bar{height:var(--pillbar-h);background:var(--bg2);border-bottom:1.5px solid var(--border);display:flex;align-items:center;padding:0 12px;flex-shrink:0;gap:0;}
+    .pills-wrapper{display:flex;align-items:center;gap:4px;overflow-x:auto;flex:1;padding:2px 0;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+    .pill-group-label{flex-shrink:0;font-size:0.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 6px;color:var(--muted);white-space:nowrap;}
     .pill-group-label.alap{color:#fb923c;}
     .pill-group-label.feltetel{color:#60a5fa;}
     .pill-group-label.fuggveny{color:#a78bfa;}
     .pill-group-label.ciklus{color:#34d399;}
     .pill-group-label.beepitett{color:#f472b6;}
-    .pill{flex-shrink:0;width:26px;height:24px;border-radius:5px;border:1.5px solid #374151;background:transparent;color:var(--muted);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;}
+    .pill{flex-shrink:0;width:30px;height:26px;border-radius:6px;border:1.5px solid #374151;background:transparent;color:var(--muted);font-size:0.76rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;}
     .pill:hover{border-color:var(--blue);color:#93c5fd;}
     .pill.active{border-color:var(--blue);background:rgba(59,130,246,.15);color:#93c5fd;}
     .pill.done{border-color:var(--accent);background:var(--accent);color:#052e16;font-weight:700;}
-    .progress-label{white-space:nowrap;font-size:0.78rem;color:var(--muted);padding:0 8px;border-left:1.5px solid var(--border);}
-    .progress-label span{color:var(--accent);font-weight:700;}
-    .btn-restart{padding:4px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:0.75rem;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap;}
-    .btn-restart:hover{border-color:var(--red);color:#fca5a5;}
 
     /* LAYOUT */
-    .layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--topbar-h) - var(--bottom-h));}
+    .layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--topbar-h) - var(--pillbar-h) - var(--bottom-h));}
 
     /* LEFT */
     .left-panel{width:var(--left-w);flex-shrink:0;background:var(--bg2);border-right:1.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
@@ -170,10 +173,14 @@
   <a href="../portal.html" title="Főmenü"><img src="kandologo2.png" alt="Kandó" class="topbar-logo" style="cursor:pointer;"></a>
   <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
   <a href="practice.html" class="btn-back" style="border-color:#22c55e;color:#22c55e;"><i class="fas fa-dumbbell"></i> Haladó</a>
-  <div class="pills-wrapper" id="pills-wrapper"></div>
+  <div class="topbar-spacer"></div>
   <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 20</div>
   <button class="btn-restart" onclick="restartPractice()"><i class="fa-solid fa-arrow-rotate-right"></i> Újrakezd</button>
 </header>
+<!-- PILLS BAR -->
+<div class="pills-bar">
+  <div class="pills-wrapper" id="pills-wrapper"></div>
+</div>
 
 <!-- COMPLETION MODAL -->
 <div class="completion-overlay" id="completion-modal">
@@ -1675,7 +1682,7 @@ function restartPractice(){
 // ═══════════════════════════════════════════════════════════════════════════
 // PILLS
 // ═══════════════════════════════════════════════════════════════════════════
-const GROUP_LABELS={alap:'Alap',feltetel:'Felt.',fuggveny:'Fv.',ciklus:'Cik.',beepitett:'Bép.'};
+const GROUP_LABELS={alap:'Alapok',feltetel:'Feltételek',fuggveny:'Függvények',ciklus:'Ciklusok',beepitett:'Beépített'};
 function buildPills(){
   const wrapper=document.getElementById('pills-wrapper');
   wrapper.innerHTML='';
