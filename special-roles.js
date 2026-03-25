@@ -102,7 +102,7 @@
         hm.innerHTML = `
             <div class="sr-box" style="border:1.5px solid #dc2626;">
                 <h3 style="color:#f87171;"><i class="fa-solid fa-bug"></i> Hibajelentés</h3>
-                <p>Írj le egy tesztelés közben talált hibát. Csatolhatsz képernyőképet is (Ctrl+V a vágólapról).</p>
+                <p>Írj le egy tesztelés közben talált hibát. Képernyőképet csatolhatsz fájlból <strong>vagy Ctrl+V</strong>-vel a vágólapról.</p>
                 <div class="sr-fg">
                     <label>Leírás *</label>
                     <textarea id="sr-hiba-szoveg" placeholder="Mit csináltál, mi történt, mi lett volna a helyes viselkedés..."></textarea>
@@ -172,30 +172,35 @@
             const f = this.files[0];
             if (!f) return;
             const r = new FileReader();
-            r.onload = e => {
-                const img = document.getElementById('sr-hiba-preview');
-                img.src = e.target.result; img.style.display = 'block';
-            };
+            r.onload = e => { _srHibaSetKep(e.target.result); };
             r.readAsDataURL(f);
         });
-
-        // Ctrl+V képbeillesztés a hiba modalban
-        hm.addEventListener('paste', function(e) {
-            const items = e.clipboardData && e.clipboardData.items;
-            if (!items) return;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.startsWith('image/')) {
-                    const r = new FileReader();
-                    r.onload = ev => {
-                        const img = document.getElementById('sr-hiba-preview');
-                        img.src = ev.target.result; img.style.display = 'block';
-                    };
-                    r.readAsDataURL(items[i].getAsFile());
-                    e.preventDefault(); break;
-                }
-            }
-        });
     }
+
+    // ── Kép kezelés ──────────────────────────────────────────────────────────
+    let _srHibaKep = null;
+
+    function _srHibaSetKep(dataUrl) {
+        _srHibaKep = dataUrl;
+        const img = document.getElementById('sr-hiba-preview');
+        if (img) { img.src = dataUrl; img.style.display = 'block'; }
+    }
+
+    // Document szintű paste: akkor kap képet, ha a hiba modal nyitva van
+    document.addEventListener('paste', function(e) {
+        const modal = document.getElementById('sr-hiba-modal');
+        if (!modal || !modal.classList.contains('open')) return;
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.startsWith('image/')) {
+                const r = new FileReader();
+                r.onload = ev => { _srHibaSetKep(ev.target.result); };
+                r.readAsDataURL(items[i].getAsFile());
+                e.preventDefault(); break;
+            }
+        }
+    });
 
     // ── Kandó logó bug aktiválása ─────────────────────────────────────────────
     function activateBugLogo() {
@@ -215,8 +220,10 @@
 
     // ── Hibajelentés ─────────────────────────────────────────────────────────
     window._srHibaOpen = function () {
+        _srHibaKep = null;
         document.getElementById('sr-hiba-szoveg').value = '';
-        document.getElementById('sr-hiba-preview').style.display = 'none';
+        const prev = document.getElementById('sr-hiba-preview');
+        if (prev) { prev.src = ''; prev.style.display = 'none'; }
         const kep = document.getElementById('sr-hiba-kep');
         if (kep) kep.value = '';
         document.getElementById('sr-hiba-msg').textContent = '';
@@ -232,11 +239,7 @@
         const msgEl  = document.getElementById('sr-hiba-msg');
         if (!szoveg) { msgEl.textContent = 'A leírás kötelező!'; msgEl.className = 'sr-msg sr-err'; return; }
 
-        let kepBase64 = null;
-        const preview = document.getElementById('sr-hiba-preview');
-        if (preview.src && preview.style.display !== 'none') {
-            kepBase64 = preview.src; // base64 data URL
-        }
+        const kepBase64 = _srHibaKep || null;
 
         const oldal = window.location.pathname.split('/').pop() || 'oldal';
         try {
