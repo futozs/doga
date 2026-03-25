@@ -646,7 +646,7 @@ print(szamok)`,
 <code>csere = a</code> → <code>a = b</code> → <code>b = csere</code></p>
 <p>Pythonban van egy elegánsabb módszer is: <code>a, b = b, a</code> – de vizsgákon a kézi módszert is tudni kell.</p>`,
     examples: [
-      { title: 'Buborékrendezés és csere', code: `# Csere Python módra (tuple unpacking)
+      { title: 'Buborékrendezés és csere', code: `# Csere Python módra (egyszerre cseréli a kettőt)
 a = 5
 b = 3
 a, b = b, a
@@ -668,8 +668,8 @@ print(lista)  # [1, 1, 3, 4, 5]` }
 {
   id: 6, emoji: '⚡', topicGroup: 'listakif',
   title: 'List comprehension – alap',
-  description: `<p>A list comprehension egy tömörebb módja egy lista létrehozásának. Ahelyett hogy for ciklussal és <code>.append()</code>-pel töltöd fel, egy sorban megírhatod.</p>
-<p>Hozz létre egy listát, ami az 1–10 számok <strong>négyzeteit</strong> tartalmazza list comprehension-nel!<br>
+  description: `<p>A <strong>lista-lerövidítés</strong> (angolul: list comprehension) azt jelenti, hogy ahelyett hogy ciklussal és <code>.append()</code>-pel töltöd fel a listát, egyetlen sorban megírhatod.</p>
+<p>Hozz létre egy listát, ami az 1–10 számok <strong>négyzeteit</strong> tartalmazza – az egysoros rövidítéssel!<br>
 Írd ki az eredményt: <code>[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]</code></p>`,
   starterCode: `# 6. feladat: List comprehension alap
 # Hagyományos módszer (ezt már tudod):
@@ -686,7 +686,7 @@ print(negyzetek)
 print(negyzetek)`,
   mockInputs: [],
   checks: [
-    { label: 'list comprehension szintaxis [ ... for ... in ...]', fn: (c,o) => /\[.+for\s+\w+\s+in\s+.+\]/.test(c) },
+    { label: 'egysoros lista-lerövidítés szintaxisa [ ... for ... in ...]', fn: (c,o) => /\[.+for\s+\w+\s+in\s+.+\]/.test(c) },
     { label: 'x**2 négyzetszám', fn: (c,o) => /x\s*\*\*\s*2/.test(c) },
     { label: 'range(1, 11)', fn: (c,o) => /range\s*\(\s*1\s*,\s*11\s*\)/.test(c) },
     { label: 'Kimenet: [1, 4, 9, ...]', fn: (c,o) => /\[1,?\s*4,?\s*9/.test(o) },
@@ -694,7 +694,7 @@ print(negyzetek)`,
   ],
   tutorial: {
     intro: `<h3>List comprehension</h3>
-<p>A list comprehension egy Pythonos rövidítés listák létrehozásához. A szerkezete: <code>[kifejezés for változó in sorozat]</code></p>
+<p>A lista-lerövidítés egy Pythonos rövidítés listák létrehozásához. A szerkezete: <code>[kifejezés for változó in lista_vagy_range]</code></p>
 <p>Olvasd így: "adjál nekem <em>x négyzetét</em>, minden <em>x</em>-re, ami a <em>range(1,11)</em>-ben van".</p>
 <p>Nem kötelező, de a Python kódokban nagyon gyakran látni – és vizsgán is előkerülhet. Ha megérted, sokkal tömörebb és olvashatóbb kódot tudsz írni.</p>`,
     examples: [
@@ -739,7 +739,7 @@ nagyok = [x for x in szamok if x > 10]
 print("Nagyok:", nagyok)`,
   mockInputs: [],
   checks: [
-    { label: 'két list comprehension', fn: (c,o) => (c.match(/\[.+for\s+\w+\s+in\s+szamok\s+if/g)||[]).length >= 2 },
+    { label: 'két egysoros lista-lerövidítés if feltétellel', fn: (c,o) => (c.match(/\[.+for\s+\w+\s+in\s+szamok\s+if/g)||[]).length >= 2 },
     { label: 'páros feltétel: % 2 == 0', fn: (c,o) => /\%\s*2\s*==\s*0/.test(c) },
     { label: '>10 feltétel', fn: (c,o) => />\s*10/.test(c) },
     { label: 'Kimenet: [8, 4, 22, 12, 18]', fn: (c,o) => /8.*4.*22.*12.*18|P[aá]rosak.*8/.test(o) },
@@ -803,7 +803,7 @@ print(hosszu_nevek)`,
   ],
   tutorial: {
     intro: `<h3>Dict comprehension</h3>
-<p>A dict comprehension ugyanolyan logikájú mint a list comprehension, csak szótárat hoz létre. A formája: <code>{kulcs: érték for elem in sorozat}</code></p>
+<p>A dict comprehension ugyanolyan logikájú mint a lista-lerövidítés, csak szótárat hoz létre. A formája: <code>{kulcs: érték for elem in lista}</code></p>
 <p>Nagyon hasznos, ha egy listából szótárat akarsz csinálni, vagy egy meglévő szótárat át akarsz alakítani.</p>
 <p>Feltételt is tehetsz a végére: <code>{k: v for k, v in d.items() if feltétel}</code> – ezzel szűrheted a szótár elemeit.</p>`,
     examples: [
@@ -859,7 +859,7 @@ print(nagy_e(3))`,
   ],
   tutorial: {
     intro: `<h3>lambda – névtelen függvény</h3>
-<p>A lambda egy "dobható" kis függvény – akkor használod, amikor kell egy függvény, de nem érdemes külön <code>def</code>-fel megírni.</p>
+<p>A lambda egy <strong>rövid, egyszeri</strong> függvény – akkor használod, amikor kell egy gyors számítás, de nem érdemes külön <code>def</code>-fel nevet adni neki.</p>
 <p>A <code>lambda x: x**2</code> pontosan ugyanaz mint:<br>
 <code>def negyze(x): return x**2</code> – csak rövidebb.</p>
 <p>Önmagában ritkán látni, de <code>sorted()</code>, <code>map()</code> és <code>filter()</code> mellé nagyon gyakran párosítják.</p>`,
@@ -915,7 +915,7 @@ print(nagybetus)`,
   tutorial: {
     intro: `<h3>map() – minden elemre alkalmaz</h3>
 <p>A <code>map()</code> egy függvényt végigfuttat egy lista összes elemén, és visszaadja az eredményeket. Gondolj rá úgy, mint egy "gyár" – bejön egy lista, kijön egy átalakított lista.</p>
-<p>A <code>list()</code> azért kell köré, mert a <code>map()</code> önmagában nem listát ad vissza, hanem egy "generátort" – a <code>list()</code> alakítja át igazi listává.</p>
+<p>A <code>list()</code> azért kell köré, mert a <code>map()</code> önmagában még nem listát ad vissza – csak "készülő" állapotban van. A <code>list()</code> fejezi be a munkát és adja vissza az igazi listát.</p>
 <p>Ugyanezt megteheted list comprehension-nel is: <code>[x*2 for x in szamok]</code> – mindkét megoldás helyes.</p>`,
     examples: [
       { title: 'map() példák', code: `szamok = [1, 4, 9, 16, 25]

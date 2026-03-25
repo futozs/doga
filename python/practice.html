@@ -479,7 +479,7 @@ print(gyumolcsok["szilva"])`,
   tutorial: {
     intro: `<h3>Elem elérése szótárból</h3>
 <p>Szögletes zárójelbe írd a <strong>kulcsot</strong>, és megkapod az értéket:</p>
-<p>Ha olyan kulcsot adsz meg, ami <strong>nincs</strong> a szótárban, <code>KeyError</code> hibát kapsz. Ellenőrizd a kulcs meglétét: <code>"kulcs" in d</code></p>`,
+<p>Ha olyan kulcsot adsz meg, ami <strong>nincs</strong> a szótárban, hibaüzenet jelenik meg. Előbb ellenőrizd, hogy benne van-e: <code>"kulcs" in d</code></p>`,
     examples: [
       { title: 'Elem elérése', code: `nap = {"h": "Hétfő", "k": "Kedd", "sz": "Szerda"}
 
@@ -526,7 +526,7 @@ print(gyumolcsok)`,
   ],
   tutorial: {
     intro: `<h3>Szótár módosítása</h3>
-<p>A szótár <strong>módosítható</strong> (mutable) – tetszőleges elem megváltoztatható, és új elem hozzáadható.</p>
+<p>A szótár <strong>módosítható</strong> – tetszőleges elem megváltoztatható, és új elem hozzáadható.</p>
 <p>Elem törlése: <code>del d["kulcs"]</code></p>`,
     examples: [
       { title: 'Módosítás és hozzáadás', code: `pontok = {"Anna": 85, "Béla": 70}
@@ -646,7 +646,7 @@ print("Válasz:", kviz[kerdes])`,
   tutorial: {
     intro: `<h3>Véletlenszerű kulcs választása</h3>
 <p>A <code>random.choice()</code> egy listából választ véletlenszerűen.<br>
-A szótár kulcsai <strong>nem lista</strong>, ezért <code>list()</code>-tel kell átalakítani.</p>`,
+A szótár kulcsai <strong>nem lista</strong>, ezért a <code>list()</code> függvénnyel kell listává alakítani, hogy a <code>random.choice()</code> kezelni tudja.</p>`,
     examples: [
       { title: 'random.choice dict-tel', code: `import random
 
@@ -819,7 +819,7 @@ print(fifi.nev, fifi.kor)`,
   mockInputs: [],
   checks: [
     { label: '__init__ megtalálható', fn: (c, o) => /__init__/.test(c) },
-    { label: 'self.nev és self.kor attribútumok', fn: (c, o) => /self\.nev/.test(c) && /self\.kor/.test(c) },
+    { label: 'self.nev és self.kor – az objektum saját adatai', fn: (c, o) => /self\.nev/.test(c) && /self\.kor/.test(c) },
     { label: 'Két objektum létrehozva', fn: (c, o) => (c.match(/Kutya\s*\(/g) || []).length >= 2 },
     { label: 'Kimenet: Rex', fn: (c, o) => /Rex/.test(o) },
     { label: 'Kimenet: Fifi', fn: (c, o) => /Fifi/.test(o) },
@@ -1031,7 +1031,7 @@ rex.ugat()`,
 <p>Az örökös osztály automatikusan megkapja mindazt, ami a szülő osztályban van – nem kell újra megírni. Gondolj rá úgy, mint egy sablon bővítésére: a kutya mindent tud, amit az állat, plusz még ugat is.</p>
 <p>Ha az örökös osztályban ugyanolyan nevű metódust írsz, az saját verzióként működik – a szülő verziója "felülíródik". A <code>super()</code> segítségével ilyenkor is meghívhatod az eredeti szülő verziót, ha szükséges.</p>`,
     examples: [
-      { title: 'Öröklés és override', code: `class Jarmu:
+      { title: 'Öröklés és felülírás', code: `class Jarmu:
     def __init__(self, marka):
         self.marka = marka
 
