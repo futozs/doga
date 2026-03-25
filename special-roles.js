@@ -137,6 +137,7 @@
                         <select id="sr-fk-pont">
                             <option value="8">8 pont</option>
                             <option value="14">14 pont</option>
+                            <option value="18">18 pont</option>
                         </select>
                     </div>
                     <div class="sr-fg">
