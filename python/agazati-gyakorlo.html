@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ágazati feladatok – Gyakorló</title>
+  <title>Gyakorló feladatok</title>
   <link rel="icon" href="../kando_favion_dark.png"  type="image/png" media="(prefers-color-scheme: light)">
   <link rel="icon" href="../kando_favion_light.png" type="image/png" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -159,11 +159,12 @@
     #input-values:focus { outline:none; border-color:#4f46e5; }
 
     /* SUCCESS BANNER */
-    #success-banner { position:fixed; top:calc(var(--topbar-h) + var(--tabbar-h) + 12px); left:50%;
-      transform:translateX(-50%) translateY(-60px); background:#166534; border:1.5px solid var(--konnyu);
+    #success-banner { position:fixed; top:calc(var(--topbar-h) + var(--tabbar-h) + 16px); left:50%;
+      transform:translateX(-50%); background:#166534; border:1.5px solid var(--konnyu);
       color:var(--konnyu); padding:8px 24px; border-radius:10px; font-weight:700; font-size:0.9rem;
-      transition:transform .35s; z-index:200; pointer-events:none; white-space:nowrap; }
-    #success-banner.visible { transform:translateX(-50%) translateY(0); }
+      transition:opacity .35s, visibility .35s; z-index:200; pointer-events:none; white-space:nowrap;
+      opacity:0; visibility:hidden; }
+    #success-banner.visible { opacity:1; visibility:visible; }
 
     /* MODALS */
     .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:500;
@@ -217,7 +218,7 @@
     <a href="../portal.html" title="Főmenü"><img src="kandologo2.png" alt="Kandó" class="topbar-logo" style="cursor:pointer;display:block;"></a>
     <span id="kando-bug-badge" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.45);border-radius:4px;font-size:1.2rem;align-items:center;justify-content:center;pointer-events:none;">🐛</span>
   </span>
-  <span class="topbar-title"><i class="fas fa-graduation-cap" style="color:#a5b4fc;margin-right:5px;"></i>Ágazati feladatok – Gyakorló</span>
+  <span class="topbar-title"><i class="fas fa-graduation-cap" style="color:#a5b4fc;margin-right:5px;"></i>Gyakorló feladatok</span>
   <div class="topbar-spacer"></div>
   <div id="pyodide-status">Pyodide betölt...</div>
   <a class="btn-back" href="../portal.html"><i class="fas fa-arrow-left"></i> Főmenü</a>
@@ -297,9 +298,9 @@
     <i class="fas fa-lightbulb"></i> Megoldás
   </button>
   <div class="bottom-spacer"></div>
-  <div class="input-wrap">
-    <div class="input-label">Input értékek (soronként)</div>
-    <textarea id="input-values" placeholder="pl.: 5&#10;alma"></textarea>
+  <div class="input-wrap" title="Ha a kód input()-ot tartalmaz, ide add meg az értékeket. Minden sor egy input() hívás értéke.">
+    <div class="input-label"><i class="fas fa-keyboard" style="margin-right:3px;opacity:.7;"></i>input() értékek <span style="opacity:.5;font-size:.65rem;">(soronként)</span></div>
+    <textarea id="input-values" placeholder="Ha input() van a kódban,&#10;ide írd az értékeket"></textarea>
   </div>
 </div>
 
@@ -460,7 +461,6 @@ function selectTask(task) {
   diffEl.className = 'desc-badge ' + task.nehezseg;
 
   document.getElementById('desc-content').innerHTML = formatDesc(task.szoveg);
-  document.getElementById('desc-content').prepend(document.getElementById('desc-header'));
 
   // Hide checklist
   document.getElementById('checklist-section').style.display = 'none';
