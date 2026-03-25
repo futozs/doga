@@ -1248,14 +1248,11 @@
             document.getElementById('portal-title').textContent = 'Üdvözöllek!';
             document.getElementById('portal-sub').textContent = 'Nézz körül – a teljes hozzáféréshez regisztrálj!';
             document.querySelector('.delete-btn').style.display = 'none';
-            // Kártyákra kattintva regisztrációs modal
-            ['card-python', 'card-web'].forEach(function(id) {
-                const card = document.getElementById(id);
-                if (card) card.onclick = function(e) {
-                    e.preventDefault();
-                    document.getElementById('vendeg-reg-modal').style.display = 'flex';
-                };
-            });
+            // Vendég: kártyák normálisan navigálnak (gyakorló szintek elérhetők)
+            const cardPython = document.getElementById('card-python');
+            if (cardPython) cardPython.onclick = function(e) { e.preventDefault(); location.replace('python/index.html'); };
+            const cardWeb = document.getElementById('card-web');
+            if (cardWeb) cardWeb.onclick = function(e) { e.preventDefault(); location.replace('web/index.html'); };
         } else {
             document.getElementById('student-layout-wrap').style.display = 'flex';
             document.getElementById('changelog-python').style.display = 'block';
