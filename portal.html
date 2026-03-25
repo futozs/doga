@@ -1168,6 +1168,21 @@
     </div>
 </div>
 
+<!-- Vendég – Python szintválasztó modal -->
+<div id="vendeg-python-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:#16213e;border:2px solid #3776ab;border-radius:18px;padding:2rem 2rem 1.5rem;max-width:420px;width:100%;">
+        <div style="font-size:2rem;text-align:center;margin-bottom:0.5rem;"><i class="fab fa-python" style="color:#3776ab;"></i></div>
+        <h3 style="color:#e0e0e0;font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:0.5rem;">Python gyakorló szint</h3>
+        <p style="color:#888;font-size:0.84rem;text-align:center;margin-bottom:1.4rem;">Válaszd ki, melyik szintről szeretnél indulni:</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;">
+            <button onclick="location.replace('python/basics.html')" style="padding:13px 20px;background:#1c1200;border:2px solid #f59e0b;border-radius:10px;color:#fcd34d;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#451a00'" onmouseout="this.style.background='#1c1200'"><i class="fas fa-seedling"></i> Kezdő szint</button>
+            <button onclick="location.replace('python/practice.html')" style="padding:13px 20px;background:#0a1f2a;border:2px solid #3b82f6;border-radius:10px;color:#93c5fd;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#0a1f2a'"><i class="fas fa-dumbbell"></i> Haladó szint</button>
+            <button onclick="location.replace('python/pro.html')" style="padding:13px 20px;background:#2a0a2a;border:2px solid #f472b6;border-radius:10px;color:#f9a8d4;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#9d174d'" onmouseout="this.style.background='#2a0a2a'"><i class="fas fa-rocket"></i> Profi szint</button>
+        </div>
+        <button onclick="document.getElementById('vendeg-python-modal').style.display='none'" style="width:100%;padding:0.6rem;background:transparent;border:1px solid #374151;border-radius:10px;color:#6b7280;font-size:0.9rem;cursor:pointer;font-family:inherit;">Mégse</button>
+    </div>
+</div>
+
 <!-- Kötelező jelszócsere modal (ideiglenes jelszó után) -->
 <div class="pw-change-overlay" id="pw-change-overlay">
     <div class="pw-change-box">
@@ -1250,7 +1265,7 @@
             document.querySelector('.delete-btn').style.display = 'none';
             // Vendég: kártyák normálisan navigálnak (gyakorló szintek elérhetők)
             const cardPython = document.getElementById('card-python');
-            if (cardPython) cardPython.onclick = function(e) { e.preventDefault(); location.replace('python/index.html'); };
+            if (cardPython) cardPython.onclick = function(e) { e.preventDefault(); document.getElementById('vendeg-python-modal').style.display = 'flex'; };
             const cardWeb = document.getElementById('card-web');
             if (cardWeb) cardWeb.onclick = function(e) { e.preventDefault(); location.replace('web/practice.html'); };
         } else {
