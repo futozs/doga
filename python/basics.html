@@ -302,9 +302,9 @@ print("2 + 3 =", 2+3)`,
     {label:'Kimenet: "5" (2+3 eredménye)', fn:(c,o)=>/5/.test(o)},
   ],
   tutorial:{
-    intro:`<h3>print() – kiírás</h3>
-<p>A <code>print()</code> kiírja az értéket a képernyőre. Több értéket vesszővel elválasztva is megadhatsz – köztük szóköz jelenik meg.</p>
-<p>A <code>\\n</code> új sort jelent a szövegen belül.</p>`,
+    intro:`<h3>print() – mondd el a gépnek, mit írjon ki</h3>
+<p>Képzeld el, hogy a számítógép egy asszisztens, aki csak akkor ír valamit a képernyőre, ha megkéred rá. A <code>print()</code> ez a kérés: <em>"Írd ki ezt!"</em></p>
+<p>Több dolgot egyszerre is kiírhatsz, vesszővel elválasztva – köztük szóköz jelenik meg automatikusan. A <code>\\n</code> sortörést jelent – mintha Entert nyomnál a szövegen belül.</p>`,
     examples:[
       {title:'print() alapok', code:`print("Szia!")             # Szia!
 print("2 + 3 =", 2+3)   # 2 + 3 = 5
@@ -346,10 +346,10 @@ print(nev, kor, varos)`,
     {label:'Kimenet: mindhárom változó megjelenik', fn:(c,o)=>o.trim().length>5},
   ],
   tutorial:{
-    intro:`<h3>Változók</h3>
-<p>A változó <strong>névvel ellátott tároló</strong> – értéke bármikor megváltoztatható.<br>
-Névadás szabályai: betűvel vagy <code>_</code>-sal kezdődhet, nem lehet benne szóköz, nem lehet kulcsszó (<code>if</code>, <code>for</code> stb.).</p>
-<p>A <strong>konstans</strong> olyan változó, amelynek értékét nem változtatjuk meg. Pythonban nincs valódi konstans – jelölésként csupa nagybetűvel írjuk: <code>PI = 3.14</code></p>`,
+    intro:`<h3>Változók – nevesített dobozok</h3>
+<p>A változó olyan, mint egy ragacscédula: ráírsz egy nevet, és hozzáragasztasz egy értéket. Bármikor le is cserélheted – ezért hívják <em>változónak</em>.</p>
+<p>Névadási szabály: betűvel vagy <code>_</code>-sal kezdődjön, ne legyen benne szóköz, ne egyezzen Python kulcsszóval (<code>if</code>, <code>for</code> stb.).</p>
+<p>A <strong>konstans</strong> olyan érték, amit egyszer beállítasz és nem változtatsz. Pythonban nincs rá külön kulcsszó – jelölésként csupa nagybetűvel írjuk: <code>PI = 3.14</code></p>`,
     examples:[
       {title:'Változók példa', code:`nev   = "Kovács Anna"
 kor   = 16
@@ -416,9 +416,10 @@ print(type(logikai))`,
     {label:'Kimenet: "str" és "bool"', fn:(c,o)=>/str/.test(o)&&/bool/.test(o)},
   ],
   tutorial:{
-    intro:`<h3>Adattípusok</h3>
-<p>Minden értéknek van típusa. A <code>type()</code> függvénnyel megnézheted.</p>
-<p><strong>bool:</strong> csak <code>True</code> vagy <code>False</code> lehet. Összehasonlítások eredménye is bool: <code>5 > 3</code> → <code>True</code></p>`,
+    intro:`<h3>Adattípusok – nem mindegy, mivel dolgozik a gép</h3>
+<p>A számítógép különbséget tesz a <code>"3"</code> szöveg és a <code>3</code> szám között – pont úgy, ahogy te is más szemmel nézel egy névjegykártyán lévő számot és egy számlán lévő összeget. Mielőtt számolsz, tudni kell, hogy szám-e egyáltalán.</p>
+<p>Négy alaptípus: <code>int</code> (egész szám) · <code>float</code> (tizedes szám) · <code>str</code> (szöveg, idézőjelben) · <code>bool</code> (csak <code>True</code> vagy <code>False</code> – igaz/hamis döntés)</p>
+<p>A <code>type()</code> függvénnyel bármikor megnézheted, milyen típusú egy érték.</p>`,
     examples:[
       {title:'Típusok és típusellenőrzés', code:`a = 10        # int
 b = 3.14      # float
@@ -464,9 +465,9 @@ print("Szia,", nev + "!")`,
   ],
   mockHint:'A program automatikusan <code>Anna</code>-t ad meg bemenetként a teszteléshez.',
   tutorial:{
-    intro:`<h3>input() – adatbekérés</h3>
-<p>Az <code>input()</code> megjelenít egy üzenetet, majd megvárja, amíg a felhasználó beír valamit és Entert nyom.<br>
-A visszaadott érték <strong>mindig string</strong> – számokat <code>int()</code> vagy <code>float()</code> függvénnyel kell átalakítani.</p>`,
+    intro:`<h3>input() – párbeszéd a felhasználóval</h3>
+<p>Minden okos alkalmazás kérdez valamit a felhasználótól: "Mi a neved?", "Hány éves vagy?". Az <code>input()</code> kiírja a kérdést, megvárja a választ, majd visszaadja a beírt szöveget.</p>
+<p><strong>Fontos:</strong> amit a felhasználó begépel, az mindig szöveg (<code>str</code>) lesz – még ha számot ír is. Ha számolni akarsz vele, át kell alakítani: <code>int(input(...))</code> vagy <code>float(input(...))</code>.</p>`,
     examples:[
       {title:'input() alapok', code:`# Szöveg bekérése
 nev = input("Neved: ")
@@ -510,13 +511,11 @@ print("Négyzete:", szam ** 2)`,
   ],
   mockHint:'Teszt bemenet: <code>7</code> → dupla: 14, négyzet: 49',
   tutorial:{
-    intro:`<h3>Típuskonverzió</h3>
-<p>Típusok átváltása egymás között:</p>
+    intro:`<h3>Típuskonverzió – fordítás típusok között</h3>
+<p>A <code>"5"</code> szöveg és az <code>5</code> szám ugyanúgy néz ki, de a számítógépnek teljesen más – mint ahogy a "három" szó és a 3-as szám emberileg ugyanazt jelenti, de másképp kezeljük őket. Az átváltás olyan, mint fordítás: megmondod a gépnek, hogy tekintsen rá szövegként vagy számként.</p>
 <ul>
-<li><code>int("5")</code> → <code>5</code> (stringből egész)</li>
-<li><code>float("3.14")</code> → <code>3.14</code> (stringből tizedes)</li>
-<li><code>str(42)</code> → <code>"42"</code> (számból string)</li>
-<li><code>int(3.9)</code> → <code>3</code> (csonkítja, nem kerekíti!)</li>
+<li><code>int("5")</code> → <code>5</code> · <code>float("3.14")</code> → <code>3.14</code> · <code>str(42)</code> → <code>"42"</code></li>
+<li>⚠️ <code>int(3.9)</code> → <code>3</code> – csonkítja, nem kerekíti!</li>
 </ul>`,
     examples:[
       {title:'Konverzió példák', code:`# String → egész
@@ -575,9 +574,9 @@ print(f"{a} % {b} = {a % b}")`,
   ],
   mockHint:'Teszt: <code>10</code> és <code>3</code>',
   tutorial:{
-    intro:`<h3>Műveletek és f-string</h3>
-<p>Aritmetikai operátorok: <code>+</code> összeadás, <code>-</code> kivonás, <code>*</code> szorzás, <code>/</code> osztás (float!), <code>//</code> egészosztás, <code>%</code> maradék, <code>**</code> hatványozás</p>
-<p>f-string: <code>f"szöveg {változó} szöveg"</code> – a kapcsos zárójelbe kifejezés is kerülhet.</p>`,
+    intro:`<h3>Műveletek és f-string – számolás és formázott szöveg</h3>
+<p>Az f-string olyan, mint egy sablonlevél: <em>"Kedves [Név]! Az átlagod [Szám]."</em> A szögletes zárójelek helyére kerül a valódi érték. Pythonban kapcsos zárójelet és egy <code>f</code> betűt kell az idézőjel elé írni – és a gép kitölti a blanket.</p>
+<p>Műveletek: <code>+</code> összeadás · <code>-</code> kivonás · <code>*</code> szorzás · <code>/</code> osztás (mindig tizedes!) · <code>//</code> egészosztás · <code>%</code> maradék · <code>**</code> hatványozás</p>`,
     examples:[
       {title:'Műveletek', code:`a, b = 10, 3
 print(a + b)   # 13
@@ -627,13 +626,9 @@ else:
   ],
   mockHint:'Teszt bemenet: <code>5</code> → "Pozitív szám."',
   tutorial:{
-    intro:`<h3>if / else – feltételes elágazás</h3>
-<p>Szintaxis:</p>
-<pre style="background:#0f172a;color:#a3e635;padding:8px;border-radius:6px;font-size:0.8rem;margin:6px 0;">if feltétel:
-    # ha igaz
-else:
-    # ha hamis</pre>
-<p>Összehasonlító operátorok: <code>==</code> egyenlő, <code>!=</code> nem egyenlő, <code>&gt;</code> nagyobb, <code>&lt;</code> kisebb, <code>&gt;=</code> nagyobb-egyenlő, <code>&lt;=</code> kisebb-egyenlő</p>`,
+    intro:`<h3>if / else – döntéshozatal a programban</h3>
+<p>Gondolj egy forgalmi lámpára: zöldnél mész, pirosnál megállsz. A program is ugyanígy dönt – megvizsgál egy feltételt, és attól függően cselekszik. Ez az <code>if/else</code> lényege.</p>
+<p>Ha a feltétel <strong>igaz</strong>, az <code>if</code> alatti kód fut le; ha <strong>hamis</strong>, az <code>else</code> alatti. Összehasonlításhoz: <code>==</code> egyenlő · <code>!=</code> nem egyenlő · <code>&gt;</code> nagyobb · <code>&lt;</code> kisebb · <code>&gt;=</code> nagyobb-egyenlő · <code>&lt;=</code> kisebb-egyenlő</p>`,
     examples:[
       {title:'if / else példa', code:`kor = int(input("Korod: "))
 
@@ -689,9 +684,9 @@ else:
   ],
   mockHint:'Teszt bemenet: <code>4</code> → "Jó"',
   tutorial:{
-    intro:`<h3>elif – több feltétel</h3>
-<p>Ha egymást kizáró eseteket kell kezelni, <code>elif</code>-et használunk.</p>
-<p>Fontos: csak az <strong>első igaz</strong> ágba lép be a program, utána a többit átugorja.</p>`,
+    intro:`<h3>elif – amikor több lehetőség is van</h3>
+<p>Ha csak két eset lenne a világban, elég lenne az if/else. De egy osztályzatnál öt lehetőség van: 1, 2, 3, 4 vagy 5. Ilyenkor jön az <code>elif</code> (<em>else if</em> = különben ha). Egymás után sorolod a feltételeket – a program megáll az <strong>első igaznál</strong>, a többit figyelmen kívül hagyja.</p>
+<p>A feltételek sorrendje számít: a Python fentről lefelé vizsgálja őket, és az első igaz ágba lép be.</p>`,
     examples:[
       {title:'if / elif / else', code:`pont = int(input("Pont: "))
 
@@ -746,11 +741,9 @@ else:
   ],
   mockHint:'Teszt bemenet: <code>15</code> → "Tanuló (10-18)"',
   tutorial:{
-    intro:`<h3>Logikai operátorok</h3>
-<p><code>and</code>: mindkettő igaz kell → <code>a > 0 and b > 0</code><br>
-<code>or</code>: elég egy igaz → <code>a == 0 or b == 0</code><br>
-<code>not</code>: megfordít → <code>not True</code> = <code>False</code></p>
-<p>Python-ban <strong>lánc összehasonlítás</strong> is lehetséges: <code>0 &lt; x &lt; 10</code></p>`,
+    intro:`<h3>Logikai operátorok – a hétköznapi „és", „vagy", „nem" kódban</h3>
+<p>„Csak akkor megyek moziba, ha van pénzem <em>és</em> szabad vagyok." – ez az <code>and</code>. „Elmegyek, ha napsütés <em>vagy</em> meleg van." – ez az <code>or</code>. „Nem leszek otthon." – ez a <code>not</code>. Ezek a logikai operátorok pontosan így működnek programban is.</p>
+<p>Python-ban lánc összehasonlítás is lehetséges: <code>10 &lt;= kor &lt;= 18</code> – ahogy matematikában is így írjuk, nem kell <code>and</code>-del összefűzni.</p>`,
     examples:[
       {title:'Logikai operátorok', code:`a, b = 5, 10
 
@@ -814,9 +807,9 @@ else:
   ],
   mockHint:'Teszt: <code>70</code> kg, <code>1.75</code> m → BMI ≈ 22.9 → Normális',
   tutorial:{
-    intro:`<h3>Összefoglalás: feltételek</h3>
-<p>Ebben a feladatban minden eddigi tudást kombinálod: <code>float(input())</code>, számítás, <code>f-string</code>, <code>if/elif/else</code>.</p>
-<p>A <code>:.1f</code> az f-string-ben 1 tizedesre kerekít.</p>`,
+    intro:`<h3>Összefoglalás – az első valódi alkalmazás</h3>
+<p>A BMI-kalkulátor az első programod, amit egy orvos is tudna használni: bekéri az adatokat, kiszámol egy értéket, majd kategóriába sorolja az eredményt. Pontosan így épülnek fel az igazi alkalmazások – adatbekérés, számítás, eredmény értelmezése.</p>
+<p>A <code>:.1f</code> az f-string-ben 1 tizedesre kerekíti a számot (<code>22.857</code> → <code>22.9</code>). A <code>:.2f</code> kettőre, a <code>:.0f</code> egész számra kerekít.</p>`,
     examples:[
       {title:'Számformázás f-string-gel', code:`ertek = 22.857
 print(f"{ertek:.1f}")   # 22.9
@@ -861,13 +854,9 @@ koszon("Csaba")`,
     {label:'Kimenet: "Béla"', fn:(c,o)=>/B[eé]la/i.test(o)},
   ],
   tutorial:{
-    intro:`<h3>Függvény (def)</h3>
-<p>Szintaxis:</p>
-<pre style="background:#0f172a;color:#a3e635;padding:8px;border-radius:6px;font-size:0.8rem;margin:6px 0;">def fuggveny_neve(parameter):
-    # ide jön a kód
-    # behúzva 4 szóközzel</pre>
-<p>Hívás: <code>fuggveny_neve(érték)</code><br>
-Paraméterből lehet több is, vesszővel elválasztva.</p>`,
+    intro:`<h3>Függvény (def) – egyszer írd meg, sokszor használd</h3>
+<p>A függvény olyan, mint egy recept: egyszer leírod a lépéseket, majd akárhányszor „elkészítheted" – anélkül, hogy mindent újra kellene írni. A névvel meghívod, és lefut. Ha változtatni kell, csak egy helyen kell módosítani.</p>
+<p>Szintaxis: <code>def névé(paraméter):</code> – a kód alatta 4 szóközzel behúzva következik. Meghívás: <code>névé(érték)</code>. Paraméterből lehet több is, vesszővel elválasztva.</p>`,
     examples:[
       {title:'Függvény paraméterekkel', code:`def koszon(nev, varos):
     print(f"Szia {nev}! Te {varos}-ból jössz?")
@@ -917,9 +906,9 @@ print(f"4 × 6 téglalap területe: {t2}")`,
     {label:'Kimenet: 24 (4×6)', fn:(c,o)=>/24/.test(o)},
   ],
   tutorial:{
-    intro:`<h3>return – visszatérési érték</h3>
-<p>A <code>return</code> a függvényből visszaad egy értéket. A <code>print()</code>-tel ellentétben ez az érték el is tárolható és tovább számolható.</p>
-<p>A <code>return</code> után a függvény azonnal leáll – utána lévő sorok nem futnak le.</p>`,
+    intro:`<h3>return – a függvény „visszaadja a választ"</h3>
+<p>A <code>print()</code> csak megmutatja az eredményt – mint amikor hangosan kimondasz valamit. A <code>return</code> viszont visszaadja az értéket – mint amikor leírod, hogy tovább lehessen küldeni, felhasználni. Egy számológép nem csak kimondja az eredményt: visszaadja, hogy tovább számolhass vele.</p>
+<p><strong>Fontos:</strong> a <code>return</code> után a függvény azonnal leáll – az utána lévő sorok már nem futnak le.</p>`,
     examples:[
       {title:'return vs print', code:`# print() csak kiírja – nem tárolható!
 def print_osszeg(a, b):
@@ -986,8 +975,9 @@ print(evszak(10))`,
     {label:'Kimenet: "Nyár"', fn:(c,o)=>/Ny[aá]r/i.test(o)},
   ],
   tutorial:{
-    intro:`<h3>Függvény return-nel – több ág</h3>
-<p>A <code>return</code> bármelyik ágból visszatérhet. Az <code>in</code> operátor ellenőrzi, hogy egy érték szerepel-e egy listában: <code>x in [1, 2, 3]</code></p>`,
+    intro:`<h3>Függvény + döntéshozatal – besoroló rendszer</h3>
+<p>A függvény belsejébe is kerülhet döntéshozatal. Gondolj egy besoroló rendszerre: beírsz egy hónapszámot, visszakapod az évszakot. A <code>return</code> bármelyik ágból visszatérhet – mihelyt elér egyet, a függvény megáll és visszaadja az értéket.</p>
+<p>Az <code>in</code> operátor ellenőrzi, hogy egy érték szerepel-e egy listában: <code>honap in [12, 1, 2]</code> – elegánsabb, mint három <code>==</code>-os feltételt <code>or</code>-ral összefűzni.</p>`,
     examples:[
       {title:'Függvény több return-nel', code:`def minapszak(ora):
     if 5 <= ora < 12:
@@ -1046,10 +1036,9 @@ for i in range(1, 11):
     {label:'Kimenet: 5× tábla (5, 10, 15...)', fn:(c,o)=>/5/.test(o)&&/10/.test(o)&&/15/.test(o)},
   ],
   tutorial:{
-    intro:`<h3>for + range()</h3>
-<p><code>range(5)</code> → 0, 1, 2, 3, 4<br>
-<code>range(1, 6)</code> → 1, 2, 3, 4, 5<br>
-<code>range(0, 10, 2)</code> → 0, 2, 4, 6, 8 (lépésköz: 2)</p>`,
+    intro:`<h3>for ciklus – végigmenni egy sorozaton</h3>
+<p>Képzeld el, hogy végig kell nézned az osztálynapló minden sorát – egyenként, fentről lefelé. Ezt csinálja a <code>for</code> ciklus: végigmegy egy sorozaton, és minden elemre egyszer lefuttatja a kódot. A <code>range(n)</code> egy számsorozatot generál – nem kell kézzel felsorolni.</p>
+<p><code>range(5)</code> → 0,1,2,3,4 · <code>range(1,6)</code> → 1,2,3,4,5 · <code>range(0,10,2)</code> → 0,2,4,6,8 (lépésköz: 2)</p>`,
     examples:[
       {title:'for + range példák', code:`# 1-től 5-ig
 for i in range(1, 6):
@@ -1112,9 +1101,9 @@ print("1-100 összege:", osszeg)`,
     {label:'Kimenet: 5050 (1-100 összege)', fn:(c,o)=>/5050/.test(o)},
   ],
   tutorial:{
-    intro:`<h3>while – feltételes ciklus</h3>
-<p>A <code>while</code> addig fut, amíg a feltétel igaz. Fontos: a számlálót <strong>mindig növelni</strong> kell, különben végtelen ciklus lesz!</p>
-<p><code>+=</code> rövid írásmód: <code>x += 1</code> ugyanaz mint <code>x = x + 1</code></p>`,
+    intro:`<h3>while – „addig csináld, amíg..."</h3>
+<p>A <code>for</code> ciklus előre tudja, hányszor fut. A <code>while</code> nem – addig fut, amíg egy feltétel igaz marad. Mint ahogy addig dagasztod a kenyértésztát, amíg rugalmas nem lesz – nem az ütések számát számolod, hanem az állapotot figyeled.</p>
+<p><strong>Figyelem:</strong> a számlálót mindig növelni kell! Ha elfelejted, végtelen ciklus lesz, és a program „befagy". A <code>+=</code> rövidítés: <code>x += 1</code> ugyanaz, mint <code>x = x + 1</code>.</p>`,
     examples:[
       {title:'while ciklus', code:`# Visszaszámlálás
 n = 5
@@ -1185,10 +1174,9 @@ for i in range(1, 21):
     }},
   ],
   tutorial:{
-    intro:`<h3>break és continue</h3>
-<p><code>break</code>: azonnal kilép a teljes ciklusból.<br>
-<code>continue</code>: az aktuális iteráció maradékát átugorja, a ciklus folytatódik.<br>
-Mindkettő működik <code>for</code> és <code>while</code> ciklusban is.</p>`,
+    intro:`<h3>break és continue – kilépés és átugrás</h3>
+<p>Képzeld el, hogy egy lejátszólistán keresel egy dalt. Ha megtaláltad, abbahagyod a keresést – ez a <code>break</code> (kilép a ciklusból). Ha kihagyod az alacsony minőségű számokat, de folytatod a keresést – ez a <code>continue</code> (átugorja az aktuális elemet, de a ciklus megy tovább).</p>
+<p>Mindkettő működik <code>for</code> és <code>while</code> ciklusban is.</p>`,
     examples:[
       {title:'break / continue', code:`# break: keresés listában
 szamok = [3, 7, 2, 15, 8]
@@ -1249,9 +1237,9 @@ print(f"Átlag: {atlag:.1f}")`,
     {label:'Kimenet: átlag (~76.6)', fn:(c,o)=>/76\.\d/.test(o)},
   ],
   tutorial:{
-    intro:`<h3>Beépített függvények listákhoz</h3>
-<p>Ezeket nem kell importálni – azonnal elérhetők.</p>
-<p>Más hasznos beépített függvények: <code>round(szam, tizedes)</code>, <code>abs(szam)</code> (abszolút érték), <code>sorted(lista)</code> (rendezés), <code>reversed(lista)</code></p>`,
+    intro:`<h3>Beépített statisztikai eszközök</h3>
+<p>Képzeld el, hogy egy tanár az osztálynaplóból szeretné tudni: hány tanuló van, ki a legjobb, ki a leggyengébb, és mennyi az átlag. Ezt Pythonban négy sorban meg lehet tenni – ezek a beépített függvények importálás nélkül, azonnal elérhetők.</p>
+<p><code>len()</code> darabszám · <code>sum()</code> összeg · <code>min()</code> legkisebb · <code>max()</code> legnagyobb · <code>sorted(lista)</code> rendezett lista · <code>round(szam, n)</code> n tizedesre kerekít · <code>abs(szam)</code> abszolút érték</p>`,
     examples:[
       {title:'Listás műveletek', code:`szamok = [5, 2, 8, 1, 9, 3]
 print(len(szamok))     # 6
@@ -1306,8 +1294,9 @@ print(f"Legjobb: {max(dobások)}")`,
     {label:'Kimenet: összeg megjelenik', fn:(c,o)=>/[Öö]sszeg/i.test(o)},
   ],
   tutorial:{
-    intro:`<h3>random modul</h3>
-<p>Az <code>import</code>-tal töltünk be modulokat (könyvtárakat). A <code>random</code> beépített modul, nem kell telepíteni.</p>`,
+    intro:`<h3>Modulok – előre megírt eszközök importálása</h3>
+<p>Nem kell mindent nulláról feltalálni. A Python sok előre megírt „szerszámosdobozt" tartalmaz – ezeket <em>moduloknak</em> hívják. A <code>random</code> a véletlenszerűséghez való eszközkészlet: kockadobás, sorsolás, lista keverése – mind megvan benne. Az <code>import</code> szóval töltöd be, utána a modulnévvel éred el a függvényeit.</p>
+<p><code>random.randint(a, b)</code> egész a-tól b-ig (mindkét vég benne!) · <code>random.choice(lista)</code> véletlen elem · <code>random.shuffle(lista)</code> összekeveri a listát</p>`,
     examples:[
       {title:'random függvények', code:`import random
 
@@ -1384,8 +1373,9 @@ print("Utolsó:", szamok[-1])`,
     {label:'Kimenet: utolsó elem 55', fn:(c,o)=>/Utols[oó].*55/i.test(o)},
   ],
   tutorial:{
-    intro:`<h3>Lista (list)</h3>
-<p>A lista rendezett, módosítható elemsorozat. Indexelés 0-tól kezdődik. Negatív index hátulról számol: <code>[-1]</code> az utolsó elem.</p>`,
+    intro:`<h3>Lista – sorban tárolt elemek</h3>
+<p>A lista olyan, mint egy bevásárlócédula: sorban vannak az elemek, bármikor hozzá lehet adni újat, ki lehet venni egyet, és a sorrend megmarad. Az indexelés 0-tól kezdődik – mint a sorozatoknál: az 1. epizód a 0. index. A <code>[-1]</code> az utolsó elemet jelenti – visszafelé számolva.</p>
+<p><code>.append(elem)</code> hozzáad · <code>.remove(elem)</code> töröl · <code>.sort()</code> rendezi helyben · <code>sorted(lista)</code> új rendezett listát ad vissza (az eredeti marad)</p>`,
     examples:[
       {title:'Lista műveletek', code:`gyumolcsok = ["alma", "körte", "szilva"]
 
@@ -1462,17 +1452,9 @@ while True:
   ],
   mockHint:'Teszt bemenetek sorban: <code>10</code>, <code>15</code>, <code>18</code> (a titkos szám 18)',
   tutorial:{
-    intro:`<h3>Összefoglalás</h3>
-<p>Ebben a feladatban mindent kombináltál:</p>
-<ul>
-<li><code>import random</code></li>
-<li><code>while True:</code> + <code>break</code></li>
-<li><code>int(input())</code></li>
-<li><code>if / elif / else</code></li>
-<li>változó növelés: <code>tippek += 1</code></li>
-<li>f-string</li>
-</ul>
-<p>Gratulálok! Készen állsz a Python alapokból.</p>`,
+    intro:`<h3>Mini projekt – az első önálló alkalmazásod</h3>
+<p>Ez a program már valódi interaktív játék: a gép „gondol" egy számot, te tippelsz, ő visszajelzést ad, és addig fut, amíg el nem találod. Megvan benne minden: adatbekérés, feltételvizsgálat, ciklus, számláló változó és formázott kimenet. Ilyen alapszerkezetű programokból épülnek fel az igazi alkalmazások is.</p>
+<p>Gratulálok – végigcsináltad az összes alapfeladatot! Készen állsz a Python vizsgára.</p>`,
     examples:[
       {title:'while True + break minta', code:`# Tipikus minta: addig fut amíg helyes bemenetet kap
 while True:
