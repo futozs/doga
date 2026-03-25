@@ -1033,7 +1033,7 @@
 <div class="otlet-modal-overlay" id="hiba-modal">
     <div class="otlet-modal-box" style="border-color:#e94560;">
         <h3>🐛 Hibajelentés</h3>
-        <p>Írj le egy tesztelés közben talált anomáliát. Csatolhatsz képernyőképet is.</p>
+        <p>Írj le egy tesztelés közben talált anomáliát. Csatolhatsz képernyőképet fájlból vagy vágólapról (Ctrl+V).</p>
         <textarea id="hiba-szoveg" placeholder="Írd le a hibát, mit csináltál, mi történt..."></textarea>
         <label class="otlet-file-label" for="hiba-kep-input">
             <i class="fas fa-image"></i> Screenshot csatolása (opcionális)
@@ -1098,6 +1098,9 @@
 <div class="otlet-fab-wrap">
     <button class="otlet-btn" id="csatlakozas-btn" onclick="openCsatlakozasModal()" style="display:none; background:#4f46e5; box-shadow:0 4px 18px rgba(79,70,229,.45);">
         🤝 Csatlakozás
+    </button>
+    <button class="otlet-btn" id="hiba-btn" onclick="openHibaModal()" style="display:none;">
+        🐛 Hibajelentés
     </button>
     <button class="otlet-btn" id="otlet-btn" onclick="openOtletModal()">
         💡 Ötlet Láda
@@ -1863,6 +1866,27 @@
         hibaKepBase64 = null;
         document.getElementById('hiba-modal').classList.add('open');
     }
+
+    // Vágólapról kép beillesztés (Ctrl+V) a hiba modalban
+    document.getElementById('hiba-modal').addEventListener('paste', function(e) {
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.startsWith('image/')) {
+                const file = items[i].getAsFile();
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    hibaKepBase64 = ev.target.result;
+                    const preview = document.getElementById('hiba-kep-preview');
+                    preview.src = hibaKepBase64;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+                e.preventDefault();
+                break;
+            }
+        }
+    });
     function closeHibaModal() {
         document.getElementById('hiba-modal').classList.remove('open');
     }
@@ -2210,6 +2234,9 @@
             if (nameEl && !nameEl.querySelector('.tesztelő-badge')) {
                 nameEl.insertAdjacentHTML('beforeend', '<span class="tesztelő-badge">🔬 Tesztelő</span>');
             }
+            // Hibajelentés gomb megjelenítése
+            const hibaBtn = document.getElementById('hiba-btn');
+            if (hibaBtn) hibaBtn.style.display = 'flex';
             // Tesztelői üzenetek betöltése
             const uRes = await fetch(`${API_BASE}/api/teszteloi-uzenetek/my`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
