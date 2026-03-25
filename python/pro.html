@@ -61,6 +61,7 @@
     .pill-group-label.algoritmus{color:#f472b6;}
     .pill-group-label.listakif{color:#34d399;}
     .pill-group-label.lambda_f{color:#fb923c;}
+    .pill-group-label.rekurzio{color:#818cf8;}
     .pill {
       flex-shrink: 0; width: 30px; height: 26px;
       border-radius: 6px; border: 1.5px solid #374151;
@@ -106,6 +107,7 @@
     .topic-badge.algoritmus{background:rgba(244,114,182,.15);color:#f472b6;border:1px solid rgba(244,114,182,.3);}
     .topic-badge.listakif{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3);}
     .topic-badge.lambda_f{background:rgba(251,146,60,.15);color:#fb923c;border:1px solid rgba(251,146,60,.3);}
+    .topic-badge.rekurzio   { background: rgba(129,140,248,.15); color: #818cf8; border: 1px solid rgba(129,140,248,.3); }
     .task-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
     .task-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
     .task-desc code { background: #1e293b; color: #93c5fd; padding: 1px 4px; border-radius: 3px; font-size: 0.8rem; }
@@ -282,7 +284,7 @@
   <a href="basics.html" class="btn-back" style="border-color:#fb923c;color:#fb923c;"><i class="fas fa-book-open"></i> Alapok</a>
   <a href="practice.html" class="btn-back" style="border-color:#22c55e;color:#22c55e;"><i class="fas fa-graduation-cap"></i> Haladó</a>
   <div class="topbar-spacer"></div>
-  <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 11</div>
+  <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 19</div>
   <button class="btn-restart" onclick="restartPractice()" title="Összes feladat törlése és újrakezdés"><i class="fa-solid fa-arrow-rotate-right"></i> Újrakezd</button>
 </header>
 <!-- PILLS BAR -->
@@ -294,8 +296,8 @@
 <div class="completion-overlay" id="completion-modal">
   <div class="completion-box">
     <div style="font-size:3rem;margin-bottom:12px;">🏆</div>
-    <h2>Mind a 11 feladat kész!</h2>
-    <p>Felkészültél az emelt szintű kérdésekre – és a Python vizsgára is!</p>
+    <h2>Mind a 19 feladat kész!</h2>
+    <p>Felkészültél az összes programozási tételre, a lista-lerövidítésre, a lambda függvényekre és a rekurzióra – ez már igazán emelt szintű tudás!</p>
     <div class="completion-buttons">
       <button class="btn-comp" onclick="restartPractice()"><i class="fa-solid fa-arrow-rotate-right"></i> Újra</button>
       <a class="btn-comp" href="index.html"><i class="fa-solid fa-list-check"></i> Vizsga feladatok</a>
@@ -663,10 +665,358 @@ print(lista)  # [1, 1, 3, 4, 5]` }
   }
 },
 
+// ═══════════ ALGORITMUSOK FOLYTATÁS (6–10) ═══════════
+
+{
+  id: 6, emoji: '⬇️', topicGroup: 'algoritmus',
+  title: 'Minimum kiválasztás',
+  description: `<p>Ugyanolyan mint a maximum keresés – csak itt a <strong>legkisebb</strong> elemet keresed.</p>
+<p>Adott: <code>arak = [850, 320, 1200, 450, 290, 780, 560]</code></p>
+<p>Keresd meg a <strong>legolcsóbb terméket</strong> és írd ki az árát és a helyét (hányadik a listában)!</p>`,
+  starterCode: `# 6. feladat: Minimum kiválasztás
+arak = [850, 320, 1200, 450, 290, 780, 560]
+
+# Kezdj az első elemtől:
+minimum = arak[0]
+min_i = 0
+
+# Ha kisebbet találsz, frissítsd:
+for i in range(len(arak)):
+    if arak[i] < minimum:
+
+print(f"Legolcsóbb: {minimum} Ft ({min_i + 1}. termék)")
+`,
+  solution: `arak = [850, 320, 1200, 450, 290, 780, 560]
+minimum = arak[0]
+min_i = 0
+for i in range(len(arak)):
+    if arak[i] < minimum:
+        minimum = arak[i]
+        min_i = i
+print(f"Legolcsóbb: {minimum} Ft ({min_i + 1}. termék)")`,
+  mockInputs: [],
+  checks: [
+    { label: 'minimum = arak[0] (első elemmel indul)', fn: (c,o) => /minimum\s*=\s*arak\[0\]/.test(c) },
+    { label: 'for ciklus range(len(...))-el', fn: (c,o) => /for\s+\w+\s+in\s+range\s*\(\s*len/.test(c) },
+    { label: 'Összehasonlítás < minimum', fn: (c,o) => /<\s*minimum|minimum\s*>/.test(c) },
+    { label: 'minimum frissítve a ciklusban', fn: (c,o) => /minimum\s*=\s*arak/.test(c) },
+    { label: 'Kimenet: 290 (minimum)', fn: (c,o) => /290/.test(o) },
+    { label: 'Kimenet: 5. termék', fn: (c,o) => /5/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Minimum kiválasztás</h3>
+<p>Pontosan ugyanaz mint a maximum keresés – csak a feltétel fordított: <code>&lt; minimum</code> helyett <code>&gt; maximum</code>.</p>
+<p>Az első elemtől indulsz, és ha kisebbet találsz, frissítesz.</p>`,
+    examples: [
+      { title: 'Minimum keresés', code: `szamok = [42, 7, 85, 3, 61]
+minimum = szamok[0]
+min_i = 0
+for i in range(len(szamok)):
+    if szamok[i] < minimum:
+        minimum = szamok[i]
+        min_i = i
+print(f"Legkisebb: {minimum} ({min_i+1}. helyen)")
+# Legkisebb: 3 (4. helyen)` },
+    ]
+  }
+},
+
+{
+  id: 7, emoji: '✅', topicGroup: 'algoritmus',
+  title: 'Eldöntés tétele',
+  description: `<p>Az eldöntés tétele arra válaszol: <strong>van-e legalább egy elem a listában, ami teljesít egy feltételt?</strong></p>
+<p>Nem kell az összes elemet megvizsgálni – amint megtaláltad az elsőt, megvan a válasz.</p>
+<p>Adott: <code>jegyek = [4, 3, 5, 2, 4, 5, 3, 1, 4]</code></p>
+<p>Döntsd el saját ciklussal:</p>
+<ol>
+<li>Van-e <strong>elégtelen (1-es)</strong> jegy?</li>
+<li>Van-e <strong>jeles (5-ös)</strong> jegy?</li>
+</ol>`,
+  starterCode: `# 7. feladat: Eldöntés tétele
+jegyek = [4, 3, 5, 2, 4, 5, 3, 1, 4]
+
+# Van-e elégtelen?
+van_elegelen = False
+for jegy in jegyek:
+    if jegy == 1:
+        van_elegelen = True
+        break   # megvan, nem kell tovább nézni
+
+if van_elegelen:
+    print("Van elégtelen!")
+else:
+    print("Nincs elégtelen.")
+
+# Van-e jeles?
+van_jeles =
+
+
+`,
+  solution: `jegyek = [4, 3, 5, 2, 4, 5, 3, 1, 4]
+van_elegelen = False
+for jegy in jegyek:
+    if jegy == 1:
+        van_elegelen = True
+        break
+if van_elegelen:
+    print("Van elégtelen!")
+else:
+    print("Nincs elégtelen.")
+
+van_jeles = False
+for jegy in jegyek:
+    if jegy == 5:
+        van_jeles = True
+        break
+if van_jeles:
+    print("Van jeles!")
+else:
+    print("Nincs jeles.")`,
+  mockInputs: [],
+  checks: [
+    { label: 'van_elegelen = False (jelző változó)', fn: (c,o) => /van_elegelen\s*=\s*False/.test(c) },
+    { label: 'break megtalálható', fn: (c,o) => /\bbreak\b/.test(c) },
+    { label: 'van_jeles változó megtalálható', fn: (c,o) => /van_jeles/.test(c) },
+    { label: 'Kimenet: "Van elégtelen!"', fn: (c,o) => /Van elégtelen/.test(o) },
+    { label: 'Kimenet: "Van jeles!"', fn: (c,o) => /Van jeles/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Eldöntés tétele</h3>
+<p>Egy <strong>jelző változóval</strong> dolgozol: indul <code>False</code>-ról, és ha megtalálod a keresett elemet, <code>True</code>-ra állítod – és <code>break</code>-kel kilépesz.</p>
+<p>Pythonban van erre beépített megoldás is: <code>any()</code> és <code>all()</code> – de a saját ciklusos változatot is tudni kell!</p>`,
+    examples: [
+      { title: 'Eldöntés tétele', code: `szamok = [3, 7, 12, 5, 8]
+
+# Van-e 10-nél nagyobb?
+van_nagy = False
+for x in szamok:
+    if x > 10:
+        van_nagy = True
+        break
+
+print("Van nagy szám:", van_nagy)  # True
+
+# Python rövid megoldás (any):
+print(any(x > 10 for x in szamok))  # True` },
+    ]
+  }
+},
+
+{
+  id: 8, emoji: '🗂️', topicGroup: 'algoritmus',
+  title: 'Kiválogatás tétele',
+  description: `<p>A kiválogatás tétele: <strong>gyűjtsd ki egy új listába az összes olyan elemet, ami megfelel egy feltételnek.</strong></p>
+<p>Ez olyan mint a megszámlálás – csak nem csak megszámolod, hanem el is teszed félre a megfelelőket.</p>
+<p>Adott: <code>pontszamok = [45, 72, 88, 31, 95, 60, 77, 42, 83, 55]</code></p>
+<p>Válogasd ki:</p>
+<ol>
+<li>Az <strong>átment (60 pont fölötti)</strong> pontszámokat</li>
+<li>A <strong>bukottak</strong> pontszámait (60 vagy alatta)</li>
+</ol>`,
+  starterCode: `# 8. feladat: Kiválogatás tétele
+pontszamok = [45, 72, 88, 31, 95, 60, 77, 42, 83, 55]
+
+# Átmentek (> 60):
+atmentek = []
+for pont in pontszamok:
+    if pont > 60:
+
+print("Átmentek:", atmentek)
+print("Átmentek száma:", len(atmentek))
+
+# Bukottak (<= 60):
+bukottak = []
+
+
+print("Bukottak:", bukottak)
+`,
+  solution: `pontszamok = [45, 72, 88, 31, 95, 60, 77, 42, 83, 55]
+atmentek = []
+for pont in pontszamok:
+    if pont > 60:
+        atmentek.append(pont)
+print("Átmentek:", atmentek)
+print("Átmentek száma:", len(atmentek))
+
+bukottak = []
+for pont in pontszamok:
+    if pont <= 60:
+        bukottak.append(pont)
+print("Bukottak:", bukottak)`,
+  mockInputs: [],
+  checks: [
+    { label: 'atmentek = [] (üres lista)', fn: (c,o) => /atmentek\s*=\s*\[\]/.test(c) },
+    { label: '.append() megtalálható', fn: (c,o) => /\.append\s*\(/.test(c) },
+    { label: 'bukottak lista megtalálható', fn: (c,o) => /bukottak/.test(c) },
+    { label: 'Kimenet: [72, 88, 95, 77, 83]', fn: (c,o) => /72.*88.*95.*77.*83/.test(o) },
+    { label: 'Kimenet: bukottak listája', fn: (c,o) => /45.*31.*60.*42.*55/.test(o) },
+    { label: 'len() az átmentek számához', fn: (c,o) => /len\s*\(/.test(c) },
+  ],
+  tutorial: {
+    intro: `<h3>Kiválogatás tétele</h3>
+<p>Egy <strong>üres listával indulsz</strong>, majd minden megfelelő elemet hozzáadsz az <code>.append()</code> metódussal.</p>
+<p>Ez tulajdonképpen ugyanaz, mint amit a lista-lerövidítéssel csináltál – csak itt ciklussal és append-del.</p>`,
+    examples: [
+      { title: 'Kiválogatás', code: `szamok = [3, 15, 8, 42, 7, 19, 24]
+
+# Kiválogatás ciklussal
+nagy = []
+for x in szamok:
+    if x > 10:
+        nagy.append(x)
+print(nagy)   # [15, 42, 19, 24]
+
+# Ugyanez lista-lerövidítéssel:
+nagy2 = [x for x in szamok if x > 10]
+print(nagy2)  # [15, 42, 19, 24]` },
+    ]
+  }
+},
+
+{
+  id: 9, emoji: '🔄', topicGroup: 'algoritmus',
+  title: 'Másolás tétele',
+  description: `<p>A másolás tétele: <strong>másold át a lista összes elemét egy új listába – de közben alakítsd át őket.</strong></p>
+<p>Például: minden elemet duplázz meg, vagy alakítsd át más típussá.</p>
+<p>Adott: <code>celsius = [0, 20, 37, 100, -10, 25]</code></p>
+<p>Számítsd ki az összes értéket <strong>Fahrenheitbe</strong> (képlet: <code>F = C * 9/5 + 32</code>) és tedd egy új listába!</p>
+<p>Írd ki az eredményt és az első értéket külön is!</p>`,
+  starterCode: `# 9. feladat: Másolás tétele
+celsius = [0, 20, 37, 100, -10, 25]
+
+# Másold át, közben alakítsd Fahrenheitté:
+fahrenheit = []
+for c in celsius:
+    f =           # képlet: c * 9/5 + 32
+    fahrenheit.append(f)
+
+print("Fahrenheit értékek:", fahrenheit)
+print("0°C =", fahrenheit[0], "°F")
+`,
+  solution: `celsius = [0, 20, 37, 100, -10, 25]
+fahrenheit = []
+for c in celsius:
+    f = c * 9/5 + 32
+    fahrenheit.append(f)
+print("Fahrenheit értékek:", fahrenheit)
+print("0°C =", fahrenheit[0], "°F")`,
+  mockInputs: [],
+  checks: [
+    { label: 'fahrenheit = [] (üres lista)', fn: (c,o) => /fahrenheit\s*=\s*\[\]/.test(c) },
+    { label: 'for ciklus a celsius listán', fn: (c,o) => /for\s+\w+\s+in\s+celsius/.test(c) },
+    { label: 'Fahrenheit képlet (* 9/5 + 32)', fn: (c,o) => /9\s*\/\s*5/.test(c) && /\+\s*32|32\s*\+/.test(c) },
+    { label: '.append() megtalálható', fn: (c,o) => /\.append\s*\(/.test(c) },
+    { label: 'Kimenet: 32.0 (0°C = 32°F)', fn: (c,o) => /32\.0|32\b/.test(o) },
+    { label: 'Kimenet: 212.0 (100°C = 212°F)', fn: (c,o) => /212/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Másolás tétele</h3>
+<p>Az összes elemet átveszed, de <strong>átalakítva</strong>. Üres listával indulsz, és minden átalakított elemet hozzáfűzöl.</p>
+<p>A Celsius → Fahrenheit képlet: <code>F = C × 9/5 + 32</code><br>
+Emlékeztető: 0°C = 32°F, 100°C = 212°F</p>`,
+    examples: [
+      { title: 'Másolás átalakítással', code: `szamok = [1, 2, 3, 4, 5]
+
+# Duplázás
+duplak = []
+for x in szamok:
+    duplak.append(x * 2)
+print(duplak)   # [2, 4, 6, 8, 10]
+
+# Stringgé alakítás
+szovegek = []
+for x in szamok:
+    szovegek.append(str(x) + ". elem")
+print(szovegek)  # ['1. elem', '2. elem', ...]` },
+    ]
+  }
+},
+
+{
+  id: 10, emoji: '🎯', topicGroup: 'algoritmus',
+  title: 'Bináris keresés',
+  description: `<p>A bináris keresés sokkal <strong>gyorsabb</strong> mint a lineáris – de csak <strong>rendezett listán</strong> működik.</p>
+<p>Az ötlet: mindig a lista közepét nézed meg. Ha a keresett szám ennél kisebb, a bal felét vizsgálod tovább, ha nagyobb, a jobb felét. Minden lépéssel felezed a keresési területet.</p>
+<p>Adott rendezett lista: <code>szamok = [2, 5, 8, 12, 16, 23, 38, 45, 72, 91]</code><br>
+Keresett szám: <code>23</code></p>`,
+  starterCode: `# 10. feladat: Bináris keresés
+szamok = [2, 5, 8, 12, 16, 23, 38, 45, 72, 91]
+keresett = 23
+
+bal = 0
+jobb = len(szamok) - 1
+talalat = -1
+
+while bal <= jobb:
+    kozep = (bal + jobb) // 2
+    if szamok[kozep] == keresett:
+        talalat = kozep
+        break
+    elif szamok[kozep] < keresett:
+        bal = kozep + 1   // jobb felére szűkítünk
+    else:
+        jobb = kozep - 1  // bal felére szűkítünk
+
+if talalat != -1:
+    print(f"Megtalálva: {talalat}. indexen")
+else:
+    print("Nem található")
+`,
+  solution: `szamok = [2, 5, 8, 12, 16, 23, 38, 45, 72, 91]
+keresett = 23
+bal = 0
+jobb = len(szamok) - 1
+talalat = -1
+while bal <= jobb:
+    kozep = (bal + jobb) // 2
+    if szamok[kozep] == keresett:
+        talalat = kozep
+        break
+    elif szamok[kozep] < keresett:
+        bal = kozep + 1
+    else:
+        jobb = kozep - 1
+if talalat != -1:
+    print(f"Megtalálva: {talalat}. indexen")
+else:
+    print("Nem található")`,
+  mockInputs: [],
+  checks: [
+    { label: 'bal és jobb változók (keresési határok)', fn: (c,o) => /\bbal\b/.test(c) && /\bjobb\b/.test(c) },
+    { label: 'while bal <= jobb', fn: (c,o) => /while\s+bal\s*<=\s*jobb/.test(c) },
+    { label: 'kozep = (bal + jobb) // 2', fn: (c,o) => /kozep\s*=.*(bal.*jobb|jobb.*bal).*\/\/\s*2/.test(c) },
+    { label: 'bal = kozep + 1 (jobb felé szűkítés)', fn: (c,o) => /bal\s*=\s*kozep\s*\+\s*1/.test(c) },
+    { label: 'jobb = kozep - 1 (bal felé szűkítés)', fn: (c,o) => /jobb\s*=\s*kozep\s*-\s*1/.test(c) },
+    { label: 'Kimenet: 5. index', fn: (c,o) => /\b5\b/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Bináris keresés – hogyan működik?</h3>
+<p>Képzeld el, hogy egy számsor közepére nyitsz rá – ha a keresett szám kisebb, csak a bal felét vizsgálod, ha nagyobb, csak a jobb felét. Így minden lépéssel felezed, amit még meg kell nézni.</p>
+<p>10 elemből 4 lépés alatt megtalálsz bármit. 1000 elemből 10 lépés elég. A lineáris keresés 1000 elemet akár 1000-szer is megnézne.</p>
+<p><strong>Feltétel:</strong> csak rendezett listán működik!</p>`,
+    examples: [
+      { title: 'Bináris keresés', code: `lista = [1, 3, 5, 7, 9, 11, 13, 15]
+keresett = 7
+bal, jobb = 0, len(lista) - 1
+
+while bal <= jobb:
+    kozep = (bal + jobb) // 2
+    if lista[kozep] == keresett:
+        print(f"Megvan: {kozep}. index")
+        break
+    elif lista[kozep] < keresett:
+        bal = kozep + 1
+    else:
+        jobb = kozep - 1
+# Megvan: 3. index` },
+    ]
+  }
+},
+
 // ═══════════ LIST COMPREHENSION (6–8) ═══════════
 
 {
-  id: 6, emoji: '⚡', topicGroup: 'listakif',
+  id: 11, emoji: '⚡', topicGroup: 'listakif',
   title: 'List comprehension – alap',
   description: `<p>A <strong>lista-lerövidítés</strong> (angolul: list comprehension) azt jelenti, hogy ahelyett hogy ciklussal és <code>.append()</code>-pel töltöd fel a listát, egyetlen sorban megírhatod.</p>
 <p>Hozz létre egy listát, ami az 1–10 számok <strong>négyzeteit</strong> tartalmazza – az egysoros rövidítéssel!<br>
@@ -715,7 +1065,7 @@ print(parosak)  # [2, 4, 6, 8, 10]` }
 },
 
 {
-  id: 7, emoji: '🔍', topicGroup: 'listakif',
+  id: 12, emoji: '🔍', topicGroup: 'listakif',
   title: 'List comprehension – feltétellel',
   description: `<p>A list comprehension végére tehetsz egy <code>if</code> feltételt – így csak azok az elemek kerülnek bele, amik megfelelnek a feltételnek.</p>
 <p>Szintaxis: <code>[kifejezés for elem in lista if feltétel]</code></p>
@@ -770,7 +1120,7 @@ print(hosszuk)  # ['helló', 'sziasztok']` }
 },
 
 {
-  id: 8, emoji: '📖', topicGroup: 'listakif',
+  id: 13, emoji: '📖', topicGroup: 'listakif',
   title: 'Dict comprehension',
   description: `<p>Ugyanúgy ahogy listát lehet egy sorban létrehozni, szótárat is lehet: ez a dict comprehension.</p>
 <p>Szintaxis: <code>{kulcs: érték for elem in lista}</code></p>
@@ -823,7 +1173,7 @@ print(dupla)  # {'kávé': 800, 'tea': 600, 'víz': 300}` }
 // ═══════════ LAMBDA & MAP/FILTER (9–11) ═══════════
 
 {
-  id: 9, emoji: 'λ', topicGroup: 'lambda_f',
+  id: 14, emoji: 'λ', topicGroup: 'lambda_f',
   title: 'lambda – névtelen függvény',
   description: `<p>A <code>lambda</code> egy kis, névtelen függvény – egyetlen kifejezés, amit nem kell <code>def</code>-fel megírni.</p>
 <p>Szintaxis: <code>lambda paraméter: kifejezés</code></p>
@@ -881,7 +1231,7 @@ print(rendezett)  # ['bor', 'alma', 'eper', 'körte']` }
 },
 
 {
-  id: 10, emoji: '🗺️', topicGroup: 'lambda_f',
+  id: 15, emoji: '🗺️', topicGroup: 'lambda_f',
   title: 'map() – minden elemre alkalmaz',
   description: `<p>A <code>map()</code> egy függvényt alkalmaz a lista <strong>minden elemére</strong> – nem kell for ciklus.</p>
 <p>Szintaxis: <code>list(map(függvény, lista))</code></p>
@@ -934,7 +1284,7 @@ print(hosszak)  # [6, 4, 11]` }
 },
 
 {
-  id: 11, emoji: '🔽', topicGroup: 'lambda_f',
+  id: 16, emoji: '🔽', topicGroup: 'lambda_f',
   title: 'filter() – szűrés',
   description: `<p>A <code>filter()</code> kiszűri a lista azon elemeit, amelyekre a megadott feltétel igaz.</p>
 <p>Szintaxis: <code>list(filter(feltétel_fv, lista))</code></p>
@@ -981,6 +1331,229 @@ parosak_lc = [x for x in szamok if x % 2 == 0]
 
 print(parosak_f)   # [2, 4, 6, 8, 10]
 print(parosak_lc)  # [2, 4, 6, 8, 10]` }
+    ]
+  }
+},
+
+// ═══════════ REKURZIÓ & MATEMATIKA (17–19) ═══════════
+
+{
+  id: 17, emoji: '🔢', topicGroup: 'rekurzio',
+  title: 'Prímszám ellenőrzés',
+  description: `<p>Egy szám <strong>prímszám</strong>, ha csak 1-gyel és önmagával osztható. Például: 2, 3, 5, 7, 11, 13...</p>
+<p>Az ellenőrzés ötlete: próbáld osztani a számot 2-től a négyzetgyökéig. Ha valamelyikkel osztható – nem prím. Ha egyikkel sem – prím.</p>
+<p>Írj egy <code>prim_e(n)</code> függvényt, ami visszaadja, hogy egy szám prímszám-e!<br>
+Majd teszteld: 7, 12, 97, 100 esetén.</p>`,
+  starterCode: `# 17. feladat: Prímszám ellenőrzés
+import math
+
+def prim_e(n):
+    if n < 2:
+        return False
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
+            return False   # osztható valamivel → nem prím
+    return True
+
+# Teszteld:
+print(prim_e(7))    # True
+print(prim_e(12))   # False
+print(prim_e(97))   # True
+print(prim_e(100))  # False
+`,
+  solution: `import math
+
+def prim_e(n):
+    if n < 2:
+        return False
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+print(prim_e(7))
+print(prim_e(12))
+print(prim_e(97))
+print(prim_e(100))`,
+  mockInputs: [],
+  checks: [
+    { label: 'def prim_e(n) függvény', fn: (c,o) => /def\s+prim_e\s*\(/.test(c) },
+    { label: 'import math', fn: (c,o) => /import\s+math/.test(c) },
+    { label: 'math.sqrt() a határhoz', fn: (c,o) => /math\.sqrt/.test(c) },
+    { label: 'n % i == 0 (oszthatóság)', fn: (c,o) => /n\s*%\s*i\s*==\s*0/.test(c) },
+    { label: 'Kimenet: True (7 prím)', fn: (c,o) => /True/.test(o) },
+    { label: 'Kimenet: False (12 nem prím)', fn: (c,o) => /False/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Prímszám ellenőrzés</h3>
+<p>Egy szám prímszám, ha csak 1-gyel és önmagával osztható. A 2 az egyetlen páros prímszám.</p>
+<p><strong>Miért elég a négyzetgyökig vizsgálni?</strong> Ha egy szám osztható valamivel, az osztó párja biztosan kisebb a négyzetgyöknél – tehát elég eddig ellenőrizni.</p>
+<p>Például 36 esetén: 2×18, 3×12, 4×9, 6×6 – a 6 után (√36=6) már csak fordított párokat találnánk.</p>`,
+    examples: [
+      { title: 'Prímszámok listája', code: `import math
+
+def prim_e(n):
+    if n < 2: return False
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0: return False
+    return True
+
+# Prímszámok 1-50 között:
+primek = [x for x in range(2, 51) if prim_e(x)]
+print(primek)
+# [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]` },
+    ]
+  }
+},
+
+{
+  id: 18, emoji: '❗', topicGroup: 'rekurzio',
+  title: 'Faktoriális – ciklussal és rekurzióval',
+  description: `<p>A faktoriális: <code>n! = 1 × 2 × 3 × ... × n</code><br>
+Például: <code>5! = 1×2×3×4×5 = 120</code></p>
+<p>A <strong>rekurzió</strong> azt jelenti, hogy egy függvény saját magát hívja meg – de kisebb értékkel, amíg el nem ér az alapesethez.</p>
+<p>Írj két változatot:</p>
+<ol>
+<li><code>faktorial_ciklus(n)</code> – hagyományos ciklussal</li>
+<li><code>faktorial_rekurzio(n)</code> – a függvény saját magát hívja</li>
+</ol>`,
+  starterCode: `# 18. feladat: Faktoriális – kétféleképpen
+# 1. Ciklussal (szorzó gyűjtőváltozó):
+def faktorial_ciklus(n):
+    eredmeny = 1
+    for i in range(1, n + 1):
+        eredmeny *= i
+    return eredmeny
+
+# 2. Rekurzióval (a függvény önmagát hívja):
+def faktorial_rekurzio(n):
+    if n == 0 or n == 1:   # alapeset – itt áll meg
+        return 1
+    return n * faktorial_rekurzio(n - 1)   # kisebb értékkel hívja magát
+
+print(faktorial_ciklus(5))      # 120
+print(faktorial_rekurzio(5))    # 120
+print(faktorial_rekurzio(10))   # 3628800
+`,
+  solution: `def faktorial_ciklus(n):
+    eredmeny = 1
+    for i in range(1, n + 1):
+        eredmeny *= i
+    return eredmeny
+
+def faktorial_rekurzio(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * faktorial_rekurzio(n - 1)
+
+print(faktorial_ciklus(5))
+print(faktorial_rekurzio(5))
+print(faktorial_rekurzio(10))`,
+  mockInputs: [],
+  checks: [
+    { label: 'def faktorial_ciklus(n)', fn: (c,o) => /def\s+faktorial_ciklus\s*\(/.test(c) },
+    { label: 'eredmeny *= i (szorzás gyűjtővel)', fn: (c,o) => /eredmeny\s*\*=/.test(c) },
+    { label: 'def faktorial_rekurzio(n)', fn: (c,o) => /def\s+faktorial_rekurzio\s*\(/.test(c) },
+    { label: 'Rekurzív hívás: faktorial_rekurzio(n - 1)', fn: (c,o) => /faktorial_rekurzio\s*\(\s*n\s*-\s*1\s*\)/.test(c) },
+    { label: 'Kimenet: 120 (5!)', fn: (c,o) => /120/.test(o) },
+    { label: 'Kimenet: 3628800 (10!)', fn: (c,o) => /3628800/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Rekurzió – a függvény saját magát hívja</h3>
+<p>A rekurzió olyan mint egy matryoshka baba: minden baba tartalmaz egy kisebbet – egészen addig, amíg el nem érsz a legkisebbre.</p>
+<p>Minden rekurzív függvénynek szüksége van egy <strong>alapesetre</strong> – ahol megáll, és nem hívja többé magát. Faktoriálisnál ez a <code>0! = 1</code> és <code>1! = 1</code>.</p>
+<p><code>5! = 5 × 4! = 5 × 4 × 3! = 5 × 4 × 3 × 2! = 5 × 4 × 3 × 2 × 1! = 120</code></p>`,
+    examples: [
+      { title: 'Rekurzió lépései', code: `def f(n):
+    if n == 1:
+        return 1          # alapeset – megáll
+    return n * f(n - 1)  # önmagát hívja kisebb értékkel
+
+# f(4) → 4 * f(3)
+#           3 * f(2)
+#               2 * f(1)
+#                   1  ← alapeset
+# visszafelé: 2*1=2, 3*2=6, 4*6=24
+print(f(4))  # 24` },
+    ]
+  }
+},
+
+{
+  id: 19, emoji: '🌀', topicGroup: 'rekurzio',
+  title: 'Fibonacci sorozat',
+  description: `<p>A Fibonacci sorozatban minden szám az előző kettő összege:<br>
+<code>0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...</code></p>
+<p>Írj két változatot:</p>
+<ol>
+<li><code>fibonacci_lista(n)</code> – az első n elemet adja vissza listában (ciklussal)</li>
+<li><code>fibonacci_rekurzio(n)</code> – az n-edik elemet adja vissza rekurzióval</li>
+</ol>`,
+  starterCode: `# 19. feladat: Fibonacci sorozat
+# 1. Ciklussal – első n elem listában:
+def fibonacci_lista(n):
+    if n <= 0: return []
+    if n == 1: return [0]
+    sor = [0, 1]
+    for i in range(2, n):
+        sor.append(sor[-1] + sor[-2])   # az utolsó kettő összege
+    return sor
+
+# 2. Rekurzióval – az n-edik elem:
+def fibonacci_rekurzio(n):
+    if n == 0: return 0   # alapeset
+    if n == 1: return 1   # alapeset
+    return fibonacci_rekurzio(n - 1) + fibonacci_rekurzio(n - 2)
+
+print(fibonacci_lista(10))          # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+print(fibonacci_rekurzio(9))        # 34 (10. elem, 0-tól indexelve)
+`,
+  solution: `def fibonacci_lista(n):
+    if n <= 0: return []
+    if n == 1: return [0]
+    sor = [0, 1]
+    for i in range(2, n):
+        sor.append(sor[-1] + sor[-2])
+    return sor
+
+def fibonacci_rekurzio(n):
+    if n == 0: return 0
+    if n == 1: return 1
+    return fibonacci_rekurzio(n - 1) + fibonacci_rekurzio(n - 2)
+
+print(fibonacci_lista(10))
+print(fibonacci_rekurzio(9))`,
+  mockInputs: [],
+  checks: [
+    { label: 'def fibonacci_lista(n)', fn: (c,o) => /def\s+fibonacci_lista\s*\(/.test(c) },
+    { label: 'sor[-1] + sor[-2] (utolsó kettő összege)', fn: (c,o) => /sor\[-1\]\s*\+\s*sor\[-2\]|sor\[-2\]\s*\+\s*sor\[-1\]/.test(c) },
+    { label: 'def fibonacci_rekurzio(n)', fn: (c,o) => /def\s+fibonacci_rekurzio\s*\(/.test(c) },
+    { label: 'Rekurzív hívás n-1 és n-2', fn: (c,o) => /fibonacci_rekurzio\s*\(\s*n\s*-\s*1/.test(c) && /fibonacci_rekurzio\s*\(\s*n\s*-\s*2/.test(c) },
+    { label: 'Kimenet: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]', fn: (c,o) => /0.*1.*1.*2.*3.*5.*8.*13.*21.*34/.test(o) },
+    { label: 'Kimenet: 34 (9. fibonacci szám)', fn: (c,o) => /34/.test(o) },
+  ],
+  tutorial: {
+    intro: `<h3>Fibonacci sorozat</h3>
+<p>A természetben mindenütt megtalálható: napraforgó magvak, kagylók spirálja, falevél elrendezés – mind Fibonacci mintát követ.</p>
+<p>Rekurzív definíció: <code>F(n) = F(n-1) + F(n-2)</code>, ahol <code>F(0)=0</code> és <code>F(1)=1</code>.</p>
+<p><strong>Megjegyzés:</strong> A rekurzív változat elegáns, de lassú – mert ugyanazokat az értékeket sokszor újra kiszámolja. Nagy számoknál a ciklusos változat sokkal gyorsabb.</p>`,
+    examples: [
+      { title: 'Fibonacci vizuálisan', code: `# Az első 8 Fibonacci szám:
+# F(0)=0, F(1)=1
+# F(2)=0+1=1
+# F(3)=1+1=2
+# F(4)=1+2=3
+# F(5)=2+3=5
+# F(6)=3+5=8
+# F(7)=5+8=13
+
+def fib(n):
+    sor = [0, 1]
+    for _ in range(2, n):
+        sor.append(sor[-1] + sor[-2])
+    return sor
+
+print(fib(8))  # [0, 1, 1, 2, 3, 5, 8, 13]` },
     ]
   }
 },
@@ -1193,7 +1766,7 @@ function loadTask(index) {
 
   // Topic badge
   const badge = document.getElementById('topic-badge');
-  const labels = { algoritmus: 'Algoritmusok', listakif: 'List comprehension', lambda_f: 'Lambda & map/filter' };
+  const labels = { algoritmus: 'Algoritmusok', listakif: 'Lista-lerövidítés', lambda_f: 'Lambda & map/filter', rekurzio: 'Rekurzió & Matematika' };
   badge.className = 'topic-badge ' + task.topicGroup;
   badge.textContent = labels[task.topicGroup] || task.topicGroup;
 
@@ -1264,8 +1837,8 @@ function restartPractice() {
 // ═══════════════════════════════════════════════════════════════════════════
 // PILLS
 // ═══════════════════════════════════════════════════════════════════════════
-const GROUP_ORDER = ['algoritmus', 'listakif', 'lambda_f'];
-const GROUP_LABEL = { algoritmus: 'Algoritmusok', listakif: 'Comprehension', lambda_f: 'Lambda' };
+const GROUP_ORDER = ['algoritmus', 'listakif', 'lambda_f', 'rekurzio'];
+const GROUP_LABEL = { algoritmus: 'Algoritmusok', listakif: 'Comprehension', lambda_f: 'Lambda', rekurzio: 'Rekurzió & Matek' };
 
 function buildPills() {
   const wrapper = document.getElementById('pills-wrapper');
