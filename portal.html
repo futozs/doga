@@ -1375,7 +1375,7 @@
 
             const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
             const isExam = cfg.test_mode === 'live' || cfg.test_mode === 'vizsga';
-            if (isExam) {
+            if (isExam && user.szerep !== 'vendeg') {
                 portalExamMode = true;
                 const cardWeb = document.getElementById('card-web');
                 if (cardWeb) cardWeb.onclick = function(e) {
