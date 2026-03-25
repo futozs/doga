@@ -1148,6 +1148,16 @@ const WEB_TASK_CHECKS = {
 // ── Beadások táblázat ──────────────────────────────────────────────────────
 const RAILWAY = 'https://agazati.up.railway.app';
 
+// Vendég átirányítás
+(function() {
+  try {
+    const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+    if (u.szerep === 'vendeg' || !u.token) {
+      window.location.replace('portal.html');
+    }
+  } catch { window.location.replace('portal.html'); }
+})();
+
 function getToken() {
   try { return JSON.parse(sessionStorage.getItem('kandoUser') || '{}').token || null; }
   catch { return null; }

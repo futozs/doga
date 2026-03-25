@@ -1609,6 +1609,10 @@
                 window.location.href = '../login.html';
                 return;
             }
+            if (JSON.parse(saved).szerep === 'vendeg') {
+                window.location.replace('../portal.html');
+                return;
+            }
             try {
                 const u = JSON.parse(saved);
                 const isBemutato = new URLSearchParams(window.location.search).has('bemutato');

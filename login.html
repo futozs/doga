@@ -401,6 +401,14 @@
     </div>
 </div>
 
+<!-- Vendég belépés -->
+<div style="text-align:center; margin-top:14px; max-width:480px; width:100%;">
+    <button type="button" onclick="enterAsGuest()" style="width:100%;padding:11px;background:none;border:1.5px solid #374151;border-radius:10px;color:#9ca3af;font-size:0.92rem;cursor:pointer;transition:all 0.2s;font-family:inherit;" onmouseover="this.style.borderColor='#6b7280';this.style.color='#d1d5db'" onmouseout="this.style.borderColor='#374151';this.style.color='#9ca3af'">
+        <i class="fas fa-user"></i> Belépés vendégként
+    </button>
+    <div style="color:#4b5563;font-size:0.75rem;margin-top:6px;">Regisztráció nélkül – csak a gyakorló szintek érhetők el, vizsgát nem lehet beadni</div>
+</div>
+
 <!-- Elfelejtett jelszó modal -->
 <div id="forgot-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;justify-content:center;align-items:center;">
     <div style="background:#16213e;border:2px solid #536dfe;border-radius:14px;padding:2rem;max-width:420px;width:90%;">
@@ -669,12 +677,25 @@
         el.style.display = 'block';
     }
 
+    function enterAsGuest() {
+        sessionStorage.setItem('kandoUser', JSON.stringify({
+            token: null,
+            szerep: 'vendeg',
+            nev: 'Vendég',
+            email: '',
+            evfolyam: '',
+            osztaly: '',
+            csoport: ''
+        }));
+        window.location.replace('portal.html');
+    }
+
     // Ha már be van lépve, átirányítás
     const stored = sessionStorage.getItem('kandoUser');
     if (stored) {
         try {
             const user = JSON.parse(stored);
-            if (user.token) {
+            if (user.token || user.szerep === 'vendeg') {
                 window.location.replace('portal.html');
             }
         } catch {}

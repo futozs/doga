@@ -1140,6 +1140,27 @@
     </div>
 </div>
 
+<!-- Vendég – regisztrációs modal -->
+<div id="vendeg-reg-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:#16213e;border:2px solid #536dfe;border-radius:18px;padding:2rem 2rem 1.5rem;max-width:440px;width:100%;">
+        <div style="font-size:2rem;text-align:center;margin-bottom:0.5rem;">🔓</div>
+        <h3 style="color:#e0e0e0;font-size:1.2rem;font-weight:700;text-align:center;margin-bottom:0.4rem;">Regisztrálj a hozzáféréshez!</h3>
+        <p style="color:#888;font-size:0.85rem;text-align:center;margin-bottom:1.4rem;">Ingyenes iskolai fiókkal ezeket érheted el:</p>
+        <ul style="list-style:none;padding:0;margin:0 0 1.5rem;display:flex;flex-direction:column;gap:10px;">
+            <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;color:#cbd5e1;"><span style="color:#3776ab;font-size:1.1rem;flex-shrink:0;"><i class="fab fa-python"></i></span><span><strong style="color:#e0e0e0;">Python feladatok</strong> – Kezdő, Haladó, Profi gyakorló szint + Ágazati vizsga</span></li>
+            <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;color:#cbd5e1;"><span style="color:#e44d26;font-size:1.1rem;flex-shrink:0;"><i class="fas fa-globe"></i></span><span><strong style="color:#e0e0e0;">WEB feladatok</strong> – HTML, CSS, Bootstrap, képek, táblázat és még sok más</span></li>
+            <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;color:#cbd5e1;"><span style="color:#fbbf24;font-size:1.1rem;flex-shrink:0;"><i class="fas fa-medal"></i></span><span><strong style="color:#e0e0e0;">Eredmények és statisztikák</strong> – látod, mennyit fejlődtél</span></li>
+            <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;color:#cbd5e1;"><span style="color:#4f46e5;font-size:1.1rem;flex-shrink:0;"><i class="fas fa-lightbulb"></i></span><span><strong style="color:#e0e0e0;">Ötlet Láda</strong> – javasolhatsz fejlesztéseket, a neved megjelenik ha megvalósul</span></li>
+        </ul>
+        <button onclick="location.replace('login.html')" style="width:100%;padding:0.75rem;background:#536dfe;border:none;border-radius:10px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;margin-bottom:8px;transition:background .2s;" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#536dfe'">
+            <i class="fas fa-right-to-bracket"></i> Regisztráció / Bejelentkezés
+        </button>
+        <button onclick="document.getElementById('vendeg-reg-modal').style.display='none'" style="width:100%;padding:0.6rem;background:transparent;border:1px solid #374151;border-radius:10px;color:#6b7280;font-size:0.9rem;cursor:pointer;font-family:inherit;">
+            Mégse
+        </button>
+    </div>
+</div>
+
 <!-- Kötelező jelszócsere modal (ideiglenes jelszó után) -->
 <div class="pw-change-overlay" id="pw-change-overlay">
     <div class="pw-change-box">
@@ -1195,7 +1216,7 @@
     } else {
         const user = JSON.parse(stored);
         document.getElementById('user-name').textContent = user.nev || user.email;
-        document.getElementById('user-role').textContent = user.szerep === 'oktato' ? 'Oktató' : 'Tanuló';
+        document.getElementById('user-role').textContent = user.szerep === 'oktato' ? 'Oktató' : user.szerep === 'vendeg' ? 'Vendég' : 'Tanuló';
         checkMustChangePassword();
         const nevReszek = (user.nev || '').trim().split(' ');
         const keresztnev = nevReszek[nevReszek.length - 1] || 'felhasználó';
@@ -1210,6 +1231,21 @@
             document.getElementById('teacher-portal').style.display = 'block';
             document.getElementById('portal-sub').textContent = 'Mit szeretnél csinálni?';
             document.getElementById('toggle-view-btn').style.display = 'block';
+        } else if (user.szerep === 'vendeg') {
+            document.getElementById('student-layout-wrap').style.display = 'flex';
+            document.getElementById('changelog-python').style.display = 'block';
+            document.getElementById('changelog-web').style.display = 'block';
+            document.getElementById('portal-title').textContent = 'Üdvözöllek!';
+            document.getElementById('portal-sub').textContent = 'Nézz körül – a teljes hozzáféréshez regisztrálj!';
+            document.querySelector('.delete-btn').style.display = 'none';
+            // Kártyákra kattintva regisztrációs modal
+            ['card-python', 'card-web'].forEach(function(id) {
+                const card = document.getElementById(id);
+                if (card) card.onclick = function(e) {
+                    e.preventDefault();
+                    document.getElementById('vendeg-reg-modal').style.display = 'flex';
+                };
+            });
         } else {
             document.getElementById('student-layout-wrap').style.display = 'flex';
             document.getElementById('changelog-python').style.display = 'block';
