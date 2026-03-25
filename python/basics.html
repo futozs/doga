@@ -24,14 +24,14 @@
     .topbar-logo{height:30px;margin-right:4px;}
     .btn-back{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:0.82rem;cursor:pointer;text-decoration:none;white-space:nowrap;transition:border-color .2s,color .2s;}
     .btn-back:hover{border-color:var(--accent);color:var(--accent);}
-    .pills-wrapper{display:flex;align-items:center;gap:4px;overflow-x:auto;flex:1;padding:4px 0;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
-    .pill-group-label{flex-shrink:0;font-size:0.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 6px;color:var(--muted);white-space:nowrap;}
+    .pills-wrapper{display:flex;align-items:center;gap:3px;overflow-x:auto;flex:1;padding:4px 0;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+    .pill-group-label{flex-shrink:0;font-size:0.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:0 4px;color:var(--muted);white-space:nowrap;}
     .pill-group-label.alap{color:#fb923c;}
     .pill-group-label.feltetel{color:#60a5fa;}
     .pill-group-label.fuggveny{color:#a78bfa;}
     .pill-group-label.ciklus{color:#34d399;}
     .pill-group-label.beepitett{color:#f472b6;}
-    .pill{flex-shrink:0;width:30px;height:26px;border-radius:6px;border:1.5px solid #374151;background:transparent;color:var(--muted);font-size:0.76rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;}
+    .pill{flex-shrink:0;width:26px;height:24px;border-radius:5px;border:1.5px solid #374151;background:transparent;color:var(--muted);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;}
     .pill:hover{border-color:var(--blue);color:#93c5fd;}
     .pill.active{border-color:var(--blue);background:rgba(59,130,246,.15);color:#93c5fd;}
     .pill.done{border-color:var(--accent);background:var(--accent);color:#052e16;font-weight:700;}
@@ -1438,16 +1438,24 @@ else:
 // STATE
 // ═══════════════════════════════════════════════════════════════════════════
 const TASK_COUNT = tasks.length;
+function _loadArr(key, def, len){
+  const raw=JSON.parse(localStorage.getItem(key)||'null');
+  const arr=(raw&&Array.isArray(raw))?raw:def.slice();
+  while(arr.length<len) arr.push(def[0]);
+  return arr;
+}
 const st = {
   cur: 0,
-  status: JSON.parse(localStorage.getItem('py_basics_status')||'null') || Array(TASK_COUNT).fill('idle'),
-  completedOnce: JSON.parse(localStorage.getItem('py_basics_done')||'null') || Array(TASK_COUNT).fill(false),
+  status: _loadArr('py_basics_status', Array(TASK_COUNT).fill('idle'), TASK_COUNT),
+  completedOnce: _loadArr('py_basics_done', Array(TASK_COUNT).fill(false), TASK_COUNT),
   failedAttempts: Array(TASK_COUNT).fill(0),
   hintLevel: Array(TASK_COUNT).fill(0),
   editor: null,
   lastOutput: '',
   pyodide: null,
 };
+// Szinkron: ha completedOnce[i]=true de status[i] nem 'done', helyreállít
+for(let i=0;i<TASK_COUNT;i++){ if(st.completedOnce[i]&&st.status[i]!=='done') st.status[i]='done'; }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PYODIDE
@@ -1667,7 +1675,7 @@ function restartPractice(){
 // ═══════════════════════════════════════════════════════════════════════════
 // PILLS
 // ═══════════════════════════════════════════════════════════════════════════
-const GROUP_LABELS={alap:'Alapok',feltetel:'Feltételek',fuggveny:'Függvények',ciklus:'Ciklusok',beepitett:'Beépített'};
+const GROUP_LABELS={alap:'Alap',feltetel:'Felt.',fuggveny:'Fv.',ciklus:'Cik.',beepitett:'Bép.'};
 function buildPills(){
   const wrapper=document.getElementById('pills-wrapper');
   wrapper.innerHTML='';
