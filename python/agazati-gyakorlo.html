@@ -151,12 +151,20 @@
     #run-spinner { display:none; }
 
     /* INPUT AREA */
-    .input-wrap { display:flex; flex-direction:column; gap:2px; }
+    .input-wrap { display:flex; flex-direction:column; gap:2px; position:relative; }
     .input-label { font-size:0.7rem; color:var(--muted); }
     #input-values { width:220px; height:28px; background:#0f172a; border:1px solid var(--border);
       border-radius:6px; color:#e0e0e0; font-size:0.8rem; padding:2px 8px;
-      font-family:'Consolas','Courier New',monospace; resize:none; }
+      font-family:'Consolas','Courier New',monospace; resize:none; transition:border-color .2s; }
     #input-values:focus { outline:none; border-color:#4f46e5; }
+    #input-values.warn { border-color:#f59e0b; animation:inputPulse .4s ease 2; }
+    @keyframes inputPulse { 0%,100%{border-color:#f59e0b} 50%{border-color:#fde68a;box-shadow:0 0 6px rgba(245,158,11,.5)} }
+    #input-hint { position:absolute; bottom:calc(100% + 6px); right:0;
+      background:#1e293b; border:1px solid #f59e0b; border-radius:8px;
+      padding:6px 10px; font-size:0.75rem; color:#fcd34d; white-space:nowrap;
+      display:none; z-index:50; pointer-events:none; }
+    #input-hint::after { content:''; position:absolute; bottom:-6px; right:20px;
+      border:6px solid transparent; border-top-color:#f59e0b; border-bottom:none; }
 
     /* SUCCESS BANNER */
     #success-banner { position:fixed; top:calc(var(--topbar-h) + var(--tabbar-h) + 16px); left:50%;
@@ -299,6 +307,7 @@
   </button>
   <div class="bottom-spacer"></div>
   <div class="input-wrap" title="Ha a kód input()-ot tartalmaz, ide add meg az értékeket. Minden sor egy input() hívás értéke.">
+    <div id="input-hint"><i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i>A kódban input() van – add meg az értékeket!</div>
     <div class="input-label"><i class="fas fa-keyboard" style="margin-right:3px;opacity:.7;"></i>input() értékek <span style="opacity:.5;font-size:.65rem;">(soronként)</span></div>
     <textarea id="input-values" placeholder="Ha input() van a kódban,&#10;ide írd az értékeket"></textarea>
   </div>
@@ -563,13 +572,25 @@ async function runCode() {
     const rawInputs = document.getElementById('input-values').value;
     const inputs = rawInputs.trim() ? rawInputs.split('\n').map(s => s.trimEnd()) : [];
 
+    // Figyelmeztetés ha input() van a kódban de nincs megadva érték
+    if (inputs.length === 0 && /\binput\s*\(/.test(code)) {
+      flashInputHint();
+    }
+
     let output = '', hasError = false;
     py.setStdout({ batched: t => { output += t + '\n'; } });
     py.setStderr({ batched: t => { output += t + '\n'; hasError = true; } });
 
     const setup = `import builtins,sys\n_mi=iter(${JSON.stringify(inputs)})\ndef _inp(p=''):\n val=str(next(_mi,''))\n sys.stdout.write(str(p));sys.stdout.write(val+'\\n');return val\nbuiltins.input=_inp\n`;
     try { await py.runPythonAsync(setup + '\n' + code); }
-    catch(e) { output += e.message + '\n'; hasError = true; }
+    catch(e) {
+      // Érthetőbb hibaüzenet ha az input() mező üres volt
+      let msg = e.message || '';
+      if (inputs.length === 0 && /\binput\s*\(/.test(code) && (msg.includes("invalid literal") || msg.includes("ValueError"))) {
+        msg = '⚠️ A kód input()-ot vár, de nem adtál meg értéket!\nÍrd be az input() értékeket a jobb alsó mezőbe (soronként), majd futtasd újra.\n\n' + msg;
+      }
+      output += msg + '\n'; hasError = true;
+    }
 
     lastOutput = output.trim();
     term.textContent = lastOutput || (hasError ? '' : '(Nincs kimenet)');
@@ -579,6 +600,14 @@ async function runCode() {
     term.textContent = 'Pyodide hiba: ' + e.message;
     term.className = 'has-error';
   } finally { btn.disabled = false; spinner.style.display = 'none'; }
+}
+
+function flashInputHint() {
+  const wrap = document.getElementById('input-values');
+  const hint = document.getElementById('input-hint');
+  wrap.classList.add('warn');
+  hint.style.display = 'block';
+  setTimeout(() => { wrap.classList.remove('warn'); hint.style.display = 'none'; }, 3000);
 }
 
 // ═══════════════════════════════════════════════════════════════════
