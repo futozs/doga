@@ -1883,7 +1883,9 @@
     }
 
     // Vágólapról kép beillesztés (Ctrl+V) a hiba modalban
-    document.getElementById('hiba-modal').addEventListener('paste', function(e) {
+    document.addEventListener('paste', function(e) {
+        const modal = document.getElementById('hiba-modal');
+        if (!modal || !modal.classList.contains('open')) return;
         const items = e.clipboardData && e.clipboardData.items;
         if (!items) return;
         for (let i = 0; i < items.length; i++) {
