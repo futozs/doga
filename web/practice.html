@@ -513,7 +513,7 @@
   <a href="index.html" class="btn-back" title="Vissza a főoldalra">
     <i class="fas fa-arrow-left"></i> Vissza
   </a>
-  <div id="streak-counter" style="display:flex;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;margin-left:4px;"></div>
+  <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;margin-left:4px;" title="Egymást követő napok, amikor beléptél a gyakorlóba"></div>
   <div class="pills-wrapper" id="pills-wrapper"></div>
   <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 25 feladat</div>
   <button class="btn-restart" onclick="restartPractice()" title="Összes feladat törlése és újrakezdés"><i class="fa-solid fa-arrow-rotate-right"></i> Újrakezd</button>
@@ -664,6 +664,26 @@
   window.addEventListener('beforeunload', () => {
     if (sessionId) fetch(`${API}/api/session/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }), keepalive: true }).catch(() => {});
   });
+})();
+// ──────────────────────────────────────────────────────────────────────────
+
+// ── Streak counter ─────────────────────────────────────────────────────────
+(function() {
+  const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+  if (!u.email) return;
+  const email = u.email.replace('@kkszki.hu', '');
+  fetch('https://agazati.up.railway.app/api/leaderboard/rank/' + encodeURIComponent(email))
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      const streak = data?.streak ?? 0;
+      const el = document.getElementById('streak-counter');
+      if (!el || streak < 1) return;
+      const icon = streak >= 30 ? '🔥' : streak >= 7 ? '🔥' : streak >= 3 ? '🔥' : '⭐';
+      const label = streak >= 30 ? 'Élő Legenda' : streak >= 14 ? 'Kitartó Harcos' : streak >= 7 ? 'Heti Hős' : streak >= 3 ? 'Ügyes Kezdő' : null;
+      el.innerHTML = icon + ' ' + streak + ' nap' + (label ? ' · ' + label : '');
+      el.style.display = 'flex';
+    })
+    .catch(() => {});
 })();
 // ──────────────────────────────────────────────────────────────────────────
 

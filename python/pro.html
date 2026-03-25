@@ -287,6 +287,7 @@
   <a href="basics.html" class="btn-back" style="border-color:#fb923c;color:#fb923c;"><i class="fas fa-book-open"></i> Alapok</a>
   <a href="practice.html" class="btn-back" style="border-color:#22c55e;color:#22c55e;"><i class="fas fa-graduation-cap"></i> Haladó</a>
   <div class="topbar-spacer"></div>
+  <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;" title="Egymást követő napok, amikor beléptél a gyakorlóba"></div>
   <div class="progress-label">Teljesítve: <span id="progress-count">0</span> / 19</div>
   <button class="btn-restart" onclick="restartPractice()" title="Összes feladat törlése és újrakezdés"><i class="fa-solid fa-arrow-rotate-right"></i> Újrakezd</button>
 </header>
@@ -395,6 +396,25 @@
   });
 })();
 // ─────────────────────────────────────────────────────────────────────────
+
+// ── Streak counter ─────────────────────────────────────────────────────────
+(function() {
+  const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+  if (!u.email) return;
+  const email = u.email.replace('@kkszki.hu', '');
+  fetch('https://agazati.up.railway.app/api/leaderboard/rank/' + encodeURIComponent(email))
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      const streak = data?.streak ?? 0;
+      const el = document.getElementById('streak-counter');
+      if (!el || streak < 1) return;
+      const label = streak >= 30 ? 'Élő Legenda' : streak >= 14 ? 'Kitartó Harcos' : streak >= 7 ? 'Heti Hős' : streak >= 3 ? 'Ügyes Kezdő' : null;
+      el.innerHTML = '🔥 ' + streak + ' nap' + (label ? ' · ' + label : '');
+      el.style.display = 'flex';
+    })
+    .catch(() => {});
+})();
+// ──────────────────────────────────────────────────────────────────────────
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FELADATOK
