@@ -1146,9 +1146,9 @@ t.vasarol(2)` },
 {
   id: 13, emoji: '📝', topicGroup: 'file',
   title: 'Fájl írása',
-  description: `<p>A <code>open("fajl.txt", "w")</code> megnyitja a fájlt <strong>írásra</strong>.<br>
-A <code>write()</code> metódus szöveget ír bele.<br>
-A <code>close()</code> lezárja a fájlt – ezt <strong>mindig</strong> meg kell hívni!</p>
+  description: `<p>Gondolj erre úgy, mint amikor kinyitsz egy füzetet, beleírsz valamit, majd becsukod.<br>
+Az <code>open("naplo.txt", "w")</code> „kinyitja" a fájlt – a <code>"w"</code> mód azt jelenti: <strong>írásra</strong> nyitjuk meg (ha még nem létezik, létrehozza; ha létezik, az előző tartalmát törli).<br>
+A <code>write()</code> beleirja a szöveget, a <code>close()</code> pedig „becsukja" a füzetet – ezt <strong>mindig</strong> meg kell hívni, különben a fájl sérülhet!</p>
 <p>Írj programot, amely létrehozza a <code>naplo.txt</code> fájlt, és beleírja a következő 3 sort:<br>
 <code>Ma sokat tanultam.</code><br>
 <code>Python fájlkezelést tanultam.</code><br>
@@ -1183,16 +1183,16 @@ print("Fájl mentve!")`,
   ],
   tutorial: {
     intro: `<h3>Fájlírás Pythonban</h3>
-<p>A <code>open()</code> függvény megnyitja a fájlt.<br>
-<strong>Módok:</strong></p>
+<p>Az <code>open()</code> függvény olyan, mint egy ajtónyitó – megmondod, melyik fájlt nyisd ki, és hogyan.<br>
+A második paraméter a <strong>mód</strong> – vagyis mit szeretnél csinálni a fájllal:</p>
 <ul>
-<li><code>"w"</code> – írás (felülírja a meglévőt)</li>
-<li><code>"a"</code> – hozzáírás (az elejéhez fűz)</li>
-<li><code>"r"</code> – olvasás</li>
-<li><code>"x"</code> – csak új fájl (ha létezik → hiba)</li>
+<li><code>"w"</code> – <em>írás</em>: mint egy új, üres lap – ha már volt benne valami, azt törli (write)</li>
+<li><code>"a"</code> – <em>hozzáírás</em>: mint egy folytatólagos napló – a meglévő szöveg végéhez fűz (append)</li>
+<li><code>"r"</code> – <em>olvasás</em>: csak megnézed, nem változtatsz semmit (read)</li>
+<li><code>"x"</code> – <em>csak új fájl</em>: ha már létezik a fájl, hibát dob – így nem írsz felül véletlenül semmit</li>
 </ul>
 <p><strong>Mindig add meg az encoding-ot!</strong><br>
-<code>encoding="utf-8"</code> – hogy az ékezetek is jól jelenjenek meg.</p>`,
+<code>encoding="utf-8"</code> – ez mondja meg a számítógépnek, hogyan értelmezze a szöveget. Ha kihagyod, az ékezetes betűk (á, é, ő…) csúnyán jelenhetnek meg vagy hibát okozhatnak.</p>`,
     examples: [
       { title: 'Fájl írása', code: `# Megnyitás és írás
 f = open("adatok.txt", "w", encoding="utf-8")
@@ -1211,10 +1211,14 @@ f.close()` },
 {
   id: 14, emoji: '📖', topicGroup: 'file',
   title: 'Fájl olvasása',
-  description: `<p>A <code>open("fajl.txt", "r")</code> megnyitja a fájlt <strong>olvasásra</strong>.<br>
-<code>read()</code> – az egész tartalmat egyszerre.<br>
-<code>readlines()</code> – listát ad vissza, minden sor egy elem.</p>
-<p>A program először megírja a <code>lista.txt</code> fájlt, majd beolvassa és kiírja soronként a tartalmat.</p>`,
+  description: `<p>Eddig megtanultuk, hogyan <em>írjunk</em> fájlba – most megtanuljuk, hogyan <em>olvassunk</em> belőle.<br>
+A <code>open("lista.txt", "r")</code> megnyitja a fájlt <strong>olvasásra</strong> (mint amikor kinyitod a füzeted, hogy megnézd, mit írtál bele).<br>
+Kétféleképpen olvashatod be a tartalmát:</p>
+<ul>
+<li><code>read()</code> – az egész fájlt egyszerre adja vissza egyetlen hosszú szövegként</li>
+<li><code>readlines()</code> – listát ad vissza: minden sor külön listaelem lesz</li>
+</ul>
+<p>A program először megírja a <code>lista.txt</code> fájlt, majd beolvassa és kiírja soronként a tartalmát.</p>`,
   starterCode: `# 14. feladat: Fájl olvasása
 
 # Előbb megírjuk a fájlt:
@@ -1255,10 +1259,13 @@ for sor in sorok:
   ],
   tutorial: {
     intro: `<h3>Fájl olvasása</h3>
-<p><code>read()</code> – az egész fájl egy stringként.<br>
-<code>readline()</code> – egy sort olvas.<br>
-<code>readlines()</code> – listát ad, minden sor egy elem (sortörés: <code>\\n</code>).</p>
-<p>Soronként olvasáskor a <code>strip()</code> eltávolítja a <code>\\n</code> karaktert!</p>`,
+<p>Háromféleképpen olvashatod be egy fájl tartalmát – attól függ, mire van szükséged:</p>
+<ul>
+<li><code>read()</code> – az egész fájlt egyszerre adja vissza: egy nagy szövegdarab lesz belőle</li>
+<li><code>readline()</code> – egyetlen sort olvas be: jó, ha csak az első néhány sort akarod</li>
+<li><code>readlines()</code> – listát ad vissza: minden sor külön listaelem, végén <code>\\n</code> sortörés-jellel</li>
+</ul>
+<p>Soronként olvasáskor a <code>strip()</code> eltávolítja a sor végéről a <code>\\n</code> sortörés-jelet – különben minden sor után egy üres sor is megjelenne a kimeneten.</p>`,
     examples: [
       { title: 'Olvasási módszerek', code: `# read() - egész tartalom
 f = open("fajl.txt", "r", encoding="utf-8")
@@ -1279,8 +1286,9 @@ f.close()` },
 {
   id: 15, emoji: '🛡️', topicGroup: 'file',
   title: 'with utasítás',
-  description: `<p>A <code>with</code> utasítás <strong>automatikusan lezárja</strong> a fájlt – nem kell <code>close()</code>!<br>
-Ez a <strong>helyes és ajánlott</strong> módszer.</p>
+  description: `<p>Az előző feladatokban mindig manuálisan kellett lezárni a fájlt a <code>close()</code>-zal – és ha elfelejtettük, az gond volt.<br>
+A <code>with</code> utasítás ezt megoldja: <strong>automatikusan lezárja a fájlt</strong>, amikor a blokk véget ér – még akkor is, ha hiba történt közben.<br>
+Ez olyan, mint egy automata ajtó: kinyílik, amikor belépünk, és magától becsukódik, amikor kilépünk – nem kell visszamenni becsukni.</p>
 <p>Írj programot, amely <code>with</code>-szel:</p>
 <ol>
 <li>Létrehozza a <code>naplo.txt</code> fájlt 3 sorral</li>
@@ -1323,10 +1331,11 @@ print(f"A fájlban {len(sorok)} sor van.")`,
     { label: 'Kimenet: "3 sor" vagy "3"', fn: (c, o) => /\b3\b/.test(o) },
   ],
   tutorial: {
-    intro: `<h3>with utasítás – a helyes módszer</h3>
-<p>A <code>with</code> <strong>automatikusan lezárja</strong> a fájlt, még hiba esetén is.<br>
-Ezért mindig ezt használd fájlkezeléskor!</p>
-<p>A <code>as f</code> rész ad nevet a fájl objektumnak.</p>`,
+    intro: `<h3>with utasítás – az ajánlott módszer</h3>
+<p>Ha sima <code>open()</code>-t használsz és elfelejtesz <code>close()</code>-t írni, a fájl „nyitva marad" – ez adatvesztést vagy hibát okozhat.<br>
+A <code>with</code> ezt kiküszöböli: gondoskodik a lezárásról még akkor is, ha a programban hiba történik.</p>
+<p>Az <code>as f</code> rész csak egy nevet ad a megnyitott fájlnak – ezen a néven tudod majd használni a blokkon belül (írni vagy olvasni). Az <code>f</code> helyett bármilyen nevet választhatsz, de az <code>f</code> a leggyakoribb.</p>
+<p>Összefoglalva: a <code>with</code>-et ugyanúgy használod, mint a sima <code>open()</code>-t – csak nem kell utána <code>close()</code>, és biztonságosabb.</p>`,
     examples: [
       { title: 'with – helyes fájlkezelés', code: `# Írás with-szel
 with open("eredmeny.txt", "w", encoding="utf-8") as f:
