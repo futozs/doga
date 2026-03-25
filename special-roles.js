@@ -1,6 +1,7 @@
 /**
- * special-roles.js – Tesztelő és Feladatkészítő gombok minden oldalon
- * Automatikusan megjelenik ha a bejelentkezett tanuló valamelyik szerepkörben van.
+ * special-roles.js – Tesztelő és Feladatkészítő funkciók minden oldalon
+ * Tesztelőknek: a Kandó logóra húzva egeret bug ikonra vált → kattintva hibajelentés nyílik.
+ * Feladatkészítőknek: FAB gomb feladat beküldéshez (portálon).
  */
 (function () {
     'use strict';
@@ -22,7 +23,7 @@
         const s = document.createElement('style');
         s.id = 'sr-css';
         s.textContent = `
-            /* Feladat küldése FAB – portál bal alsó sarok */
+            /* Feladat küldése FAB */
             #sr-fab-wrap {
                 position: fixed; bottom: 24px; left: 24px;
                 display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
@@ -39,21 +40,16 @@
             #sr-feladat-fab { background: #0d9488; box-shadow: 0 4px 18px rgba(13,148,136,.45); }
             #sr-feladat-fab:hover { box-shadow: 0 6px 24px rgba(13,148,136,.6); }
 
-            /* Hibajelentés – kis kör ikon, jobb alsó sarok, visszafogott */
-            #sr-hiba-fab {
-                position: fixed; bottom: 14px; right: 14px; z-index: 25000;
-                width: 34px; height: 34px; border-radius: 50%; border: none;
-                background: #7f1d1d; color: #fca5a5;
-                font-size: 0.95rem; cursor: pointer;
-                display: flex; align-items: center; justify-content: center;
-                opacity: 0.38; transition: opacity .2s, transform .15s, box-shadow .15s;
-                box-shadow: 0 2px 8px rgba(0,0,0,.3);
-                padding: 0;
+            /* Kandó logó bug hover (tesztelőknek) */
+            #kando-logo-wrap { position: relative; display: inline-block; }
+            #kando-bug-badge {
+                display: none; position: absolute; inset: 0;
+                background: rgba(0,0,0,0.45); border-radius: 4px;
+                font-size: 1.3rem; align-items: center; justify-content: center;
+                pointer-events: none;
             }
-            #sr-hiba-fab:hover {
-                opacity: 1; transform: scale(1.12);
-                box-shadow: 0 4px 16px rgba(220,38,38,.5);
-            }
+            #kando-logo-wrap.bug-aktiv { cursor: pointer; }
+            #kando-logo-wrap.bug-aktiv:hover #kando-bug-badge { display: flex; }
 
             .sr-overlay {
                 display: none; position: fixed; inset: 0;
@@ -92,7 +88,7 @@
     function injectHTML() {
         if (document.getElementById('sr-fab-wrap')) return;
 
-        // FAB gombok
+        // FAB gomb feladatkészítőknek
         const fab = document.createElement('div');
         fab.id = 'sr-fab-wrap';
         fab.innerHTML = `
@@ -100,22 +96,13 @@
         `;
         document.body.appendChild(fab);
 
-        // Hibajelentés gomb – kis kör ikon, jobb alsó sarok
-        const hibaBtn = document.createElement('button');
-        hibaBtn.id = 'sr-hiba-fab';
-        hibaBtn.title = 'Hibajelentés';
-        hibaBtn.setAttribute('onclick', 'window._srHibaOpen()');
-        hibaBtn.style.display = 'none';
-        hibaBtn.innerHTML = '<i class="fa-solid fa-bug"></i>';
-        document.body.appendChild(hibaBtn);
-
         // Hibajelentés modal
         const hm = document.createElement('div');
         hm.id = 'sr-hiba-modal'; hm.className = 'sr-overlay';
         hm.innerHTML = `
             <div class="sr-box" style="border:1.5px solid #dc2626;">
                 <h3 style="color:#f87171;"><i class="fa-solid fa-bug"></i> Hibajelentés</h3>
-                <p>Írj le egy tesztelés közben talált hibát. Csatolhatsz képernyőképet is.</p>
+                <p>Írj le egy tesztelés közben talált hibát. Csatolhatsz képernyőképet is (Ctrl+V a vágólapról).</p>
                 <div class="sr-fg">
                     <label>Leírás *</label>
                     <textarea id="sr-hiba-szoveg" placeholder="Mit csináltál, mi történt, mi lett volna a helyes viselkedés..."></textarea>
@@ -179,7 +166,7 @@
             </div>`;
         document.body.appendChild(fm);
 
-        // Screenshot előnézet
+        // Screenshot előnézet fájlból
         document.getElementById('sr-hiba-kep').addEventListener('change', function () {
             const f = this.files[0];
             if (!f) return;
@@ -190,20 +177,53 @@
             };
             r.readAsDataURL(f);
         });
+
+        // Ctrl+V képbeillesztés a hiba modalban
+        hm.addEventListener('paste', function(e) {
+            const items = e.clipboardData && e.clipboardData.items;
+            if (!items) return;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    const r = new FileReader();
+                    r.onload = ev => {
+                        const img = document.getElementById('sr-hiba-preview');
+                        img.src = ev.target.result; img.style.display = 'block';
+                    };
+                    r.readAsDataURL(items[i].getAsFile());
+                    e.preventDefault(); break;
+                }
+            }
+        });
+    }
+
+    // ── Kandó logó bug aktiválása ─────────────────────────────────────────────
+    function activateBugLogo() {
+        const wrap = document.getElementById('kando-logo-wrap');
+        if (!wrap || wrap.dataset.bugActive) return;
+        wrap.dataset.bugActive = '1';
+        wrap.classList.add('bug-aktiv');
+        wrap.title = '🐛 Hibajelentés';
+        // Belső <a> link navigáció tiltása
+        const link = wrap.querySelector('a');
+        if (link) link.style.pointerEvents = 'none';
+        wrap.addEventListener('click', function(e) {
+            e.preventDefault();
+            window._srHibaOpen();
+        });
     }
 
     // ── Hibajelentés ─────────────────────────────────────────────────────────
     window._srHibaOpen = function () {
-        document.getElementById('sr-hiba-modal').classList.add('open');
+        document.getElementById('sr-hiba-szoveg').value = '';
+        document.getElementById('sr-hiba-preview').style.display = 'none';
+        const kep = document.getElementById('sr-hiba-kep');
+        if (kep) kep.value = '';
         document.getElementById('sr-hiba-msg').textContent = '';
         document.getElementById('sr-hiba-msg').className = 'sr-msg';
+        document.getElementById('sr-hiba-modal').classList.add('open');
     };
     window._srHibaClose = function () {
         document.getElementById('sr-hiba-modal').classList.remove('open');
-        document.getElementById('sr-hiba-szoveg').value = '';
-        const kep = document.getElementById('sr-hiba-kep');
-        if (kep) kep.value = '';
-        document.getElementById('sr-hiba-preview').style.display = 'none';
     };
     window._srHibaSend = async function () {
         const user   = getUser();
@@ -212,13 +232,9 @@
         if (!szoveg) { msgEl.textContent = 'A leírás kötelező!'; msgEl.className = 'sr-msg sr-err'; return; }
 
         let kepBase64 = null;
-        const kepInput = document.getElementById('sr-hiba-kep');
-        if (kepInput && kepInput.files[0]) {
-            kepBase64 = await new Promise(res => {
-                const r = new FileReader();
-                r.onload = e => res(e.target.result.split(',')[1]);
-                r.readAsDataURL(kepInput.files[0]);
-            });
+        const preview = document.getElementById('sr-hiba-preview');
+        if (preview.src && preview.style.display !== 'none') {
+            kepBase64 = preview.src; // base64 data URL
         }
 
         const oldal = window.location.pathname.split('/').pop() || 'oldal';
@@ -300,10 +316,17 @@
 
     async function init() {
         const user = getUser();
+
+        // _tesztMod (Teszt Elek): tanár tesztel diák-ként → bug logó mindenhol
+        if (user._tesztMod) {
+            injectCSS(); injectHTML(); activateBugLogo();
+            return;
+        }
+
         if (!user.email) return;
-        // Oktató: nincs sr FAB gomb (a portálon külön UI van számára)
         if (user.szerep === 'oktato') return;
         if (user.szerep !== 'tanulo') return;
+
         try {
             const [tRes, fRes] = await Promise.all([
                 fetch(`${API}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`),
@@ -312,10 +335,17 @@
             const isTesztelő      = tRes.ok && (await tRes.json()).isTesztelő;
             const isFeladatkeszito= fRes.ok && (await fRes.json()).isFeladatkeszito;
             if (!isTesztelő && !isFeladatkeszito) return;
+
             injectCSS();
             injectHTML();
-            if (isTesztelő       && isPortal()) document.getElementById('sr-hiba-fab').style.display    = 'flex';
-            if (isFeladatkeszito && isPortal()) document.getElementById('sr-feladat-fab').style.display = 'flex';
+
+            if (isTesztelő) {
+                sessionStorage.setItem('kandoIsTesztelő', '1');
+                activateBugLogo();
+            }
+            if (isFeladatkeszito && isPortal()) {
+                document.getElementById('sr-feladat-fab').style.display = 'flex';
+            }
         } catch {}
     }
 

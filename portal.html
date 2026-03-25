@@ -328,8 +328,10 @@
             white-space: nowrap;
         }
         .otlet-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(79,70,229,.6); }
-        #hiba-btn { background: #dc2626; box-shadow: 0 4px 18px rgba(220,38,38,.4); }
-        #hiba-btn:hover { box-shadow: 0 6px 24px rgba(220,38,38,.6); }
+        #kando-logo-wrap { position:relative; display:inline-block; }
+        #kando-bug-badge { display:none; position:absolute; inset:0; background:rgba(0,0,0,0.45); border-radius:4px; font-size:1.5rem; align-items:center; justify-content:center; pointer-events:none; }
+        #kando-logo-wrap.bug-aktiv { cursor:pointer; }
+        #kando-logo-wrap.bug-aktiv:hover #kando-bug-badge { display:flex; }
 
         .tesztelő-badge {
             display: inline-flex; align-items: center; gap: 4px;
@@ -787,7 +789,10 @@
 
 <div class="topbar">
     <div class="topbar-left">
-        <img src="kandologo2.png" alt="Kandó">
+        <span id="kando-logo-wrap" title="">
+            <img src="kandologo2.png" alt="Kandó">
+            <span id="kando-bug-badge">🐛</span>
+        </span>
         <div class="topbar-title">
             <span>Miskolci SZC Kandó Kálmán Informatikai Technikum</span>
             <small>Digitális számonkérési rendszer</small>
@@ -1098,9 +1103,6 @@
 <div class="otlet-fab-wrap">
     <button class="otlet-btn" id="csatlakozas-btn" onclick="openCsatlakozasModal()" style="display:none; background:#4f46e5; box-shadow:0 4px 18px rgba(79,70,229,.45);">
         🤝 Csatlakozás
-    </button>
-    <button class="otlet-btn" id="hiba-btn" onclick="openHibaModal()" style="display:none;">
-        🐛 Hibajelentés
     </button>
     <button class="otlet-btn" id="otlet-btn" onclick="openOtletModal()">
         <i class="fa-regular fa-lightbulb"></i> Ötletláda
@@ -1855,6 +1857,18 @@
         return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    function activateBugLogo() {
+        sessionStorage.setItem('kandoIsTesztelő', '1');
+        const wrap = document.getElementById('kando-logo-wrap');
+        if (!wrap || wrap.dataset.bugActive) return;
+        wrap.dataset.bugActive = '1';
+        wrap.classList.add('bug-aktiv');
+        wrap.title = '🐛 Hibajelentés';
+        wrap.addEventListener('click', openHibaModal);
+    }
+    // _tesztMod (Teszt Elek) szintén kap bug logót
+    (function(){ const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}'); if(u._tesztMod) activateBugLogo(); })();
+
     function openHibaModal() {
         document.getElementById('hiba-szoveg').value = '';
         document.getElementById('hiba-kep-preview').style.display = 'none';
@@ -2234,9 +2248,8 @@
             if (nameEl && !nameEl.querySelector('.tesztelő-badge')) {
                 nameEl.insertAdjacentHTML('beforeend', '<span class="tesztelő-badge">🔬 Tesztelő</span>');
             }
-            // Hibajelentés gomb megjelenítése
-            const hibaBtn = document.getElementById('hiba-btn');
-            if (hibaBtn) hibaBtn.style.display = 'flex';
+            // Hibajelentés a logón keresztül
+            activateBugLogo();
             // Tesztelői üzenetek betöltése
             const uRes = await fetch(`${API_BASE}/api/teszteloi-uzenetek/my`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
