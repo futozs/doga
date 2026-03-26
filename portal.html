@@ -840,7 +840,7 @@
             </div>
             <!-- WEB oszlop -->
             <div class="student-col">
-                <a class="option-card web" id="card-web" href="web/index.html" onclick="event.preventDefault(); location.replace('web/index.html')">
+                <a class="option-card web" id="card-web" href="web/index.html" onclick="event.preventDefault(); document.getElementById('web-modal-dolgozat-btn').style.display='block'; document.getElementById('web-valaszto-modal').style.display='flex'">
                     <span class="icon"><i class="fas fa-globe"></i></span>
                     <span class="label">WEB</span>
                     <span class="desc">HTML, CSS, Bootstrap feladatok</span>
@@ -1184,6 +1184,21 @@
     </div>
 </div>
 
+<!-- WEB választó modal (Tananyag / Gyakorló / Dolgozat) -->
+<div id="web-valaszto-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:#16213e;border:2px solid #0ea5e9;border-radius:18px;padding:2rem 2rem 1.5rem;max-width:420px;width:100%;">
+        <div style="font-size:2rem;text-align:center;margin-bottom:0.5rem;"><i class="fas fa-globe" style="color:#0ea5e9;"></i></div>
+        <h3 style="color:#e0e0e0;font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:0.5rem;">WEB – mit szeretnél csinálni?</h3>
+        <p style="color:#888;font-size:0.84rem;text-align:center;margin-bottom:1.4rem;">Válassz az alábbi lehetőségek közül:</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;">
+            <button onclick="location.replace('web/learn-html.html')" style="padding:13px 20px;background:#0a1a2e;border:2px solid #0ea5e9;border-radius:10px;color:#7dd3fc;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#0c4a6e'" onmouseout="this.style.background='#0a1a2e'"><i class="fas fa-book-open"></i> HTML Tananyag</button>
+            <button onclick="location.replace('web/practice.html')" style="padding:13px 20px;background:#0a2a1a;border:2px solid #22c55e;border-radius:10px;color:#86efac;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#14532d'" onmouseout="this.style.background='#0a2a1a'"><i class="fas fa-dumbbell"></i> WEB Gyakorló</button>
+            <button id="web-modal-dolgozat-btn" onclick="location.replace('web/index.html')" style="display:none;padding:13px 20px;background:#2a0a1a;border:2px solid #f472b6;border-radius:10px;color:#f9a8d4;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#9d174d'" onmouseout="this.style.background='#2a0a1a'"><i class="fas fa-file-code"></i> WEB Dolgozat</button>
+        </div>
+        <button onclick="document.getElementById('web-valaszto-modal').style.display='none'" style="width:100%;padding:0.6rem;background:transparent;border:1px solid #374151;border-radius:10px;color:#6b7280;font-size:0.9rem;cursor:pointer;font-family:inherit;">Mégse</button>
+    </div>
+</div>
+
 <!-- Kötelező jelszócsere modal (ideiglenes jelszó után) -->
 <div class="pw-change-overlay" id="pw-change-overlay">
     <div class="pw-change-box">
@@ -1268,7 +1283,7 @@
             const cardPython = document.getElementById('card-python');
             if (cardPython) cardPython.onclick = function(e) { e.preventDefault(); document.getElementById('vendeg-python-modal').style.display = 'flex'; };
             const cardWeb = document.getElementById('card-web');
-            if (cardWeb) cardWeb.onclick = function(e) { e.preventDefault(); location.replace('web/practice.html'); };
+            if (cardWeb) cardWeb.onclick = function(e) { e.preventDefault(); document.getElementById('web-valaszto-modal').style.display = 'flex'; };
         } else {
             document.getElementById('student-layout-wrap').style.display = 'flex';
             document.getElementById('changelog-python').style.display = 'block';
