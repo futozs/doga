@@ -359,10 +359,10 @@ const tasks = [
   Szeretem főzni.
 </p>`,
     blanks:[
-      { answer:'strong', hint:'Félkövér – fontos tartalom jelölője' },
-      { answer:'em',     hint:'Dőlt – idegen szavakhoz, hangsúlyhoz' },
-      { answer:'u',      hint:'Aláhúzott szöveg' },
-      { answer:'br',     hint:'Sortörés – önzáró elem, nincs záró tagje!' }
+      { answer:'strong', alts:['b'],   hint:'Félkövér – strong vagy b' },
+      { answer:'em',     alts:['i'],   hint:'Dőlt – em vagy i' },
+      { answer:'u',      alts:['ins'], hint:'Aláhúzott – u vagy ins' },
+      { answer:'br',                   hint:'Sortörés – önzáró elem, nincs záró tagje!' }
     ]
   },
 
@@ -1021,7 +1021,8 @@ function renderFillin(task,idx){
     if(i<task.blanks.length){
       const b=task.blanks[i];
       const sz=Math.max(b.answer.length+2,7);
-      html+=`<input class="blank-in" id="bi-${i}" data-ans="${escH(b.answer)}" data-hint="${escH(b.hint)}" size="${sz}" placeholder="?" autocomplete="off" spellcheck="false">`;
+      const altsAttr = b.alts ? ` data-alts="${escH(b.alts.join(','))}"` : '';
+      html+=`<input class="blank-in" id="bi-${i}" data-ans="${escH(b.answer)}"${altsAttr} data-hint="${escH(b.hint)}" size="${sz}" placeholder="?" autocomplete="off" spellcheck="false">`;
     }
   });
   return `<div class="fillin-label">Egészítsd ki a kódot!</div>
@@ -1240,7 +1241,9 @@ function checkFillin(task,idx){
   let allOk=true;
   const hints=[];
   inputs.forEach((inp,i)=>{
-    const ok=inp.value.toLowerCase().trim()===inp.dataset.ans.toLowerCase().trim();
+    const val=inp.value.toLowerCase().trim();
+    const accepted=[inp.dataset.ans,...(inp.dataset.alts?inp.dataset.alts.split(','):[])].map(s=>s.toLowerCase().trim());
+    const ok=accepted.includes(val);
     inp.classList.remove('ok','err');
     inp.classList.add(ok?'ok':'err');
     if(!ok){ allOk=false; hints.push(`💡 ${i+1}. mező: <em>${inp.dataset.hint}</em>`); }
