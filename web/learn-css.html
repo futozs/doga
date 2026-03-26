@@ -1444,12 +1444,139 @@ const monacoQ = [];
 require.config({ paths:{ vs:'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
 require(['vs/editor/editor.main'], ()=>{
   require(['vs/language/html/htmlMode','vs/language/css/cssMode'], ()=>{
+    registerCssInStyleCompletions();
     monacoOk=true;
     if(window.emmetMonaco) window.emmetMonaco.emmetHTML(monaco);
     monacoQ.forEach(cb=>cb()); monacoQ.length=0;
   });
 });
 const whenMonaco = cb => monacoOk ? cb() : monacoQ.push(cb);
+
+// ── CSS IntelliSense a <style> blokkon belül ─────────────────────────────
+function registerCssInStyleCompletions(){
+  const Kind = monaco.languages.CompletionItemKind;
+  const Rule = monaco.languages.CompletionItemInsertTextRule;
+
+  // CSS tulajdonságok és jellemző értékeik
+  const CSS_PROPS = [
+    { p:'color',            vals:['red','blue','green','black','white','navy','gray','orange','purple','tomato','#333','#fff','#000','rgba(0,0,0,0.5)','inherit'] },
+    { p:'background-color', vals:['red','blue','green','white','black','navy','#f0f4f8','#3b82f6','rgba(0,0,0,0.1)','transparent','inherit'] },
+    { p:'background',       vals:['none','url("")','linear-gradient(to right, #f00, #00f)','transparent','inherit'] },
+    { p:'font-size',        vals:['12px','14px','16px','18px','20px','24px','28px','32px','36px','48px','1rem','1.25rem','1.5rem','2rem','0.875rem'] },
+    { p:'font-weight',      vals:['normal','bold','lighter','bolder','100','400','700','900'] },
+    { p:'font-style',       vals:['normal','italic','oblique'] },
+    { p:'font-family',      vals:["'Segoe UI', sans-serif","Arial, sans-serif","Georgia, serif","'Courier New', monospace","sans-serif","serif","monospace"] },
+    { p:'font',             vals:['bold 16px sans-serif','italic 14px serif'] },
+    { p:'text-align',       vals:['left','center','right','justify'] },
+    { p:'text-decoration',  vals:['none','underline','line-through','overline'] },
+    { p:'text-transform',   vals:['none','uppercase','lowercase','capitalize'] },
+    { p:'letter-spacing',   vals:['normal','1px','2px','3px','0.05em','0.1em'] },
+    { p:'line-height',      vals:['normal','1','1.4','1.5','1.6','1.8','2','20px','24px'] },
+    { p:'vertical-align',   vals:['baseline','top','middle','bottom','text-top','text-bottom'] },
+    { p:'white-space',      vals:['normal','nowrap','pre','pre-wrap','pre-line'] },
+    { p:'width',            vals:['100%','50%','auto','200px','300px','400px','500px','100vw','fit-content','max-content'] },
+    { p:'height',           vals:['auto','100%','100vh','50vh','200px','300px','fit-content'] },
+    { p:'max-width',        vals:['100%','600px','800px','1200px','none'] },
+    { p:'min-height',       vals:['0','100vh','200px','fit-content'] },
+    { p:'margin',           vals:['0','auto','0 auto','8px','16px','20px','8px 16px','0 0 16px'] },
+    { p:'margin-top',       vals:['0','8px','16px','20px','auto'] },
+    { p:'margin-bottom',    vals:['0','8px','16px','20px','auto'] },
+    { p:'margin-left',      vals:['0','auto','8px','16px'] },
+    { p:'margin-right',     vals:['0','auto','8px','16px'] },
+    { p:'padding',          vals:['0','8px','12px','16px','20px','8px 16px','12px 24px','16px 20px'] },
+    { p:'padding-top',      vals:['0','8px','16px','20px'] },
+    { p:'padding-bottom',   vals:['0','8px','16px','20px'] },
+    { p:'padding-left',     vals:['0','8px','16px','20px'] },
+    { p:'padding-right',    vals:['0','8px','16px','20px'] },
+    { p:'border',           vals:['none','1px solid #ccc','2px solid #333','1px dashed #999','2px solid #3b82f6'] },
+    { p:'border-top',       vals:['none','1px solid #ccc','2px solid #333'] },
+    { p:'border-radius',    vals:['0','4px','6px','8px','12px','16px','50%','999px'] },
+    { p:'border-color',     vals:['red','blue','#ccc','#333','transparent'] },
+    { p:'border-width',     vals:['1px','2px','3px','thin','medium','thick'] },
+    { p:'border-style',     vals:['none','solid','dashed','dotted','double'] },
+    { p:'box-shadow',       vals:['none','0 2px 4px rgba(0,0,0,0.1)','0 4px 12px rgba(0,0,0,0.15)','0 8px 24px rgba(0,0,0,0.2)','inset 0 1px 3px rgba(0,0,0,0.1)'] },
+    { p:'box-sizing',       vals:['content-box','border-box'] },
+    { p:'display',          vals:['block','inline','inline-block','flex','inline-flex','grid','none','table','table-cell'] },
+    { p:'flex-direction',   vals:['row','row-reverse','column','column-reverse'] },
+    { p:'justify-content',  vals:['flex-start','flex-end','center','space-between','space-around','space-evenly'] },
+    { p:'align-items',      vals:['stretch','flex-start','flex-end','center','baseline'] },
+    { p:'flex-wrap',        vals:['nowrap','wrap','wrap-reverse'] },
+    { p:'gap',              vals:['8px','12px','16px','20px','24px'] },
+    { p:'flex',             vals:['1','auto','none','0 1 auto','1 1 auto'] },
+    { p:'float',            vals:['none','left','right'] },
+    { p:'clear',            vals:['none','both','left','right'] },
+    { p:'overflow',         vals:['visible','hidden','scroll','auto'] },
+    { p:'overflow-x',       vals:['visible','hidden','scroll','auto'] },
+    { p:'overflow-y',       vals:['visible','hidden','scroll','auto'] },
+    { p:'position',         vals:['static','relative','absolute','fixed','sticky'] },
+    { p:'top',              vals:['0','auto','8px','16px','50%'] },
+    { p:'bottom',           vals:['0','auto','8px','16px'] },
+    { p:'left',             vals:['0','auto','8px','16px','50%'] },
+    { p:'right',            vals:['0','auto','8px','16px'] },
+    { p:'z-index',          vals:['0','1','10','100','999','-1','auto'] },
+    { p:'opacity',          vals:['1','0','0.5','0.7','0.8','0.9'] },
+    { p:'cursor',           vals:['default','pointer','text','move','not-allowed','crosshair','grab','help'] },
+    { p:'transition',       vals:['none','0.2s','0.3s','all 0.3s ease','background-color 0.2s','opacity 0.3s'] },
+    { p:'list-style',       vals:['none','disc','circle','square','decimal'] },
+    { p:'list-style-type',  vals:['none','disc','circle','square','decimal','lower-alpha','upper-alpha'] },
+  ];
+
+  monaco.languages.registerCompletionItemProvider('html', {
+    triggerCharacters: [' ', '\n', '\t', '-', ':'],
+    provideCompletionItems(model, position) {
+      const textBefore = model.getValueInRange({
+        startLineNumber:1, startColumn:1,
+        endLineNumber:position.lineNumber, endColumn:position.column
+      });
+
+      // Kurzor <style> blokkon belül van-e?
+      const lastStyleOpen  = textBefore.lastIndexOf('<style');
+      const lastStyleClose = textBefore.lastIndexOf('</style>');
+      // Kurzor style="" attribútumon belül van-e?
+      const lastTagStart = textBefore.lastIndexOf('<');
+      const afterTag = textBefore.slice(lastTagStart);
+      const inStyleAttr = /style\s*=\s*["'][^"']*$/.test(afterTag);
+
+      const inStyleBlock = lastStyleOpen > lastStyleClose;
+      if (!inStyleBlock && !inStyleAttr) return { suggestions: [] };
+
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber, endLineNumber: position.lineNumber,
+        startColumn: word.startColumn, endColumn: position.column
+      };
+
+      // Ha kettőspont előtt vagyunk → property javaslatok
+      const lineText = model.getLineContent(position.lineNumber);
+      const lineUpToCursor = lineText.slice(0, position.column - 1);
+      const afterColon = lineUpToCursor.match(/([a-z-]+)\s*:\s*([^;]*)$/);
+
+      if (afterColon) {
+        // Érték javaslatok az adott propertyhez
+        const prop = afterColon[1];
+        const found = CSS_PROPS.find(x => x.p === prop);
+        if (!found) return { suggestions: [] };
+        return {
+          suggestions: found.vals.map(v => ({
+            label: v, kind: Kind.Value,
+            insertText: v, range,
+            detail: prop + ': ' + v + ';'
+          }))
+        };
+      }
+
+      // Property javaslatok
+      return {
+        suggestions: CSS_PROPS.map(({p}) => ({
+          label: p, kind: Kind.Property,
+          insertText: p + ': ',
+          range,
+          detail: 'CSS tulajdonság'
+        }))
+      };
+    }
+  });
+}
 
 // ══════════════════════════════════════════════════════════════════════
 // BOOT
