@@ -991,7 +991,10 @@ function renderQuiz(task,idx){
 
 function selQuiz(optIdx,taskIdx){
   if(state.qAnswered[taskIdx]) return;
-  document.querySelectorAll('.quiz-opt').forEach(el=>el.classList.remove('selected'));
+  // Töröljük a korábbi wrong/selected jelölést, új választásnál tiszta lap
+  document.querySelectorAll('.quiz-opt').forEach(el=>el.classList.remove('selected','wrong'));
+  document.getElementById('score-msg').textContent='';
+  const fb=document.getElementById('qfb'); if(fb) fb.className='quiz-feedback';
   const el=document.getElementById('opt-'+optIdx);
   if(el) el.classList.add('selected');
   state.qSel[taskIdx]=optIdx;
@@ -1220,20 +1223,25 @@ function checkQuiz(task,idx){
     document.getElementById('score-msg').textContent='⚠️ Válassz egy lehetőséget!';
     return;
   }
-  state.qAnswered[idx]=true;
   const ok=sel===task.correct;
-  document.querySelectorAll('.quiz-opt').forEach((el,i)=>{
-    el.classList.add('disabled');
-    if(i===task.correct) el.classList.add('correct');
-    else if(i===sel&&!ok) el.classList.add('wrong');
-  });
   const fb=document.getElementById('qfb');
-  fb.className='quiz-feedback show '+(ok?'ok':'err');
-  fb.innerHTML=ok
-    ? task.feedback
-    : `❌ Nem ez a helyes. A helyes: <strong>${task.options[task.correct]}</strong><br><br>${task.feedback}`;
-  if(ok) markDone(idx);
-  else document.getElementById('score-msg').textContent='❌ Próbáld újra – gondold át a magyarázatot!';
+  if(ok){
+    // Helyes: lezárjuk, markDone
+    state.qAnswered[idx]=true;
+    document.querySelectorAll('.quiz-opt').forEach((el,i)=>{
+      el.classList.add('disabled');
+      if(i===task.correct) el.classList.add('correct');
+    });
+    fb.className='quiz-feedback show ok';
+    fb.innerHTML=task.feedback;
+    markDone(idx);
+  } else {
+    // Helytelen: csak a rossz opciót jelöljük, de NEM zárjuk le → újra lehet próbálni
+    document.getElementById('opt-'+sel)?.classList.add('wrong');
+    fb.className='quiz-feedback show err';
+    fb.innerHTML='❌ Nem ez a helyes. Gondold át, és próbáld újra!';
+    document.getElementById('score-msg').textContent='';
+  }
 }
 
 function checkFillin(task,idx){
