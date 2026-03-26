@@ -375,8 +375,9 @@ const tasks = [
       <ul>
         <li>Főcím <code>&lt;h1&gt;</code>: <strong>Kedvenc ételeim</strong></li>
         <li>Alcím <code>&lt;h2&gt;</code>: <strong>Olasz ételek</strong></li>
-        <li>Bekezdés: "A <strong>pizza</strong> az <em>olasz</em> konyha remeke."</li>
-        <li>Valahol legyen <code>&lt;u&gt;</code> aláhúzás is</li>
+        <li>Bekezdés: "A <strong>pizza</strong> az <em>olasz</em> konyha remeke."<br>
+          <small style="color:#94a3b8">(&lt;strong&gt; vagy &lt;b&gt;, &lt;em&gt; vagy &lt;i&gt; is elfogadott)</small></li>
+        <li>Valahol legyen aláhúzás: <code>&lt;u&gt;</code> vagy <code>&lt;ins&gt;</code></li>
       </ul>`,
     starterHtml:
 `<!DOCTYPE html>
@@ -393,9 +394,9 @@ const tasks = [
       { label:'&lt;h1&gt; főcím az oldalon',              fn:(h,d)=>!!d.querySelector('h1') },
       { label:'h1 tartalma: Kedvenc ételeim',        fn:(h,d)=>d.querySelector('h1')?.textContent?.trim()==='Kedvenc ételeim' },
       { label:'&lt;h2&gt; alcím az oldalon',          fn:(h,d)=>!!d.querySelector('h2') },
-      { label:'&lt;strong&gt; félkövér egy bekezdésben', fn:(h,d)=>!!d.querySelector('p strong') },
-      { label:'&lt;em&gt; dőlt egy bekezdésben',      fn:(h,d)=>!!d.querySelector('p em') },
-      { label:'&lt;u&gt; aláhúzás valahol',           fn:(h,d)=>!!d.querySelector('u') }
+      { label:'Félkövér (&lt;strong&gt; vagy &lt;b&gt;) bekezdésben',  fn:(h,d)=>!!(d.querySelector('p strong')||d.querySelector('p b')) },
+      { label:'Dőlt (&lt;em&gt; vagy &lt;i&gt;) bekezdésben',        fn:(h,d)=>!!(d.querySelector('p em')||d.querySelector('p i')) },
+      { label:'Aláhúzás (&lt;u&gt; vagy &lt;ins&gt;) valahol',       fn:(h,d)=>!!(d.querySelector('u')||d.querySelector('ins')) }
     ]
   },
 
