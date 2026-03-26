@@ -460,8 +460,10 @@ const tasks = [
         <li><code>&lt;h1&gt;</code>: <strong>Kedvenc webhelyeim</strong></li>
         <li>Legalább <strong>2 db link</strong> (<code>&lt;a href="..."&gt;</code>)</li>
         <li>Az egyik link nyíljon meg <strong>új lapon</strong> (<code>target="_blank"</code>)</li>
-        <li>Legalább <strong>1 db kép</strong> (<code>&lt;img src="..."&gt;</code>) <code>alt</code> attribútummal</li>
-      </ul>`,
+        <li>A képet csomagold <code>&lt;figure&gt;</code> elembe, és adj hozzá <code>&lt;figcaption&gt;</code> feliratot</li>
+      </ul>
+      <br>💡 Emlékeztető:
+      <code>&lt;figure&gt;<br>&nbsp;&nbsp;&lt;img src="..." alt="..."&gt;<br>&nbsp;&nbsp;&lt;figcaption&gt;Kép felirata&lt;/figcaption&gt;<br>&lt;/figure&gt;</code>`,
     starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -480,7 +482,10 @@ const tasks = [
     <!-- Ide írj egy másik linket, ami új lapon nyílik meg (target="_blank") -->
   </p>
 
-  <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="">
+  <figure>
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google logó">
+    <figcaption>A Google logója</figcaption>
+  </figure>
 
 </body>
 </html>`,
@@ -488,8 +493,10 @@ const tasks = [
       { label:'&lt;h1&gt; főcím az oldalon',                       fn:(h,d)=>!!d.querySelector('h1') },
       { label:'Legalább 2 link (&lt;a href&gt;)',             fn:(h,d)=>d.querySelectorAll('a[href]').length>=2 },
       { label:'Egyik link új lapon nyílik (target=_blank)',   fn:(h,d)=>!!d.querySelector('a[target="_blank"]') },
-      { label:'Van &lt;img&gt; kép az oldalon',               fn:(h,d)=>!!d.querySelector('img') },
-      { label:'A képnek van alt attribútuma',                 fn:(h,d)=>d.querySelector('img')?.hasAttribute('alt') }
+      { label:'Van &lt;figure&gt; elem az oldalon',           fn:(h,d)=>!!d.querySelector('figure') },
+      { label:'A figure-ben van &lt;img&gt; kép',            fn:(h,d)=>!!d.querySelector('figure img') },
+      { label:'A képnek van alt attribútuma',                 fn:(h,d)=>d.querySelector('img')?.hasAttribute('alt') },
+      { label:'Van &lt;figcaption&gt; felirat',              fn:(h,d)=>!!d.querySelector('figcaption') }
     ]
   },
 
@@ -747,11 +754,13 @@ const tasks = [
     explanation:`<div class="exp-label">✏️ Feladat</div>
       Készíts HTML táblázatot:
       <ul>
+        <li>A táblázatnak legyen <code>&lt;caption&gt;</code> felirata (pl. "Osztálylista")</li>
         <li><code>&lt;table&gt;</code> belső <code>&lt;thead&gt;</code> és <code>&lt;tbody&gt;</code>-val</li>
         <li>Fejléc sorban legalább <strong>3 <code>&lt;th&gt;</code></strong> cella</li>
         <li>Legalább <strong>2 adatsor</strong> (<code>&lt;tr&gt;</code>) a <code>&lt;tbody&gt;</code>-ban</li>
         <li>Minden adatsorban legalább <strong>3 <code>&lt;td&gt;</code></strong> cella</li>
-      </ul>`,
+      </ul>
+      <br>💡 A <code>&lt;caption&gt;</code> közvetlenül a <code>&lt;table&gt;</code> nyitó tag után kerül.`,
     starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -765,6 +774,7 @@ const tasks = [
 </html>`,
     checks:[
       { label:'Van &lt;table&gt; a lapon',               fn:(h,d)=>!!d.querySelector('table') },
+      { label:'Van &lt;caption&gt; táblázatfelirat',    fn:(h,d)=>!!d.querySelector('caption') },
       { label:'Van &lt;thead&gt; fejléc rész',           fn:(h,d)=>!!d.querySelector('thead') },
       { label:'A fejlécben legalább 3 &lt;th&gt; cella', fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
       { label:'Van &lt;tbody&gt; törzs rész',            fn:(h,d)=>!!d.querySelector('tbody') },
