@@ -581,22 +581,23 @@ const tasks = [
   {
     id:13, block:5, blockName:'Szemantikus váz', emoji:'🏛️',
     type:'quiz',
-    title:'Miért használunk szemantikus elemeket?',
+    title:'Szemantikus elemek – ki mit jelöl?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>szemantikus elemek</strong> elmondják a böngészőnek (és a keresőknek), mi mire való:
+      Vannak HTML elemek, amelyek neve már elárulja, mi a szerepük az oldalon.
+      Ezeket hívjuk <strong>szemantikus elemeknek</strong>:
       <ul>
-        <li><code>&lt;header&gt;</code> — fejléc (logo, navigáció)</li>
-        <li><code>&lt;nav&gt;</code> — navigáció (menü linkek)</li>
-        <li><code>&lt;main&gt;</code> — fő tartalom (egy oldalaon csak egy!)</li>
-        <li><code>&lt;article&gt;</code> — önálló tartalom (pl. blogbejegyzés)</li>
-        <li><code>&lt;section&gt;</code> — tematikus szakasz</li>
-        <li><code>&lt;footer&gt;</code> — lábléc (copyright, kapcsolat)</li>
+        <li><code>&lt;header&gt;</code> — az oldal teteje: logo, cím</li>
+        <li><code>&lt;nav&gt;</code> — a menü, ahol a linkek vannak</li>
+        <li><code>&lt;main&gt;</code> — a fő tartalom (oldalanként csak egy)</li>
+        <li><code>&lt;article&gt;</code> — egy önálló egység, pl. egy hír</li>
+        <li><code>&lt;section&gt;</code> — egy téma szerinti rész</li>
+        <li><code>&lt;footer&gt;</code> — az oldal alja: copyright, kapcsolat</li>
       </ul>
-      Régen mindent <code>&lt;div&gt;</code>-val csináltak – ez nem mondja el mi micsoda.`,
-    question:'Melyik elem a fő navigációs menü jelölésére való?',
+      Hasznos, mert a Google és a képernyőolvasók is jobban értik az oldalt.`,
+    question:'Melyik elemet használjuk a navigációs menü jelölésére?',
     options:['&lt;menu&gt;','&lt;nav&gt;','&lt;header&gt;','&lt;ul&gt;'],
     correct:1,
-    feedback:'✅ Igen! A <code>&lt;nav&gt;</code> jelöli a navigációs linkkészletet. A <code>&lt;header&gt;</code> a fejléc egésze (amibe a nav is kerülhet), az <code>&lt;ul&gt;</code> csak egy lista, szemantika nélkül.'
+    feedback:'✅ Helyes! A <code>&lt;nav&gt;</code> jelöli a menüt. A <code>&lt;header&gt;</code> az egész fejléc doboza (amibe a nav is kerülhet), az <code>&lt;ul&gt;</code> pedig csak egy lista – nem mondja el, hogy ez egy navigáció.'
   },
 
   {
