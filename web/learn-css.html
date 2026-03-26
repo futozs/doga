@@ -1541,36 +1541,45 @@ function registerCssInStyleCompletions(){
       if (!inStyleBlock && !inStyleAttr) return { suggestions: [] };
 
       const word = model.getWordUntilPosition(position);
-      const range = {
-        startLineNumber: position.lineNumber, endLineNumber: position.lineNumber,
-        startColumn: word.startColumn, endColumn: position.column
-      };
-
-      // Ha kettőspont előtt vagyunk → property javaslatok
       const lineText = model.getLineContent(position.lineNumber);
       const lineUpToCursor = lineText.slice(0, position.column - 1);
-      const afterColon = lineUpToCursor.match(/([a-z-]+)\s*:\s*([^;]*)$/);
 
+      // Ha kettőspont van a sorban → érték javaslatok
+      const afterColon = lineUpToCursor.match(/([a-z-]+)\s*:\s*([^;]*)$/);
       if (afterColon) {
-        // Érték javaslatok az adott propertyhez
         const prop = afterColon[1];
         const found = CSS_PROPS.find(x => x.p === prop);
         if (!found) return { suggestions: [] };
+        // Range: a kettőspont utáni rész cseréje
+        const colonIdx = lineUpToCursor.lastIndexOf(':');
+        const afterColonText = lineText.slice(colonIdx + 1);
+        const valMatch = afterColonText.match(/^\s*([\w#().,\s-]*)/);
+        const valLen = valMatch ? valMatch[0].length : 0;
+        const valRange = {
+          startLineNumber: position.lineNumber, endLineNumber: position.lineNumber,
+          startColumn: colonIdx + 2, endColumn: colonIdx + 2 + valLen
+        };
         return {
           suggestions: found.vals.map(v => ({
             label: v, kind: Kind.Value,
-            insertText: v, range,
-            detail: prop + ': ' + v + ';'
+            insertText: ' ' + v, range: valRange,
+            sortText: '0_' + v,
+            detail: prop + ': ' + v
           }))
         };
       }
 
       // Property javaslatok
+      const propRange = {
+        startLineNumber: position.lineNumber, endLineNumber: position.lineNumber,
+        startColumn: word.startColumn, endColumn: position.column
+      };
       return {
         suggestions: CSS_PROPS.map(({p}) => ({
           label: p, kind: Kind.Property,
           insertText: p + ': ',
-          range,
+          range: propRange,
+          sortText: '0_' + p,
           detail: 'CSS tulajdonság'
         }))
       };
@@ -1785,7 +1794,9 @@ function initMonaco(task,idx){
       value:task.starterHtml, language:'html', theme:'vs-dark',
       fontSize:14, minimap:{enabled:false}, automaticLayout:true,
       wordWrap:'on', scrollBeyondLastLine:false, tabSize:2,
-      quickSuggestions:{other:true,comments:false,strings:true}
+      quickSuggestions:true,
+      suggestOnTriggerCharacters:true,
+      wordBasedSuggestions:'off'
     });
     const btnW = document.getElementById('btn-wrap');
     if(btnW) btnW.onclick = ()=>wrapWithAbbreviation(state.monacoEd);
