@@ -172,7 +172,7 @@
   </div>
   <div class="topbar-spacer"></div>
   <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;" title="Bejelentkezési sorozat"></div>
-  <div class="progress-label">Teljesítve: <span id="prog-done">0</span> / <span id="prog-total">21</span></div>
+  <div class="progress-label">Teljesítve: <span id="prog-done">0</span> / <span id="prog-total">30</span></div>
 </header>
 
 <div class="modal-ov" id="modal-done">
@@ -242,9 +242,9 @@ function hasVal(h,prop,val){
 
 const tasks = [
 
-  // ── BLOKK 1: Mi a CSS? ───────────────────────────────────────────
+  // ── BLOKK 1: Mi a CSS? + CSS módok ──────────────────────────────────
   {
-    id:1, block:1, blockName:'Mi a CSS?', emoji:'🎨',
+    id:1, block:1, blockName:'Mi a CSS? + CSS módok', emoji:'🎨',
     type:'quiz',
     title:'Mi a CSS feladata?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -255,11 +255,11 @@ const tasks = [
       <br><br>
       Háromféleképpen adhatjuk meg:
       <ul>
-        <li><code>&lt;style&gt;</code> tag a HTML-ben</li>
-        <li>Külső <code>.css</code> fájl (<code>&lt;link&gt;</code> taggel)</li>
-        <li>Inline: <code>style="..."</code> attribútum az elemen</li>
+        <li><strong>Inline</strong>: <code>style="..."</code> az elemen</li>
+        <li><strong>Internal</strong>: <code>&lt;style&gt;</code> tag a <code>&lt;head&gt;</code>-ben</li>
+        <li><strong>External</strong>: külső <code>.css</code> fájl (<code>&lt;link&gt;</code>-kel)</li>
       </ul>
-      A legjobb megoldás a külső fájl – akkor egy helyen kezeljük az egész oldal stílusát.`,
+      A legjobb megoldás a külső fájl – egy helyen kezeljük az egész oldal stílusát.`,
     question:'Mire való a CSS?',
     options:[
       'A weboldal szerkezetét (fejléc, bekezdés) határozza meg',
@@ -272,87 +272,233 @@ const tasks = [
   },
 
   {
-    id:2, block:1, blockName:'Mi a CSS?', emoji:'🎨',
+    id:2, block:1, blockName:'Mi a CSS? + CSS módok', emoji:'🎨',
     type:'fillin',
-    title:'A CSS szintaxisa',
+    title:'A három CSS mód',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Minden CSS szabály így épül fel:
+      <strong>1. Inline CSS</strong> – közvetlenül az elemen:
+      <br><code>&lt;p style="color:red;"&gt;</code>
       <br><br>
-      <code>szelektor { tulajdonság: érték; }</code>
+      <strong>2. Internal CSS</strong> – a <code>&lt;head&gt;</code>-ben:
+      <br><code>&lt;style&gt; p { color:red; } &lt;/style&gt;</code>
       <br><br>
-      <ul>
-        <li><strong>Szelektor</strong>: melyik HTML elemre vonatkozzon (pl. <code>h1</code>, <code>p</code>)</li>
-        <li><strong>Tulajdonság</strong>: mit változtassunk (pl. <code>color</code>)</li>
-        <li><strong>Érték</strong>: mire változtassuk (pl. <code>red</code>)</li>
-      </ul>
-      A kapcsos zárójeleken <code>{ }</code> belül több szabály is lehet, mindegyik után <code>;</code> kell.`,
+      <strong>3. External CSS</strong> – külső fájl hivatkozása:
+      <br><code>&lt;link rel="stylesheet" href="style.css"&gt;</code>
+      <br><br>
+      Az external mód a legjobb: egy <code>.css</code> fájlban kezeljük az összes oldal stílusát.`,
     codeTemplate:
-`___ {
-  ___: red;
-  font-size: 24px;
-}
+`<!-- 1. Inline CSS: közvetlenül a tagen -->
+<p ___="color:red; font-size:18px;">Piros szöveg</p>
 
-p {
-  color: #333;
-  ___: 16px;
-}`,
+<!-- 2. Internal CSS: a head-ben -->
+<___>
+  h1 { color: navy; }
+</style>
+
+<!-- 3. External CSS hivatkozás -->
+<link ___="stylesheet" href="stílus.css">`,
     blanks:[
-      { answer:'h1',       hint:'Szelektor – az összes h1 elemre vonatkozik' },
-      { answer:'color',    hint:'Ez a tulajdonság állítja be a szöveg színét' },
-      { answer:'font-size',hint:'Ez a tulajdonság állítja be a betűméretet' }
+      { answer:'style', hint:'Az inline CSS attribútum neve' },
+      { answer:'style', hint:'Az internal CSS tag neve (head-ben)' },
+      { answer:'rel',   hint:'A link elem attribútuma, ami megadja a kapcsolat típusát' }
     ]
   },
 
   {
-    id:3, block:1, blockName:'Mi a CSS?', emoji:'🎨',
+    id:3, block:1, blockName:'Mi a CSS? + CSS módok', emoji:'🎨',
     type:'monaco',
-    title:'Adj stílust az oldalnak!',
+    title:'CSS módok és alapszintaxis',
     explanation:`<div class="exp-label">✏️ Feladat</div>
-      A <code>&lt;style&gt;</code> tagbe írd meg a stílusokat:
+      Írd meg a hiányzó stílusokat:
       <ul>
-        <li>A <code>body</code> háttérszíne legyen valamilyen szín (<code>background-color</code>)</li>
-        <li>A <code>h1</code> szövegszíne (<code>color</code>) különbözzön a háttértől</li>
-        <li>A <code>p</code> bekezdés betűmérete (<code>font-size</code>) legyen megadva</li>
-      </ul>
-      💡 Próbálj ki különböző színeket: <code>navy</code>, <code>tomato</code>, <code>#3b82f6</code>`,
+        <li>A <code>h1</code> elemen legyen <strong>inline CSS</strong>: <code>style="color: navy;"</code></li>
+        <li>A <code>&lt;style&gt;</code> tagbe (internal CSS) írj szabályt:
+          <ul>
+            <li><code>body</code>-nak <code>background-color</code></li>
+            <li><code>p</code>-nek <code>font-size</code> (legalább 16px)</li>
+            <li><code>.kiemelt</code> osztálynak <code>font-weight: bold</code></li>
+          </ul>
+        </li>
+      </ul>`,
     starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
-  <title>CSS próba</title>
+  <title>CSS módok</title>
   <style>
-    /* Ide írd a stílusokat! */
+    /* Internal CSS ide! */
 
   </style>
 </head>
 <body>
-  <h1>Helló, CSS!</h1>
-  <p>Ez az első stílusom.</p>
+  <!-- Inline CSS: add hozzá a style attribútumot! -->
+  <h1>CSS módok</h1>
+  <p>Ez a bekezdés internal CSS-sel lesz formázva.</p>
+  <p class="kiemelt">Ez a kiemelt bekezdés.</p>
 </body>
 </html>`,
     checks:[
-      { label:'Van <style> tag az oldalon',         fn:(h)=>/<style/i.test(h) },
-      { label:'body-nak van background-color',       fn:(h)=>/body\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
-      { label:'h1-nek van color (szövegszín)',       fn:(h)=>/h1\s*\{[^}]*color\s*:/i.test(cssOf(h)) },
-      { label:'p-nek van font-size',                 fn:(h)=>/p\s*\{[^}]*font-size\s*:/i.test(cssOf(h)) }
+      { label:'Van <style> tag (internal CSS)',        fn:(h)=>/<style/i.test(h) },
+      { label:'Van style= attribútum (inline CSS)',    fn:(h)=>/<[^>]+style\s*=\s*"/i.test(h) },
+      { label:'body-nak van background-color',         fn:(h)=>/body\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
+      { label:'p-nek van font-size (legalább 16px)',   fn:(h)=>{ const m=cssOf(h).match(/\bp\s*\{[^}]*font-size\s*:\s*(\d+)px/i); return m&&parseInt(m[1])>=16; } },
+      { label:'.kiemelt-nek van font-weight: bold',    fn:(h)=>/\.kiemelt\s*\{[^}]*font-weight\s*:\s*bold/i.test(cssOf(h)) }
     ]
   },
 
-  // ── BLOKK 2: Szöveg stílusok ─────────────────────────────────────
+  // ── BLOKK 2: Mértékegységek ──────────────────────────────────────────
   {
-    id:4, block:2, blockName:'Szöveg stílusok', emoji:'✍️',
+    id:4, block:2, blockName:'Mértékegységek', emoji:'📐',
+    type:'quiz',
+    title:'Abszolút és relatív mértékegységek',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      <strong>Abszolút</strong> (mindig ugyanakkora):
+      <ul>
+        <li><code>px</code> — pixel, a leggyakoribb abszolút egység</li>
+      </ul>
+      <strong>Relatív</strong> (más értékhez viszonyítva):
+      <ul>
+        <li><code>em</code> — a <em>szülő</em> elem betűméretéhez viszonyítva<br>
+          (ha szülő: 16px, akkor 1.5em = 24px)</li>
+        <li><code>rem</code> — a <em>gyökér</em> (<code>html</code>) elem betűméretéhez<br>
+          (alapértelmezés: 1rem = 16px)</li>
+        <li><code>%</code> — a szülő elem szélességéhez viszonyítva</li>
+        <li><code>vw</code> — a viewport (böngészőablak) <em>szélességének</em> 1%-a</li>
+        <li><code>vh</code> — a viewport <em>magasságának</em> 1%-a</li>
+      </ul>`,
+    question:'Ha a body betűmérete 20px, mennyit jelent a p { font-size: 1.5em; }?',
+    options:[
+      '15px (20 × 0.75)',
+      '20px (ugyanannyi mint a szülő)',
+      '30px (20 × 1.5)',
+      '24px (16 × 1.5, az alapértelmezett)'
+    ],
+    correct:2,
+    feedback:'✅ Helyes! Az <code>em</code> a szülő betűméretéhez viszonyít. 20px × 1.5 = 30px. Ha <code>rem</code>-et használtunk volna, 16px × 1.5 = 24px lett volna (a html elem alapértelmezett méretéhez mér).'
+  },
+
+  {
+    id:5, block:2, blockName:'Mértékegységek', emoji:'📐',
+    type:'fillin',
+    title:'Mértékegységek kiegészítés',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Összefoglaló:
+      <ul>
+        <li><code>px</code> — pixel (abszolút, pl. <code>24px</code>)</li>
+        <li><code>em</code> — szülő betűméretéhez (pl. <code>1.5em</code>)</li>
+        <li><code>rem</code> — gyökér betűméretéhez (pl. <code>2rem</code> = 32px)</li>
+        <li><code>%</code> — szülő szélességéhez (pl. <code>50%</code>)</li>
+        <li><code>vw</code> — viewport szélesség (pl. <code>100vw</code> = teljes szélesség)</li>
+        <li><code>vh</code> — viewport magasság (pl. <code>100vh</code> = teljes magasság)</li>
+      </ul>`,
+    codeTemplate:
+`/* Abszolút: mindig ugyanakkora */
+h1 { font-size: 32___; }
+
+/* Relatív a szülő betűméretéhez */
+p { font-size: 1.125___; }
+
+/* Relatív a gyökér (html) betűméretéhez */
+.felirat { font-size: 0.875___; }
+
+/* Viewport szélessége */
+.hero { width: 100___; }
+
+/* Viewport magassága */
+.teljes-oldal { min-height: 100___; }`,
+    blanks:[
+      { answer:'px',  hint:'Pixel – abszolút mértékegység' },
+      { answer:'em',  hint:'A szülő elem betűméretéhez viszonyítva' },
+      { answer:'rem', hint:'A gyökér (html) elem betűméretéhez viszonyítva' },
+      { answer:'vw',  hint:'Viewport Width – a böngészőablak szélességének %-a' },
+      { answer:'vh',  hint:'Viewport Height – a böngészőablak magasságának %-a' }
+    ]
+  },
+
+  {
+    id:6, block:2, blockName:'Mértékegységek', emoji:'📐',
+    type:'monaco',
+    title:'Mértékegységek alkalmazása',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Használj különböző mértékegységeket:
+      <ul>
+        <li><code>body</code>: <code>font-size: 16px</code> (alap, px-ben)</li>
+        <li><code>h1</code>: <code>font-size: 2rem</code> (rem-ben – ez 32px lesz)</li>
+        <li><code>p</code>: <code>font-size: 1.125em</code> (em-ben)</li>
+        <li><code>.hero</code>: <code>width: 100%</code> és <code>min-height: 40vh</code></li>
+        <li><code>.doboz</code>: <code>max-width: 600px</code>, <code>margin: 0 auto</code></li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Mértékegységek</title>
+  <style>
+    /* Alapbeállítás */
+    body {
+      /* font-size px-ben */
+    }
+
+    h1 {
+      /* font-size rem-ben */
+    }
+
+    p {
+      /* font-size em-ben */
+    }
+
+    .hero {
+      background-color: #3b82f6;
+      color: white;
+      padding: 20px;
+      /* width % és min-height vh */
+    }
+
+    .doboz {
+      background: white;
+      padding: 20px;
+      /* max-width px, margin auto */
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Nagy cím</h1>
+  </div>
+  <div class="doboz">
+    <p>Ez a bekezdés em-ben méretezett betűkkel jelenik meg.</p>
+  </div>
+</body>
+</html>`,
+    checks:[
+      { label:'body font-size pixelben van megadva',   fn:(h)=>/body\s*\{[^}]*font-size\s*:\s*\d+px/i.test(cssOf(h)) },
+      { label:'h1 font-size rem-ben van megadva',      fn:(h)=>/h1\s*\{[^}]*font-size\s*:[^}]*rem/i.test(cssOf(h)) },
+      { label:'p font-size em-ben van megadva',        fn:(h)=>/\bp\s*\{[^}]*font-size\s*:[^}]*em/i.test(cssOf(h)) },
+      { label:'.hero-nak van width % vagy min-height vh', fn:(h)=>/\.hero\s*\{[^}]*(width\s*:[^}]*%|min-height\s*:[^}]*vh)/i.test(cssOf(h)) },
+      { label:'.doboz-nak van max-width pixelben',     fn:(h)=>/\.doboz\s*\{[^}]*max-width\s*:\s*\d+px/i.test(cssOf(h)) }
+    ]
+  },
+
+  // ── BLOKK 3: Szöveg stílusok ─────────────────────────────────────────
+  {
+    id:7, block:3, blockName:'Szöveg stílusok', emoji:'✍️',
     type:'quiz',
     title:'Szöveg CSS tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
       A legfontosabb szöveggel kapcsolatos CSS tulajdonságok:
       <ul>
         <li><code>color</code> — szöveg színe</li>
-        <li><code>font-size</code> — betűméret (pl. <code>16px</code>, <code>1.2rem</code>)</li>
-        <li><code>font-weight</code> — vastagság: <code>bold</code> = félkövér, <code>normal</code> = normál</li>
-        <li><code>font-style</code> — <code>italic</code> = dőlt</li>
-        <li><code>text-align</code> — igazítás: <code>left</code>, <code>center</code>, <code>right</code></li>
-        <li><code>text-decoration</code> — <code>underline</code> = aláhúzott, <code>none</code> = nincs</li>
+        <li><code>font-size</code> — betűméret</li>
+        <li><code>font-weight: bold</code> — félkövér</li>
+        <li><code>font-style: italic</code> — dőlt</li>
+        <li><code>font-family</code> — betűtípus (pl. <code>sans-serif</code>)</li>
+        <li><code>text-align: center</code> — középre igazítás</li>
+        <li><code>text-decoration: underline</code> — aláhúzás</li>
+        <li><code>text-transform: uppercase</code> — csupa nagybetű</li>
+        <li><code>letter-spacing</code> — betűk közötti tér</li>
+        <li><code>line-height</code> — sormagasság</li>
       </ul>`,
     question:'Melyik CSS tulajdonság igazítja középre a szöveget?',
     options:['font-align: center','text-align: center','align: center','center: text'],
@@ -361,49 +507,56 @@ p {
   },
 
   {
-    id:5, block:2, blockName:'Szöveg stílusok', emoji:'✍️',
+    id:8, block:3, blockName:'Szöveg stílusok', emoji:'✍️',
     type:'fillin',
     title:'Szöveg stílus tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
       Emlékeztető:
       <ul>
-        <li><code>font-size: 32px</code> — betűméret pixelben</li>
+        <li><code>font-size: 32px</code> — betűméret</li>
         <li><code>text-align: center</code> — középre igazítás</li>
         <li><code>font-weight: bold</code> — félkövér</li>
-        <li><code>font-style: italic</code> — dőlt</li>
-        <li><code>color: #e74c3c</code> — szín hex kódban</li>
+        <li><code>text-transform: uppercase</code> — nagybetűs</li>
+        <li><code>letter-spacing: 2px</code> — betűköz</li>
+        <li><code>line-height: 1.6</code> — sormagasság (szorzó)</li>
       </ul>`,
     codeTemplate:
 `h1 {
-  ___: 36px;
+  font-size: 36px;
   ___: center;
-  color: #2c3e50;
+  ___: uppercase;
+  letter-spacing: 3px;
 }
 
 p {
-  ___: 18px;
+  font-size: 18px;
+  ___: 1.7;
+  color: #334155;
+}
+
+.nav-link {
+  text-decoration: none;
   ___: bold;
-  font-style: italic;
 }`,
     blanks:[
-      { answer:'font-size',   hint:'Betűméret – pixelben adjuk meg' },
-      { answer:'text-align',  hint:'Vízszintes igazítás: left, center, right' },
-      { answer:'font-size',   hint:'Betűméret – pixelben adjuk meg' },
-      { answer:'font-weight', hint:'Vastagság: bold = félkövér, normal = normál' }
+      { answer:'text-align',     hint:'Vízszintes igazítás: left, center, right' },
+      { answer:'text-transform', hint:'Betűk átalakítása: uppercase=nagybetűs, lowercase=kisbetűs' },
+      { answer:'line-height',    hint:'Sormagasság – szorzóval adjuk meg (pl. 1.6 = másfeles sortávolság)' },
+      { answer:'font-weight',    hint:'Vastagság: bold = félkövér' }
     ]
   },
 
   {
-    id:6, block:2, blockName:'Szöveg stílusok', emoji:'✍️',
+    id:9, block:3, blockName:'Szöveg stílusok', emoji:'✍️',
     type:'monaco',
-    title:'Formázd meg a szöveget CSS-sel!',
+    title:'Szövegformázás CSS-sel',
     explanation:`<div class="exp-label">✏️ Feladat</div>
-      Formázd meg a stíluslapban:
+      Formázd meg a szövegeket:
       <ul>
-        <li><code>h1</code>: középre igazítva, legalább 28px betűméret</li>
-        <li><code>p</code>: legalább 16px betűméret, tetszőleges szín</li>
-        <li>Valahol legyen <code>font-weight: bold</code> (félkövér)</li>
-        <li>Valahol legyen <code>text-align: center</code></li>
+        <li><code>h1</code>: legalább 28px, középre, <code>text-transform: uppercase</code></li>
+        <li><code>p</code>: legalább 16px, <code>line-height</code> megadva</li>
+        <li><code>.kiemelt</code>: <code>font-weight: bold</code> és más szín</li>
+        <li>Valahol legyen <code>letter-spacing</code> vagy <code>font-family</code></li>
       </ul>`,
     starterHtml:
 `<!DOCTYPE html>
@@ -419,34 +572,35 @@ p {
 <body>
   <h1>Kandó Kálmán Iskola</h1>
   <p>Budapest legjobb műszaki középiskolája.</p>
-  <p>Gyere és tanuld meg a webfejlesztést!</p>
+  <p class="kiemelt">Gyere és tanuld meg a webfejlesztést!</p>
 </body>
 </html>`,
     checks:[
-      { label:'h1-nek van font-size',              fn:(h)=>/h1\s*\{[^}]*font-size\s*:/i.test(cssOf(h)) },
-      { label:'h1 legalább 28px betűméret',        fn:(h)=>{ const m=cssOf(h).match(/h1\s*\{[^}]*font-size\s*:\s*(\d+)px/i); return m&&parseInt(m[1])>=28; } },
-      { label:'p-nek van font-size',               fn:(h)=>/p\s*\{[^}]*font-size\s*:/i.test(cssOf(h)) },
-      { label:'Van font-weight: bold valahol',     fn:(h)=>/font-weight\s*:\s*bold/i.test(cssOf(h)) },
-      { label:'Van text-align: center valahol',    fn:(h)=>/text-align\s*:\s*center/i.test(cssOf(h)) }
+      { label:'h1-nek van font-size (legalább 28px)', fn:(h)=>{ const m=cssOf(h).match(/h1\s*\{[^}]*font-size\s*:\s*(\d+)px/i); return m&&parseInt(m[1])>=28; } },
+      { label:'h1 text-align: center',                fn:(h)=>/h1\s*\{[^}]*text-align\s*:\s*center/i.test(cssOf(h)) },
+      { label:'h1 text-transform: uppercase',         fn:(h)=>/h1\s*\{[^}]*text-transform\s*:\s*uppercase/i.test(cssOf(h)) },
+      { label:'p-nek van line-height',                fn:(h)=>/\bp\s*\{[^}]*line-height\s*:/i.test(cssOf(h)) },
+      { label:'.kiemelt-nek van font-weight: bold',   fn:(h)=>/\.kiemelt\s*\{[^}]*font-weight\s*:\s*bold/i.test(cssOf(h)) },
+      { label:'Van letter-spacing vagy font-family valahol', fn:(h)=>/letter-spacing\s*:|font-family\s*:/i.test(cssOf(h)) }
     ]
   },
 
-  // ── BLOKK 3: Doboz modell ─────────────────────────────────────────
+  // ── BLOKK 4: Doboz modell + box-sizing ───────────────────────────────
   {
-    id:7, block:3, blockName:'Doboz modell', emoji:'📦',
+    id:10, block:4, blockName:'Doboz modell', emoji:'📦',
     type:'quiz',
     title:'Margin és padding különbsége',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Minden HTML elem egy dobozként viselkedik. A doboznak négy "rétege" van (kívülről befelé):
+      Minden HTML elem egy dobozként viselkedik. A doboznak négy rétege van (kívülről befelé):
       <br><br>
       <code>margin</code> → szegély → <code>padding</code> → tartalom
       <br><br>
       <ul>
-        <li><strong>margin</strong> — a doboz <em>kívüli</em> tér, a szomszédos elemektől való távolság</li>
+        <li><strong>margin</strong> — kívüli tér, a szomszédos elemektől való távolság</li>
         <li><strong>border</strong> — a keret maga</li>
-        <li><strong>padding</strong> — a tartalom és a keret közötti <em>belső</em> tér</li>
-      </ul>
-      Pl. egy gombnak <code>padding: 10px 20px</code> adja a belső kitöltést, <code>margin: 8px</code> a körülötte lévő teret.`,
+        <li><strong>padding</strong> — a tartalom és a keret közötti belső tér</li>
+        <li><strong>box-sizing: border-box</strong> — a padding és border beleszámít a megadott szélességbe</li>
+      </ul>`,
     question:'Mit jelent a padding?',
     options:[
       'A doboz körüli külső tér, a szomszédos elemektől való távolság',
@@ -459,40 +613,39 @@ p {
   },
 
   {
-    id:8, block:3, blockName:'Doboz modell', emoji:'📦',
+    id:11, block:4, blockName:'Doboz modell', emoji:'📦',
     type:'fillin',
-    title:'Doboz modell tulajdonságok',
+    title:'Doboz modell + box-sizing',
     explanation:`<div class="exp-label">📖 Tananyag</div>
       Rövidített és hosszú forma:
       <ul>
         <li><code>margin: 10px</code> — mind a 4 oldalon 10px</li>
-        <li><code>margin: 10px 20px</code> — fent-lent 10px, jobbra-balra 20px</li>
-        <li><code>padding: 16px</code> — belső kitöltés</li>
+        <li><code>padding: 10px 20px</code> — fent-lent 10px, jobbra-balra 20px</li>
         <li><code>width: 300px</code> — szélesség</li>
-        <li><code>border: 2px solid #ccc</code> — keret: vastagság, stílus, szín</li>
+        <li><code>border: 2px solid #ccc</code> — keret</li>
+        <li><code>box-sizing: border-box</code> — a padding beleszámít a szélességbe</li>
       </ul>`,
     codeTemplate:
-`.kártya {
+`*, *::before, *::after {
+  ___: border-box;  /* padding ne növelje a szélességet */
+}
+
+.kártya {
   ___: 280px;
   ___: 20px;
   ___: 16px auto;
   border: 2px solid #e2e8f0;
-}
-
-.gomb {
-  padding: 10px 24px;
-  ___: 8px 0;
 }`,
     blanks:[
-      { answer:'width',   hint:'A doboz szélessége pixelben' },
-      { answer:'padding', hint:'Belső kitöltés – a tartalom és a keret között' },
-      { answer:'margin',  hint:'Külső margó – auto = vízszintesen középre igazít' },
-      { answer:'margin',  hint:'Külső margó – fent-lent 8px tér a többi elemtől' }
+      { answer:'box-sizing', hint:'Meghatározza, beleszámít-e a padding a megadott szélességbe' },
+      { answer:'width',      hint:'A doboz szélessége pixelben' },
+      { answer:'padding',    hint:'Belső kitöltés – a tartalom és a keret között' },
+      { answer:'margin',     hint:'Külső margó – auto = vízszintesen középre igazít' }
     ]
   },
 
   {
-    id:9, block:3, blockName:'Doboz modell', emoji:'📦',
+    id:12, block:4, blockName:'Doboz modell', emoji:'📦',
     type:'monaco',
     title:'Doboz modell alkalmazása',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -500,8 +653,9 @@ p {
       <ul>
         <li><code>width</code>: adj meg szélességet</li>
         <li><code>padding</code>: belső kitöltés (legalább 10px)</li>
-        <li><code>margin</code>: külső margó (pl. <code>16px auto</code> = középre igazít)</li>
-        <li><code>border</code>: adj keretet (pl. <code>1px solid #ccc</code>)</li>
+        <li><code>margin</code>: külső margó (<code>16px auto</code> = középre)</li>
+        <li><code>border</code>: adj keretet</li>
+        <li><code>box-sizing: border-box</code></li>
       </ul>`,
     starterHtml:
 `<!DOCTYPE html>
@@ -529,47 +683,159 @@ p {
 </body>
 </html>`,
     checks:[
-      { label:'Van .kártya CSS szabály',             fn:(h)=>/\.kártya\s*\{/i.test(cssOf(h))||/\.k.rtya\s*\{/i.test(cssOf(h)) },
-      { label:'.kártyának van width',                fn:(h)=>/\.k[aá]rtya\s*\{[^}]*width\s*:/i.test(cssOf(h)) },
-      { label:'.kártyának van padding',              fn:(h)=>/\.k[aá]rtya\s*\{[^}]*padding\s*:/i.test(cssOf(h)) },
-      { label:'.kártyának van margin',               fn:(h)=>/\.k[aá]rtya\s*\{[^}]*margin\s*:/i.test(cssOf(h)) },
-      { label:'.kártyának van border',               fn:(h)=>/\.k[aá]rtya\s*\{[^}]*border\s*:/i.test(cssOf(h)) }
+      { label:'Van .kártya CSS szabály',              fn:(h)=>/\.k[aá]rtya\s*\{/i.test(cssOf(h)) },
+      { label:'.kártyának van width',                 fn:(h)=>/\.k[aá]rtya\s*\{[^}]*width\s*:/i.test(cssOf(h)) },
+      { label:'.kártyának van padding',               fn:(h)=>/\.k[aá]rtya\s*\{[^}]*padding\s*:/i.test(cssOf(h)) },
+      { label:'.kártyának van margin',                fn:(h)=>/\.k[aá]rtya\s*\{[^}]*margin\s*:/i.test(cssOf(h)) },
+      { label:'.kártyának van border',                fn:(h)=>/\.k[aá]rtya\s*\{[^}]*border\s*:/i.test(cssOf(h)) },
+      { label:'Van box-sizing: border-box',           fn:(h)=>/box-sizing\s*:\s*border-box/i.test(cssOf(h)) }
     ]
   },
 
-  // ── BLOKK 4: Háttér és szegély ───────────────────────────────────
+  // ── BLOKK 5: Szelektorok ─────────────────────────────────────────────
   {
-    id:10, block:4, blockName:'Háttér és szegély', emoji:'🖼️',
+    id:13, block:5, blockName:'Szelektorok', emoji:'🎯',
     type:'quiz',
-    title:'Lekerekített sarkok és háttér',
+    title:'Elem, osztály és ID szelektorok',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Négyféle alapszelektor:
+      <ul>
+        <li><strong>Univerzális</strong>: <code>* { }</code> — minden elemre vonatkozik</li>
+        <li><strong>Elem</strong>: <code>p { }</code> — minden <code>&lt;p&gt;</code> elemre</li>
+        <li><strong>Osztály</strong>: <code>.kiemelt { }</code> — minden <code>class="kiemelt"</code> elemre (pont!)</li>
+        <li><strong>ID</strong>: <code>#fooldal { }</code> — egy konkrét <code>id="fooldal"</code> elemre (#)</li>
+      </ul>
+      <strong>Specificitás</strong> (erősség sorrendje): ID > osztály > elem > univerzális.<br>
+      Ha többféle szabály vonatkozik egy elemre, az erősebb nyer.`,
+    question:'Hogyan hivatkozunk a class="kiemelt" osztályra CSS-ben?',
+    options:['kiemelt { }','#kiemelt { }','.kiemelt { }','@kiemelt { }'],
+    correct:2,
+    feedback:'✅ Helyes! Az osztályt <strong>pont</strong> előzi meg: <code>.kiemelt</code>. A <code>#</code> az ID-hez kell. Specificitás: ID > osztály > elem.'
+  },
+
+  {
+    id:14, block:5, blockName:'Szelektorok', emoji:'🎯',
+    type:'fillin',
+    title:'A négy alapszelektor',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Összefoglalás:
+      <ul>
+        <li><code>*</code> — univerzális (minden elem)</li>
+        <li><code>p</code> — elem szelektor</li>
+        <li><code>.kiemelt</code> — osztály szelektor (pont + osztálynév)</li>
+        <li><code>#fooldal</code> — ID szelektor (kettőskereszt + ID)</li>
+      </ul>
+      Kombináció is lehetséges: <code>p.kiemelt</code> csak az olyan <code>&lt;p&gt;</code> elemre vonatkozik, amelynek <code>class="kiemelt"</code>.`,
+    codeTemplate:
+`/* Minden elemre vonatkozik */
+___ {
+  box-sizing: border-box;
+}
+
+/* Minden p bekezdés szürke */
+___ {
+  color: #555;
+}
+
+/* A "kiemelt" osztályú elemek narancssárgák */
+___ {
+  color: orange;
+  font-weight: bold;
+}
+
+/* A "fooldal" ID-jű elem középre igazított */
+___ {
+  text-align: center;
+  font-size: 2rem;
+}`,
+    blanks:[
+      { answer:'*',        hint:'Univerzális szelektor – csillag (*) karakter' },
+      { answer:'p',        hint:'Elem szelektor – csak a tagname-t kell írni' },
+      { answer:'.kiemelt', hint:'Osztály szelektor – pont + osztálynév' },
+      { answer:'#fooldal', hint:'ID szelektor – kettőskereszt + az ID értéke' }
+    ]
+  },
+
+  {
+    id:15, block:5, blockName:'Szelektorok', emoji:'🎯',
+    type:'monaco',
+    title:'Szelektorok a gyakorlatban',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Írd meg a CSS szabályokat:
+      <ul>
+        <li>Univerzális: <code>box-sizing: border-box</code> minden elemre</li>
+        <li>Elem szelektor: a <code>h2</code> elemek legyenek kékek</li>
+        <li>Osztály szelektor: <code>.kiemelt</code> legyen sárga hátterű</li>
+        <li>ID szelektor: <code>#bevezeto</code> legyen középre igazítva</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Szelektorok</title>
+  <style>
+    /* Univerzális szelektor */
+
+    /* Elem szelektor: h2 legyen kék */
+
+    /* Osztály szelektor: .kiemelt sárga háttér */
+
+    /* ID szelektor: #bevezeto középre igazítva */
+
+  </style>
+</head>
+<body>
+  <p id="bevezeto">Üdvözöllek az oldalon!</p>
+  <h2>Első fejezet</h2>
+  <p>Ez egy normál bekezdés.</p>
+  <p class="kiemelt">Ez egy kiemelt bekezdés.</p>
+  <h2>Második fejezet</h2>
+</body>
+</html>`,
+    checks:[
+      { label:'Univerzális szelektor (* {}) van',        fn:(h)=>/\*\s*\{/i.test(cssOf(h)) },
+      { label:'h2 szelektor és color van',               fn:(h)=>/h2\s*\{[^}]*color\s*:/i.test(cssOf(h)) },
+      { label:'.kiemelt szelektor van',                  fn:(h)=>/\.kiemelt\s*\{/i.test(cssOf(h)) },
+      { label:'.kiemelt-nek van background(-color)',     fn:(h)=>/\.kiemelt\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
+      { label:'#bevezeto szelektor van',                 fn:(h)=>/\#bevezeto\s*\{/i.test(cssOf(h)) },
+      { label:'#bevezeto text-align: center',            fn:(h)=>/\#bevezeto\s*\{[^}]*text-align\s*:\s*center/i.test(cssOf(h)) }
+    ]
+  },
+
+  // ── BLOKK 6: Háttér, szegély, opacity ────────────────────────────────
+  {
+    id:16, block:6, blockName:'Háttér, szegély, opacity', emoji:'🖼️',
+    type:'quiz',
+    title:'Lekerekített sarkok és árnyék',
     explanation:`<div class="exp-label">📖 Tananyag</div>
       Néhány hasznos CSS tulajdonság:
       <ul>
         <li><code>background-color: #f0f4f8</code> — háttérszín</li>
         <li><code>border: 2px solid #3b82f6</code> — keret (vastagság stílus szín)</li>
         <li><code>border-radius: 8px</code> — lekerekített sarkok</li>
-        <li><code>border-radius: 50%</code> — tökéletes kör (négyzet elemből)</li>
+        <li><code>border-radius: 50%</code> — tökéletes kör</li>
         <li><code>box-shadow: 0 4px 12px rgba(0,0,0,0.1)</code> — árnyék</li>
-      </ul>
-      A <code>border-radius</code> nélkül minden doboznak szögletes sarka van.`,
+        <li><code>opacity: 0.7</code> — átlátszóság (0=láthatatlan, 1=teljes)</li>
+      </ul>`,
     question:'Melyik CSS tulajdonság kerekíti le a doboz sarkait?',
     options:['border-style','border-width','border-color','border-radius'],
     correct:3,
-    feedback:'✅ Igen! A <code>border-radius</code> a lekerekítés mértékét adja meg pixelben. Minél nagyobb az érték, annál gömbölyűbb a sarok. <code>50%</code>-nál tökéletes kört kapunk.'
+    feedback:'✅ Igen! A <code>border-radius</code> a lekerekítés mértékét adja meg. Minél nagyobb, annál gömbölyűbb. <code>50%</code>-nál tökéletes kört kapunk egy négyzet alapú elemből.'
   },
 
   {
-    id:11, block:4, blockName:'Háttér és szegély', emoji:'🖼️',
+    id:17, block:6, blockName:'Háttér, szegély, opacity', emoji:'🖼️',
     type:'fillin',
-    title:'Háttér és szegély tulajdonságok',
+    title:'Háttér, szegély, opacity tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Gomb stílushoz tipikusan ezeket használjuk:
+      Tipikus kártya és gomb stílushoz:
       <ul>
         <li><code>background-color</code> — háttérszín</li>
-        <li><code>border</code> — keret</li>
+        <li><code>border</code> — keret (none = nincs)</li>
         <li><code>border-radius</code> — lekerekítés</li>
-        <li><code>color</code> — szöveg színe</li>
-        <li><code>padding</code> — belső kitöltés</li>
+        <li><code>opacity</code> — átlátszóság (0–1 között)</li>
+        <li><code>box-shadow</code> — árnyék</li>
       </ul>`,
     codeTemplate:
 `.gomb {
@@ -578,33 +844,37 @@ p {
   ___: none;
   ___: 10px;
   padding: 12px 28px;
-  font-size: 16px;
 }
 
 .profilkép {
   width: 80px;
   height: 80px;
   ___: 50%;
+}
+
+.halvány {
+  ___: 0.5;
 }`,
     blanks:[
       { answer:'background-color', hint:'Háttérszín – itt kék' },
       { answer:'border',           hint:'Keret – none = nincs keret' },
-      { answer:'border-radius',    hint:'Lekerekített sarok – 10px' },
-      { answer:'border-radius',    hint:'50% = tökéletes kör' }
+      { answer:'border-radius',    hint:'Lekerekített sarok' },
+      { answer:'border-radius',    hint:'50% = tökéletes kör' },
+      { answer:'opacity',          hint:'Átlátszóság – 0=láthatatlan, 1=teljes, 0.5=félig átlátszó' }
     ]
   },
 
   {
-    id:12, block:4, blockName:'Háttér és szegély', emoji:'🖼️',
+    id:18, block:6, blockName:'Háttér, szegély, opacity', emoji:'🖼️',
     type:'monaco',
     title:'Stílusos kártya készítése',
     explanation:`<div class="exp-label">✏️ Feladat</div>
       Készíts egy stílusos kártyát:
       <ul>
-        <li><code>background-color</code> a kártyának (fehér vagy más szín)</li>
+        <li><code>background-color</code> a kártyának</li>
         <li><code>border-radius</code> lekerekített sarokhoz</li>
-        <li><code>box-shadow</code> árnyékhoz (másolhatod: <code>0 2px 8px rgba(0,0,0,0.12)</code>)</li>
-        <li>Legalább egy <code>.gomb</code> osztályú elem stílussal</li>
+        <li><code>box-shadow</code> árnyékhoz (pl. <code>0 2px 8px rgba(0,0,0,0.12)</code>)</li>
+        <li><code>.gomb</code> stílussal és <code>opacity</code> vagy <code>border-radius</code>-szal</li>
       </ul>`,
     starterHtml:
 `<!DOCTYPE html>
@@ -639,116 +909,296 @@ p {
 </body>
 </html>`,
     checks:[
-      { label:'.kártyának van background-color',      fn:(h)=>/\.k[aá]rtya\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
-      { label:'.kártyának van border-radius',         fn:(h)=>/\.k[aá]rtya\s*\{[^}]*border-radius\s*:/i.test(cssOf(h)) },
-      { label:'Van box-shadow valahol',               fn:(h)=>/box-shadow\s*:/i.test(cssOf(h)) },
-      { label:'.gombnak van valamilyen stílusa',      fn:(h)=>/\.gomb\s*\{[^}]*\S/i.test(cssOf(h)) },
-      { label:'.gombnak van background-color vagy border', fn:(h)=>/\.gomb\s*\{[^}]*(background(-color)?|border)\s*:/i.test(cssOf(h)) }
+      { label:'.kártyának van background-color',          fn:(h)=>/\.k[aá]rtya\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
+      { label:'.kártyának van border-radius',             fn:(h)=>/\.k[aá]rtya\s*\{[^}]*border-radius\s*:/i.test(cssOf(h)) },
+      { label:'Van box-shadow valahol',                   fn:(h)=>/box-shadow\s*:/i.test(cssOf(h)) },
+      { label:'.gombnak van background-color vagy border', fn:(h)=>/\.gomb\s*\{[^}]*(background(-color)?|border)\s*:/i.test(cssOf(h)) },
+      { label:'Van opacity vagy border-radius a gombon',  fn:(h)=>/\.gomb\s*\{[^}]*(opacity|border-radius)\s*:/i.test(cssOf(h)) }
     ]
   },
 
-  // ── BLOKK 5: Szelektorok ─────────────────────────────────────────
+  // ── BLOKK 7: Display és Float ─────────────────────────────────────────
   {
-    id:13, block:5, blockName:'Szelektorok', emoji:'🎯',
+    id:19, block:7, blockName:'Display és Float', emoji:'🔲',
     type:'quiz',
-    title:'Elem, osztály és ID szelektorok',
+    title:'Display értékek',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Háromféle alapszelektor van:
+      A <code>display</code> határozza meg, hogyan jelenik meg az elem:
       <ul>
-        <li><strong>Elem szelektor</strong>: <code>p { }</code> — minden <code>&lt;p&gt;</code> elemre vonatkozik</li>
-        <li><strong>Osztály szelektor</strong>: <code>.kiemelt { }</code> — minden <code>class="kiemelt"</code> elemre (pont az elején!)</li>
-        <li><strong>ID szelektor</strong>: <code>#fooldal { }</code> — egy konkrét <code>id="fooldal"</code> elemre (kettőskereszt az elején!)</li>
+        <li><code>block</code> — teljes sort foglalja el (pl. <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>)</li>
+        <li><code>inline</code> — csak a tartalmának szélességét foglalja (pl. <code>&lt;span&gt;</code>) – nem adható width/height</li>
+        <li><code>inline-block</code> — sorban marad, DE beállítható width/height</li>
+        <li><code>none</code> — el van rejtve, nem foglal helyet</li>
       </ul>
-      Az osztály többször is használható, az ID-t csak egyszer szabad!`,
-    question:'Hogyan hivatkozunk a class="kiemelt" osztályra CSS-ben?',
-    options:['kiemelt { }','#kiemelt { }','.kiemelt { }','@kiemelt { }'],
+      A <code>float</code> az elemet balra vagy jobbra "úsztatja", a szöveg köré folyik:
+      <ul>
+        <li><code>float: left</code> — balra úszik</li>
+        <li><code>float: right</code> — jobbra úszik</li>
+        <li><code>float: none</code> — nincs úsztatás</li>
+      </ul>`,
+    question:'Melyik display érték teszi az elemet sorba állíthatóvá ÉS beállítható width/height-tal?',
+    options:[
+      'display: block',
+      'display: inline',
+      'display: inline-block',
+      'display: flex'
+    ],
     correct:2,
-    feedback:'✅ Helyes! Az osztályt <strong>pont</strong> előzi meg: <code>.kiemelt</code>. A <code>#</code> az ID-hez kell, a <code>@</code> más CSS szabályokhoz (pl. @media).'
+    feedback:'✅ Helyes! Az <code>inline-block</code> sorban marad (mint az inline), de width és height megadható (mint a block). Az <code>inline</code>-nál nem lehet méretet beállítani.'
   },
 
   {
-    id:14, block:5, blockName:'Szelektorok', emoji:'🎯',
+    id:20, block:7, blockName:'Display és Float', emoji:'🔲',
     type:'fillin',
-    title:'A három alapszelektor',
+    title:'Display és float tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
       Összefoglalás:
       <ul>
-        <li><code>p</code> — elem szelektor (tagname)</li>
-        <li><code>.kiemelt</code> — osztály szelektor (pont + osztálynév)</li>
-        <li><code>#fooldal</code> — ID szelektor (kettőskereszt + ID)</li>
-      </ul>
-      Kombináció is lehetséges: <code>p.kiemelt</code> csak az olyan <code>&lt;p&gt;</code> elemekre vonatkozik, amelyeknek van <code>class="kiemelt"</code>`,
+        <li><code>display: none</code> — el van rejtve</li>
+        <li><code>display: block</code> — teljes sor</li>
+        <li><code>display: inline-block</code> — sorban, de méretezhetõ</li>
+        <li><code>float: left</code> — balra úszik, szöveg köré folyik</li>
+        <li><code>overflow: hidden</code> — clearfix helyett, lezárja a floatot</li>
+      </ul>`,
     codeTemplate:
-`/* Minden p bekezdés szürke */
-___ {
-  color: #555;
+`/* Elrejtve, nem foglal helyet */
+.rejtett { display: ___; }
+
+/* Teljes sort foglal */
+.sor { display: ___; }
+
+/* Sorban, de méretezhetõ */
+.gomb {
+  display: ___;
+  width: 120px;
+  height: 40px;
 }
 
-/* A "kiemelt" osztályú elemek narancssárgák */
-___ {
-  color: orange;
-  font-weight: bold;
-}
-
-/* A "fooldal" ID-jű elem középre igazított */
-___ {
-  text-align: center;
-  font-size: 2rem;
-}`,
+/* Balra úszik, szöveg köré folyik */
+.kép { ___: left; margin: 0 12px 8px 0; }`,
     blanks:[
-      { answer:'p',         hint:'Elem szelektor – csak a tagname-t kell írni' },
-      { answer:'.kiemelt',  hint:'Osztály szelektor – pont + osztálynév' },
-      { answer:'#fooldal',  hint:'ID szelektor – kettőskereszt + az ID értéke' }
+      { answer:'none',         hint:'Láthatatlan és nem foglal helyet' },
+      { answer:'block',        hint:'Blokkszintű: teljes sort foglal' },
+      { answer:'inline-block', hint:'Sorban van, de width/height megadható' },
+      { answer:'float',        hint:'A float tulajdonság úsztatja az elemet' }
     ]
   },
 
   {
-    id:15, block:5, blockName:'Szelektorok', emoji:'🎯',
+    id:21, block:7, blockName:'Display és Float', emoji:'🔲',
     type:'monaco',
-    title:'Szelektorok a gyakorlatban',
+    title:'Display és float alkalmazása',
     explanation:`<div class="exp-label">✏️ Feladat</div>
-      Írd meg a CSS szabályokat:
+      Állítsd be a megfelelő display/float értékeket:
       <ul>
-        <li>Elem szelektor: a <code>h2</code> elemek legyenek kékek</li>
-        <li>Osztály szelektor: a <code>.kiemelt</code> osztály legyen sárga hátterű</li>
-        <li>ID szelektor: a <code>#bevezeto</code> ID legyen középre igazítva</li>
+        <li><code>.rejtett</code>: <code>display: none</code></li>
+        <li><code>.bal-kep</code>: <code>float: left</code> és <code>margin</code></li>
+        <li><code>.gomb</code>: <code>display: inline-block</code> és <code>width</code></li>
+        <li><code>.tartalom</code>: <code>overflow: hidden</code> (clearfix)</li>
       </ul>`,
     starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
-  <title>Szelektorok</title>
+  <title>Display és Float</title>
   <style>
-    /* Elem szelektor: h2 legyen kék */
+    body { font-family: sans-serif; padding: 20px; }
 
-    /* Osztály szelektor: .kiemelt sárga háttér */
+    .rejtett {
+      /* display: none! */
+    }
 
-    /* ID szelektor: #bevezeto középre igazítva */
+    .bal-kep {
+      /* float: left, margin kellene */
+      width: 120px; height: 90px;
+      background: #3b82f6;
+    }
 
+    .tartalom {
+      /* overflow: hidden a clearfix-hez */
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+    }
+
+    .gomb {
+      /* display: inline-block, width megadva */
+      background: #22c55e;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+    }
   </style>
 </head>
 <body>
-  <p id="bevezeto">Üdvözöllek az oldalon!</p>
-  <h2>Első fejezet</h2>
-  <p>Ez egy normál bekezdés.</p>
-  <p class="kiemelt">Ez egy kiemelt bekezdés.</p>
-  <h2>Második fejezet</h2>
+  <div class="rejtett">Ezt nem kéne látni!</div>
+
+  <div class="tartalom">
+    <div class="bal-kep"></div>
+    <p>Ez a szöveg a kék téglalapnak a jobboldalán jelenik meg, ha a float jól van beállítva.</p>
+  </div>
+
+  <div style="margin-top:12px">
+    <button class="gomb">Első</button>
+    <button class="gomb">Második</button>
+    <button class="gomb">Harmadik</button>
+  </div>
 </body>
 </html>`,
     checks:[
-      { label:'h2 szelektor van a CSS-ben',          fn:(h)=>/\bh2\s*\{/i.test(cssOf(h)) },
-      { label:'h2-nek van color tulajdonsága',        fn:(h)=>/h2\s*\{[^}]*color\s*:/i.test(cssOf(h)) },
-      { label:'.kiemelt szelektor van',              fn:(h)=>/\.kiemelt\s*\{/i.test(cssOf(h)) },
-      { label:'.kiemelt-nek van background(-color)', fn:(h)=>/\.kiemelt\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
-      { label:'#bevezeto szelektor van',             fn:(h)=>/\#bevezeto\s*\{/i.test(cssOf(h)) },
-      { label:'#bevezeto text-align: center',        fn:(h)=>/\#bevezeto\s*\{[^}]*text-align\s*:\s*center/i.test(cssOf(h)) }
+      { label:'.rejtett display: none',              fn:(h)=>/\.rejtett\s*\{[^}]*display\s*:\s*none/i.test(cssOf(h)) },
+      { label:'.bal-kep float: left',                fn:(h)=>/\.bal-kep\s*\{[^}]*float\s*:\s*left/i.test(cssOf(h)) },
+      { label:'.bal-kep-nek van margin',             fn:(h)=>/\.bal-kep\s*\{[^}]*margin\s*:/i.test(cssOf(h)) },
+      { label:'.tartalom overflow: hidden',          fn:(h)=>/\.tartalom\s*\{[^}]*overflow\s*:\s*hidden/i.test(cssOf(h)) },
+      { label:'.gomb display: inline-block',         fn:(h)=>/\.gomb\s*\{[^}]*display\s*:\s*inline-block/i.test(cssOf(h)) }
     ]
   },
 
-  // ── BLOKK 6: Flexbox ─────────────────────────────────────────────
+  // ── BLOKK 8: Pozicionálás ─────────────────────────────────────────────
   {
-    id:16, block:6, blockName:'Flexbox', emoji:'🔧',
+    id:22, block:8, blockName:'Pozicionálás', emoji:'📍',
+    type:'quiz',
+    title:'position értékek',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A <code>position</code> meghatározza, hogyan helyezkedik el az elem:
+      <ul>
+        <li><code>static</code> — alapértelmezett, a normál folyamban van</li>
+        <li><code>relative</code> — saját helyzetéhez képest tolható (<code>top</code>, <code>left</code>)</li>
+        <li><code>absolute</code> — a legközelebbi nem-static szülőhöz képest pozicionálva, kikerül a folyamból</li>
+        <li><code>fixed</code> — a böngészőablakhoz rögzített, görgetéskor sem mozdul</li>
+      </ul>
+      A <code>z-index</code> a rétegzés sorrendjét adja meg (nagyobb = előrébb).`,
+    question:'Melyik position értékkel rögzíthetünk egy fejlécet, hogy görgetéskor sem mozduljon el?',
+    options:[
+      'position: static',
+      'position: relative',
+      'position: absolute',
+      'position: fixed'
+    ],
+    correct:3,
+    feedback:'✅ Helyes! A <code>fixed</code> a böngészőablakhoz van rögzítve – görgetéstől független. Az <code>absolute</code> ezzel szemben a szülő elemhez képest pozicionál és a görgetéssel mozdul.'
+  },
+
+  {
+    id:23, block:8, blockName:'Pozicionálás', emoji:'📍',
+    type:'fillin',
+    title:'Pozicionálás tulajdonságok',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A pozicionáláshoz ezeket használjuk:
+      <ul>
+        <li><code>position: relative/absolute/fixed</code></li>
+        <li><code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code> — eltolás</li>
+        <li><code>z-index</code> — rétegzési sorrend (nagyobb = előrébb)</li>
+        <li>Az <code>absolute</code> szülőjének <code>position: relative</code> kell!</li>
+      </ul>`,
+    codeTemplate:
+`/* Saját helyzetéhez képest eltolva */
+.tolt {
+  ___: relative;
+  top: 10px;
+  left: 20px;
+}
+
+/* Szülőhöz képest a jobb alsó sarokba */
+.jobb-also {
+  ___: absolute;
+  ___: 0;
+  ___: 0;
+}
+
+/* Görgetéskor sem mozdul – fix fejléc */
+.fejlec {
+  ___: fixed;
+  top: 0;
+  width: 100%;
+  ___: 100;
+}`,
+    blanks:[
+      { answer:'position', hint:'A pozicionálás módját határozza meg' },
+      { answer:'position', hint:'Az absolute szülőhöz képest pozicionál' },
+      { answer:'bottom',   hint:'Alulról való távolság' },
+      { answer:'right',    hint:'Jobbról való távolság' },
+      { answer:'position', hint:'A fixed a böngészőablakhoz rögzít' },
+      { answer:'z-index',  hint:'Rétegzési sorrend – nagyobb érték = előrébb' }
+    ]
+  },
+
+  {
+    id:24, block:8, blockName:'Pozicionálás', emoji:'📍',
+    type:'monaco',
+    title:'Pozicionálás alkalmazása',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Pozicionálj elemeket:
+      <ul>
+        <li><code>.fejlec</code>: <code>position: fixed</code>, <code>top: 0</code>, <code>width: 100%</code></li>
+        <li><code>.kártya</code>: <code>position: relative</code> (hogy a badge-hez viszonyítson)</li>
+        <li><code>.badge</code>: <code>position: absolute</code>, jobb felső sarok (<code>top</code>, <code>right</code>)</li>
+        <li><code>.fejlec</code>: <code>z-index: 100</code></li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Pozicionálás</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 80px 20px 20px;
+      background: #f8fafc;
+    }
+
+    .fejlec {
+      /* position: fixed, top: 0, width: 100%, z-index: 100 */
+      background: #1e293b;
+      color: white;
+      padding: 16px 20px;
+    }
+
+    .kártya {
+      /* position: relative – kell a badge-nek */
+      width: 240px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      background: white;
+    }
+
+    .badge {
+      /* position: absolute, jobb felső sarok */
+      background: #ef4444;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="fejlec">📌 Fix fejléc – mindig látható</div>
+  <div class="kártya">
+    <span class="badge">ÚJ</span>
+    <h3>Termék neve</h3>
+    <p>Leírás szövege</p>
+  </div>
+</body>
+</html>`,
+    checks:[
+      { label:'.fejlec position: fixed',           fn:(h)=>/\.fejlec\s*\{[^}]*position\s*:\s*fixed/i.test(cssOf(h)) },
+      { label:'.fejlec top: 0',                    fn:(h)=>/\.fejlec\s*\{[^}]*top\s*:\s*0/i.test(cssOf(h)) },
+      { label:'.fejlec width: 100%',               fn:(h)=>/\.fejlec\s*\{[^}]*width\s*:\s*100%/i.test(cssOf(h)) },
+      { label:'.fejlec z-index van beállítva',     fn:(h)=>/\.fejlec\s*\{[^}]*z-index\s*:/i.test(cssOf(h)) },
+      { label:'.kártya position: relative',        fn:(h)=>/\.k[aá]rtya\s*\{[^}]*position\s*:\s*relative/i.test(cssOf(h)) },
+      { label:'.badge position: absolute',         fn:(h)=>/\.badge\s*\{[^}]*position\s*:\s*absolute/i.test(cssOf(h)) },
+      { label:'.badge top és right van megadva',   fn:(h)=>/\.badge\s*\{[^}]*top\s*:[^}]*right\s*:|\.badge\s*\{[^}]*right\s*:[^}]*top\s*:/i.test(cssOf(h)) }
+    ]
+  },
+
+  // ── BLOKK 9: Flexbox ─────────────────────────────────────────────────
+  {
+    id:25, block:9, blockName:'Flexbox', emoji:'🔧',
     type:'quiz',
     title:'Mi a Flexbox?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -763,6 +1213,7 @@ ___ {
         <li><code>justify-content: center</code> — vízszintes igazítás</li>
         <li><code>align-items: center</code> — függőleges igazítás</li>
         <li><code>gap: 16px</code> — elemek közötti tér</li>
+        <li><code>flex-wrap: wrap</code> — sortörés, ha nem fér el</li>
       </ul>`,
     question:'Melyik CSS tulajdonság kapcsolja be a Flexbox elrendezést?',
     options:['flex: on','display: flex','layout: flex','flex-mode: active'],
@@ -771,17 +1222,17 @@ ___ {
   },
 
   {
-    id:17, block:6, blockName:'Flexbox', emoji:'🔧',
+    id:26, block:9, blockName:'Flexbox', emoji:'🔧',
     type:'fillin',
     title:'Flexbox tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Tipikus Flexbox sor középre igazítva:
+      Tipikus Flexbox navigáció:
       <ul>
         <li><code>display: flex</code> — bekapcsolja</li>
-        <li><code>justify-content</code> — vízszintes igazítás (<code>center</code>, <code>space-between</code>)</li>
-        <li><code>align-items</code> — függőleges igazítás (<code>center</code>, <code>flex-start</code>)</li>
+        <li><code>justify-content</code> — vízszintes elosztás</li>
+        <li><code>align-items</code> — függőleges igazítás</li>
         <li><code>gap</code> — rés az elemek között</li>
-        <li><code>flex-wrap: wrap</code> — ha nem fér el, töri a sort</li>
+        <li><code>flex-wrap: wrap</code> — sortörés engedélyezése</li>
       </ul>`,
     codeTemplate:
 `.navigáció {
@@ -800,7 +1251,7 @@ ___ {
   },
 
   {
-    id:18, block:6, blockName:'Flexbox', emoji:'🔧',
+    id:27, block:9, blockName:'Flexbox', emoji:'🔧',
     type:'monaco',
     title:'Flexbox elrendezés',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -843,52 +1294,52 @@ ___ {
 </body>
 </html>`,
     checks:[
-      { label:'.sor-nak van display: flex',          fn:(h)=>/\.sor\s*\{[^}]*display\s*:\s*flex/i.test(cssOf(h)) },
-      { label:'.sor-nak van gap',                    fn:(h)=>/\.sor\s*\{[^}]*gap\s*:/i.test(cssOf(h)) },
-      { label:'Van flex-wrap: wrap',                 fn:(h)=>/flex-wrap\s*:\s*wrap/i.test(cssOf(h)) },
-      { label:'Van justify-content beállítás',       fn:(h)=>/justify-content\s*:/i.test(cssOf(h)) }
+      { label:'.sor-nak van display: flex',         fn:(h)=>/\.sor\s*\{[^}]*display\s*:\s*flex/i.test(cssOf(h)) },
+      { label:'.sor-nak van gap',                   fn:(h)=>/\.sor\s*\{[^}]*gap\s*:/i.test(cssOf(h)) },
+      { label:'Van flex-wrap: wrap',                fn:(h)=>/flex-wrap\s*:\s*wrap/i.test(cssOf(h)) },
+      { label:'Van justify-content beállítás',      fn:(h)=>/justify-content\s*:/i.test(cssOf(h)) }
     ]
   },
 
-  // ── BLOKK 7: Hover és átmenet ─────────────────────────────────────
+  // ── BLOKK 10: CSS függvények + Hover ─────────────────────────────────
   {
-    id:19, block:7, blockName:'Hover és átmenet', emoji:'✨',
+    id:28, block:10, blockName:'CSS függvények + Hover', emoji:'✨',
     type:'quiz',
-    title:'A :hover pszeudo-osztály',
+    title:'CSS színfüggvények és calc()',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>pszeudo-osztályok</strong> az elem bizonyos állapotaira vonatkoznak:
+      CSS-ben vannak beépített függvények:
       <ul>
-        <li><code>:hover</code> — az egér a felette van</li>
-        <li><code>:focus</code> — a mező fókuszban van (billentyűzetre kattintás után)</li>
-        <li><code>:active</code> — épp kattintanak rá</li>
+        <li><code>rgb(255, 0, 0)</code> — piros, zöld, kék (0–255)</li>
+        <li><code>rgba(255, 0, 0, 0.5)</code> — ugyanaz + alfa (átlátszóság, 0–1)</li>
+        <li><code>hsl(200, 80%, 50%)</code> — árnyalat, telítettség, világosság</li>
+        <li><code>calc(100% - 40px)</code> — dinamikus számítás (vegyítheti az egységeket!)</li>
+        <li><code>url("kep.jpg")</code> — erőforrás hivatkozás (pl. háttérkép)</li>
       </ul>
-      Szintaxisa: <code>szelektor:pszeudo { }</code>
-      <br><br>
-      Pl: <code>a:hover { color: red; }</code> — a linkek pirosak lesznek rámutatáskor.
-      <br><br>
-      A <code>transition</code> simán animálja az átmenetet:
-      <code>transition: 0.3s</code>`,
-    question:'Mit jelent a button:hover CSS szabály?',
+      A <code>:hover</code> pszeudo-osztály az egér rámutatásakor aktiválódik.<br>
+      A <code>transition</code> sima átmenetet biztosít.`,
+    question:'Melyik CSS értékkel adunk meg félig átlátszó kék háttérszínt?',
     options:[
-      'A gomb átlátszó lesz',
-      'A gomb felett lebegő (lebegő) pozíciót kap',
-      'A gomb stílusa megváltozik, ha az egér felette van',
-      'A gomb csak akkor jelenik meg, ha az egér az oldalon van'
+      'rgb(0, 0, 255)',
+      'rgba(0, 0, 255, 0.5)',
+      'color(blue, 50%)',
+      'background: blue opacity(0.5)'
     ],
-    correct:2,
-    feedback:'✅ Igen! A <code>:hover</code> pszeudo-osztály pontosan akkor aktiválódik, amikor az egérkurzor az elem felett van. Így tudunk interaktív effekteket létrehozni JavaScript nélkül.'
+    correct:1,
+    feedback:'✅ Helyes! Az <code>rgba()</code> négy paramétert kap: piros, zöld, kék (0–255) és alfa (0=átlátszó, 1=teljes). A sima <code>rgb()</code>-vel nem lehet átlátszóságot megadni.'
   },
 
   {
-    id:20, block:7, blockName:'Hover és átmenet', emoji:'✨',
+    id:29, block:10, blockName:'CSS függvények + Hover', emoji:'✨',
     type:'fillin',
-    title:'Hover és transition',
+    title:'Hover, transition és CSS függvények',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Interaktív gomb:
+      Interaktív elem:
       <ul>
-        <li><code>transition: 0.3s</code> — 0.3 másodperces sima átmenet</li>
-        <li><code>cursor: pointer</code> — mutató kurzor (kézfej ikon)</li>
+        <li><code>transition: 0.3s</code> — sima átmenet 0.3 mp-ig</li>
+        <li><code>cursor: pointer</code> — kézfej kurzor</li>
         <li><code>:hover</code> — rámutatáskor érvényes stílus</li>
+        <li><code>rgba(0,0,0,0.15)</code> — félig átlátszó árnyék</li>
+        <li><code>calc(100% - 32px)</code> — dinamikus szélességszámítás</li>
       </ul>`,
     codeTemplate:
 `.gomb {
@@ -897,40 +1348,42 @@ ___ {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
+  width: ___(100% - 40px);
   ___: 0.3s;
   ___: pointer;
 }
 
 .gomb:___ {
   background-color: #1d4ed8;
-  ___: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px ___(0,0,0,0.2);
 }`,
     blanks:[
+      { answer:'calc',       hint:'Dinamikus számítás – vegyítheti a % és px egységeket' },
       { answer:'transition', hint:'Sima átmenet – megadja az animáció idejét' },
       { answer:'cursor',     hint:'Az egérkurzor stílusa – pointer = kézfej ikon' },
       { answer:'hover',      hint:'Pszeudo-osztály – rámutatáskor aktiválódik' },
-      { answer:'box-shadow', hint:'Árnyék – rámutatáskor megjelenik' }
+      { answer:'rgba',       hint:'Szín + alfa átlátszóság (0–1)' }
     ]
   },
 
   {
-    id:21, block:7, blockName:'Hover és átmenet', emoji:'✨',
+    id:30, block:10, blockName:'CSS függvények + Hover', emoji:'✨',
     type:'monaco',
-    title:'Interaktív gomb készítése',
+    title:'Interaktív gomb CSS függvényekkel',
     explanation:`<div class="exp-label">✏️ Feladat</div>
-      Készíts egy szép, interaktív gombot:
+      Készíts interaktív gombot CSS függvényekkel:
       <ul>
-        <li>Alapstílus: <code>background-color</code>, <code>color</code>, <code>padding</code>, <code>border-radius</code></li>
-        <li><code>transition</code> a sima átmenethez</li>
-        <li><code>cursor: pointer</code></li>
-        <li><code>:hover</code> állapot: más háttérszín</li>
+        <li>Alapstílus: <code>rgba()</code> a háttérszínhez (pl. félig átlátszó)</li>
+        <li><code>calc()</code> a szélességhez (pl. <code>calc(100% - 40px)</code>)</li>
+        <li><code>transition</code> és <code>cursor: pointer</code></li>
+        <li><code>:hover</code> állapot: más szín és <code>box-shadow</code></li>
       </ul>`,
     starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
-  <title>Interaktív gomb</title>
+  <title>CSS függvények</title>
   <style>
     body {
       font-family: sans-serif;
@@ -938,16 +1391,17 @@ ___ {
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: #f1f5f9;
+      background: #0f172a;
+      padding: 20px;
     }
 
     .gomb {
-      /* Alapstílus ide */
+      /* rgba() szín, calc() szélesség, transition, cursor */
 
     }
 
     .gomb:hover {
-      /* Hover stílus ide */
+      /* más szín, box-shadow rgba()-val */
 
     }
   </style>
@@ -957,12 +1411,12 @@ ___ {
 </body>
 </html>`,
     checks:[
-      { label:'.gombnak van background-color',       fn:(h)=>/\.gomb\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
-      { label:'.gombnak van padding',                fn:(h)=>/\.gomb\s*\{[^}]*padding\s*:/i.test(cssOf(h)) },
-      { label:'.gombnak van border-radius',          fn:(h)=>/\.gomb\s*\{[^}]*border-radius\s*:/i.test(cssOf(h)) },
-      { label:'Van transition az alap stílusban',    fn:(h)=>/\.gomb\s*\{[^}]*transition\s*:/i.test(cssOf(h)) },
-      { label:'Van cursor: pointer',                 fn:(h)=>/cursor\s*:\s*pointer/i.test(cssOf(h)) },
-      { label:'Van .gomb:hover szabály',             fn:(h)=>/\.gomb\s*:\s*hover\s*\{|\.gomb:hover\s*\{/i.test(cssOf(h)) }
+      { label:'Van rgba() használat valahol',           fn:(h)=>/rgba\s*\(/i.test(cssOf(h)) },
+      { label:'Van calc() használat valahol',           fn:(h)=>/calc\s*\(/i.test(cssOf(h)) },
+      { label:'.gombnak van transition',                fn:(h)=>/\.gomb\s*\{[^}]*transition\s*:/i.test(cssOf(h)) },
+      { label:'Van cursor: pointer',                    fn:(h)=>/cursor\s*:\s*pointer/i.test(cssOf(h)) },
+      { label:'Van .gomb:hover szabály',                fn:(h)=>/\.gomb\s*:\s*hover\s*\{|\.gomb:hover\s*\{/i.test(cssOf(h)) },
+      { label:'.gomb:hover-ban van box-shadow',         fn:(h)=>/\.gomb\s*:hover\s*\{[^}]*box-shadow\s*:|\.gomb:hover\s*\{[^}]*box-shadow\s*:/i.test(cssOf(h)) }
     ]
   }
 ];
@@ -971,7 +1425,7 @@ ___ {
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'lcss_v1';
+const SKEY = 'lcss_v2';
 const state = {
   cur: 0,
   done:      JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),
