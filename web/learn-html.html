@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Alapok – WEB Tananyag</title>
+  <link rel="icon" href="../kando_favion_dark.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../kando_favion_light.png" type="image/png" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f172a; --bg2: #111827; --bg3: #1e293b;
+      --border: #1f2937; --accent: #22c55e; --accent2: #16a34a;
+      --text: #e2e8f0; --muted: #94a3b8;
+      --blue: #3b82f6; --blue2: #1d4ed8;
+      --red: #ef4444; --orange: #f97316; --yellow: #fbbf24;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --topbar-h: 54px; --bottom-h: 56px; --left-w: 240px;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+
+    /* ── TOPBAR ── */
+    .topbar { height: var(--topbar-h); background: var(--bg2); border-bottom: 1.5px solid var(--border); display: flex; align-items: center; padding: 0 14px; gap: 10px; flex-shrink: 0; }
+    .topbar-logo { height: 30px; cursor: pointer; }
+    .btn-back { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px; background: transparent; border: 1.5px solid var(--border); color: var(--muted); font-size: 0.82rem; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+    .topbar-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .topbar-sub { font-size: 0.78rem; color: var(--muted); }
+    .topbar-spacer { flex: 1; }
+    .progress-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .progress-label span { color: var(--accent); font-weight: 700; }
+
+    /* ── LAYOUT ── */
+    .layout { display: flex; flex: 1; overflow: hidden; height: calc(100vh - var(--topbar-h) - var(--bottom-h)); }
+
+    /* ── LEFT PANEL ── */
+    .left-panel { width: var(--left-w); flex-shrink: 0; background: var(--bg2); border-right: 1.5px solid var(--border); overflow-y: auto; padding: 12px 10px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .block-group { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .block-header { padding: 9px 12px; background: var(--bg3); font-size: 0.82rem; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .block-header .block-emoji { font-size: 1rem; }
+    .block-header .block-done { margin-left: auto; color: var(--accent); font-size: 0.75rem; }
+    .block-tasks { padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+    .task-pill { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; font-size: 0.82rem; color: var(--muted); transition: all .15s; }
+    .task-pill:hover:not(.locked) { background: var(--bg3); color: var(--text); }
+    .task-pill.active { background: rgba(59,130,246,.12); border-color: var(--blue); color: #93c5fd; }
+    .task-pill.done { color: var(--accent); }
+    .task-pill.done .pill-icon { color: var(--accent); }
+    .task-pill.locked { opacity: .35; cursor: not-allowed; }
+    .pill-icon { font-size: 0.78rem; width: 16px; text-align: center; flex-shrink: 0; }
+    .pill-label { line-height: 1.3; }
+    .pill-type { font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
+
+    /* ── MAIN PANEL ── */
+    .main-panel { flex: 1; overflow-y: auto; padding: 28px 36px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .task-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .task-num { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .task-type-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .badge-quiz { background: rgba(168,85,247,.15); color: #c084fc; border: 1px solid rgba(168,85,247,.3); }
+    .badge-fillin { background: rgba(59,130,246,.15); color: #93c5fd; border: 1px solid rgba(59,130,246,.3); }
+    .badge-monaco { background: rgba(34,197,94,.12); color: #86efac; border: 1px solid rgba(34,197,94,.3); }
+    .task-title { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+
+    /* Magyarázat doboz */
+    .explanation-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 10px; padding: 14px 18px; margin-bottom: 22px; font-size: 0.88rem; color: #cbd5e1; line-height: 1.7; }
+    .explanation-box code { background: #1e293b; color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-size: 0.83rem; }
+    .explanation-box strong { color: #f1f5f9; }
+    .explanation-box ul { margin: 8px 0 4px 18px; }
+    .explanation-box ul li { margin-bottom: 4px; }
+    .explanation-box .exp-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--blue); font-weight: 700; margin-bottom: 8px; }
+
+    /* ── QUIZ ── */
+    .quiz-question { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 18px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; max-width: 560px; }
+    .quiz-option { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg2); cursor: pointer; font-size: 0.9rem; color: var(--text); transition: all .18s; }
+    .quiz-option:hover:not(.disabled) { border-color: var(--blue); background: rgba(59,130,246,.06); }
+    .quiz-option.selected { border-color: var(--blue); background: rgba(59,130,246,.12); }
+    .quiz-option.correct { border-color: var(--accent); background: rgba(34,197,94,.1); color: #86efac; }
+    .quiz-option.wrong { border-color: var(--red); background: rgba(239,68,68,.1); color: #fca5a5; }
+    .quiz-option.disabled { cursor: default; }
+    .option-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--bg3); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; }
+    .quiz-option.correct .option-letter { background: var(--accent); border-color: var(--accent); color: #052e16; }
+    .quiz-option.wrong .option-letter { background: var(--red); border-color: var(--red); color: #fff; }
+    .quiz-feedback { margin-top: 16px; padding: 12px 16px; border-radius: 10px; font-size: 0.88rem; line-height: 1.6; display: none; }
+    .quiz-feedback.correct { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: #86efac; }
+    .quiz-feedback.wrong { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+    .quiz-feedback.visible { display: block; }
+    .quiz-feedback code { background: rgba(255,255,255,.08); padding: 1px 4px; border-radius: 3px; font-size: 0.83rem; }
+    .quiz-feedback em { font-style: italic; }
+
+    /* ── FILL-IN ── */
+    .fillin-task { max-width: 640px; }
+    .fillin-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 10px; }
+    .code-template { background: #020617; border: 1px solid #0f1f3a; border-radius: 10px; padding: 16px 18px; font-family: 'Consolas', 'Fira Code', monospace; font-size: 0.88rem; line-height: 2; color: #a3e635; white-space: pre-wrap; position: relative; }
+    .blank-input { display: inline-block; background: #0f2744; border: 1.5px solid var(--blue); border-radius: 5px; padding: 1px 6px; color: #93c5fd; font-family: inherit; font-size: inherit; font-weight: 700; outline: none; min-width: 40px; transition: border-color .2s; vertical-align: baseline; }
+    .blank-input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(59,130,246,.2); }
+    .blank-input.correct { border-color: var(--accent); background: rgba(34,197,94,.1); color: #86efac; }
+    .blank-input.wrong { border-color: var(--red); background: rgba(239,68,68,.1); color: #fca5a5; }
+    .fillin-feedback { margin-top: 14px; font-size: 0.85rem; color: var(--muted); line-height: 1.6; display: none; }
+    .fillin-feedback.visible { display: block; }
+    .fillin-hint { margin-top: 6px; font-size: 0.8rem; color: #64748b; }
+
+    /* ── MONACO ── */
+    .monaco-task { display: flex; gap: 16px; height: 340px; }
+    .monaco-editor-wrap { flex: 1; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; min-width: 0; }
+    .monaco-preview-wrap { flex: 1; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .preview-label { padding: 6px 12px; background: var(--bg3); border-bottom: 1px solid var(--border); font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: flex; align-items: center; gap: 6px; }
+    .preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+    #monaco-preview { flex: 1; border: none; background: #fff; }
+    .monaco-checks { margin-top: 14px; display: flex; flex-direction: column; gap: 5px; }
+    .check-row { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: var(--muted); padding: 5px 0; }
+    .check-row .ci { font-size: 0.9rem; flex-shrink: 0; }
+    .check-row.pass { color: var(--accent); }
+    .check-row.fail { color: var(--muted); }
+
+    /* ── SUCCESS BANNER ── */
+    .success-banner { display: none; margin-top: 18px; background: rgba(34,197,94,.1); border: 1.5px solid rgba(34,197,94,.35); border-radius: 12px; padding: 14px 18px; text-align: center; font-size: 0.92rem; color: var(--accent); font-weight: 600; }
+    .success-banner.visible { display: block; }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar { height: var(--bottom-h); background: var(--bg2); border-top: 1.5px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 14px; flex-shrink: 0; }
+    .btn-check { padding: 10px 24px; border-radius: 9px; background: var(--accent2); border: 1.5px solid var(--accent); color: #fff; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: background .18s; display: flex; align-items: center; gap: 8px; }
+    .btn-check:hover { background: var(--accent); }
+    .btn-check:disabled { opacity: .4; cursor: default; }
+    .score-msg { font-size: 0.85rem; color: var(--muted); flex: 1; }
+    .btn-next { padding: 10px 20px; border-radius: 9px; background: transparent; border: 1.5px solid var(--border); color: var(--muted); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all .18s; display: flex; align-items: center; gap: 7px; margin-left: auto; }
+    .btn-next:hover:not(:disabled) { border-color: var(--blue); color: #93c5fd; }
+    .btn-next:disabled { opacity: .3; cursor: default; }
+
+    /* ── CONFETTI ── */
+    .confetti-flash { position: fixed; inset: 0; z-index: 9999; pointer-events: none; display: flex; align-items: center; justify-content: center; font-size: 5rem; opacity: 0; }
+    .confetti-flash.animate { animation: confPop .7s ease-out forwards; }
+    @keyframes confPop { 0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1.2)}70%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.1)} }
+
+    /* ── COMPLETION MODAL ── */
+    .completion-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,.8); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+    .completion-overlay.visible { display: flex; }
+    .completion-box { background: var(--bg2); border: 1px solid var(--accent); border-radius: 14px; padding: 36px 32px; max-width: 420px; width: 94%; text-align: center; }
+    .completion-box h2 { color: var(--accent); font-size: 1.3rem; margin: 12px 0 10px; }
+    .completion-box p { color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; margin-bottom: 22px; }
+    .completion-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn-comp { padding: 10px 18px; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-comp-primary { background: var(--accent); color: #000; border: none; }
+    .btn-comp-primary:hover { background: var(--yellow); }
+    .btn-comp-secondary { background: transparent; color: #94a3b8; border: 1px solid var(--border); }
+    .btn-comp-secondary:hover { color: #f1f5f9; border-color: #64748b; }
+
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<script>
+  (function(){
+    const u = JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+    if (!u.token && u.szerep!=='oktato' && u.szerep!=='vendeg' && !u._tesztMod)
+      location.replace('../portal.html');
+  })();
+</script>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="../portal.html" title="Főmenü"><img src="kandologo2.png" alt="Kandó" class="topbar-logo"></a>
+  <a href="../portal.html" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
+  <div>
+    <div class="topbar-title">🌐 WEB Tananyag</div>
+    <div class="topbar-sub">1. szint: HTML Alapok</div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;" title="Egymást követő napok, amikor beléptél a gyakorlóba"></div>
+  <div class="progress-label">Teljesítve: <span id="prog-done">0</span> / <span id="prog-total">0</span> feladat</div>
+</header>
+
+<!-- COMPLETION MODAL -->
+<div class="completion-overlay" id="completion-modal">
+  <div class="completion-box">
+    <div style="font-size:3rem">🏆</div>
+    <h2>Gratulálunk! Az összes HTML feladat kész!</h2>
+    <p>Elsajátítottad a HTML alapjait. Ideje a következő szintre lépni: CSS stílusok!</p>
+    <div class="completion-btns">
+      <a class="btn-comp btn-comp-primary" href="learn-css.html"><i class="fas fa-arrow-right"></i> Tovább: CSS</a>
+      <a class="btn-comp btn-comp-secondary" href="../portal.html"><i class="fas fa-home"></i> Főmenü</a>
+    </div>
+  </div>
+</div>
+
+<div class="confetti-flash" id="confetti">🎉</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+  <!-- LEFT: Block navigation -->
+  <aside class="left-panel" id="left-panel"></aside>
+
+  <!-- RIGHT: Task content -->
+  <div class="main-panel" id="main-panel">
+    <div style="color:var(--muted);text-align:center;margin-top:60px;">Betöltés...</div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="btn-check" id="btn-check" onclick="checkTask()">
+    <i class="fas fa-check-circle"></i> Ellenőrzés
+  </button>
+  <div class="score-msg" id="score-msg"></div>
+  <button class="btn-next" id="btn-next" onclick="goNext()" disabled>
+    Következő <i class="fas fa-arrow-right"></i>
+  </button>
+</div>
+
+<!-- MONACO LOADER -->
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.min.js"></script>
+<script src="emmet-monaco.min.js"></script>
+
+<script>
+'use strict';
+
+// ── Streak counter ──────────────────────────────────────────────────────────
+(function() {
+  const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+  if (!u.email) return;
+  const email = u.email.replace('@kkszki.hu', '');
+  fetch('https://agazati.up.railway.app/api/leaderboard/rank/' + encodeURIComponent(email))
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      const streak = data?.streak ?? 0;
+      const el = document.getElementById('streak-counter');
+      if (!el || streak < 1) return;
+      const label = streak >= 30 ? 'Élő Legenda' : streak >= 14 ? 'Kitartó Harcos' : streak >= 7 ? 'Heti Hős' : streak >= 3 ? 'Ügyes Kezdő' : null;
+      el.innerHTML = '🔥 ' + streak + ' nap' + (label ? ' · ' + label : '');
+      el.style.display = 'flex';
+    }).catch(() => {});
+})();
+// ───────────────────────────────────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════
+// FELADATOK
+// ══════════════════════════════════════════════════════
+
+const tasks = [
+  // ── BLOKK 1: Mi a HTML? ──────────────────────────────
+  {
+    id: 1, block: 1, blockName: 'Mi a HTML?', emoji: '🏗️',
+    type: 'quiz',
+    title: 'Mi a HTML?',
+    explanation: `<div class="exp-label">📖 Tananyag</div>
+      A <strong>HTML</strong> (HyperText Markup Language) egy <strong>jelölőnyelv</strong> – nem programozás!
+      Olyan mint egy Word dokumentum, csak kézzel írjuk a formázást <em>szögletes zárójelekkel</em>.
+      <br><br>
+      A böngésző (Chrome, Firefox) olvassa el és jeleníti meg. Te megírod, a böngésző megmutatja.
+      <br><br>
+      Az elemeket <strong>tageknek</strong> hívjuk: <code>&lt;p&gt;</code> egy nyitó tag, <code>&lt;/p&gt;</code> a záró tag.`,
+    question: 'Mire való a HTML?',
+    options: [
+      'Programokat futtat a számítógépen',
+      'Megmondja a böngészőnek, hogyan épüljön fel a weboldal',
+      'Adatbázisokat kezel',
+      'Képeket rajzol és animál'
+    ],
+    correct: 1,
+    feedback: '✅ Pontosan! A HTML csak <em>leírja</em> az oldal szerkezetét – hogy mi hol legyen. Nem programoz, nem számol, csak szervez és jelöl.'
+  },
+  {
+    id: 2, block: 1, blockName: 'Mi a HTML?', emoji: '🏗️',
+    type: 'fillin',
+    title: 'A HTML váz felépítése',
+    explanation: `<div class="exp-label">📖 Tananyag</div>
+      Minden HTML oldal ugyanígy kezdődik – ez a <strong>váz</strong>:
+      <ul>
+        <li><code>&lt;!DOCTYPE html&gt;</code> — megmondja a böngészőnek: "ez HTML5 oldal"</li>
+        <li><code>&lt;html lang="hu"&gt;</code> — az egész oldalt fogja közre, <code>lang="hu"</code> = magyar</li>
+        <li><code>&lt;head&gt;</code> — fejléc: beállítások (nem látszik az oldalon)</li>
+        <li><code>&lt;meta charset="UTF-8"&gt;</code> — nélküle az ékezetek (á, é, ő) rosszul jelennek meg</li>
+        <li><code>&lt;body&gt;</code> — ide kerül minden amit a látogató lát</li>
+      </ul>`,
+    codeTemplate: '<!_1_ html>\n<html _2_="hu">\n<_3_>\n  <meta charset="UTF-8">\n  <title>Az én weboldalem</title>\n</_3_>\n<_4_>\n  <p>Hello világ!</p>\n</_4_>\n</html>',
+    blanks: [
+      { key: '_1_', answer: 'DOCTYPE', hint: 'Nagybetűs, ezt írják minden HTML oldal elejére' },
+      { key: '_2_', answer: 'lang', hint: 'Az attribútum neve, ami a nyelvet jelzi' },
+      { key: '_3_', answer: 'head', hint: 'Fejléc — a beállítások helye, nem látszik az oldalon' },
+      { key: '_4_', answer: 'body', hint: 'Test — a látható tartalom helye' }
+    ]
+  },
+  {
+    id: 3, block: 1, blockName: 'Mi a HTML?', emoji: '🏗️',
+    type: 'monaco',
+    title: 'Írd meg a saját HTML vázadat!',
+    explanation: `<div class="exp-label">✏️ Feladat</div>
+      Készíts egy teljes HTML oldalt az alábbi feltételekkel:
+      <ul>
+        <li>A <code>&lt;html&gt;</code> elem legyen <code>lang="hu"</code></li>
+        <li>A <code>&lt;title&gt;</code> tartalma: <strong>Első oldalam</strong></li>
+        <li>A <code>&lt;body&gt;</code>-ban egy bekezdés: <strong>Helló, HTML!</strong></li>
+      </ul>
+      💡 Tipp: nyomd meg a <strong>!</strong> billentyűt, majd <strong>Tab</strong>-ot – az Emmet azonnal legenerálja a vázat!`,
+    starterHtml: '',
+    checks: [
+      { label: 'lang="hu" az html elemen', fn: (h,d) => !!d.querySelector('html[lang="hu"]') },
+      { label: '<title>Első oldalam</title>', fn: (h,d) => (d.querySelector('title')||{}).textContent?.trim() === 'Első oldalam' },
+      { label: '<p> bekezdés a body-ban', fn: (h,d) => !!d.querySelector('body p') },
+      { label: 'A bekezdés tartalmazza: Helló, HTML!', fn: (h,d) => [...(d.querySelectorAll('body p'))].some(p => p.textContent.includes('Helló, HTML!')) }
+    ]
+  },
+
+  // ── BLOKK 2: Szöveg elemek ────────────────────────────
+  {
+    id: 4, block: 2, blockName: 'Szöveg elemek', emoji: '📝',
+    type: 'quiz',
+    title: 'Fejléc elemek: h1–h6',
+    explanation: `<div class="exp-label">📖 Tananyag</div>
+      A HTML-ben 6 szintű fejléc (cím) létezik – <code>&lt;h1&gt;</code>-től <code>&lt;h6&gt;</code>-ig.
+      Képzeld el mint egy könyvben:
+      <ul>
+        <li><code>&lt;h1&gt;</code> = A könyv főcíme (nagy, vastag) — <strong>oldalanként csak egy legyen!</strong></li>
+        <li><code>&lt;h2&gt;</code> = Fejezet cím</li>
+        <li><code>&lt;h3&gt;</code> = Alfejezet</li>
+        <li><code>&lt;h6&gt;</code> = A legkisebb alcím</li>
+      </ul>
+      Mellettük a <code>&lt;p&gt;</code> elem a <strong>bekezdés</strong> (paragraph) — a legtöbb szöveg ide kerül.`,
+    question: 'Melyik HTML elem a legfontosabb (legnagyobb) főcím?',
+    options: ['<h6>', '<title>', '<h1>', '<header>'],
+    correct: 2,
+    feedback: '✅ Igen! <code>&lt;h1&gt;</code> a legnagyobb, <code>&lt;h6&gt;</code> a legkisebb. A <code>&lt;title&gt;</code> csak a böngésző fülén jelenik meg, nem az oldalon. A <code>&lt;header&gt;</code> egy strukturális doboz, nem cím.'
+  },
+  {
+    id: 5, block: 2, blockName: 'Szöveg elemek', emoji: '📝',
+    type: 'fillin',
+    title: 'Szöveg formázó elemek',
+    explanation: `<div class="exp-label">📖 Tananyag</div>
+      A legfontosabb szövegformázó elemek:
+      <ul>
+        <li><code>&lt;strong&gt;</code> — <strong>félkövér</strong>, fontos tartalom (a keresők is figyelnek rá!)</li>
+        <li><code>&lt;em&gt;</code> — <em>dőlt</em>, hangsúlyos tartalom, idegen szavakhoz</li>
+        <li><code>&lt;u&gt;</code> — <u>aláhúzott</u> szöveg (vizsgán kérik!)</li>
+        <li><code>&lt;br&gt;</code> — sortörés, önzáró elem (nincs záró tagje)</li>
+      </ul>
+      ⚠️ Nem <code>&lt;b&gt;</code> és <code>&lt;i&gt;</code> kellnek — azok csak vizuálisan formáznak, szemantikus jelentésük nincs.`,
+    codeTemplate: '<h1>Kedvenc ételeim</h1>\n\n<p>\n  A <_1_>pizza</_1_> az <_2_>olasz</_2_> konyha remeke.\n</p>\n\n<p>\n  A <_3_>gulyás</_3_> magyar klasszikus.<_4_>\n  Szeretem főzni.\n</p>',
+    blanks: [
+      { key: '_1_', answer: 'strong', hint: 'Félkövér — fontos tartalom jelölője' },
+      { key: '_2_', answer: 'em', hint: 'Dőlt — idegen szavakhoz, hangsúlyhoz' },
+      { key: '_3_', answer: 'u', hint: 'Aláhúzott szöveg' },
+      { key: '_4_', answer: 'br', hint: 'Sortörés — önzáró, nincs záró tagje!' }
+    ]
+  },
+  {
+    id: 6, block: 2, blockName: 'Szöveg elemek', emoji: '📝',
+    type: 'monaco',
+    title: 'Formázd meg a szöveget!',
+    explanation: `<div class="exp-label">✏️ Feladat</div>
+      A megadott vázba írd be a hiányzó tartalmat:
+      <ul>
+        <li>Főcím <code>&lt;h1&gt;</code>: <strong>Kedvenc ételeim</strong></li>
+        <li>Alcím <code>&lt;h2&gt;</code>: <strong>Olasz ételek</strong></li>
+        <li>Bekezdés: "A <strong>pizza</strong> az <em>olasz</em> konyha remeke."</li>
+        <li>Második bekezdés: valami szöveg <u>aláhúzással</u></li>
+      </ul>`,
+    starterHtml: `<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Ételek</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    checks: [
+      { label: '<h1> főcím van az oldalon', fn: (h,d) => !!d.querySelector('h1') },
+      { label: 'h1 tartalma: Kedvenc ételeim', fn: (h,d) => (d.querySelector('h1')||{}).textContent?.trim() === 'Kedvenc ételeim' },
+      { label: '<h2> alcím van az oldalon', fn: (h,d) => !!d.querySelector('h2') },
+      { label: '<strong> elem egy bekezdésben', fn: (h,d) => !!d.querySelector('p strong') },
+      { label: '<em> elem egy bekezdésben', fn: (h,d) => !!d.querySelector('p em') },
+      { label: '<u> aláhúzás valahol', fn: (h,d) => !!d.querySelector('u') }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+
+const STORAGE_KEY = 'learn_html_v1';
+
+const state = {
+  current: 0,
+  done: JSON.parse(localStorage.getItem(STORAGE_KEY + '_done') || 'null') || Array(tasks.length).fill(false),
+  quizAnswered: Array(tasks.length).fill(false),
+  monacoEditor: null,
+  previewTimeout: null
+};
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+
+document.getElementById('prog-total').textContent = tasks.length;
+
+require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
+
+let monacoReady = false;
+let monacoReadyCallbacks = [];
+require(['vs/editor/editor.main'], function() {
+  monacoReady = true;
+  monacoReadyCallbacks.forEach(cb => cb());
+  monacoReadyCallbacks = [];
+});
+
+function onMonacoReady(cb) {
+  if (monacoReady) cb();
+  else monacoReadyCallbacks.push(cb);
+}
+
+buildLeft();
+loadTask(0);
+
+// ══════════════════════════════════════════════════════
+// LEFT PANEL
+// ══════════════════════════════════════════════════════
+
+function buildLeft() {
+  const panel = document.getElementById('left-panel');
+  panel.innerHTML = '';
+
+  // Group tasks by block
+  const blocks = [];
+  tasks.forEach((t, i) => {
+    let b = blocks.find(x => x.id === t.block);
+    if (!b) { b = { id: t.block, name: t.blockName, emoji: t.emoji, tasks: [] }; blocks.push(b); }
+    b.tasks.push({ task: t, idx: i });
+  });
+
+  blocks.forEach(block => {
+    const allDone = block.tasks.every(x => state.done[x.idx]);
+    const firstIdx = block.tasks[0].idx;
+    const prevDone = firstIdx === 0 || state.done[firstIdx - 1];
+
+    const group = document.createElement('div');
+    group.className = 'block-group';
+
+    const header = document.createElement('div');
+    header.className = 'block-header';
+    header.innerHTML = `<span class="block-emoji">${block.emoji}</span><span>${block.name}</span>` +
+      (allDone ? '<span class="block-done">✓ kész</span>' : '');
+    group.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'block-tasks';
+
+    block.tasks.forEach(({ task, idx }) => {
+      const locked = idx > 0 && !state.done[idx - 1];
+      const pill = document.createElement('div');
+      pill.className = 'task-pill' +
+        (idx === state.current ? ' active' : '') +
+        (state.done[idx] ? ' done' : '') +
+        (locked ? ' locked' : '');
+      pill.id = 'pill-' + idx;
+
+      const typeIcon = task.type === 'quiz' ? '❓' : task.type === 'fillin' ? '✏️' : '💻';
+      const typeLabel = task.type === 'quiz' ? 'Kvíz' : task.type === 'fillin' ? 'Kódkiegészítés' : 'Szerkesztő';
+      const statusIcon = state.done[idx] ? '✅' : locked ? '🔒' : '⬜';
+
+      pill.innerHTML = `<span class="pill-icon">${statusIcon}</span>
+        <div><div class="pill-label">${idx + 1}. ${task.title}</div>
+        <div class="pill-type">${typeIcon} ${typeLabel}</div></div>`;
+
+      if (!locked) pill.onclick = () => loadTask(idx);
+      list.appendChild(pill);
+    });
+
+    group.appendChild(list);
+    panel.appendChild(group);
+  });
+}
+
+function updatePills() {
+  tasks.forEach((t, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    const locked = i > 0 && !state.done[i - 1];
+    const typeIcon = t.type === 'quiz' ? '❓' : t.type === 'fillin' ? '✏️' : '💻';
+    const typeLabel = t.type === 'quiz' ? 'Kvíz' : t.type === 'fillin' ? 'Kódkiegészítés' : 'Szerkesztő';
+    const statusIcon = state.done[i] ? '✅' : locked ? '🔒' : '⬜';
+    pill.className = 'task-pill' + (i === state.current ? ' active' : '') + (state.done[i] ? ' done' : '') + (locked ? ' locked' : '');
+    pill.innerHTML = `<span class="pill-icon">${statusIcon}</span>
+      <div><div class="pill-label">${i + 1}. ${t.title}</div>
+      <div class="pill-type">${typeIcon} ${typeLabel}</div></div>`;
+    if (!locked) pill.onclick = () => loadTask(i);
+    else pill.onclick = null;
+  });
+  const done = state.done.filter(Boolean).length;
+  document.getElementById('prog-done').textContent = done;
+}
+
+// ══════════════════════════════════════════════════════
+// TASK LOADING
+// ══════════════════════════════════════════════════════
+
+function loadTask(idx) {
+  // Destroy old Monaco editor
+  if (state.monacoEditor) {
+    state.monacoEditor.dispose();
+    state.monacoEditor = null;
+  }
+
+  state.current = idx;
+  const task = tasks[idx];
+
+  // Reset bottom bar
+  document.getElementById('score-msg').textContent = '';
+  document.getElementById('btn-next').disabled = !state.done[idx];
+  document.getElementById('btn-check').disabled = false;
+
+  updatePills();
+
+  const panel = document.getElementById('main-panel');
+
+  const typeBadge = task.type === 'quiz'
+    ? '<span class="task-type-badge badge-quiz">❓ Kvíz</span>'
+    : task.type === 'fillin'
+    ? '<span class="task-type-badge badge-fillin">✏️ Kódkiegészítés</span>'
+    : '<span class="task-type-badge badge-monaco">💻 Szerkesztő</span>';
+
+  let contentHtml = '';
+
+  if (task.type === 'quiz') {
+    contentHtml = renderQuiz(task, idx);
+  } else if (task.type === 'fillin') {
+    contentHtml = renderFillin(task, idx);
+  } else {
+    contentHtml = renderMonacoShell(task, idx);
+  }
+
+  panel.innerHTML = `
+    <div class="task-header">
+      <span class="task-num">${task.block}. blokk · ${idx + 1}. feladat</span>
+      ${typeBadge}
+    </div>
+    <div class="task-title">${task.emoji} ${task.title}</div>
+    <div class="explanation-box">${task.explanation}</div>
+    ${contentHtml}
+    <div class="success-banner${state.done[idx] ? ' visible' : ''}" id="success-banner">
+      🎉 Sikeresen teljesítetted ezt a feladatot!
+    </div>
+  `;
+
+  if (task.type === 'monaco') {
+    initMonaco(task, idx);
+  }
+
+  if (state.done[idx]) {
+    if (task.type === 'quiz') lockQuiz(idx);
+    if (task.type === 'fillin') lockFillin();
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════════════
+
+function renderQuiz(task, idx) {
+  const letters = ['A', 'B', 'C', 'D'];
+  const opts = task.options.map((opt, i) =>
+    `<div class="quiz-option${state.done[idx] && i === task.correct ? ' correct' : ''}" id="opt-${i}" onclick="selectQuiz(${i},${idx})">
+      <span class="option-letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </div>`
+  ).join('');
+
+  return `
+    <div class="quiz-question">${task.question}</div>
+    <div class="quiz-options">${opts}</div>
+    <div class="quiz-feedback${state.done[idx] ? ' correct visible' : ''}" id="quiz-feedback">
+      ${state.done[idx] ? task.feedback : ''}
+    </div>`;
+}
+
+function selectQuiz(optIdx, taskIdx) {
+  if (state.quizAnswered[taskIdx]) return;
+  document.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
+  document.getElementById('opt-' + optIdx).classList.add('selected');
+  state._selectedQuiz = optIdx;
+}
+
+function lockQuiz(taskIdx) {
+  const task = tasks[taskIdx];
+  document.querySelectorAll('.quiz-option').forEach((el, i) => {
+    el.classList.add('disabled');
+    if (i === task.correct) el.classList.add('correct');
+  });
+  state.quizAnswered[taskIdx] = true;
+}
+
+// ══════════════════════════════════════════════════════
+// FILL-IN
+// ══════════════════════════════════════════════════════
+
+function renderFillin(task, idx) {
+  let code = task.codeTemplate;
+  task.blanks.forEach((b, i) => {
+    const size = Math.max(b.answer.length + 2, 6);
+    code = code.split(b.key).join(
+      `<input class="blank-input" id="blank-${i}" data-answer="${b.answer}" data-hint="${b.hint}" size="${size}" placeholder="?" autocomplete="off" spellcheck="false">`
+    );
+  });
+
+  // Escape HTML except our inputs
+  const parts = code.split(/(<input[^>]+>)/g);
+  const escaped = parts.map((p, i) => i % 2 === 0 ? escHtml(p) : p).join('');
+
+  return `
+    <div class="fillin-task">
+      <div class="fillin-label">Egészítsd ki a kódot!</div>
+      <div class="code-template">${escaped}</div>
+      <div class="fillin-feedback" id="fillin-feedback"></div>
+    </div>`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function lockFillin() {
+  document.querySelectorAll('.blank-input').forEach(inp => { inp.disabled = true; });
+}
+
+// ══════════════════════════════════════════════════════
+// MONACO
+// ══════════════════════════════════════════════════════
+
+function renderMonacoShell(task, idx) {
+  const checks = task.checks.map((ch, i) =>
+    `<div class="check-row" id="chk-${i}"><span class="ci">⬜</span> ${ch.label}</div>`
+  ).join('');
+
+  return `
+    <div class="monaco-task">
+      <div class="monaco-editor-wrap">
+        <div id="monaco-editor" style="width:100%;height:100%;"></div>
+      </div>
+      <div class="monaco-preview-wrap">
+        <div class="preview-label"><div class="preview-dot"></div> Élő előnézet</div>
+        <iframe id="monaco-preview" title="Előnézet" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+    <div class="monaco-checks">${checks}</div>`;
+}
+
+function initMonaco(task, idx) {
+  onMonacoReady(() => {
+    const container = document.getElementById('monaco-editor');
+    if (!container) return;
+
+    state.monacoEditor = monaco.editor.create(container, {
+      value: task.starterHtml,
+      language: 'html',
+      theme: 'vs-dark',
+      fontSize: 14,
+      minimap: { enabled: false },
+      automaticLayout: true,
+      wordWrap: 'on',
+      scrollBeyondLastLine: false,
+      tabSize: 2,
+      quickSuggestions: { other: true, comments: false, strings: true },
+    });
+
+    if (window.emmetMonaco) window.emmetMonaco.emmetHTML(monaco);
+
+    state.monacoEditor.onDidChangeModelContent(() => {
+      clearTimeout(state.previewTimeout);
+      state.previewTimeout = setTimeout(() => updateMonacoPreview(task), 400);
+    });
+
+    if (task.starterHtml) updateMonacoPreview(task);
+  });
+}
+
+function updateMonacoPreview(task) {
+  if (!state.monacoEditor) return;
+  let html = state.monacoEditor.getValue();
+  const base = location.href.replace(/\/[^\/]*$/, '/');
+  if (!html.includes('<base')) html = html.replace('<head>', `<head>\n  <base href="${base}">`);
+  const frame = document.getElementById('monaco-preview');
+  if (frame) frame.srcdoc = html;
+  liveCheckMonaco(task);
+}
+
+function liveCheckMonaco(task) {
+  if (!state.monacoEditor) return;
+  const html = state.monacoEditor.getValue();
+  let doc;
+  try { doc = new DOMParser().parseFromString(html, 'text/html'); }
+  catch(e) { doc = document.implementation.createHTMLDocument(''); }
+
+  task.checks.forEach((ch, i) => {
+    const pass = (() => { try { return !!ch.fn(html, doc); } catch(e) { return false; } })();
+    const el = document.getElementById('chk-' + i);
+    if (el) {
+      el.className = 'check-row ' + (pass ? 'pass' : 'fail');
+      el.querySelector('.ci').textContent = pass ? '✅' : '⬜';
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// CHECK
+// ══════════════════════════════════════════════════════
+
+function checkTask() {
+  const task = tasks[state.current];
+  const idx = state.current;
+
+  if (task.type === 'quiz') checkQuiz(task, idx);
+  else if (task.type === 'fillin') checkFillin(task, idx);
+  else checkMonaco(task, idx);
+}
+
+function checkQuiz(task, idx) {
+  if (state.quizAnswered[idx]) return;
+  const sel = state._selectedQuiz;
+  if (sel === undefined || sel === null) {
+    document.getElementById('score-msg').textContent = '⚠️ Válassz egy lehetőséget!';
+    return;
+  }
+
+  state.quizAnswered[idx] = true;
+  const correct = sel === task.correct;
+
+  document.querySelectorAll('.quiz-option').forEach((el, i) => {
+    el.classList.add('disabled');
+    if (i === task.correct) el.classList.add('correct');
+    else if (i === sel && !correct) el.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = 'quiz-feedback visible ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = correct
+    ? task.feedback
+    : `❌ Nem ez a helyes válasz. A helyes válasz: <strong>${task.options[task.correct]}</strong><br><br>${task.feedback}`;
+
+  if (correct) markDone(idx);
+  else document.getElementById('score-msg').textContent = '❌ Próbáld újra!';
+}
+
+function checkFillin(task, idx) {
+  const inputs = document.querySelectorAll('.blank-input');
+  let allCorrect = true;
+  let wrongCount = 0;
+
+  inputs.forEach((inp, i) => {
+    const answer = inp.dataset.answer.toLowerCase().trim();
+    const val = inp.value.toLowerCase().trim();
+    const correct = val === answer;
+    inp.classList.remove('correct', 'wrong');
+    inp.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct) { allCorrect = false; wrongCount++; }
+  });
+
+  const fb = document.getElementById('fillin-feedback');
+  fb.className = 'fillin-feedback visible';
+
+  if (allCorrect) {
+    fb.innerHTML = '✅ Tökéletes! Minden mező helyes.';
+    fb.style.color = '#86efac';
+    markDone(idx);
+    lockFillin();
+  } else {
+    fb.style.color = '#fca5a5';
+    const hints = [];
+    inputs.forEach((inp, i) => {
+      if (inp.classList.contains('wrong')) {
+        hints.push(`💡 ${i + 1}. mező tipp: <em>${inp.dataset.hint}</em>`);
+      }
+    });
+    fb.innerHTML = `❌ ${wrongCount} mező még nem stimmel.<br>${hints.join('<br>')}`;
+  }
+}
+
+function checkMonaco(task, idx) {
+  if (!state.monacoEditor) return;
+  const html = state.monacoEditor.getValue();
+  let doc;
+  try { doc = new DOMParser().parseFromString(html, 'text/html'); }
+  catch(e) { doc = document.implementation.createHTMLDocument(''); }
+
+  const results = task.checks.map(ch => { try { return !!ch.fn(html, doc); } catch(e) { return false; } });
+  const passed = results.filter(Boolean).length;
+  const total = results.length;
+
+  results.forEach((res, i) => {
+    const el = document.getElementById('chk-' + i);
+    if (el) {
+      el.className = 'check-row ' + (res ? 'pass' : 'fail');
+      el.querySelector('.ci').textContent = res ? '✅' : '❌';
+    }
+  });
+
+  document.getElementById('score-msg').innerHTML = `<span style="color:${passed===total?'#22c55e':'#94a3b8'}">${passed} / ${total}</span> ellenőrzés teljesítve`;
+
+  if (passed === total) markDone(idx);
+}
+
+// ══════════════════════════════════════════════════════
+// DONE / NEXT
+// ══════════════════════════════════════════════════════
+
+function markDone(idx) {
+  state.done[idx] = true;
+  localStorage.setItem(STORAGE_KEY + '_done', JSON.stringify(state.done));
+  document.getElementById('btn-next').disabled = false;
+  document.getElementById('btn-check').disabled = true;
+
+  const banner = document.getElementById('success-banner');
+  if (banner) banner.classList.add('visible');
+
+  triggerConfetti();
+  updatePills();
+
+  if (state.done.every(Boolean)) {
+    setTimeout(() => document.getElementById('completion-modal').classList.add('visible'), 900);
+  }
+}
+
+function goNext() {
+  const next = state.current + 1;
+  if (next < tasks.length) loadTask(next);
+}
+
+// ══════════════════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════════════════
+
+function triggerConfetti() {
+  const el = document.getElementById('confetti');
+  el.classList.remove('animate');
+  void el.offsetWidth;
+  el.classList.add('animate');
+  setTimeout(() => el.classList.remove('animate'), 800);
+}
+</script>
+<script src="../special-roles.js"></script>
+</body>
+</html>
