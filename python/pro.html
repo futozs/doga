@@ -664,13 +664,14 @@ szamok = [64, 34, 25, 12, 22, 11, 90]
 
 n = len(szamok)
 
-for i in range(n - 1):
-    for j in range(n - 1 - i):
+# Két egymásba ágyazott ciklus – töltsd ki!
+for i in range(___):
+    for j in range(___):
         # Ha a szomszéd nagyobb, cseréljük fel:
-        if szamok[j] > szamok[j + 1]:
-            # Csere: ideiglenes változóval
-            csere = szamok[j]
-            szamok[j] = szamok[j + 1]
+        if ___:
+            # Csere ideiglenes változóval:
+            csere = ___
+            szamok[j] = ___
             szamok[j + 1] = csere
 
 print(szamok)
