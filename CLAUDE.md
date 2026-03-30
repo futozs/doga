@@ -13,34 +13,69 @@ Live at: https://sandornefr.github.io/doga/
 
 ## Architecture
 
+### Portal / Login / Review
+- `login.html` — Bejelentkezés/regisztráció (tanuló @kkszki.hu email, tanár)
+- `portal.html` — Főmenü belépés után: Python/Web/C# exam kártyák, tananyag linkek, fiók kezelés
+- `review.html` — Eredmények/statisztikák
+- `special-roles.js` — Hibabejelentő modal + Ctrl+V kép paste listener
+
+**Szerepkörök:** `tanulo`, `oktato`, `vendeg`, `_tesztMod:true` (Teszt Elek, tanár diákként)
+
 ### Python Exam (`python/`)
 - `index.html` — Student interface. Requires fullscreen; cheating (DevTools, tab switch, focus loss) auto-submits.
 - `admin.html` — Teacher panel: view submissions, AI grading (Gemini), statistics, mode switching (practice/live).
-- `feladatok.txt` — **Single source of truth** for all 16 tasks with scoring criteria. Edit here only.
+- `feladatok.txt` — **Single source of truth** for all 31 tasks with scoring criteria. Edit here only.
 - `python_teszt.obfuscated.js` — Obfuscated production JS (original at `C:\Users\feker\Desktop\Rékának\python_teszt.js`).
+- `basics.html` — Kezdő szint gyakorló (20 feladat)
+- `practice.html` — Haladó szint gyakorló (20 feladat)
+- `pro.html` — Profi szint gyakorló (19 feladat)
+- `agazati-gyakorlo.html` — Gyakorló feladatok vendégeknek is, 3 nehézségi szint (Pyodide futtatja)
 
 **Task selection:** 2 random 8-point tasks + 1 random 14-point task (45 min total). Cross-device deduplication via Railway backend `/api/user-state/{email}/lastTasks`.
 
+**Task selection:** 2 random 8-point tasks + 1 random 14-point task (45 min total). 31 tasks total (11 könnyű, 12 közepes, 8 nehéz — `Nehezseg:` mező alapján).
+
+**Hint rendszer (mindhárom gyakorló fájlban):**
+- Level 0: "Segítség" gomb → tananyag flash panel
+- Level 1: "Vázlat" gomb → `task.hint` / `task.hintCode` betöltése (`___` blanks)
+- Level 2: "Megoldás" gomb → teljes megoldás
+
 **Scoring criteria syntax in feladatok.txt:**
 ```
-input:N|description       # N input() calls required
-int_float:N|description   # type conversion check
-if|description            # keyword presence
-elif|description
-tartalmaz:szöveg|desc     # code contains text
-teszt:in1,in2:expected|desc  # run with mock inputs (Pyodide)
-def|description
-return|description
-while|description
-for|description
+bekeres:N|leírás|tipp     # N input() calls required
+int_float:N|leírás|tipp   # type conversion check
+import:modul|leírás|tipp  # module import presence
+if|leírás                 # keyword presence
+elif|leírás
+tartalmaz:szöveg|leírás|tipp  # code contains text
+teszt:in1,in2:expected|leírás|tipp  # run with mock inputs (Pyodide)
+def|leírás
+return|leírás
+while|leírás
+for|leírás
 ```
 
-**Backend (Railway):** ASP.NET Core Minimal API + SQLite at `backend/`. Endpoints: `/api/auth/login`, `/api/submit`, `/api/submissions`, `/api/config`, `/api/stats`, `/api/user-state/{email}/{key}`.
+**Backend (Railway):** ASP.NET Core Minimal API + SQLite at `backend/`. URL: `https://agazati.up.railway.app`. Endpoints: `/api/auth/login`, `/api/submit`, `/api/submissions`, `/api/config`, `/api/stats`, `/api/user-state/{email}/{key}`.
 
 ### Web Exam (`web/`)
-- `index.html` — Student interface
-- `app.js` — All scoring logic + task definitions
+- `index.html` — Student interface (Monaco Editor, HTML+CSS fülek, élő előnézet, 60 perc)
+- `practice.html` — Gyakorló mód (vendégeknek is elérhető)
+- `app.js` — All scoring logic + task definitions (5303 sor)
 - `forrasok/{taskname}/` — Each task's HTML starter file, CSS, images, source texts
+
+**WEB Tananyag (learn-*.html fájlok):**
+- `learn-html.html` — 1. szint: HTML Alapok
+- `learn-css.html` — 2. szint: CSS Stílusok
+- `learn-bootstrap.html` — 3. szint: Bootstrap + JavaScript
+- `learn-emmet.html` — 4. szint: Emmet gyorsírás (**FEJLESZTÉS ALATT**, ~95% kész, untracked!)
+
+**Tananyag láncolat:** HTML → CSS → Bootstrap → Emmet → HTML gyakorló
+
+**⚠️ Emmet oldal hiányos integrációi (2026-03-30 állapot):**
+- `learn-emmet.html` nincs committolva (git untracked)
+- `portal.html` nem tartalmaz linket a `learn-emmet.html`-re (csak HTML/CSS/Bootstrap gomb van)
+- `learn-bootstrap.html` befejező modalja azt mondja "Elvégezted az összes szintet" — holott az Emmet még következik
+- `learn-bootstrap.html` `goNext()` függvénye nem navigál a `learn-emmet.html`-re az utolsó feladat után
 
 **Scoring structure in `app.js`:**
 ```js

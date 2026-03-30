@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emmet gyorsírás – WEB Tananyag</title>
+  <link rel="icon" href="../kando_favion_dark.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../kando_favion_light.png" type="image/png" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0f172a; --bg2:#111827; --bg3:#1e293b;
+      --border:#1f2937; --accent:#22c55e; --accent2:#16a34a;
+      --text:#e2e8f0; --muted:#94a3b8;
+      --blue:#3b82f6; --red:#ef4444; --yellow:#fbbf24;
+      --font:'Segoe UI',system-ui,sans-serif;
+      --topbar-h:54px; --bottom-h:52px; --left-w:230px;
+    }
+    html,body { height:100%; overflow:hidden; }
+    body { font-family:var(--font); background:var(--bg); color:var(--text); display:flex; flex-direction:column; }
+
+    /* ── TOPBAR ── */
+    .topbar { height:var(--topbar-h); background:var(--bg2); border-bottom:1.5px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:10px; flex-shrink:0; }
+    .topbar-logo { height:30px; cursor:pointer; }
+    .btn-back { display:flex; align-items:center; gap:6px; padding:5px 12px; border-radius:8px; background:transparent; border:1.5px solid var(--border); color:var(--muted); font-size:0.82rem; cursor:pointer; text-decoration:none; transition:border-color .2s,color .2s; white-space:nowrap; }
+    .btn-back:hover { border-color:var(--accent); color:var(--accent); }
+    .topbar-info { line-height:1.3; }
+    .topbar-title { font-size:0.95rem; font-weight:700; color:var(--text); }
+    .topbar-sub { font-size:0.75rem; color:var(--muted); }
+    .topbar-spacer { flex:1; }
+    .progress-label { font-size:0.8rem; color:var(--muted); white-space:nowrap; }
+    .progress-label span { color:var(--accent); font-weight:700; }
+
+    /* ── LAYOUT ── */
+    .layout { display:flex; flex:1; overflow:hidden; }
+
+    /* ── LEFT PANEL ── */
+    .left-panel { width:var(--left-w); flex-shrink:0; background:var(--bg2); border-right:1.5px solid var(--border); overflow-y:auto; padding:10px 8px; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+    .block-group { margin-bottom:6px; border:1px solid var(--border); border-radius:9px; overflow:hidden; }
+    .block-header { padding:8px 10px; background:var(--bg3); font-size:0.79rem; font-weight:700; color:var(--muted); display:flex; align-items:center; gap:6px; }
+    .block-done-mark { margin-left:auto; color:var(--accent); font-size:0.72rem; }
+    .block-tasks { padding:5px 6px; display:flex; flex-direction:column; gap:3px; }
+    .task-pill { display:flex; align-items:flex-start; gap:7px; padding:6px 8px; border-radius:7px; border:1px solid transparent; cursor:pointer; font-size:0.8rem; color:var(--muted); transition:all .14s; }
+    .task-pill:hover:not(.locked) { background:var(--bg3); color:var(--text); }
+    .task-pill.active { background:rgba(59,130,246,.12); border-color:var(--blue); color:#93c5fd; }
+    .task-pill.done { color:var(--accent); }
+    .task-pill.locked { opacity:.32; cursor:not-allowed; }
+    .pill-icon { font-size:0.75rem; margin-top:2px; flex-shrink:0; }
+    .pill-label { font-size:0.8rem; line-height:1.3; }
+    .pill-type { font-size:0.67rem; color:var(--muted); margin-top:1px; }
+
+    /* ── MAIN PANEL ── */
+    .main-panel { flex:1; display:flex; flex-direction:column; overflow:hidden; padding:16px 22px 12px; gap:0; min-width:0; }
+    .task-meta { display:flex; align-items:center; gap:8px; flex-shrink:0; margin-bottom:4px; }
+    .task-num { font-size:0.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; }
+    .type-badge { font-size:0.68rem; padding:2px 8px; border-radius:20px; font-weight:600; }
+    .badge-quiz   { background:rgba(168,85,247,.15); color:#c084fc; border:1px solid rgba(168,85,247,.3); }
+    .badge-fillin { background:rgba(59,130,246,.15);  color:#93c5fd; border:1px solid rgba(59,130,246,.3); }
+    .badge-monaco { background:rgba(34,197,94,.12);   color:#86efac; border:1px solid rgba(34,197,94,.3); }
+    .badge-emmet  { background:rgba(251,191,36,.12);  color:#fde68a; border:1px solid rgba(251,191,36,.3); }
+    .task-title-row { font-size:1.25rem; font-weight:700; color:var(--text); flex-shrink:0; margin-bottom:10px; }
+
+    /* ── CONTENT AREA ── */
+    .content-area { flex:1; display:flex; overflow:hidden; gap:16px; }
+    .content-area.two-col { flex-direction:row; }
+    .exp-col { width:38%; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+    .task-col { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+    .content-area.one-col { flex-direction:column; }
+    .exp-compact { flex-shrink:0; overflow:hidden; }
+
+    /* ── EMMET LAYOUT ── */
+    .emmet-exp-col { width:36%; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border) transparent; display:flex; flex-direction:column; gap:10px; }
+    .emmet-right-col { flex:1; display:flex; flex-direction:column; gap:8px; overflow:hidden; min-width:0; }
+    .emmet-editor-wrap { flex:1; border:1px solid var(--border); border-radius:9px; overflow:hidden; display:flex; flex-direction:column; min-height:0; }
+    .emmet-preview-wrap { height:160px; flex-shrink:0; border:1px solid var(--border); border-radius:9px; overflow:hidden; display:flex; flex-direction:column; }
+
+    /* ── ABBREVIATION CARD ── */
+    .abbr-card { background:#0b1a0b; border:1.5px solid var(--accent); border-radius:9px; padding:12px 14px; flex-shrink:0; }
+    .abbr-label { font-size:0.68rem; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:8px; letter-spacing:.07em; }
+    .abbr-text { font-family:'Consolas','Fira Code',monospace; font-size:1.0rem; color:#86efac; word-break:break-all; line-height:1.5; }
+    .abbr-hint { margin-top:8px; font-size:0.76rem; color:var(--muted); line-height:1.5; }
+    kbd { background:#1e293b; border:1px solid #475569; border-radius:4px; padding:1px 5px; font-size:0.75rem; color:#e2e8f0; }
+
+    /* ── MAGYARÁZAT ── */
+    .exp-box { background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:9px; padding:12px 14px; font-size:0.93rem; color:#cbd5e1; line-height:1.65; }
+    .exp-box.compact { height:auto; }
+    .exp-box code { background:#1e293b; color:#93c5fd; padding:1px 5px; border-radius:4px; font-size:0.8rem; }
+    .exp-box strong { color:#f1f5f9; }
+    .exp-box ul { margin:6px 0 2px 16px; }
+    .exp-box ul li { margin-bottom:3px; }
+    .exp-label { font-size:0.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--blue); font-weight:700; margin-bottom:7px; }
+
+    /* ── QUIZ ── */
+    .quiz-q { font-size:1.05rem; font-weight:600; color:var(--text); margin-bottom:14px; }
+    .quiz-opts { display:flex; flex-direction:column; gap:8px; }
+    .quiz-opt { display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:9px; border:1.5px solid var(--border); background:var(--bg2); cursor:pointer; font-size:0.97rem; color:var(--text); transition:all .16s; }
+    .quiz-opt:hover:not(.disabled):not(.selected) { border-color:#475569; background:rgba(255,255,255,.04); }
+    .quiz-opt.selected { border-color:#60a5fa; background:rgba(59,130,246,.22); color:#e0f2fe; box-shadow:0 0 0 2px rgba(59,130,246,.3); }
+    .quiz-opt.correct { border-color:var(--accent); background:rgba(34,197,94,.1); color:#86efac; }
+    .quiz-opt.wrong   { border-color:var(--red);    background:rgba(239,68,68,.1);  color:#fca5a5; }
+    .quiz-opt.disabled{ cursor:default; }
+    .opt-letter { width:26px; height:26px; border-radius:50%; background:var(--bg3); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0; }
+    .quiz-opt.correct .opt-letter { background:var(--accent); border-color:var(--accent); color:#052e16; }
+    .quiz-opt.wrong   .opt-letter { background:var(--red);    border-color:var(--red);    color:#fff; }
+    .quiz-feedback { margin-top:12px; padding:10px 13px; border-radius:9px; font-size:0.93rem; line-height:1.6; display:none; }
+    .quiz-feedback.show { display:block; }
+    .quiz-feedback.ok  { background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.3); color:#86efac; }
+    .quiz-feedback.err { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); color:#fca5a5; }
+    .quiz-feedback code { background:rgba(255,255,255,.08); padding:1px 4px; border-radius:3px; font-size:0.8rem; }
+
+    /* ── FILL-IN ── */
+    .fillin-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:8px; }
+    .code-tpl { background:#020617; border:1px solid #0f1f3a; border-radius:9px; padding:14px 16px; font-family:'Consolas','Fira Code',monospace; font-size:0.95rem; line-height:2.1; color:#a3e635; white-space:pre-wrap; word-break:break-all; }
+    .blank-in { display:inline-block; background:#0f2744; border:1.5px solid var(--blue); border-radius:5px; padding:0 6px; color:#93c5fd; font-family:inherit; font-size:inherit; font-weight:700; outline:none; min-width:44px; transition:border-color .18s; vertical-align:baseline; }
+    .blank-in:focus { border-color:#60a5fa; box-shadow:0 0 0 2px rgba(59,130,246,.2); }
+    .blank-in.ok  { border-color:var(--accent); background:rgba(34,197,94,.1); color:#86efac; }
+    .blank-in.err { border-color:var(--red);    background:rgba(239,68,68,.1);  color:#fca5a5; }
+    .blank-in:disabled { opacity:.7; }
+    .fillin-fb { margin-top:10px; font-size:0.82rem; line-height:1.6; display:none; }
+    .fillin-fb.show { display:block; }
+
+    /* ── EDITOR HEADER / PREVIEW ── */
+    .editor-hd { padding:5px 10px; background:var(--bg3); border-bottom:1px solid var(--border); font-size:0.7rem; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .preview-hd { padding:5px 10px; background:var(--bg3); border-bottom:1px solid var(--border); font-size:0.7rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; display:flex; align-items:center; gap:5px; flex-shrink:0; }
+    .pdot { width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 2s ease-in-out infinite; }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* ── CHECK LIST ── */
+    .check-list { flex-shrink:0; display:flex; flex-wrap:wrap; gap:5px 14px; padding-top:8px; }
+    .chk-row { display:flex; align-items:center; gap:5px; font-size:0.9rem; color:var(--muted); }
+    .chk-row.pass { color:var(--accent); }
+
+    /* ── SUCCESS BANNER ── */
+    .success-banner { display:none; flex-shrink:0; margin-top:10px; background:rgba(34,197,94,.1); border:1.5px solid rgba(34,197,94,.35); border-radius:10px; padding:10px 14px; text-align:center; font-size:0.88rem; color:var(--accent); font-weight:600; }
+    .success-banner.show { display:block; }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar { height:var(--bottom-h); background:var(--bg2); border-top:1.5px solid var(--border); display:flex; align-items:center; padding:0 18px; gap:12px; flex-shrink:0; }
+    .btn-check { padding:9px 22px; border-radius:9px; background:var(--accent2); border:1.5px solid var(--accent); color:#fff; font-size:0.87rem; font-weight:700; cursor:pointer; transition:background .18s; display:flex; align-items:center; gap:7px; }
+    .btn-check:hover { background:var(--accent); }
+    .btn-check:disabled { opacity:.4; cursor:default; }
+    .score-msg { font-size:0.84rem; color:var(--muted); flex:1; }
+    .btn-next { padding:9px 18px; border-radius:9px; background:transparent; border:1.5px solid var(--border); color:var(--muted); font-size:0.87rem; font-weight:600; cursor:pointer; transition:all .18s; display:flex; align-items:center; gap:6px; margin-left:auto; }
+    .btn-next:hover:not(:disabled) { border-color:var(--blue); color:#93c5fd; }
+    .btn-next:disabled { opacity:.3; cursor:default; }
+
+    /* ── CONFETTI & MODAL ── */
+    .confetti-flash { position:fixed; inset:0; z-index:9999; pointer-events:none; display:flex; align-items:center; justify-content:center; font-size:5rem; opacity:0; }
+    .confetti-flash.animate { animation:cpop .7s ease-out forwards; }
+    @keyframes cpop{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1.2)}70%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.1)}}
+    .modal-ov { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,.8); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+    .modal-ov.show { display:flex; }
+    .modal-box { background:var(--bg2); border:1px solid var(--accent); border-radius:14px; padding:32px 28px; max-width:400px; width:94%; text-align:center; }
+    .modal-box h2 { color:var(--accent); font-size:1.2rem; margin:10px 0 8px; }
+    .modal-box p { color:#cbd5e1; font-size:0.88rem; line-height:1.6; margin-bottom:20px; }
+    .modal-btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .btn-m { padding:9px 18px; border-radius:8px; font-size:0.86rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
+    .btn-m-p { background:var(--accent); color:#000; border:none; }
+    .btn-m-p:hover { background:var(--yellow); }
+    .btn-m-s { background:transparent; color:#94a3b8; border:1px solid var(--border); }
+    .btn-m-s:hover { color:#f1f5f9; border-color:#64748b; }
+
+    ::-webkit-scrollbar{width:4px;height:4px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  </style>
+</head>
+<body>
+
+<script>
+  (function(){
+    const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+    if(!u.token&&u.szerep!=='oktato'&&u.szerep!=='vendeg'&&!u._tesztMod) location.replace('../portal.html');
+  })();
+</script>
+
+<header class="topbar">
+  <a href="../portal.html"><img src="kandologo2.png" alt="Kandó" class="topbar-logo"></a>
+  <a href="../portal.html" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
+  <div class="topbar-info">
+    <div class="topbar-title">⚡ WEB Tananyag</div>
+    <div class="topbar-sub">4. szint · Emmet gyorsírás</div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;" title="Bejelentkezési sorozat"></div>
+  <div class="progress-label">Teljesítve: <span id="prog-done">0</span> / <span id="prog-total">15</span></div>
+</header>
+
+<div class="modal-ov" id="modal-done">
+  <div class="modal-box">
+    <div style="font-size:2.8rem">🏆</div>
+    <h2>Emmet gyorsírás – kész!</h2>
+    <p>Gratulálok! Elsajátítottad az Emmet gyorsírást. Mostantól sokkal gyorsabban tudsz HTML struktúrákat létrehozni!</p>
+    <div class="modal-btns">
+      <a class="btn-m btn-m-p" href="../portal.html"><i class="fas fa-home"></i> Főmenü</a>
+      <a class="btn-m btn-m-s" href="index.html"><i class="fas fa-pen"></i> WEB Dolgozat</a>
+    </div>
+  </div>
+</div>
+
+<div class="confetti-flash" id="confetti">⚡</div>
+
+<div class="layout">
+  <aside class="left-panel" id="left-panel"></aside>
+  <div class="main-panel" id="main-panel"></div>
+</div>
+
+<div class="bottom-bar">
+  <button class="btn-check" id="btn-check" onclick="checkTask()">
+    <i class="fas fa-check-circle"></i> Ellenőrzés
+  </button>
+  <div class="score-msg" id="score-msg"></div>
+  <button class="btn-next" id="btn-next" onclick="goNext()" disabled>
+    Következő <i class="fas fa-arrow-right"></i>
+  </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.min.js"></script>
+<script src="emmet-monaco.min.js"></script>
+<script>
+'use strict';
+
+// ── Streak counter ──────────────────────────────────────────────────────────
+(function(){
+  const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+  if(!u.email) return;
+  const email=u.email.replace('@kkszki.hu','');
+  fetch('https://agazati.up.railway.app/api/leaderboard/rank/'+encodeURIComponent(email))
+    .then(r=>r.ok?r.json():null).then(d=>{
+      const s=d?.streak??0, el=document.getElementById('streak-counter');
+      if(!el||s<1) return;
+      const lbl=s>=30?'Élő Legenda':s>=14?'Kitartó Harcos':s>=7?'Heti Hős':s>=3?'Ügyes Kezdő':null;
+      el.innerHTML='🔥 '+s+' nap'+(lbl?' · '+lbl:'');
+      el.style.display='flex';
+    }).catch(()=>{});
+})();
+
+// ══════════════════════════════════════════════════════════════════════
+// FELADATOK
+// ══════════════════════════════════════════════════════════════════════
+
+const tasks = [
+
+  // ── BLOKK 1: Mi az Emmet? ────────────────────────────────────────────
+  {
+    id:1, block:1, blockName:'Mi az Emmet?', emoji:'⚡',
+    type:'quiz',
+    title:'Mi az Emmet gyorsírás?',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Az <strong>Emmet</strong> egy fejlesztői eszköz, amely rövid rövidítésekből (abbreviation)
+      teljes HTML vagy CSS kódot generál.
+      <br><br>
+      Például ez a rövidítés:
+      <br><code>ul&gt;li*3&gt;a</code>
+      <br><br>
+      …kibontva ezt adja:
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin-top:6px;overflow-x:auto;">&lt;ul&gt;
+  &lt;li&gt;&lt;a href=""&gt;&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=""&gt;&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=""&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</pre>
+      <br>
+      Az Emmet <strong>beépítve működik</strong> a VS Code-ban és a Monaco szerkesztőben is –
+      írd be a rövidítést, majd nyomj <kbd>Tab</kbd>-ot!`,
+    question:'Mire való az Emmet gyorsírás?',
+    options:[
+      'CSS animációk létrehozására szolgáló library',
+      'HTML és CSS struktúrák gyors generálása rövid rövidítésekből',
+      'JavaScript kód minifikálására és tömörítésére',
+      'Képek optimalizálására és konvertálására'
+    ],
+    correct:1,
+    feedback:'✅ Pontosan! Az Emmet rövid rövidítésekből (<code>div.container&gt;h1+p</code>) teljes HTML struktúrát generál. Hatalmas időmegtakarítás a webfejlesztésben!'
+  },
+
+  {
+    id:2, block:1, blockName:'Mi az Emmet?', emoji:'⚡',
+    type:'fillin',
+    title:'Emmet alapoperátorok',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Három alapvető Emmet operátor:
+      <ul>
+        <li><code>&gt;</code> — <strong>gyermek</strong>: bal oldali elem tartalmazza a jobb oldalit<br>
+          <code>div&gt;p</code> → <code>&lt;div&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt;</code></li>
+        <li><code>+</code> — <strong>testvér</strong>: egymás után, azonos szinten<br>
+          <code>h1+p</code> → <code>&lt;h1&gt;&lt;/h1&gt;&lt;p&gt;&lt;/p&gt;</code></li>
+        <li><code>*</code> — <strong>ismétlés</strong>: adott elem N-szer<br>
+          <code>li*3</code> → három <code>&lt;li&gt;</code> egymás után</li>
+      </ul>`,
+    codeTemplate:
+`/* Emmet operátorok – töltsd ki a ___-ket! */
+
+/* Gyermek: div tartalmazza a p-t */
+div___p
+
+/* Testvér: h2 után jön p */
+h2___p
+
+/* Ismétlés: négy li elem */
+li___4`,
+    blanks:[
+      { answer:'>', hint:'Gyermek operátor – bal oldali tartalmazza a jobb oldalit' },
+      { answer:'+', hint:'Testvér operátor – egymás után, azonos szinten' },
+      { answer:'*', hint:'Ismétlés – az elem N-szer jelenik meg' }
+    ]
+  },
+
+  {
+    id:3, block:1, blockName:'Mi az Emmet?', emoji:'⚡',
+    type:'emmet',
+    title:'Első Emmet kibontás',
+    explanation:`<div class="exp-label">⚡ Emmet feladat</div>
+      Írd be a jobb oldali szerkesztőbe az alábbi rövidítést, majd nyomj <kbd>Tab</kbd>-ot!
+      <br><br>
+      Eredményül egy <code>div</code>-et kell kapnod <code>doboz</code> osztállyal,
+      amelyen belül van egy <code>h1</code> „Üdvözlet!" szöveggel,
+      és egy <code>p</code> „Ez az első Emmet kódom." szöveggel.
+      <br><br>
+      💡 Ha a kibontás nem sikerül, nézd a lenti előnézetet – ott látod az eredményt!`,
+    abbreviation:'div.doboz>h1{Üdvözlet!}+p{Ez az első Emmet kódom.}',
+    checks:[
+      { label:'Van div class="doboz"',         fn:(h,d)=>!!d.querySelector('.doboz') },
+      { label:'h1 a .doboz-on belül van',       fn:(h,d)=>!!d.querySelector('.doboz h1') },
+      { label:'h1 tartalmaz "Üdvözlet"',        fn:(h,d)=>{ const el=d.querySelector('.doboz h1'); return !!el&&el.textContent.includes('dvözlet'); } },
+      { label:'Van p elem a .doboz-ban',        fn:(h,d)=>!!d.querySelector('.doboz p') },
+      { label:'p tartalmaz "Emmet"',            fn:(h,d)=>{ const el=d.querySelector('.doboz p'); return !!el&&el.textContent.includes('Emmet'); } }
+    ]
+  },
+
+  // ── BLOKK 2: Gyermek > és testvér + ─────────────────────────────────
+  {
+    id:4, block:2, blockName:'Gyermek > és testvér +', emoji:'🔗',
+    type:'quiz',
+    title:'> és + operátor különbsége',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      <strong>Gyermek operátor <code>&gt;</code></strong>
+      <br>Az elemek egymásba vannak ágyazva – a bal oldali tartalmazza a jobb oldalit.
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;overflow-x:auto;">nav&gt;ul&gt;li  →  &lt;nav&gt;&lt;ul&gt;&lt;li&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/nav&gt;</pre>
+      <strong>Testvér operátor <code>+</code></strong>
+      <br>Az elemek egymás után vannak, azonos szinten (nem egymásban!).
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;overflow-x:auto;">h1+p+img  →  &lt;h1&gt;&lt;/h1&gt;&lt;p&gt;&lt;/p&gt;&lt;img&gt;</pre>`,
+    question:'Mit csinál a nav>ul Emmet rövidítés?',
+    options:[
+      'Létrehoz egy nav és ul elemet egymás után (testvérként)',
+      'Létrehoz egy nav elemet, amelyen belül van egy ul (gyermek)',
+      'Létrehoz egy ul elemet nav osztállyal',
+      'A nav és ul elemeket egy div-be csomagolja'
+    ],
+    correct:1,
+    feedback:'✅ Igen! A <code>&gt;</code> gyermek operátor: a jobb oldali elem a bal oldali <em>belsejébe</em> kerül. Tehát <code>nav&gt;ul</code> = nav, amelyen <em>belül</em> ul van.'
+  },
+
+  {
+    id:5, block:2, blockName:'Gyermek > és testvér +', emoji:'🔗',
+    type:'fillin',
+    title:'Mélyen beágyazott struktúrák',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A <code>&gt;</code> és <code>+</code> operátorokat kombinálhatjuk:
+      <ul>
+        <li><code>nav&gt;ul&gt;li</code> — nav → ul → li (három szint mélyen)</li>
+        <li><code>header&gt;h1+nav</code> — header-ben h1 és nav egymás után</li>
+        <li><code>ul&gt;li*4</code> — ul-ban 4 db li egymás után</li>
+      </ul>
+      Minél több <code>&gt;</code>-t láncolsz, annál mélyebbre kerülsz az elemek fájában.`,
+    codeTemplate:
+`/* Navigáció: nav → ul → li → a (4 szint mélyen) */
+nav___ul___li___a
+
+/* Fejléc: h1 és nav egymás után a header-ben */
+header___h1___nav
+
+/* Táblázat sor: 3 td egymás után a tr-ben */
+tr___td___3`,
+    blanks:[
+      { answer:'>', hint:'Mélyre beágyaz – nav tartalmazza az ul-t' },
+      { answer:'>', hint:'ul tartalmazza a li-t' },
+      { answer:'>', hint:'li tartalmazza az a-t' },
+      { answer:'>', hint:'header tartalmazza az elemeket' },
+      { answer:'+', hint:'Testvér: h1 és nav egymás után' },
+      { answer:'>', hint:'tr tartalmazza a td-ket' },
+      { answer:'*', hint:'Ismétlés: 3 td egymás után' }
+    ]
+  },
+
+  {
+    id:6, block:2, blockName:'Gyermek > és testvér +', emoji:'🔗',
+    type:'emmet',
+    title:'Navigáció Emmettel',
+    explanation:`<div class="exp-label">⚡ Emmet feladat</div>
+      Írd be a rövidítést, majd nyomj <kbd>Tab</kbd>-ot!
+      <br><br>
+      Eredményül egy <code>nav</code>-ot kell kapnod, amelyen belül van egy
+      <code>ul</code>, és abban 3 db <code>li</code>, mindegyikben egy <code>a</code>
+      hivatkozással. A <code>$</code> jel automatikusan számoz (Link 1, Link 2, Link 3).
+      <br><br>
+      💡 A <code>$</code> jel az Emmet számozó operátora – minden ismétlésnél növekszik.`,
+    abbreviation:'nav>ul>li*3>a{Link $}',
+    checks:[
+      { label:'Van nav elem',                   fn:(h,d)=>!!d.querySelector('nav') },
+      { label:'Van ul a nav-ban',               fn:(h,d)=>!!d.querySelector('nav ul') },
+      { label:'Legalább 3 li elem',             fn:(h,d)=>d.querySelectorAll('li').length>=3 },
+      { label:'Van a hivatkozás',               fn:(h,d)=>!!d.querySelector('a') },
+      { label:'a elem tartalmaz "Link" szöveget', fn:(h,d)=>[...d.querySelectorAll('a')].some(a=>a.textContent.includes('Link')) }
+    ]
+  },
+
+  // ── BLOKK 3: Osztályok, ID-k, attribútumok ──────────────────────────
+  {
+    id:7, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'🏷️',
+    type:'quiz',
+    title:'Osztály (.), ID (#) és attribútum ([])',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Az Emmet CSS szintaxist követ az osztályokhoz és ID-khez:
+      <ul>
+        <li><code>.</code> — osztály hozzáadása:<br>
+          <code>div.container</code> → <code>&lt;div class="container"&gt;</code></li>
+        <li><code>#</code> — ID hozzáadása:<br>
+          <code>section#fooldal</code> → <code>&lt;section id="fooldal"&gt;</code></li>
+        <li><code>[]</code> — egyéni attribútum:<br>
+          <code>a[href="#" target="_blank"]</code> → <code>&lt;a href="#" target="_blank"&gt;</code></li>
+        <li>Kettő is mehet egyszerre:<br>
+          <code>div#wrapper.container</code> → <code>&lt;div id="wrapper" class="container"&gt;</code></li>
+      </ul>`,
+    question:'Melyik Emmet rövidítés ad a div-nek "kartya" osztályt ÉS "elem1" ID-t?',
+    options:[
+      'div.kartya+#elem1',
+      'div(kartya)(elem1)',
+      'div.kartya#elem1',
+      'div class="kartya" id="elem1"'
+    ],
+    correct:2,
+    feedback:'✅ Helyes! Az Emmet-ben a <code>.</code> az osztályt, a <code>#</code> az ID-t jelöli – egymás után írhatók: <code>div.kartya#elem1</code> → <code>&lt;div class="kartya" id="elem1"&gt;</code>.'
+  },
+
+  {
+    id:8, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'🏷️',
+    type:'fillin',
+    title:'Osztály, ID és attribútum kiegészítés',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Emlékeztető:
+      <ul>
+        <li><code>elem.osztaly</code> → <code>class="osztaly"</code></li>
+        <li><code>elem#azonosito</code> → <code>id="azonosito"</code></li>
+        <li><code>elem[attr="érték"]</code> → egyéni attribútum</li>
+        <li>Ha nem adsz tagnevet, alapértelmezés: <code>div</code><br>
+          pl. <code>.wrapper</code> → <code>&lt;div class="wrapper"&gt;</code></li>
+      </ul>`,
+    codeTemplate:
+`/* div "wrapper" osztállyal */
+div___wrapper
+
+/* section "fooldal" ID-vel */
+section___fooldal
+
+/* img src és alt attribútummal */
+img[src="kep.jpg" ___="kép leírása"]
+
+/* Kettő egyszerre: "kartya" osztály + "c1" ID */
+div___kartya___c1`,
+    blanks:[
+      { answer:'.', hint:'Osztály operátor – pont + osztálynév' },
+      { answer:'#', hint:'ID operátor – kettőskereszt + azonosító' },
+      { answer:'alt', hint:'Kép alternatív szövege – fontos az akadálymentességhez' },
+      { answer:'.', hint:'Osztály operátor' },
+      { answer:'#', hint:'ID operátor' }
+    ]
+  },
+
+  {
+    id:9, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'🏷️',
+    type:'emmet',
+    title:'Kártya rács Emmettel',
+    explanation:`<div class="exp-label">⚡ Emmet feladat</div>
+      Írd be a rövidítést, majd nyomj <kbd>Tab</kbd>-ot!
+      <br><br>
+      Eredménye: egy <code>div.kartya-grid</code> konténer, amelyen belül
+      2 db <code>div.kartya</code> van. Mindkét kártyában van egy
+      <code>h2.kartya-cim</code> (számozott cím) és egy <code>p</code>
+      „Szöveg" tartalommal.`,
+    abbreviation:'div.kartya-grid>div.kartya*2>h2.kartya-cim{Cím $}+p{Szöveg}',
+    checks:[
+      { label:'Van .kartya-grid osztályú div',   fn:(h,d)=>!!d.querySelector('.kartya-grid') },
+      { label:'Legalább 2 .kartya elem',          fn:(h,d)=>d.querySelectorAll('.kartya').length>=2 },
+      { label:'Van .kartya-cim osztályú h2',      fn:(h,d)=>!!d.querySelector('.kartya-cim') },
+      { label:'Van p elem',                       fn:(h,d)=>!!d.querySelector('p') },
+      { label:'p elem tartalmaz "Szöveg" szöveget', fn:(h,d)=>[...d.querySelectorAll('p')].some(p=>p.textContent.includes('Sz\u00f6veg')) }
+    ]
+  },
+
+  // ── BLOKK 4: Tartalom {} és számozás $ ──────────────────────────────
+  {
+    id:10, block:4, blockName:'Tartalom {} és számozás $', emoji:'✖️',
+    type:'quiz',
+    title:'Kapcsos zárójel {} és dollárjel $',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      <strong>Tartalom: <code>{}</code></strong>
+      <br>Kapcsos zárójelben megadjuk az elem szövegét:
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;">h1{Főcím}  →  &lt;h1&gt;Főcím&lt;/h1&gt;
+a{Kattints ide}  →  &lt;a href=""&gt;Kattints ide&lt;/a&gt;</pre>
+      <strong>Számozás: <code>$</code></strong>
+      <br>Ismétlésnél (<code>*</code>) a <code>$</code> automatikusan számoz:
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;">li{Tétel $}*3  →  Tétel 1, Tétel 2, Tétel 3
+div.elem-$*3  →  class="elem-1", "elem-2", "elem-3"</pre>`,
+    question:'Mit generál a li{Pont $}*4 Emmet rövidítés?',
+    options:[
+      'Egy li elemet "Pont $" szöveggel',
+      'Négy li elemet "Pont 1", "Pont 2", "Pont 3", "Pont 4" szöveggel',
+      'Négy li elemet mindegyikben "Pont $" szövegként (nem cseréli ki)',
+      'Egy számozott listát 4 elemmel, automatikus számozással'
+    ],
+    correct:1,
+    feedback:'✅ Pontosan! A <code>$</code> az ismétléskor (<code>*4</code>) automatikusan 1-től 4-ig számoz. Így "Pont 1", "Pont 2", "Pont 3", "Pont 4" szövegű li elemeket kapunk.'
+  },
+
+  {
+    id:11, block:4, blockName:'Tartalom {} és számozás $', emoji:'✖️',
+    type:'fillin',
+    title:'Tartalom és számozás kiegészítés',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Összefoglaló:
+      <ul>
+        <li><code>elem{szöveg}</code> — elem tartalma kapcsos zárójelben</li>
+        <li><code>$</code> — sorszám az ismétlésnél (1-től indul)</li>
+        <li><code>$$</code> — kétjegyű sorszám (01, 02, 03...)</li>
+        <li>Kombinálva: <code>div.item-$*3</code> → class="item-1", "item-2", "item-3"</li>
+      </ul>`,
+    codeTemplate:
+`/* Cím szöveggel */
+h2___Üdvözlet___
+
+/* Három gomb automatikus sorszámmal */
+button___Gomb $___*3
+
+/* Lista 4 számozott elemmel (class is számozott) */
+ul>li___item-$___4`,
+    blanks:[
+      { answer:'{', hint:'Kapcsos zárójel nyit – tartalom kezdete' },
+      { answer:'}', hint:'Kapcsos zárójel zár – tartalom vége' },
+      { answer:'{', hint:'Kapcsos zárójel nyit' },
+      { answer:'}', hint:'Kapcsos zárójel zár' },
+      { answer:'.', hint:'Osztály operátor – dot + osztálynév' },
+      { answer:'*', hint:'Ismétlés operátor' }
+    ]
+  },
+
+  {
+    id:12, block:4, blockName:'Tartalom {} és számozás $', emoji:'✖️',
+    type:'emmet',
+    title:'Számozott lista Emmettel',
+    explanation:`<div class="exp-label">⚡ Emmet feladat</div>
+      Írd be a rövidítést, majd nyomj <kbd>Tab</kbd>-ot!
+      <br><br>
+      Eredménye: egy <code>ul</code> lista, amelyben 4 db <code>li</code> van.
+      Minden li-nek van egy <code>termek-1</code>, <code>termek-2</code>... stb. osztálya,
+      és egy <code>span</code> gyermeke „1. tétel", „2. tétel"... szöveggel.`,
+    abbreviation:'ul>li.termek-$*4>span{$. tétel}',
+    checks:[
+      { label:'Van ul elem',                    fn:(h,d)=>!!d.querySelector('ul') },
+      { label:'Legalább 4 li elem',             fn:(h,d)=>d.querySelectorAll('li').length>=4 },
+      { label:'Van .termek-1 osztályú li',      fn:(h,d)=>!!d.querySelector('.termek-1') },
+      { label:'Van span elem',                  fn:(h,d)=>!!d.querySelector('span') },
+      { label:'span tartalmaz "tétel" szöveget', fn:(h,d)=>[...d.querySelectorAll('span')].some(s=>s.textContent.includes('t\u00e9tel')) }
+    ]
+  },
+
+  // ── BLOKK 5: Csoportosítás () ────────────────────────────────────────
+  {
+    id:13, block:5, blockName:'Csoportosítás ()', emoji:'📦',
+    type:'quiz',
+    title:'Csoportosítás kerek zárójelekkel',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A <strong>kerek zárójelek <code>()</code></strong> csoportot alkotnak –
+      az ismétlés (<code>*</code>) vagy a testvér (<code>+</code>) az egész csoportra vonatkozik.
+      <br><br>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;">/* Csoport ismétlése */
+div>(h3+p)*2
+→ &lt;div&gt;
+    &lt;h3&gt;&lt;/h3&gt;&lt;p&gt;&lt;/p&gt;
+    &lt;h3&gt;&lt;/h3&gt;&lt;p&gt;&lt;/p&gt;
+  &lt;/div&gt;</pre>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;">/* Fejléc: cím + belső csoportok */
+header&gt;h1+(nav&gt;ul&gt;li*3)</pre>`,
+    question:'Mit jelent a (h2+p)*3 Emmet rövidítés?',
+    options:[
+      'Egy h2 és egy p elemet, amelyek háromszor ismétlődnek páronként',
+      'Egy h2 elemet, amelynek 3 p testvére van',
+      'Háromszor beágyazott h2 és p elemek',
+      'Egy csoport, amelynek h2-je és p-je van, mindkettő * 3'
+    ],
+    correct:0,
+    feedback:'✅ Helyes! A <code>(h2+p)*3</code> a <em>teljes csoportot</em> (h2+p együtt) ismétli háromszor. Eredmény: h2, p, h2, p, h2, p – hat elem összesen.'
+  },
+
+  {
+    id:14, block:5, blockName:'Csoportosítás ()', emoji:'📦',
+    type:'fillin',
+    title:'Csoportosítás kiegészítés',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Csoportosítás jellemző felhasználásai:
+      <ul>
+        <li>Ismétlés csoportra: <code>(dt+dd)*3</code> — 3 definíció pár</li>
+        <li>Fejléc struktúra: <code>header&gt;h1+(nav&gt;ul&gt;li*3)</code></li>
+        <li>Kártya grid: <code>section&gt;(div.card&gt;h3+p+button)*4</code></li>
+      </ul>
+      💡 A <code>()</code>-n belüli elemek saját szinten vannak –
+      a csoport a szülő gyermeke lesz.`,
+    codeTemplate:
+`/* 3 cikk, mindegyikben cím + bekezdés */
+main>___article>h2+p___*3
+
+/* Fejléc: logo + navigáció (ul-ban 4 link) */
+header>img.logo+___nav>ul>li*4___
+
+/* Kéthasábos layout: két div egymás után csoportként */
+___div.col-bal+div.col-jobb___*1`,
+    blanks:[
+      { answer:'(', hint:'Csoport nyitó zárójel' },
+      { answer:')', hint:'Csoport záró zárójel' },
+      { answer:'(', hint:'Csoport nyitó zárójel' },
+      { answer:')', hint:'Csoport záró zárójel' },
+      { answer:'(', hint:'Csoport nyitó zárójel' },
+      { answer:')', hint:'Csoport záró zárójel' }
+    ]
+  },
+
+  {
+    id:15, block:5, blockName:'Csoportosítás ()', emoji:'📦',
+    type:'emmet',
+    title:'Fejléc csoportosítással',
+    explanation:`<div class="exp-label">⚡ Emmet feladat</div>
+      Írd be a rövidítést, majd nyomj <kbd>Tab</kbd>-ot!
+      <br><br>
+      Eredménye: egy <code>header</code>, amelyen belül van egy
+      <code>h1</code> „Weboldal" szöveggel, majd egy <code>nav</code>, amelyen
+      belül egy csoport: <code>ul</code> (3 li-vel, mindegyikben a) és egy
+      <code>button.hamburger</code> „☰" szöveggel.
+      <br><br>
+      💡 A kerek zárójel <code>()</code> a nav két gyermekét (ul és button) fogja össze!`,
+    abbreviation:'header>h1{Weboldal}+nav>(ul>li*3>a)+button.hamburger{☰}',
+    checks:[
+      { label:'Van header elem',                fn:(h,d)=>!!d.querySelector('header') },
+      { label:'h1 tartalmaz "Weboldal" szöveget', fn:(h,d)=>{ const el=d.querySelector('h1'); return !!el&&el.textContent.includes('Weboldal'); } },
+      { label:'Van nav elem',                   fn:(h,d)=>!!d.querySelector('nav') },
+      { label:'Legalább 3 li a nav-ban',        fn:(h,d)=>d.querySelectorAll('nav li').length>=3 },
+      { label:'Van .hamburger osztályú button', fn:(h,d)=>!!d.querySelector('.hamburger') }
+    ]
+  }
+
+];
+
+// ══════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════
+
+const SKEY = 'lemmet_v1';
+const state = {
+  cur: 0,
+  done:      JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),
+  qSel:      Array(tasks.length).fill(null),
+  qAnswered: Array(tasks.length).fill(false),
+  monacoEd: null,
+  prevTimer: null
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// MONACO INIT
+// ══════════════════════════════════════════════════════════════════════
+
+let monacoOk = false;
+const monacoQ = [];
+require.config({ paths:{ vs:'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
+require(['vs/editor/editor.main'], ()=>{
+  require(['vs/language/html/htmlMode'], ()=>{
+    monacoOk=true;
+    if(window.emmetMonaco) window.emmetMonaco.emmetHTML(monaco);
+    monacoQ.forEach(cb=>cb()); monacoQ.length=0;
+  });
+});
+const whenMonaco = cb => monacoOk ? cb() : monacoQ.push(cb);
+
+// ══════════════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════════════
+
+document.getElementById('prog-total').textContent = tasks.length;
+buildLeft();
+loadTask(0);
+
+// ══════════════════════════════════════════════════════════════════════
+// LEFT PANEL
+// ══════════════════════════════════════════════════════════════════════
+
+function buildLeft() {
+  const panel = document.getElementById('left-panel');
+  panel.innerHTML = '';
+  const blocks = [];
+  tasks.forEach((t,i) => {
+    let b = blocks.find(x=>x.id===t.block);
+    if (!b) { b={id:t.block,name:t.blockName,emoji:t.emoji,tasks:[]}; blocks.push(b); }
+    b.tasks.push({t,i});
+  });
+  blocks.forEach(bl => {
+    const allDone = bl.tasks.every(x=>state.done[x.i]);
+    const g = document.createElement('div'); g.className='block-group';
+    const h = document.createElement('div'); h.className='block-header';
+    h.innerHTML = `<span>${bl.emoji}</span><span>${bl.name}</span>`+(allDone?'<span class="block-done-mark">✓ kész</span>':'');
+    const lst = document.createElement('div'); lst.className='block-tasks';
+    bl.tasks.forEach(({t,i})=>{
+      const locked = i>0 && !state.done[i-1];
+      const p = document.createElement('div');
+      p.id='pill-'+i;
+      const typeIcon  = t.type==='quiz'?'❓':t.type==='fillin'?'✏️':t.type==='emmet'?'⚡':'💻';
+      const typeLabel = t.type==='quiz'?'Kvíz':t.type==='fillin'?'Kódkiegészítés':t.type==='emmet'?'Emmet':'Szerkesztő';
+      p.innerHTML=`<span class="pill-icon">${state.done[i]?'✅':locked?'🔒':'⬜'}</span>
+        <div><div class="pill-label">${i+1}. ${t.title}</div>
+        <div class="pill-type">${typeIcon} ${typeLabel}</div></div>`;
+      updatePillClass(p,i,locked);
+      if(!locked) p.onclick=()=>loadTask(i);
+      lst.appendChild(p);
+    });
+    g.appendChild(h); g.appendChild(lst); panel.appendChild(g);
+  });
+}
+
+function updatePillClass(el,i,locked){
+  el.className='task-pill'+(i===state.cur?' active':'')+(state.done[i]?' done':'')+(locked?' locked':'');
+}
+
+function refreshLeft(){
+  tasks.forEach((_,i)=>{
+    const p=document.getElementById('pill-'+i); if(!p) return;
+    const locked=i>0&&!state.done[i-1];
+    p.querySelector('.pill-icon').textContent=state.done[i]?'✅':locked?'🔒':'⬜';
+    updatePillClass(p,i,locked);
+    if(!locked) p.onclick=()=>loadTask(i); else p.onclick=null;
+  });
+  document.getElementById('prog-done').textContent=state.done.filter(Boolean).length;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// TASK LOADING
+// ══════════════════════════════════════════════════════════════════════
+
+function loadTask(idx){
+  if(state.monacoEd){ state.monacoEd.dispose(); state.monacoEd=null; }
+  clearTimeout(state.prevTimer);
+  state.cur = idx;
+  const task = tasks[idx];
+  const isDone = state.done[idx];
+
+  document.getElementById('score-msg').textContent='';
+  document.getElementById('btn-next').disabled=!isDone;
+  document.getElementById('btn-check').disabled=isDone && task.type!=='monaco' && task.type!=='emmet';
+  refreshLeft();
+
+  const typeBadge = task.type==='quiz'
+    ? '<span class="type-badge badge-quiz">❓ Kvíz</span>'
+    : task.type==='fillin'
+    ? '<span class="type-badge badge-fillin">✏️ Kódkiegészítés</span>'
+    : task.type==='emmet'
+    ? '<span class="type-badge badge-emmet">⚡ Emmet feladat</span>'
+    : '<span class="type-badge badge-monaco">💻 Szerkesztő</span>';
+
+  let mainContent = '';
+  let checkListHtml = '';
+
+  if(task.type==='quiz'){
+    mainContent = `
+      <div class="content-area two-col" id="content-area">
+        <div class="exp-col"><div class="exp-box">${task.explanation}</div></div>
+        <div class="task-col">${renderQuiz(task,idx)}</div>
+      </div>`;
+  } else if(task.type==='fillin'){
+    mainContent = `
+      <div class="content-area two-col" id="content-area">
+        <div class="exp-col"><div class="exp-box">${task.explanation}</div></div>
+        <div class="task-col">${renderFillin(task,idx)}</div>
+      </div>`;
+  } else if(task.type==='emmet'){
+    mainContent = `
+      <div class="content-area two-col" id="content-area">
+        <div class="emmet-exp-col">
+          <div class="exp-box">${task.explanation}</div>
+          <div class="abbr-card">
+            <div class="abbr-label">⚡ Írd be ezt a rövidítést:</div>
+            <div class="abbr-text">${escH(task.abbreviation)}</div>
+            <div class="abbr-hint">Gépeld be a fenti sort a szerkesztőbe, majd nyomj <kbd>Tab</kbd>-ot a kibontáshoz!</div>
+          </div>
+        </div>
+        <div class="emmet-right-col">
+          <div class="emmet-editor-wrap">
+            <div class="editor-hd">
+              <span style="text-transform:uppercase;letter-spacing:.06em;">⚡ Emmet szerkesztő</span>
+              <span style="margin-left:auto;font-size:0.67rem;color:#475569;">Tab = kibontás</span>
+            </div>
+            <div id="med" style="width:100%;height:calc(100% - 29px)"></div>
+          </div>
+          <div class="emmet-preview-wrap">
+            <div class="preview-hd"><div class="pdot"></div>Előnézet</div>
+            <iframe id="emmet-preview" sandbox="allow-scripts" style="flex:1;border:none;background:#fff;"></iframe>
+          </div>
+        </div>
+      </div>`;
+    if(task.checks){
+      checkListHtml = `<div class="check-list">${task.checks.map((_,i)=>`<div class="chk-row" id="chk-${i}"><span class="ci">⬜</span> ${task.checks[i].label}</div>`).join('')}</div>`;
+    }
+  }
+
+  document.getElementById('main-panel').innerHTML=`
+    <div class="task-meta">
+      <span class="task-num">${task.block}. blokk · ${idx+1}. feladat</span>
+      ${typeBadge}
+    </div>
+    <div class="task-title-row">${task.emoji} ${task.title}</div>
+    ${mainContent}
+    ${checkListHtml}
+    <div class="success-banner${isDone?' show':''}" id="suc-banner">🎉 Sikeresen teljesítetted ezt a feladatot!</div>
+  `;
+
+  if(task.type==='emmet') initEmmetMonaco(task,idx);
+  if(task.type==='quiz' && state.qAnswered[idx]) restoreQuiz(task,idx);
+  if(task.type==='fillin' && isDone) lockFillin();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════════════════════════════
+
+function renderQuiz(task,idx){
+  const LETTERS=['A','B','C','D'];
+  const opts=task.options.map((opt,i)=>
+    `<div class="quiz-opt" id="opt-${i}" onclick="selQuiz(${i},${idx})">
+      <span class="opt-letter">${LETTERS[i]}</span>
+      <span>${opt}</span>
+    </div>`
+  ).join('');
+  return `<div class="quiz-q">${task.question}</div>
+    <div class="quiz-opts">${opts}</div>
+    <div class="quiz-feedback" id="qfb"></div>`;
+}
+
+function selQuiz(optIdx,taskIdx){
+  if(state.qAnswered[taskIdx]) return;
+  document.querySelectorAll('.quiz-opt').forEach(el=>el.classList.remove('selected','wrong'));
+  document.getElementById('score-msg').textContent='';
+  const fb=document.getElementById('qfb'); if(fb) fb.className='quiz-feedback';
+  const el=document.getElementById('opt-'+optIdx);
+  if(el) el.classList.add('selected');
+  state.qSel[taskIdx]=optIdx;
+}
+
+function restoreQuiz(task,idx){
+  const sel=state.qSel[idx];
+  document.querySelectorAll('.quiz-opt').forEach((el,i)=>{
+    el.classList.add('disabled');
+    if(i===task.correct) el.classList.add('correct');
+    else if(i===sel && sel!==task.correct) el.classList.add('wrong');
+  });
+  const fb=document.getElementById('qfb');
+  if(fb){ fb.className='quiz-feedback show ok'; fb.innerHTML=task.feedback; }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// FILL-IN
+// ══════════════════════════════════════════════════════════════════════
+
+function renderFillin(task,idx){
+  const parts=task.codeTemplate.split('___');
+  let html='';
+  parts.forEach((part,i)=>{
+    html+=escH(part);
+    if(i<task.blanks.length){
+      const b=task.blanks[i];
+      const sz=Math.max(b.answer.length+2,7);
+      const altsAttr = b.alts ? ` data-alts="${escH(b.alts.join(','))}"` : '';
+      html+=`<input class="blank-in" id="bi-${i}" data-ans="${escH(b.answer)}"${altsAttr} data-hint="${escH(b.hint)}" size="${sz}" placeholder="?" autocomplete="off" spellcheck="false">`;
+    }
+  });
+  return `<div class="fillin-label">Egészítsd ki a kódot!</div>
+    <div class="code-tpl">${html}</div>
+    <div class="fillin-fb" id="fillin-fb"></div>`;
+}
+
+function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function lockFillin(){
+  document.querySelectorAll('.blank-in').forEach(inp=>{
+    inp.disabled=true;
+    inp.classList.add('ok');
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// EMMET MONACO
+// ══════════════════════════════════════════════════════════════════════
+
+function initEmmetMonaco(task,idx){
+  whenMonaco(()=>{
+    const el=document.getElementById('med'); if(!el) return;
+    state.monacoEd=monaco.editor.create(el,{
+      value:'', language:'html', theme:'vs-dark',
+      fontSize:14, minimap:{enabled:false}, automaticLayout:true,
+      wordWrap:'on', scrollBeyondLastLine:false, tabSize:2,
+      quickSuggestions:true,
+      suggestOnTriggerCharacters:true,
+      wordBasedSuggestions:'off',
+      lineNumbers:'off',
+      glyphMargin:false,
+      folding:false
+    });
+    state.monacoEd.onDidChangeModelContent(()=>{
+      clearTimeout(state.prevTimer);
+      state.prevTimer=setTimeout(()=>updateEmmetPreview(task),300);
+    });
+    // focus the editor so the student can start typing immediately
+    setTimeout(()=>state.monacoEd&&state.monacoEd.focus(), 200);
+  });
+}
+
+function updateEmmetPreview(task){
+  if(!state.monacoEd) return;
+  const html=state.monacoEd.getValue();
+  const wrapped=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    body{padding:10px 14px;font-family:sans-serif;font-size:14px;color:#1e293b;line-height:1.5;}
+    *{box-sizing:border-box;} ul,ol{padding-left:20px;} a{color:#3b82f6;}
+  </style></head><body>${html}</body></html>`;
+  const fr=document.getElementById('emmet-preview');
+  if(fr) fr.srcdoc=wrapped;
+  liveEmmetChecks(task);
+}
+
+function liveEmmetChecks(task){
+  if(!state.monacoEd||!task.checks) return;
+  const html=state.monacoEd.getValue();
+  let doc;
+  try{ doc=new DOMParser().parseFromString(`<html><body>${html}</body></html>`,'text/html'); }
+  catch(e){ doc=document.implementation.createHTMLDocument(''); }
+  task.checks.forEach((ch,i)=>{
+    const pass=(()=>{try{return !!ch.fn(html,doc);}catch(e){return false;}})();
+    const el=document.getElementById('chk-'+i);
+    if(el){ el.className='chk-row'+(pass?' pass':''); el.querySelector('.ci').textContent=pass?'✅':'⬜'; }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// CHECK
+// ══════════════════════════════════════════════════════════════════════
+
+function checkTask(){
+  const t=tasks[state.cur], idx=state.cur;
+  if(t.type==='quiz')   checkQuiz(t,idx);
+  if(t.type==='fillin') checkFillin(t,idx);
+  if(t.type==='emmet')  checkEmmet(t,idx);
+}
+
+function checkQuiz(task,idx){
+  if(state.qAnswered[idx]) return;
+  const sel=state.qSel[idx];
+  if(sel===null||sel===undefined){
+    document.getElementById('score-msg').textContent='⚠️ Válassz egy lehetőséget!';
+    return;
+  }
+  const ok=sel===task.correct;
+  const fb=document.getElementById('qfb');
+  if(ok){
+    state.qAnswered[idx]=true;
+    document.querySelectorAll('.quiz-opt').forEach((el,i)=>{
+      el.classList.add('disabled');
+      if(i===task.correct) el.classList.add('correct');
+    });
+    fb.className='quiz-feedback show ok';
+    fb.innerHTML=task.feedback;
+    markDone(idx);
+  } else {
+    document.getElementById('opt-'+sel)?.classList.add('wrong');
+    fb.className='quiz-feedback show err';
+    fb.innerHTML='❌ Nem ez a helyes. Gondold át, és próbáld újra!';
+    document.getElementById('score-msg').textContent='';
+  }
+}
+
+function checkFillin(task,idx){
+  const inputs=document.querySelectorAll('.blank-in');
+  let allOk=true;
+  const hints=[];
+  inputs.forEach((inp,i)=>{
+    const val=inp.value.toLowerCase().trim();
+    const accepted=[inp.dataset.ans,...(inp.dataset.alts?inp.dataset.alts.split(','):[])].map(s=>s.toLowerCase().trim());
+    const ok=accepted.includes(val);
+    inp.classList.remove('ok','err');
+    inp.classList.add(ok?'ok':'err');
+    if(!ok){ allOk=false; hints.push(`💡 ${i+1}. mező: <em>${inp.dataset.hint}</em>`); }
+  });
+  const fb=document.getElementById('fillin-fb');
+  fb.className='fillin-fb show';
+  if(allOk){
+    fb.style.color='#86efac'; fb.textContent='✅ Tökéletes! Minden mező helyes.';
+    markDone(idx); lockFillin();
+  } else {
+    fb.style.color='#fca5a5';
+    fb.innerHTML=`❌ ${hints.length} mező még nem stimmel.<br>${hints.join('<br>')}`;
+  }
+}
+
+function checkEmmet(task,idx){
+  if(!state.monacoEd) return;
+  const html=state.monacoEd.getValue();
+  if(!html.trim()){
+    document.getElementById('score-msg').textContent='⚠️ Írd be a rövidítést és bontsd ki Tab-bal!';
+    return;
+  }
+  let doc;
+  try{ doc=new DOMParser().parseFromString(`<html><body>${html}</body></html>`,'text/html'); }
+  catch(e){ doc=document.implementation.createHTMLDocument(''); }
+  const res=task.checks.map(ch=>{try{return !!ch.fn(html,doc);}catch(e){return false;}});
+  const pass=res.filter(Boolean).length, tot=res.length;
+  res.forEach((r,i)=>{
+    const el=document.getElementById('chk-'+i);
+    if(el){ el.className='chk-row'+(r?' pass':''); el.querySelector('.ci').textContent=r?'✅':'❌'; }
+  });
+  document.getElementById('score-msg').innerHTML=`<span style="color:${pass===tot?'#22c55e':'#94a3b8'}">${pass}/${tot}</span> ellenőrzés teljesítve`;
+  if(pass===tot) markDone(idx);
+  else if(pass<tot){
+    document.getElementById('score-msg').innerHTML+=` — <span style="color:#fbbf24">Próbáld újra: bontsd ki a rövidítést Tab-bal!</span>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// DONE / NEXT
+// ══════════════════════════════════════════════════════════════════════
+
+function markDone(idx){
+  state.done[idx]=true;
+  localStorage.setItem(SKEY+'_done',JSON.stringify(state.done));
+  document.getElementById('btn-next').disabled=false;
+  document.getElementById('btn-check').disabled=true;
+  const b=document.getElementById('suc-banner'); if(b) b.classList.add('show');
+  triggerConfetti(); refreshLeft();
+  if(state.done.every(Boolean))
+    setTimeout(()=>document.getElementById('modal-done').classList.add('show'),900);
+}
+
+function goNext(){
+  const n=state.cur+1;
+  if(n<tasks.length) loadTask(n);
+}
+
+function triggerConfetti(){
+  const el=document.getElementById('confetti');
+  el.classList.remove('animate'); void el.offsetWidth;
+  el.classList.add('animate');
+  setTimeout(()=>el.classList.remove('animate'),800);
+}
+</script>
+<script src="../special-roles.js"></script>
+</body>
+</html>

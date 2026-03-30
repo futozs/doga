@@ -179,10 +179,10 @@
   <div class="modal-box">
     <div style="font-size:2.8rem">🏆</div>
     <h2>Bootstrap + JavaScript – kész!</h2>
-    <p>Gratulálok! Elvégezted a WEB Tananyag összes szintjét. Készen állsz a vizsgára!</p>
+    <p>Gratulálok! Elvégezted a 3. szintet. Következő lépés: <strong>Emmet gyorsírás</strong> (4. szint).</p>
     <div class="modal-btns">
       <a class="btn-m btn-m-p" href="../portal.html"><i class="fas fa-home"></i> Főmenü</a>
-      <a class="btn-m btn-m-s" href="index.html"><i class="fas fa-pencil-alt"></i> WEB Dolgozat</a>
+      <a class="btn-m btn-m-s" href="learn-emmet.html"><i class="fas fa-bolt"></i> Emmet Tananyag →</a>
     </div>
   </div>
 </div>
@@ -1592,6 +1592,7 @@ function markDone(idx){
 function goNext(){
   const n=state.cur+1;
   if(n<tasks.length) loadTask(n);
+  else location.href='learn-emmet.html';
 }
 
 function triggerConfetti(){
