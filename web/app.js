@@ -3179,8 +3179,8 @@ function clearLocalStorage(taskId) {
 // Feladat betöltése
 async function loadTaskFiles(task) {
   try {
-    const htmlResponse = await fetch(task.basePath + task.htmlFile);
-    const cssResponse = await fetch(task.basePath + task.cssFile);
+    const htmlResponse = await fetch(task.basePath + task.htmlFile, { signal: AbortSignal.timeout(8000) });
+    const cssResponse = await fetch(task.basePath + task.cssFile, { signal: AbortSignal.timeout(8000) });
 
     if (!htmlResponse.ok || !cssResponse.ok) {
       throw new Error('Nem sikerült betölteni a forrásfájlokat');
@@ -3994,7 +3994,7 @@ function updateStudentDisplay() {
     if (kandoUser.szerep === 'oktato') {
       if (switchBtn) switchBtn.style.display = 'inline-block';
       // Oktató is látja a valódi módot, de anti-cheat nem indul
-      fetch('https://agazati.up.railway.app/api/config')
+      fetch('https://agazati.up.railway.app/api/config', { signal: AbortSignal.timeout(6000) })
         .then(r => r.json())
         .then(data => {
           const isLive = data.test_mode === 'live' || data.test_mode === 'vizsga';
@@ -4019,7 +4019,7 @@ function updateStudentDisplay() {
         })
         .catch(() => { setModeBadge(false); });
     } else {
-      fetch('https://agazati.up.railway.app/api/config')
+      fetch('https://agazati.up.railway.app/api/config', { signal: AbortSignal.timeout(6000) })
         .then(r => r.json())
         .then(data => {
           const isVizsga = data.test_mode === 'vizsga';
@@ -5073,7 +5073,7 @@ if (btnToggleTasks) btnToggleTasks.addEventListener('click', () => {
     // Anti-cheat inicializálás (test mode lekérdezése után)
     const acKandoUser = (() => { try { return JSON.parse(sessionStorage.getItem('kandoUser') || '{}'); } catch { return {}; } })();
     if (acKandoUser.szerep !== 'oktato') {
-      fetch('https://agazati.up.railway.app/api/config')
+      fetch('https://agazati.up.railway.app/api/config', { signal: AbortSignal.timeout(6000) })
         .then(r => r.json())
         .then(data => { initAntiCheat(data.test_mode === 'live'); })
         .catch(() => { initAntiCheat(false); });
@@ -5130,7 +5130,8 @@ async function submitWebToBackend() {
     await fetch('https://agazati.up.railway.app/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(12000)
     });
   } catch {}
 }

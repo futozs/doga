@@ -424,7 +424,7 @@ function setupEventListeners() {
 // Feladatok betöltése fájlból
 async function loadTasksFromFile() {
     try {
-        const response = await fetch('feladatok.txt');
+        const response = await fetch('feladatok.txt', { signal: AbortSignal.timeout(10000) });
         const text = await response.text();
         parseTasks(text);
         logEvent('Tasks loaded', { count: tasks.length });
@@ -673,7 +673,7 @@ async function selectRandomTasks() {
     const email = studentData.email || 'anon';
     const lsKey = 'kandoLastTasks_' + email;
     try {
-        const resp = await fetch(RAILWAY_URL + '/api/user-state/' + encodeURIComponent(email.replace('@kkszki.hu','')) + '/lastTasks');
+        const resp = await fetch(RAILWAY_URL + '/api/user-state/' + encodeURIComponent(email.replace('@kkszki.hu','')) + '/lastTasks', { signal: AbortSignal.timeout(5000) });
         if (resp.ok) {
             const data = await resp.json();
             if (data.value) {
@@ -739,7 +739,7 @@ async function loadCustomTaskHistory() {
     const email = (studentData.email || 'anon').replace('@kkszki.hu', '');
     const lsKey = 'kandoTaskHistory_' + email;
     try {
-        const resp = await fetch(RAILWAY_URL + '/api/user-state/' + encodeURIComponent(email) + '/lastTasksHistory');
+        const resp = await fetch(RAILWAY_URL + '/api/user-state/' + encodeURIComponent(email) + '/lastTasksHistory', { signal: AbortSignal.timeout(5000) });
         if (resp.ok) {
             const data = await resp.json();
             if (data.value) {
@@ -1132,7 +1132,8 @@ function maybePostPythonProgress(task, earned, total) {
             feladat: taskId,
             pont: earned,
             maxPont: total
-        })
+        }),
+        signal: AbortSignal.timeout(8000)
     }).catch(() => {});
 }
 

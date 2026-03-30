@@ -1388,7 +1388,7 @@
 
     (async function checkVizsgaMode() {
         try {
-            const res = await fetch(API + '/api/config');
+            const res = await fetch(API + '/api/config', { signal: AbortSignal.timeout(6000) });
             const cfg = await res.json();
 
             const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
@@ -1672,15 +1672,17 @@
             const email = (u.email || '').replace('@kkszki.hu','');
             if (!email) { document.getElementById('ered-content').innerHTML = '<div class="ered-loading">Nem találhatók adatok.</div>'; return; }
             const authHeader = u.token ? { 'Authorization': 'Bearer ' + u.token } : {};
+            const TO = 7000;
             const [res, rankRes, sessRes] = await Promise.all([
-                fetch(`${API}/api/progress/${encodeURIComponent(email)}`, { headers: authHeader }),
-                fetch(`${API}/api/leaderboard/rank/${encodeURIComponent(email)}`, { headers: authHeader }),
-                fetch(`${API}/api/session/stats/${encodeURIComponent(u.email)}`, { headers: authHeader })
+                fetch(`${API}/api/progress/${encodeURIComponent(email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null),
+                fetch(`${API}/api/leaderboard/rank/${encodeURIComponent(email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null),
+                fetch(`${API}/api/session/stats/${encodeURIComponent(u.email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null)
             ]);
+            if (!res) throw new Error('Időtúllépés – a szerver nem válaszolt 7 másodpercen belül.');
             if (res.status === 401) { handleSessionExpired(); return; }
             const p = await res.json();
-            const rankData = rankRes.ok ? await rankRes.json() : null;
-            const sessData = sessRes.ok ? await sessRes.json() : [];
+            const rankData = rankRes?.ok ? await rankRes.json() : null;
+            const sessData = sessRes?.ok ? await sessRes.json() : [];
             // A JSON kulcsai camelCase (C# record)
             const progress = {
                 web:    { sessions: p.web?.sessions ?? 0, avgPercent: p.web?.avgPercent ?? 0, bestPercent: p.web?.bestPercent ?? 0, lastSession: p.web?.lastSession ?? null },
