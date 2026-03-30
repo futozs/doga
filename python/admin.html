@@ -747,6 +747,22 @@
             <div style="display:flex;gap:10px;margin-bottom:14px;">
                 <button class="btn-refresh" onclick="loadUsers()"><i class="fas fa-rotate"></i> Frissítés</button>
             </div>
+
+            <!-- Névsor ellenőrzés -->
+            <details style="margin-bottom:18px;background:#0f1e35;border:1px solid #1f3460;border-radius:12px;padding:14px 18px;">
+                <summary style="cursor:pointer;font-weight:700;color:#7dd3fc;font-size:0.95rem;user-select:none;">
+                    <i class="fas fa-list-check"></i> Névsor ellenőrzés – ki nem regisztrált még?
+                </summary>
+                <div style="margin-top:14px;">
+                    <div style="color:#94a3b8;font-size:0.83rem;margin-bottom:8px;">Illeszd be az osztály névsorát (soronként egy név, pl. <em>Kiss Péter</em>):</div>
+                    <textarea id="nevsor-input" rows="8" placeholder="Kiss Péter&#10;Nagy Anna&#10;Kovács Béla&#10;..." style="width:100%;box-sizing:border-box;background:#0a1628;border:1px solid #1f3460;border-radius:8px;color:#e0e0e0;padding:10px 12px;font-size:0.88rem;font-family:inherit;resize:vertical;"></textarea>
+                    <div style="display:flex;gap:10px;margin-top:10px;align-items:center;">
+                        <button onclick="checkNevsor()" style="padding:7px 18px;background:#536dfe;border:none;border-radius:8px;color:white;font-weight:700;cursor:pointer;font-size:0.9rem;"><i class="fas fa-magnifying-glass"></i> Ellenőrzés</button>
+                        <button onclick="document.getElementById('nevsor-input').value='';document.getElementById('nevsor-eredmeny').innerHTML='';" style="padding:7px 14px;background:transparent;border:1px solid #555;border-radius:8px;color:#aaa;cursor:pointer;font-size:0.85rem;">Törlés</button>
+                    </div>
+                    <div id="nevsor-eredmeny" style="margin-top:14px;"></div>
+                </div>
+            </details>
             <div id="evfolyam-stat" style="display:none;margin-bottom:18px;"></div>
             <div id="users-loading" class="loading" style="display:none;">Betöltés...</div>
             <div class="table-wrapper">
@@ -1141,6 +1157,8 @@
         }
         // ── Követelmények vége ─────────────────────────────────────────────────
 
+        let _cachedUsers = [];
+
         async function loadUsers() {
             document.getElementById('users-loading').style.display = 'block';
             try {
@@ -1150,6 +1168,7 @@
                     throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
                 }
                 const users = await res.json();
+                _cachedUsers = Array.isArray(users) ? users : [];
                 const tbody = document.getElementById('users-tbody');
                 if (!Array.isArray(users) || !users.length) {
                     tbody.innerHTML = '<tr><td colspan="6" class="loading">Nincs regisztrált felhasználó</td></tr>';
@@ -1211,6 +1230,58 @@
             } finally {
                 document.getElementById('users-loading').style.display = 'none';
             }
+        }
+
+        function normNev(s) {
+            return (s || '').toLowerCase()
+                .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i')
+                .replace(/ó/g,'o').replace(/ö/g,'o').replace(/ő/g,'o')
+                .replace(/ú/g,'u').replace(/ü/g,'u').replace(/ű/g,'u')
+                .replace(/\s+/g,' ').trim();
+        }
+
+        function checkNevsor() {
+            const input = document.getElementById('nevsor-input').value;
+            const eredmenyEl = document.getElementById('nevsor-eredmeny');
+            const nevek = input.split('\n').map(s => s.trim()).filter(Boolean);
+            if (!nevek.length) { eredmenyEl.innerHTML = '<span style="color:#aaa;font-size:0.85rem;">Adj meg legalább egy nevet!</span>'; return; }
+            if (!_cachedUsers.length) { eredmenyEl.innerHTML = '<span style="color:#ffc107;font-size:0.85rem;">Előbb kattints a Frissítés gombra, hogy betöltse a felhasználókat!</span>'; return; }
+
+            const regNevek = _cachedUsers.filter(u => u.szerep !== 'oktato').map(u => normNev(u.nev));
+
+            const regisztralt = [], nemRegisztralt = [];
+            nevek.forEach(nev => {
+                const norm = normNev(nev);
+                // Egyenes és fordított sorrend is (Kovács Péter = Péter Kovács)
+                const parts = norm.split(' ');
+                const fordított = parts.length === 2 ? parts[1] + ' ' + parts[0] : null;
+                const talalt = regNevek.includes(norm) || (fordított && regNevek.includes(fordított));
+                if (talalt) regisztralt.push(nev);
+                else nemRegisztralt.push(nev);
+            });
+
+            const ossz = nevek.length;
+            eredmenyEl.innerHTML = `
+                <div style="font-size:0.83rem;color:#94a3b8;margin-bottom:10px;">
+                    Összesen: <strong>${ossz} név</strong> &nbsp;·&nbsp;
+                    <span style="color:#4ade80;">✔ ${regisztralt.length} regisztrált</span> &nbsp;·&nbsp;
+                    <span style="color:#f87171;">✘ ${nemRegisztralt.length} nem regisztrált</span>
+                </div>
+                ${nemRegisztralt.length ? `
+                <div style="margin-bottom:10px;">
+                    <div style="font-weight:700;color:#f87171;font-size:0.85rem;margin-bottom:6px;"><i class="fas fa-circle-xmark"></i> Nem regisztrált (${nemRegisztralt.length} fő):</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                        ${nemRegisztralt.map(n => `<span style="background:rgba(248,113,113,0.12);border:1px solid #f87171;border-radius:20px;padding:3px 12px;color:#fca5a5;font-size:0.85rem;">${n}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+                ${regisztralt.length ? `
+                <div>
+                    <div style="font-weight:700;color:#4ade80;font-size:0.85rem;margin-bottom:6px;"><i class="fas fa-circle-check"></i> Regisztrált (${regisztralt.length} fő):</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                        ${regisztralt.map(n => `<span style="background:rgba(74,222,128,0.08);border:1px solid #4ade80;border-radius:20px;padding:3px 12px;color:#86efac;font-size:0.85rem;">${n}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+            `;
         }
 
         let editUserTargetEmail = '';
