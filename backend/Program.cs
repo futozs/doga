@@ -268,12 +268,6 @@ app.MapPost("/api/auth/register", async (RegisterRequest req, Database db) =>
         catch { return Results.BadRequest(new { error = "Captcha szerver hiba!" }); }
     }
 
-    if (req.Szerep == "oktato")
-    {
-        if (string.IsNullOrEmpty(teacherCode) || req.OktatoiKod != teacherCode)
-            return Results.BadRequest(new { error = "Hibás oktatói kód!" });
-    }
-
     var hash = BCrypt.Net.BCrypt.HashPassword(req.Jelszo);
     var normalizedReq = req with { Email = email };
     var success = db.RegisterUser(normalizedReq, hash);
