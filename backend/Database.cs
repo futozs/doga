@@ -817,6 +817,48 @@ public class Database
     private static double CompScore(double avgPct, int sessions) =>
         avgPct * 0.7 + Math.Min(sessions, 20) / 20.0 * 30.0;
 
+    public List<CompletionStatItem> GetCompletionStats()
+    {
+        using var conn = Open();
+        using var cmd  = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT
+                u.email,
+                u.vezeteknev || ' ' || u.keresztnev AS nev,
+                u.evfolyam, u.osztaly, u.csoport,
+                MAX(CASE WHEN s.state_key='tananyag_html'          THEN s.state_value END),
+                MAX(CASE WHEN s.state_key='tananyag_css'           THEN s.state_value END),
+                MAX(CASE WHEN s.state_key='tananyag_bootstrap'     THEN s.state_value END),
+                MAX(CASE WHEN s.state_key='tananyag_emmet'         THEN s.state_value END),
+                MAX(CASE WHEN s.state_key='python_kezdo'           THEN s.state_value END),
+                MAX(CASE WHEN s.state_key='python_halado'          THEN s.state_value END),
+                MAX(CASE WHEN s.state_key='python_pro_algoritmus'  THEN s.state_value END)
+            FROM users u
+            LEFT JOIN user_state s ON LOWER(u.email) = LOWER(s.email)
+            WHERE u.szerep = 'tanulo'
+            GROUP BY u.email
+            ORDER BY u.evfolyam, u.osztaly, u.csoport, u.vezeteknev, u.keresztnev";
+
+        var list = new List<CompletionStatItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new CompletionStatItem {
+                Email               = r.GetString(0),
+                Nev                 = r.IsDBNull(1)  ? null : r.GetString(1),
+                Evfolyam            = r.IsDBNull(2)  ? null : r.GetString(2),
+                Osztaly             = r.IsDBNull(3)  ? null : r.GetString(3),
+                Csoport             = r.IsDBNull(4)  ? null : r.GetString(4),
+                TananyagHtml        = r.IsDBNull(5)  ? null : r.GetString(5),
+                TananyagCss         = r.IsDBNull(6)  ? null : r.GetString(6),
+                TananyagBootstrap   = r.IsDBNull(7)  ? null : r.GetString(7),
+                TananyagEmmet       = r.IsDBNull(8)  ? null : r.GetString(8),
+                PythonKezdo         = r.IsDBNull(9)  ? null : r.GetString(9),
+                PythonHalado        = r.IsDBNull(10) ? null : r.GetString(10),
+                PythonProAlgoritmus = r.IsDBNull(11) ? null : r.GetString(11),
+            });
+        return list;
+    }
+
     public int GetStreak(string email)
     {
         using var conn = Open();

@@ -470,6 +470,7 @@
             <button class="tab-btn" onclick="switchTab('rangsor', this)"><i class="fas fa-ranking-star"></i> Rangsor</button>
             <button class="tab-btn" onclick="switchTab('visszajelzesek', this)"><i class="fas fa-face-smile"></i> Visszajelzések</button>
             <button class="tab-btn" onclick="switchTab('otlet-lada', this)"><i class="fas fa-lightbulb"></i> Ötlet Láda</button>
+            <button class="tab-btn" onclick="switchTab('kovetelmenyek', this)"><i class="fas fa-check-double"></i> Követelmények</button>
             <button class="tab-btn" id="feladatok-tab-btn" onclick="switchTab('feladatok', this)"><i class="fas fa-pencil"></i> Feladatkészítők</button>
         </div>
 
@@ -663,6 +664,43 @@
         </div>
 
         <!-- Feladatkészítők panel -->
+        <!-- Követelmények panel -->
+        <div class="panel" id="kovetelmenyek-panel" data-tab="kovetelmenyek" style="display:none;">
+            <h2><i class="fas fa-check-double"></i> Követelmények teljesítése</h2>
+            <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+                <button class="btn-refresh" onclick="loadKovetelmenyek()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <input id="kov-filter" type="text" placeholder="Szűrés névre vagy osztályra…" oninput="filterKovetelmenyek()"
+                    style="padding:5px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.85rem;width:200px;" autocomplete="off">
+                <select id="kov-evfolyam" onchange="filterKovetelmenyek()"
+                    style="padding:5px 10px;background:#0f3460;border:1px solid #536dfe;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="">Minden évfolyam</option>
+                </select>
+                <span id="kov-osszesito" style="margin-left:auto;font-size:0.82rem;color:#94a3b8;"></span>
+            </div>
+            <div id="kov-loading" class="loading" style="display:none;">Betöltés…</div>
+            <div class="table-wrapper">
+                <table class="submissions-table" id="kov-table" style="min-width:900px;">
+                    <thead>
+                        <tr>
+                            <th>Név</th>
+                            <th style="text-align:center;">Osztály</th>
+                            <th style="text-align:center;" title="HTML Tananyag">🌐 HTML</th>
+                            <th style="text-align:center;" title="CSS Tananyag">🎨 CSS</th>
+                            <th style="text-align:center;" title="Bootstrap Tananyag">🅱️ Bootstrap</th>
+                            <th style="text-align:center;" title="Emmet Tananyag">⚡ Emmet</th>
+                            <th style="text-align:center;" title="Python Kezdő">🐍 Kezdő</th>
+                            <th style="text-align:center;" title="Python Haladó">🐍 Haladó</th>
+                            <th style="text-align:center;" title="Python Profi – Algoritmus">🐍 Algoritmus</th>
+                            <th style="text-align:center;">Összesítés</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kov-tbody">
+                        <tr><td colspan="10" class="loading">Nincs adat</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="panel" data-tab="feladatok" style="display:none;">
             <h2><i class="fas fa-pencil"></i> Feladatkészítők</h2>
 
@@ -1001,6 +1039,78 @@
         // ── Felhasználókezelés ─────────────────────────────────────────────
         let resetPwTargetEmail = '';
 
+        // ── Követelmények ──────────────────────────────────────────────────────
+        let kovData = [];
+        const KOV_KEYS = ['tananyagHtml','tananyagCss','tananyagBootstrap','tananyagEmmet','pythonKezdo','pythonHalado','pythonProAlgoritmus'];
+
+        async function loadKovetelmenyek() {
+            document.getElementById('kov-loading').style.display = 'block';
+            try {
+                const res = await authFetch(`${RAILWAY_URL}/api/completion-stats`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                kovData = await res.json();
+
+                // Évfolyam szűrő feltöltése
+                const evfolyamok = [...new Set(kovData.map(r=>r.evfolyam||'–'))].sort();
+                const sel = document.getElementById('kov-evfolyam');
+                sel.innerHTML = '<option value="">Minden évfolyam</option>' +
+                    evfolyamok.map(e=>`<option value="${e}">${e}. évfolyam</option>`).join('');
+
+                renderKovetelmenyek(kovData);
+            } catch(e) {
+                document.getElementById('kov-tbody').innerHTML = `<tr><td colspan="10" style="color:#e94560;">Hiba: ${e.message}</td></tr>`;
+            } finally {
+                document.getElementById('kov-loading').style.display = 'none';
+            }
+        }
+
+        function filterKovetelmenyek() {
+            const q = document.getElementById('kov-filter').value.toLowerCase();
+            const ef = document.getElementById('kov-evfolyam').value;
+            const filtered = kovData.filter(r => {
+                const matchQ = !q || (r.nev||'').toLowerCase().includes(q) || (r.osztaly||'').toLowerCase().includes(q);
+                const matchEf = !ef || (r.evfolyam||'–') === ef;
+                return matchQ && matchEf;
+            });
+            renderKovetelmenyek(filtered);
+        }
+
+        function renderKovetelmenyek(rows) {
+            const ok  = v => v ? `<span title="${v}" style="color:#22c55e;font-size:1.1rem;">✅</span>` : `<span style="color:#475569;font-size:1rem;">–</span>`;
+            const tbody = document.getElementById('kov-tbody');
+            if (!rows.length) { tbody.innerHTML = '<tr><td colspan="10" class="loading">Nincs találat</td></tr>'; return; }
+
+            const teljesTotal = rows.filter(r => KOV_KEYS.every(k => r[k])).length;
+            document.getElementById('kov-osszesito').textContent =
+                `${teljesTotal} / ${rows.length} tanuló teljesítette az összes követelményt`;
+
+            tbody.innerHTML = rows.map(r => {
+                const done = KOV_KEYS.filter(k => r[k]).length;
+                const pct  = Math.round(done / KOV_KEYS.length * 100);
+                const barColor = pct === 100 ? '#22c55e' : pct >= 50 ? '#fbbf24' : '#ef4444';
+                return `<tr>
+                    <td style="font-weight:600;">${r.nev||'–'}</td>
+                    <td style="text-align:center;font-size:0.85rem;">${[r.evfolyam,r.osztaly,r.csoport].filter(Boolean).join('/')}</td>
+                    <td style="text-align:center;">${ok(r.tananyagHtml)}</td>
+                    <td style="text-align:center;">${ok(r.tananyagCss)}</td>
+                    <td style="text-align:center;">${ok(r.tananyagBootstrap)}</td>
+                    <td style="text-align:center;">${ok(r.tananyagEmmet)}</td>
+                    <td style="text-align:center;">${ok(r.pythonKezdo)}</td>
+                    <td style="text-align:center;">${ok(r.pythonHalado)}</td>
+                    <td style="text-align:center;">${ok(r.pythonProAlgoritmus)}</td>
+                    <td style="text-align:center;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;min-width:60px;">
+                                <div style="width:${pct}%;background:${barColor};height:8px;border-radius:4px;"></div>
+                            </div>
+                            <span style="font-size:0.8rem;color:${barColor};font-weight:700;white-space:nowrap;">${done}/${KOV_KEYS.length}</span>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+        // ── Követelmények vége ─────────────────────────────────────────────────
+
         async function loadUsers() {
             document.getElementById('users-loading').style.display = 'block';
             try {
@@ -1133,6 +1243,7 @@
             if (name === 'visszajelzesek') loadFeedbackStats();
             if (name === 'otlet-lada') { loadOtletek(); loadTesztelők(); loadUzenetStatusz(); }
             if (name === 'feladatok')  { loadFeladatkeszitok(); loadFeladatStats(); loadFeladatJavaslatok(); }
+            if (name === 'kovetelmenyek' && kovData.length === 0) loadKovetelmenyek();
         }
 
         // Check auth on page load

@@ -1906,6 +1906,8 @@ function runChecks() {
     const banner = document.getElementById('success-banner');
     banner.textContent = '✓ Kiváló! Lépj tovább!';
     banner.classList.add('visible');
+    const algoritmusIdx = tasks.map((t,i)=>t.topicGroup==='algoritmus'?i:-1).filter(i=>i>=0);
+    if(algoritmusIdx.every(i=>st.status[i]==='done')) saveCompletion('python_pro_algoritmus');
     if (st.status.every(s => s === 'done')) {
       setTimeout(() => document.getElementById('completion-modal').classList.add('visible'), 800);
     }
@@ -1941,6 +1943,16 @@ function esc(s) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+function saveCompletion(key){
+  const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+  if(!u.token||!u.email) return;
+  fetch(`https://agazati.up.railway.app/api/user-state/${encodeURIComponent(u.email)}/${key}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+u.token},
+    body:JSON.stringify({value:new Date().toISOString().substring(0,10)})
+  }).catch(()=>{});
+}
+
 // LOAD / SAVE
 // ═══════════════════════════════════════════════════════════════════════════
 function saveState() {

@@ -458,6 +458,13 @@ app.MapGet("/api/leaderboard", (HttpContext ctx, Database db) =>
     return Results.Ok(db.GetLeaderboard(osztaly, csoport, mode));
 });
 
+// Követelmény teljesítési statisztika (admin)
+app.MapGet("/api/completion-stats", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    return Results.Ok(db.GetCompletionStats());
+});
+
 // Saját rang lekérése (tanuló, nyilvános)
 app.MapGet("/api/leaderboard/rank/{email}", (string email, Database db) =>
 {

@@ -191,6 +191,23 @@ public record StudentRankResult(
     int Streak
 );
 
+// ── Completion Stats ───────────────────────────────────────────────────────
+
+public class CompletionStatItem {
+    public string Email              { get; set; } = "";
+    public string? Nev               { get; set; }
+    public string? Evfolyam          { get; set; }
+    public string? Osztaly           { get; set; }
+    public string? Csoport           { get; set; }
+    public string? TananyagHtml      { get; set; }
+    public string? TananyagCss       { get; set; }
+    public string? TananyagBootstrap { get; set; }
+    public string? TananyagEmmet     { get; set; }
+    public string? PythonKezdo       { get; set; }
+    public string? PythonHalado      { get; set; }
+    public string? PythonProAlgoritmus { get; set; }
+}
+
 // ── Task Ratings / Feedback ────────────────────────────────────────────────
 
 public record UpdateScoresRequest(string Scores, string MaxScores, int TotalScore, int MaxTotal);

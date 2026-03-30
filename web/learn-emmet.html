@@ -1127,8 +1127,20 @@ function markDone(idx){
   document.getElementById('btn-check').disabled=true;
   const b=document.getElementById('suc-banner'); if(b) b.classList.add('show');
   triggerConfetti(); refreshLeft();
-  if(state.done.every(Boolean))
+  if(state.done.every(Boolean)){
+    saveCompletion('tananyag_emmet');
     setTimeout(()=>document.getElementById('modal-done').classList.add('show'),900);
+  }
+}
+
+function saveCompletion(key){
+  const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+  if(!u.token||!u.email) return;
+  fetch(`https://agazati.up.railway.app/api/user-state/${encodeURIComponent(u.email)}/${key}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+u.token},
+    body:JSON.stringify({value:new Date().toISOString().substring(0,10)})
+  }).catch(()=>{});
 }
 
 function goNext(){
