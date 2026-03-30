@@ -351,13 +351,15 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Évfolyam</label>
-                    <select id="reg-evfolyam">
+                    <select id="reg-evfolyam" onchange="updateCsoportOptions()">
                         <option value="">– válassz –</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
+                        <option>9.</option>
+                        <option>10.</option>
+                        <option>11.</option>
+                        <option>12.</option>
+                        <option>13.</option>
+                        <option>1/13.</option>
+                        <option>2/14.</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -520,19 +522,19 @@
         document.getElementById('teacher-code-field').classList.toggle('show', role === 'oktato');
     }
 
-    // Csoport opciók frissítése osztály alapján
+    // Csoport opciók frissítése osztály és évfolyam alapján
     function updateCsoportOptions() {
         const osztaly = document.getElementById('reg-osztaly').value;
+        const evfolyam = document.getElementById('reg-evfolyam').value;
         const csoportSel = document.getElementById('reg-csoport');
         const csoportGroup = csoportSel.closest('.form-group');
         csoportSel.value = '';
         if (osztaly === 'K') {
             csoportGroup.style.display = 'block';
             csoportSel.innerHTML = `
-                <option value="">– válassz –</option>
-                <option value="info">infó</option>
+                <option value="info" selected>infó</option>
             `;
-        } else if (osztaly === 'F') {
+        } else if (osztaly === 'F' || evfolyam === '1/13.') {
             csoportGroup.style.display = 'none';
             csoportSel.innerHTML = `<option value="nincs" selected>nincs csoport</option>`;
         } else if (['A', 'B', 'C'].includes(osztaly)) {
