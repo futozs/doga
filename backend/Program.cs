@@ -327,13 +327,13 @@ app.MapDelete("/api/users/{email}", (HttpContext ctx, string email, Database db)
 });
 
 // Felhasználó nevének és csoportjának szerkesztése (admin)
-app.MapPatch("/api/users/{email}", (HttpContext ctx, string email, UpdateUserRequest req, Database db) =>
+app.MapPost("/api/users/{email}/update", (HttpContext ctx, string email, UpdateUserRequest req, Database db) =>
 {
     if (!ValidateOktato(ctx)) return Results.Unauthorized();
     if (string.IsNullOrWhiteSpace(req.Nev)) return Results.BadRequest(new { error = "A név nem lehet üres!" });
     var ok = db.UpdateUserBasic(Uri.UnescapeDataString(email), req.Nev.Trim(), req.Csoport?.Trim());
     return ok ? Results.Ok(new { success = true }) : Results.NotFound(new { error = "Felhasználó nem található" });
-}).RequireCors("AllowAll");
+});
 
 // Felhasználó jelszavának visszaállítása admin/oktató által
 app.MapPost("/api/users/reset-password", (HttpContext ctx, ResetPasswordRequest req, Database db) =>

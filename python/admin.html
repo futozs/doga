@@ -1228,8 +1228,8 @@
             const btn = document.getElementById('edit-user-btn');
             btn.disabled = true;
             try {
-                const res = await authFetch(`${RAILWAY_URL}/api/users/${encodeURIComponent(editUserTargetEmail)}`, {
-                    method: 'PATCH',
+                const res = await authFetch(`${RAILWAY_URL}/api/users/${encodeURIComponent(editUserTargetEmail)}/update`, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nev, csoport })
                 });
