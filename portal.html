@@ -1343,6 +1343,15 @@
         }
     }
 
+    // URL paraméter alapján modal megnyitása (pl. visszanavigáláskor)
+    const urlParams = new URLSearchParams(window.location.search);
+    const webParam = urlParams.get('web');
+    if (webParam === 'gyakorlo') {
+        document.getElementById('web-valaszto-modal').style.display = 'flex';
+        document.getElementById('web-modal-foMenu').style.display = 'none';
+        document.getElementById('web-modal-gyakorlo').style.display = 'flex';
+    }
+
     // ── Diák teszt mód ────────────────────────────────────────────────────────
     function enterStudentTestMode() {
         const teacherSession = sessionStorage.getItem('kandoUser');
