@@ -182,7 +182,7 @@
   </div>
   <div class="topbar-spacer"></div>
   <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;" title="Bejelentkezési sorozat"></div>
-  <div class="progress-label">Teljesítve: <span id="prog-done">0</span> / <span id="prog-total">15</span></div>
+  <div class="progress-label">Teljesítve: <span id="prog-done">0</span> / <span id="prog-total">18</span></div>
 </header>
 
 <div class="modal-ov" id="modal-done">
@@ -643,6 +643,98 @@ ___div.col-bal+div.col-jobb___*1`,
       { label:'Legalább 3 li a nav-ban',        fn:(h,d)=>d.querySelectorAll('nav li').length>=3 },
       { label:'Van .hamburger osztályú button', fn:(h,d)=>!!d.querySelector('.hamburger') }
     ]
+  },
+
+  // ── BLOKK 6: Szintlépés ^ ────────────────────────────────────────────
+  {
+    id:16, block:6, blockName:'Szintlépés ^', emoji:'⬆️',
+    type:'quiz',
+    title:'A ^ (szintlépés) operátor',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A <strong><code>^</code></strong> operátor <strong>egy szinttel feljebb lép</strong>
+      az elemek fájában – a következő elem a jelenlegi elem szülőjének testvéreként kerül be.
+      <br><br>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;overflow-x:auto;">div&gt;p&gt;span^h3
+→ &lt;div&gt;
+    &lt;p&gt;&lt;span&gt;&lt;/span&gt;&lt;/p&gt;
+    &lt;h3&gt;&lt;/h3&gt;
+  &lt;/div&gt;</pre>
+      A <code>span</code> szülője <code>p</code> → <code>^</code> felvisz a <code>p</code>
+      szintjére → a <code>h3</code> a <code>p</code> <em>testvére</em> lesz (div-en belül).
+      <br><br>
+      Több <code>^</code> egymás után több szinttel lép fel:
+      <ul>
+        <li><code>^</code> = 1 szint fel</li>
+        <li><code>^^</code> = 2 szint fel</li>
+        <li><code>^^^</code> = 3 szint fel</li>
+      </ul>`,
+    question:'Mit csinál a <code>div&gt;p&gt;span^h3</code> rövidítés?',
+    options:[
+      'h3 a span testvére lesz (p-n belül)',
+      'h3 a p testvére lesz (div-en belül)',
+      'h3 a div testvére lesz (div-en kívül)',
+      'h3 a span szülőjévé válik'
+    ],
+    correct:1,
+    feedback:'✅ Pontosan! A <code>^</code> a <code>span</code> szülőjéig (<code>p</code>) visz fel, ezért a <code>h3</code> a <code>p</code> testvére lesz – mindkettő a <code>div</code>-en belül.'
+  },
+
+  {
+    id:17, block:6, blockName:'Szintlépés ^', emoji:'⬆️',
+    type:'fillin',
+    title:'Hány ^ kell?',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Számold meg, hány szintet kell felmenni, és annyi <code>^</code>-t írj!
+      <br><br>
+      Szabály: annyi <code>^</code> kell, ahány szinttel feljebb kell kerülni az aktuális elemtől.
+      <ul>
+        <li><code>ul&gt;li^p</code> — <code>li</code>-ből 1 szint fel → <code>p</code> az <code>ul</code> testvére</li>
+        <li><code>nav&gt;ul&gt;li^^button</code> — <code>li</code>-ből 2 szint fel → <code>button</code> a <code>nav</code> testvére</li>
+      </ul>
+      💡 A <code>^</code> alternativa a csoportosításhoz: ugyanazt az eredményt adja,
+      mint a <code>()</code>, csak más szintaxissal.`,
+    codeTemplate:
+`/* p az ul UTÁN (testvérként), 1 szinttel feljebb */
+ul>li*3___p{Összefoglalás}
+
+/* tbody a table-ba kerül (thead testvéreként), 2 szinttel feljebb a th-tól */
+table>thead>tr>th*3___tbody>tr>td*3
+
+/* aside a section testvére lesz, 1 szinttel feljebb az article-tól */
+div.layout>section>article___aside`,
+    blanks:[
+      { answer:'^',  hint:'Li-ből 1 szintet kell felmenni az ul-ig' },
+      { answer:'^^', hint:'Th-ból 2 szintet kell felmenni: th→tr→thead, majd tbody a thead testvére lesz', alts:['^^^'] },
+      { answer:'^',  hint:'Article-ból 1 szintet kell felmenni a section-ig' }
+    ]
+  },
+
+  {
+    id:18, block:6, blockName:'Szintlépés ^', emoji:'⬆️',
+    type:'emmet',
+    title:'Teljes táblázat ^ operátorral',
+    explanation:`<div class="exp-label">⚡ Emmet feladat</div>
+      Írd be a rövidítést, majd nyomj <kbd>Tab</kbd>-ot!
+      <br><br>
+      Eredménye: egy <code>table</code>, amelyen belül van egy <code>thead</code>
+      (1 sor, 3 fejléccel) és egy <code>tbody</code> (2 sor, soronként 3 cellával).
+      <br><br>
+      <strong>Két egyenértékű módszer:</strong>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#86efac;margin:6px 0;overflow-x:auto;">/* ^ operátorral */
+table&gt;thead&gt;tr&gt;th*3^^^tbody&gt;tr*2&gt;td*3
+
+/* Csoportosítással */
+table&gt;(thead&gt;tr&gt;th*3)+(tbody&gt;tr*2&gt;td*3)</pre>
+      💡 Mindkettő ugyanazt az eredményt adja – használd amelyik természetesebbnek tűnik!`,
+    abbreviation:'table>(thead>tr>th*3)+(tbody>tr*2>td*3)',
+    checks:[
+      { label:'Van table elem',                       fn:(h,d)=>!!d.querySelector('table') },
+      { label:'Van thead a table-ban',                fn:(h,d)=>!!d.querySelector('table thead') },
+      { label:'Van tbody a table-ban',                fn:(h,d)=>!!d.querySelector('table tbody') },
+      { label:'Legalább 3 th elem',                   fn:(h,d)=>d.querySelectorAll('th').length>=3 },
+      { label:'Legalább 2 tr a tbody-ban',            fn:(h,d)=>d.querySelectorAll('tbody tr').length>=2 },
+      { label:'Legalább 3 td az első tbody sorban',   fn:(h,d)=>{ const r=d.querySelector('tbody tr'); return !!r&&r.querySelectorAll('td').length>=3; } }
+    ]
   }
 
 ];
@@ -651,7 +743,7 @@ ___div.col-bal+div.col-jobb___*1`,
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'lemmet_v1';
+const SKEY = 'lemmet_v2';
 const state = {
   cur: 0,
   done:      JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),
