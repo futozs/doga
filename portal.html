@@ -1196,17 +1196,12 @@
             <button onclick="document.getElementById('web-modal-foMenu').style.display='none';document.getElementById('web-modal-tanulas').style.display='flex';"
                 style="padding:18px 20px;background:#0a1a2e;border:2px solid #0ea5e9;border-radius:12px;color:#7dd3fc;font-size:1.05rem;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
                 <i class="fas fa-book-open" style="font-size:1.4rem;"></i>
-                <span>Tananyag<br><span style="font-size:0.8rem;font-weight:400;color:#94a3b8;">HTML · CSS · Bootstrap · Emmet</span></span>
+                <span>Tananyag<br><span style="font-size:0.8rem;font-weight:400;color:#94a3b8;">HTML · CSS · Bootstrap + JS · Emmet</span></span>
             </button>
-            <button onclick="location.replace('web/practice.html')"
+            <button onclick="document.getElementById('web-modal-foMenu').style.display='none';document.getElementById('web-modal-gyakorlo').style.display='flex';"
                 style="padding:18px 20px;background:#0a1f14;border:2px solid #22c55e;border-radius:12px;color:#86efac;font-size:1.05rem;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
                 <i class="fas fa-laptop-code" style="font-size:1.4rem;"></i>
-                <span>Gyakorló feladatok<br><span style="font-size:0.8rem;font-weight:400;color:#94a3b8;">Kávézó weboldal lépésről lépésre</span></span>
-            </button>
-            <button id="web-modal-dolgozat-btn" onclick="location.replace('web/index.html')"
-                style="display:none;padding:18px 20px;background:#2a0a1a;border:2px solid #f472b6;border-radius:12px;color:#f9a8d4;font-size:1.05rem;font-weight:700;cursor:pointer;text-align:left;align-items:center;gap:12px;">
-                <i class="fas fa-file-code" style="font-size:1.4rem;"></i>
-                <span>WEB Dolgozat<br><span style="font-size:0.8rem;font-weight:400;color:#94a3b8;">Vizsga feladat</span></span>
+                <span>Gyakorló feladatok<br><span style="font-size:0.8rem;font-weight:400;color:#94a3b8;">Weboldal · Ágazati alapvizsga</span></span>
             </button>
         </div>
 
@@ -1220,7 +1215,15 @@
                 style="padding:0.6rem;background:transparent;border:1px solid #374151;border-radius:10px;color:#6b7280;font-size:0.9rem;cursor:pointer;">← Vissza</button>
         </div>
 
-        <button onclick="document.getElementById('web-valaszto-modal').style.display='none';document.getElementById('web-modal-tanulas').style.display='none';document.getElementById('web-modal-foMenu').style.display='flex';"
+        <!-- 2. szint: gyakorló feladatok -->
+        <div id="web-modal-gyakorlo" style="display:none;flex-direction:column;gap:10px;margin-bottom:1rem;">
+            <button onclick="location.replace('web/practice.html')" style="padding:13px 20px;background:#0a1f14;border:2px solid #22c55e;border-radius:10px;color:#86efac;font-size:0.95rem;font-weight:700;cursor:pointer;" onmouseover="this.style.background='#14532d'" onmouseout="this.style.background='#0a1f14'"><i class="fas fa-globe"></i> Weboldal lépésről lépésre</button>
+            <button id="web-modal-dolgozat-btn" onclick="location.replace('web/index.html')" style="padding:13px 20px;background:#2a0a1a;border:2px solid #f472b6;border-radius:10px;color:#f9a8d4;font-size:0.95rem;font-weight:700;cursor:pointer;" onmouseover="this.style.background='#9d174d'" onmouseout="this.style.background='#2a0a1a'"><i class="fas fa-file-code"></i> Ágazati alapvizsga feladatok</button>
+            <button onclick="document.getElementById('web-modal-gyakorlo').style.display='none';document.getElementById('web-modal-foMenu').style.display='flex';"
+                style="padding:0.6rem;background:transparent;border:1px solid #374151;border-radius:10px;color:#6b7280;font-size:0.9rem;cursor:pointer;">← Vissza</button>
+        </div>
+
+        <button onclick="document.getElementById('web-valaszto-modal').style.display='none';document.getElementById('web-modal-tanulas').style.display='none';document.getElementById('web-modal-gyakorlo').style.display='none';document.getElementById('web-modal-foMenu').style.display='flex';"
             style="width:100%;padding:0.6rem;background:transparent;border:1px solid #374151;border-radius:10px;color:#6b7280;font-size:0.9rem;cursor:pointer;font-family:inherit;">Mégse</button>
     </div>
 </div>
