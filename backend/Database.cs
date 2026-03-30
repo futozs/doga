@@ -740,20 +740,42 @@ public class Database
 
     public StudentRankResult GetStudentRank(string email)
     {
-        var user = GetUserByEmail(email);
-        var csoport = user?.Csoport;
-        var osztaly = user?.Osztaly;
+        var user     = GetUserByEmail(email);
+        var csoport  = user?.Csoport;
+        var osztaly  = user?.Osztaly;
+        var evfolyam = user?.Evfolyam;
 
+        var (wcso, pcso) = csoport != null && osztaly != null
+            ? GetRankInScope(email, "LOWER(COALESCE(u.csoport,''))=LOWER($cs) AND LOWER(COALESCE(u.osztaly,''))=LOWER($o)",
+                new() { {"$cs", csoport}, {"$o", osztaly} }, $"{osztaly}/{csoport}-es csoport")
+            : (null, null);
+
+        var (wosz, posz) = osztaly != null
+            ? GetRankInScope(email, "LOWER(COALESCE(u.osztaly,''))=LOWER($o)",
+                new() { {"$o", osztaly} }, $"{osztaly} osztály")
+            : (null, null);
+
+        var (wevf, pevf) = evfolyam != null
+            ? GetRankInScope(email, "LOWER(COALESCE(u.evfolyam,''))=LOWER($ef)",
+                new() { {"$ef", evfolyam} }, $"{evfolyam}. évfolyam")
+            : GetRankInScope(email, null, new(), "Iskola");
+
+        return new StudentRankResult(
+            new ThreeScopeRanks(wcso, wosz, wevf),
+            new ThreeScopeRanks(pcso, posz, pevf),
+            GetStreak(email)
+        );
+    }
+
+    private (RankInfo? web, RankInfo? python) GetRankInScope(
+        string email, string? whereClause,
+        Dictionary<string, string?> parms, string groupLabel)
+    {
         using var conn = Open();
-        using var cmd = conn.CreateCommand();
+        using var cmd  = conn.CreateCommand();
 
-        var groupLabel = csoport != null && osztaly != null
-            ? $"{osztaly}/{csoport}-es csoport"
-            : osztaly != null ? $"{osztaly} osztály" : "Évfolyam";
-
-        var where = new List<string>();
-        if (csoport != null) { where.Add("LOWER(COALESCE(u.csoport,'')) = LOWER($cs)"); cmd.Parameters.AddWithValue("$cs", csoport); }
-        else if (osztaly != null) { where.Add("LOWER(COALESCE(p.osztaly,'')) = LOWER($o)"); cmd.Parameters.AddWithValue("$o", osztaly); }
+        foreach (var kv in parms)
+            cmd.Parameters.AddWithValue(kv.Key, (object?)kv.Value ?? DBNull.Value);
 
         cmd.CommandText = $@"
             SELECT p.email, p.targy,
@@ -761,7 +783,7 @@ public class Database
                 COUNT(*) as sessions
             FROM progress p
             LEFT JOIN users u ON LOWER(p.email) = LOWER(u.email)
-            {(where.Count > 0 ? "WHERE " + string.Join(" AND ", where) : "")}
+            {(whereClause != null ? "WHERE " + whereClause : "")}
             GROUP BY p.email, p.targy";
 
         var web = new List<(string email, double avg, int sess)>();
@@ -786,10 +808,9 @@ public class Database
         var mw = wi >= 0 ? web[wi] : default;
         var mp = pi >= 0 ? py [pi] : default;
 
-        return new StudentRankResult(
-            new RankInfo(wi >= 0 ? wi + 1 : 0, web.Count, groupLabel, mw.avg),
-            new RankInfo(pi >= 0 ? pi + 1 : 0, py .Count, groupLabel, mp.avg),
-            GetStreak(email)
+        return (
+            wi >= 0 ? new RankInfo(wi + 1, web.Count, groupLabel, mw.avg) : null,
+            pi >= 0 ? new RankInfo(pi + 1, py.Count,  groupLabel, mp.avg) : null
         );
     }
 

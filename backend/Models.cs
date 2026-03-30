@@ -179,9 +179,15 @@ public record RankInfo(
     double AvgPercent
 );
 
+public record ThreeScopeRanks(
+    RankInfo? Csoport,
+    RankInfo? Osztaly,
+    RankInfo? Evfolyam
+);
+
 public record StudentRankResult(
-    RankInfo Web,
-    RankInfo Python,
+    ThreeScopeRanks Web,
+    ThreeScopeRanks Python,
     int Streak
 );
 
