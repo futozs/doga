@@ -1272,9 +1272,15 @@
         }
 
         if (user.szerep === 'oktato') {
-            document.getElementById('teacher-portal').style.display = 'block';
-            document.getElementById('portal-sub').textContent = 'Mit szeretnél csinálni?';
-            document.getElementById('toggle-view-btn').style.display = 'block';
+            document.getElementById('student-layout-wrap').style.display = 'flex';
+            document.getElementById('changelog-python').style.display = 'block';
+            document.getElementById('changelog-web').style.display = 'block';
+            document.getElementById('portal-sub').textContent = 'Válassz ágazati alapvizsga feladatot!';
+            // Oktató: kártyák mindig gyakorló módba mutatnak, soha nem vizsgára
+            const cardPython = document.getElementById('card-python');
+            if (cardPython) cardPython.onclick = function(e) { e.preventDefault(); document.getElementById('vendeg-python-modal').style.display = 'flex'; };
+            const cardWeb = document.getElementById('card-web');
+            if (cardWeb) cardWeb.onclick = function(e) { e.preventDefault(); document.getElementById('web-valaszto-modal').style.display = 'flex'; };
         } else if (user.szerep === 'vendeg') {
             document.getElementById('student-layout-wrap').style.display = 'flex';
             document.getElementById('changelog-python').style.display = 'block';
@@ -1394,7 +1400,7 @@
 
             const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
             const isExam = cfg.test_mode === 'live' || cfg.test_mode === 'vizsga';
-            if (isExam && user.szerep !== 'vendeg') {
+            if (isExam && user.szerep !== 'vendeg' && user.szerep !== 'oktato') {
                 portalExamMode = true;
                 const cardWeb = document.getElementById('card-web');
                 if (cardWeb) cardWeb.onclick = function(e) {
