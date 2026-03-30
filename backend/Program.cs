@@ -26,15 +26,17 @@ builder.Services.AddRateLimiter(options =>
 });
 
 // CORS – GitHub Pages + helyi fejlesztés
-builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
-    p.WithOrigins(
-        "https://sandornefr.github.io",
-        "https://sandorpeteer.github.io",
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "http://localhost:3000"
-    ).AllowAnyHeader().AllowAnyMethod()
-));
+builder.Services.AddCors(o => {
+    o.AddDefaultPolicy(p =>
+        p.WithOrigins(
+            "https://sandornefr.github.io",
+            "https://sandorpeteer.github.io",
+            "http://localhost:5500",
+            "http://127.0.0.1:5500",
+            "http://localhost:3000"
+        ).AllowAnyHeader().AllowAnyMethod());
+    o.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
 
 var dbPath = builder.Configuration["DB_PATH"] ?? "kando.db";
 var db = new Database(dbPath);
@@ -331,7 +333,7 @@ app.MapPatch("/api/users/{email}", (HttpContext ctx, string email, UpdateUserReq
     if (string.IsNullOrWhiteSpace(req.Nev)) return Results.BadRequest(new { error = "A név nem lehet üres!" });
     var ok = db.UpdateUserBasic(Uri.UnescapeDataString(email), req.Nev.Trim(), req.Csoport?.Trim());
     return ok ? Results.Ok(new { success = true }) : Results.NotFound(new { error = "Felhasználó nem található" });
-});
+}).RequireCors("AllowAll");
 
 // Felhasználó jelszavának visszaállítása admin/oktató által
 app.MapPost("/api/users/reset-password", (HttpContext ctx, ResetPasswordRequest req, Database db) =>
