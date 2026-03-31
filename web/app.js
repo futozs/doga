@@ -4054,21 +4054,10 @@ function updateStudentDisplay() {
   }
 }
 
-function showModeSelector() {
-  if (new URLSearchParams(location.search).get('mode') === 'exam') { goToExam(); return; }
-  const modal = document.getElementById('mode-selector-modal');
-  if (modal) modal.style.display = 'flex';
-}
-function hideModeSelector() {
-  const modal = document.getElementById('mode-selector-modal');
-  if (modal) modal.style.display = 'none';
-}
-function goToPractice() {
-  location.href = 'practice.html';
-}
-function goToExam() {
-  hideModeSelector();
-}
+function showModeSelector() { /* módválasztó eltávolítva */ }
+function hideModeSelector() { }
+function goToPractice() { location.href = 'practice.html'; }
+function goToExam() { }
 
 function logoutStudent() {
   const isBemutato = new URLSearchParams(location.search).get('bemutato') === '1';
