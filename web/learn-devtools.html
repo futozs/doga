@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fejlesztői eszközök – WEB Tananyag</title>
+  <link rel="icon" href="../kando_favion_dark.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../kando_favion_light.png" type="image/png" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0f172a; --bg2:#111827; --bg3:#1e293b;
+      --border:#1f2937; --accent:#38bdf8; --accent2:#0284c7;
+      --text:#e2e8f0; --muted:#94a3b8;
+      --font:'Segoe UI',system-ui,sans-serif;
+    }
+    html,body { min-height:100%; }
+    body { font-family:var(--font); background:var(--bg); color:var(--text); display:flex; flex-direction:column; }
+
+    .topbar { height:54px; background:var(--bg2); border-bottom:1.5px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:10px; flex-shrink:0; }
+    .topbar-logo { height:30px; cursor:pointer; }
+    .btn-back { display:flex; align-items:center; gap:6px; padding:5px 12px; border-radius:8px; background:transparent; border:1.5px solid var(--border); color:var(--muted); font-size:0.82rem; cursor:pointer; text-decoration:none; transition:border-color .2s,color .2s; white-space:nowrap; }
+    .btn-back:hover { border-color:var(--accent); color:var(--accent); }
+    .topbar-info { line-height:1.3; }
+    .topbar-title { font-size:0.95rem; font-weight:700; color:var(--text); }
+    .topbar-sub { font-size:0.75rem; color:var(--muted); }
+    .topbar-spacer { flex:1; }
+
+    .page { max-width:900px; margin:0 auto; padding:32px 20px 60px; }
+
+    h1 { font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:6px; }
+    .subtitle { color:var(--muted); font-size:0.95rem; margin-bottom:36px; }
+
+    .section { margin-bottom:40px; }
+    .section-title { font-size:1.15rem; font-weight:700; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    .card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:14px; }
+    .card-title { font-size:1rem; font-weight:700; color:var(--text); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+    .card p { color:#cbd5e1; font-size:0.92rem; line-height:1.7; }
+    .card p + p { margin-top:8px; }
+    .card code { background:#1e293b; color:#7dd3fc; padding:1px 6px; border-radius:4px; font-size:0.82rem; }
+    .card strong { color:#f1f5f9; }
+    .card ul { margin:8px 0 4px 18px; color:#cbd5e1; font-size:0.92rem; line-height:1.7; }
+    .card ul li { margin-bottom:3px; }
+
+    .link-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:16px; text-decoration:none; transition:border-color .2s,background .2s; margin-bottom:10px; }
+    .link-card:hover { border-color:var(--accent); background:#0f1e35; }
+    .link-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+    .link-info { flex:1; }
+    .link-name { font-size:0.97rem; font-weight:700; color:var(--text); margin-bottom:2px; }
+    .link-desc { font-size:0.83rem; color:var(--muted); }
+    .link-arrow { color:var(--muted); font-size:0.85rem; }
+
+    .tip-box { background:rgba(56,189,248,.07); border:1px solid rgba(56,189,248,.25); border-left:3px solid var(--accent); border-radius:9px; padding:12px 16px; margin-top:12px; font-size:0.88rem; color:#bae6fd; line-height:1.65; }
+    .tip-box strong { color:#e0f2fe; }
+
+    .steps { display:flex; flex-direction:column; gap:10px; }
+    .step { display:flex; gap:14px; align-items:flex-start; }
+    .step-num { width:28px; height:28px; border-radius:50%; background:var(--accent2); color:#fff; font-size:0.8rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+    .step-body { flex:1; color:#cbd5e1; font-size:0.92rem; line-height:1.65; }
+    .step-body strong { color:#f1f5f9; }
+
+    .key-badge { display:inline-block; background:#1e293b; border:1px solid #374151; border-radius:5px; padding:2px 8px; font-family:'Consolas',monospace; font-size:0.8rem; color:#e2e8f0; margin:0 2px; }
+
+    .bottom-nav { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:40px; padding-top:24px; border-top:1px solid var(--border); }
+    .btn-nav { padding:11px 22px; border-radius:10px; font-size:0.9rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
+    .btn-nav-p { background:var(--accent2); border:1.5px solid var(--accent); color:#fff; }
+    .btn-nav-p:hover { background:var(--accent); }
+    .btn-nav-s { background:transparent; color:#94a3b8; border:1.5px solid var(--border); }
+    .btn-nav-s:hover { color:#f1f5f9; border-color:#64748b; }
+
+    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  </style>
+</head>
+<body>
+
+<script>
+  (function(){
+    const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+    if(!u.token&&u.szerep!=='oktato'&&u.szerep!=='vendeg'&&!u._tesztMod) location.replace('../portal.html');
+  })();
+</script>
+
+<header class="topbar">
+  <a href="../portal.html"><img src="kandologo2.png" alt="Kandó" class="topbar-logo"></a>
+  <a href="../portal.html" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
+  <div class="topbar-info">
+    <div class="topbar-title">🔧 WEB Tananyag</div>
+    <div class="topbar-sub">6. szint · Fejlesztői eszközök</div>
+  </div>
+  <div class="topbar-spacer"></div>
+</header>
+
+<div class="page">
+  <h1>🔧 Fejlesztői eszközök és hasznos oldalak</h1>
+  <p class="subtitle">Megismered a webfejlesztők leghasznosabb eszközeit: referencia oldalakat, validátort és a böngésző beépített fejlesztői eszközeit.</p>
+
+  <!-- W3SCHOOLS -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-book-open"></i> W3Schools – a webfejlesztő enciklopédiája</div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-globe" style="color:#4ade80;"></i> Mi a W3Schools?</div>
+      <p>A <strong>W3Schools</strong> a világ egyik leglátogatottabb webfejlesztési oktatóoldala. Ingyenesen elérhető, minden HTML, CSS és JavaScript témáról tartalmaz:</p>
+      <ul>
+        <li><strong>Referencia táblázatokat</strong> – összes tag, tulajdonság, metódus listázva</li>
+        <li><strong>Interaktív példákat</strong> – "Try it Yourself" gombbal kipróbálható kódok</li>
+        <li><strong>Oktató feladatokat</strong> – kvízek, gyakorlatok</li>
+      </ul>
+      <div class="tip-box">
+        💡 Ha elfelejtesz valamit (pl. melyik CSS tulajdonsággal lehet keretezni?), a W3Schools az első hely ahol érdemes keresni.
+      </div>
+    </div>
+
+    <a href="https://www.w3schools.com/html/" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(74,222,128,.1);">📄</div>
+      <div class="link-info">
+        <div class="link-name">W3Schools – HTML referencia</div>
+        <div class="link-desc">Összes HTML tag leírása, példákkal</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+    <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(59,130,246,.1);">🎨</div>
+      <div class="link-info">
+        <div class="link-name">W3Schools – CSS referencia</div>
+        <div class="link-desc">CSS tulajdonságok, szelektorok, példák</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+    <a href="https://www.w3schools.com/js/" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(245,158,11,.1);">🟨</div>
+      <div class="link-info">
+        <div class="link-name">W3Schools – JavaScript referencia</div>
+        <div class="link-desc">JS alapok, DOM, események, függvények</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+    <a href="https://www.w3schools.com/bootstrap5/" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(168,85,247,.1);">🅱️</div>
+      <div class="link-info">
+        <div class="link-name">W3Schools – Bootstrap 5 referencia</div>
+        <div class="link-desc">Grid, komponensek, utility osztályok</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+  </div>
+
+  <!-- MDN -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-fire"></i> MDN Web Docs – a szakmai referencia</div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-file-code" style="color:#f97316;"></i> Mi az MDN?</div>
+      <p>Az <strong>MDN Web Docs</strong> (Mozilla Developer Network) a legteljesebb és legmegbízhatóbb webfejlesztési dokumentáció. A W3Schools-nál részletesebb, és a böngészők által ténylegesen implementált szabványokat írja le.</p>
+      <ul>
+        <li>Minden CSS tulajdonságnál megmutatja, <strong>melyik böngésző támogatja</strong></li>
+        <li>Pontos szintaxis leírások, edge case-ek</li>
+        <li>Haladóbb fejlesztőknek különösen hasznos</li>
+      </ul>
+    </div>
+
+    <a href="https://developer.mozilla.org/hu/docs/Web/HTML" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(249,115,22,.1);">🦊</div>
+      <div class="link-info">
+        <div class="link-name">MDN Web Docs – HTML</div>
+        <div class="link-desc">Mozilla teljes HTML dokumentációja (részben magyarul is)</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+    <a href="https://developer.mozilla.org/hu/docs/Web/CSS" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(249,115,22,.1);">🦊</div>
+      <div class="link-info">
+        <div class="link-name">MDN Web Docs – CSS</div>
+        <div class="link-desc">Böngészőkompatibilitás, részletes CSS referencia</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+  </div>
+
+  <!-- VALIDÁLÁS -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-circle-check"></i> Validálás – miért fontos?</div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-triangle-exclamation" style="color:#fbbf24;"></i> Mi a validálás?</div>
+      <p>A <strong>validálás</strong> azt jelenti, hogy ellenőrzöd: a kódod megfelel-e a hivatalos HTML/CSS szabványoknak.</p>
+      <p>Miért fontos?</p>
+      <ul>
+        <li>A hibás kód <strong>különbözőképpen jelenhet meg</strong> különböző böngészőkben</li>
+        <li>Záratlan tagek, elírt attribútumok <strong>láthatatlan hibákat</strong> okozhatnak</li>
+        <li>A validátor megmutatja pontosan <strong>melyik sorban van a hiba</strong></li>
+        <li>Keresőoptimalizálás (SEO) szempontjából is számít a tiszta kód</li>
+      </ul>
+      <div class="tip-box">
+        💡 Mielőtt beadod a feladatot, mindig futtasd le a validátoron! Egy záratlan <code>&lt;/div&gt;</code> az egész oldal elrendezését tönkreteheti.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-wand-magic-sparkles" style="color:#4ade80;"></i> Hogyan validálsz?</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">Nyisd meg a <strong>W3C HTML Validátort</strong>: <code>validator.w3.org</code></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">Válaszd a <strong>"Validate by Direct Input"</strong> fület, és illeszd be a kódodat</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">Kattints a <strong>"Check"</strong> gombra – a hibák sorban jelennek meg piros színnel, sorszámmal</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">Javítsd a hibákat, majd futtasd le újra – addig amíg <strong>"No errors or warnings"</strong> üzenetet nem kapsz</div>
+        </div>
+      </div>
+    </div>
+
+    <a href="https://validator.w3.org/#validate_by_input" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(74,222,128,.1);">✅</div>
+      <div class="link-info">
+        <div class="link-name">W3C HTML Validátor</div>
+        <div class="link-desc">Ellenőrizd le a HTML kódod helyességét</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+    <a href="https://jigsaw.w3.org/css-validator/#validate_by_input" target="_blank" rel="noopener" class="link-card">
+      <div class="link-icon" style="background:rgba(59,130,246,.1);">✅</div>
+      <div class="link-info">
+        <div class="link-name">W3C CSS Validátor</div>
+        <div class="link-desc">Ellenőrizd le a CSS kódod helyességét</div>
+      </div>
+      <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+    </a>
+  </div>
+
+  <!-- BÖNGÉSZŐ FEJLESZTŐI ESZKÖZÖK -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-screwdriver-wrench"></i> Böngésző – fejlesztői eszközök (DevTools)</div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-magnifying-glass" style="color:#38bdf8;"></i> Mi a DevTools?</div>
+      <p>Minden modern böngészőbe (Chrome, Firefox, Edge) be van építve egy <strong>fejlesztői eszközkészlet</strong>, amellyel valós időben vizsgálhatod és módosíthatod az oldalak kódját.</p>
+      <p>Megnyitás: <span class="key-badge">F12</span> vagy <span class="key-badge">Ctrl</span> + <span class="key-badge">Shift</span> + <span class="key-badge">I</span></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-layer-group" style="color:#38bdf8;"></i> A legfontosabb fülek</div>
+      <ul>
+        <li><strong>Elements (Elemek)</strong> – az oldal HTML-CSS struktúrája; valós időben szerkeszthető</li>
+        <li><strong>Console (Konzol)</strong> – JavaScript hibák és <code>console.log()</code> kimenetek</li>
+        <li><strong>Sources</strong> – a betöltött fájlok (HTML, CSS, JS) listája</li>
+        <li><strong>Network (Hálózat)</strong> – betöltési idők, kérések figyelése</li>
+      </ul>
+      <div class="tip-box">
+        💡 <strong>Tipp:</strong> Az Elements fülön kattints egy elemre jobb gombbal az oldalon → <em>"Inspect"</em> (Vizsgálat) – azonnal az adott elem CSS-énél ugrik a DevTools.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-mobile-screen" style="color:#38bdf8;"></i> Reszponzivitás ellenőrzése</div>
+      <p>A DevTools-ban a <span class="key-badge">Ctrl</span> + <span class="key-badge">Shift</span> + <span class="key-badge">M</span> gombbal (vagy a kis mobilikon ikonra kattintva) <strong>különböző képernyőméreteken</strong> nézheted meg az oldaladat – telefon, tablet, laptop nézetben egyaránt.</p>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <a href="learn-emmet.html" class="btn-nav btn-nav-p"><i class="fas fa-arrow-left"></i> Vissza: Emmet</a>
+    <a href="../portal.html" class="btn-nav btn-nav-s"><i class="fas fa-home"></i> Főmenü</a>
+  </div>
+</div>
+
+<script src="../special-roles.js"></script>
+</body>
+</html>
