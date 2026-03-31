@@ -955,15 +955,6 @@ Az áthaladás maximális száma: 82; A rögzítés időpontja: 8:30.
 
 </div><!-- /page-wrap -->
 
-<script>
-  // Auth redirect: vendég és oktató is megtekintheti
-  try {
-    const u = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!u.token && u.szerep !== 'oktato' && u.szerep !== 'vendeg' && !u._tesztMod) {
-      location.replace('../portal.html');
-    }
-  } catch(e) {}
-</script>
 
 </body>
 </html>
