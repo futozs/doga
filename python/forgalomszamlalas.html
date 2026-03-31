@@ -302,6 +302,45 @@ Az áthaladók maximális száma: 82; a rögzítés időpontja: 8:30.</pre>
   <!-- TUTORIAL -->
   <div class="tut-title"><i class="fas fa-graduation-cap"></i> Hogyan oldjuk meg lépésről lépésre?</div>
 
+  <!-- ALAPFOGALMAK -->
+  <div class="step" style="margin-bottom:28px; border-color:#1e3a5f;">
+    <div class="step-head" style="background:#0a1a2e; border-color:#1e3a5f;">
+      <div class="step-badge" style="background:#1e3a5f; color:#60a5fa;"><i class="fas fa-book-open" style="font-size:0.75rem;"></i></div>
+      <div>
+        <div class="step-ttl" style="color:#93c5fd;">Mielőtt belekezdenénk – alapfogalmak</div>
+        <div class="step-sub">Ezeket érdemes tudni a kód olvasásához</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="sor-lista" style="margin-top:0; border-top:none; padding-top:0;">
+        <div class="sor">
+          <span class="sor-kod">változó</span>
+          <span class="sor-leiras">Egy <strong>névvel ellátott tároló</strong>, amibe értéket teszünk. Például <code>osszeg = 0</code> azt jelenti: legyen egy "osszeg" nevű fiók, amelynek értéke most 0. Később ezt felülírhatjuk, növelhetjük stb.</span>
+        </div>
+        <div class="sor">
+          <span class="sor-kod">lista</span>
+          <span class="sor-leiras">Több érték együtt, sorban tárolva. Például <code>[36, 48, 39, -1]</code> egy négy elemű lista. Az elemeket <strong>0-tól számozzuk</strong>: az első elem a 0. helyen van, a második az 1. helyen, stb. Ezt a sorszámot <strong>indexnek</strong> nevezzük.</span>
+        </div>
+        <div class="sor">
+          <span class="sor-kod">index (sorszám)</span>
+          <span class="sor-leiras">A lista elemeinek sorszáma, <strong>0-tól kezdve</strong>. A mi 16 elemű listánkban: lista[0]=36 (6:00), lista[1]=48 (6:15), lista[2]=39 (6:30) … lista[10]=82 (8:30) … lista[15]=65 (9:45). Az index és az időpont kapcsolata: index × 15 perc = eltelt idő 6:00 óta.</span>
+        </div>
+        <div class="sor">
+          <span class="sor-kod">print()</span>
+          <span class="sor-leiras">Ez az utasítás <strong>kiírja a képernyőre</strong> azt, amit a zárójelbe írunk. Például <code>print("Helló")</code> → megjelenik: <code>Helló</code>. Az f-betűs változatban (<code>print(f"Összesen {osszeg}...")</code>) a kapcsos zárójelbe tett változó értékét automatikusan belehelyettesíti a szövegbe.</span>
+        </div>
+        <div class="sor">
+          <span class="sor-kod">for ciklus</span>
+          <span class="sor-leiras">Egy <strong>ismétlő utasítás</strong>: ugyanazt a műveletet hajtja végre többször, más-más értékkel. Például <code>for i in range(4):</code> négyszer fut le: i=0, i=1, i=2, i=3. Minden körben az <code>i</code> változó veszi fel a következő értéket.</span>
+        </div>
+        <div class="sor">
+          <span class="sor-kod">if feltétel</span>
+          <span class="sor-leiras">Egy <strong>döntési pont</strong>: a program csak akkor hajtja végre a következő sort, ha a feltétel igaz. Például <code>if ertek != -1:</code> azt jelenti: "csak akkor csináld, ha az érték nem -1". A <code>!=</code> jel = "nem egyenlő".</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 1. LÉPÉS -->
   <div class="step" id="l1">
     <div class="step-head">
@@ -314,9 +353,9 @@ Az áthaladók maximális száma: 82; a rögzítés időpontja: 8:30.</pre>
     <div class="step-body">
       <p class="explain">
         A program nem tudja fejből az adatokat — a <strong>meresi_adatok.txt</strong> fájlból kell kiolvasnia őket,
-        és egy <strong>listába</strong> gyűjteni. A fájlból minden sor szövegként érkezik
-        (pl. <code>"36\n"</code>), ezért két dolgot kell csinálni: eltávolítani a sor végéről a láthatatlan
-        sortörést (<code>.strip()</code>), majd számmá alakítani (<code>int()</code>).
+        és egy <strong>listába</strong> gyűjteni. Fontos tudni: a fájlból minden adat <em>szövegként</em> érkezik,
+        nem számként — ezért át kell alakítani. Ezen kívül minden sor végén van egy láthatatlan sortörés-jel,
+        amit el kell távolítani. Erre való a <code>.strip()</code> és az <code>int()</code>.
       </p>
       <div class="miert">
         <div class="miert-cim"><i class="fas fa-lightbulb"></i> Miért <code>with open(...)</code>?</div>
@@ -394,10 +433,10 @@ print(f"Összesen {osszeg} kerékpárost számoltak.")
     </div>
     <div class="step-body">
       <p class="explain">
-        A 16 mérés 4 teljes órát fed le (6., 7., 8., 9. óra), óránként 4 adat.
-        A listában az <strong>i-edik óra</strong> adatai az <code>i×4</code>, <code>i×4+1</code>,
-        <code>i×4+2</code>, <code>i×4+3</code> indexeken vannak.
-        Ezt egy egymásba ágyazott <code>for</code> ciklussal dolgozzuk fel.
+        A 16 mérés 4 órára oszlik (6., 7., 8., 9. óra), és minden óra pontosan <strong>4 adatot</strong> tartalmaz
+        (pl. 8:00, 8:15, 8:30, 8:45). A listában ezek egymás után vannak: az első 4 a 6. óra, a következő 4 a 7. óra stb.
+        Két egymásba ágyazott ciklust használunk: a <strong>külső</strong> az órákon megy végig,
+        a <strong>belső</strong> az adott óra 4 negyedórájára.
       </p>
       <div class="miert">
         <div class="miert-cim"><i class="fas fa-lightbulb"></i> Hogyan számolódik az index?</div>
@@ -444,11 +483,10 @@ for i in range(4):                              # i = 0, 1, 2, 3  →  6., 7., 8
     </div>
     <div class="step-body">
       <p class="explain">
-        Meg kell találni a <strong>legnagyobb értéket</strong> és annak <strong>sorszámát (indexét)</strong> a listában,
-        majd az indexből ki kell számítani az időpontot.
-        A <code>range(len(...))</code> ciklus egyszerre ad indexet (<code>i</code>) és hozzáférést az értékhez (<code>meresi_adatok[i]</code>).
-        Minden index 15 percet jelent 6:00-tól számolva —
-        az <strong>egészosztás</strong> (<code>//</code>) adja az órákat, a <strong>maradék</strong> (<code>%</code>) a perceket.
+        Végigmegyünk az összes mérési értéken, és megkeressük a <strong>legnagyobbat</strong> — de nem elég tudni,
+        mekkora, azt is meg kell jegyezni, hogy <strong>hányadik helyen van</strong> a listában (ez az index).
+        Ebből a sorszámból számítjuk ki az időpontot: az index × 15 perc adja meg, hány perccel vagyunk 6:00 után.
+        Az óra és a perc szétválasztásához egészosztást (<code>//</code>) és maradékot (<code>%</code>) használunk.
       </p>
       <div class="miert">
         <div class="miert-cim"><i class="fas fa-lightbulb"></i> A // és % egyszerűen</div>
