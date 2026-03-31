@@ -267,18 +267,18 @@
 
       <div class="minta-label"><i class="fas fa-terminal"></i> Minta kimenet:</div>
       <div class="minta">
-2. feladat:
+2. feladat
 Összesen 838 kerékpárost számoltak.
 
-3. feladat:
+3. feladat
 Óránkénti mérések:
-6 órától 123 kerékpáros haladt át
-7 órától 149 kerékpáros haladt át
-8 órától 297 kerékpáros haladt át
-9 órától 269 kerékpáros haladt át
+6 órától 123 kerékpáros
+7 órától 149 kerékpáros
+8 órától 297 kerékpáros
+9 órától 269 kerékpáros
 
-4. feladat:
-Az áthaladás maximális száma: 82; A rögzítés időpontja: 8:30.
+4. feladat
+Az áthaladók maximális száma: 82; a rögzítés időpontja: 8:30.
       </div>
     </div>
   </div>
@@ -344,7 +344,7 @@ for ertek in meresi_adatok:
     if ertek != -1:                             # a hibás (-1) értékeket kihagyjuk
         osszeg += ertek                         # hozzáadjuk az összeghez
 
-print("2. feladat:")
+print("2. feladat")
 print(f"Összesen {osszeg} kerékpárost számoltak.")
 # → 2. feladat:
 # → Összesen 838 kerékpárost számoltak.</code></pre>
@@ -376,7 +376,7 @@ print(f"Összesen {osszeg} kerékpárost számoltak.")
       <div class="kod-wrap">
         <div class="kod-fej"><i class="fab fa-python"></i> 3. feladat – óránkénti bontás</div>
         <pre><code class="language-python">print()
-print("3. feladat:")
+print("3. feladat")
 print("Óránkénti mérések:")
 
 for i in range(4):                              # i = 0, 1, 2, 3  →  6., 7., 8., 9. óra
@@ -385,11 +385,11 @@ for i in range(4):                              # i = 0, 1, 2, 3  →  6., 7., 8
         ertek = meresi_adatok[i * 4 + j]        # pl. i=2, j=2 → index 10 → 82
         if ertek != -1:
             orankenti_osszeg += ertek
-    print(f"{6 + i} órától {orankenti_osszeg} kerékpáros haladt át")
+    print(f"{6 + i} órától {orankenti_osszeg} kerékpáros")
 
 # → 3. feladat:
 # → Óránkénti mérések:
-# → 6 órától 123 kerékpáros haladt át  ...stb.</code></pre>
+# → 6 órától 123 kerékpáros  ...stb.</code></pre>
       </div>
     </div>
   </div>
@@ -434,10 +434,10 @@ perc    = percek % 60                           # 150 % 60 = 30
 idopont = f"{ora}:{perc:02d}"                   # :02d → ha perc=0, akkor "8:00" (nem "8:0")
 
 print()
-print("4. feladat:")
-print(f"Az áthaladás maximális száma: {max_ertek}; A rögzítés időpontja: {idopont}.")
+print("4. feladat")
+print(f"Az áthaladók maximális száma: {max_ertek}; a rögzítés időpontja: {idopont}.")
 # → 4. feladat:
-# → Az áthaladás maximális száma: 82; A rögzítés időpontja: 8:30.</code></pre>
+# → Az áthaladók maximális száma: 82; a rögzítés időpontja: 8:30.</code></pre>
       </div>
     </div>
   </div>
@@ -463,12 +463,12 @@ for ertek in meresi_adatok:
     if ertek != -1:
         osszeg += ertek
 
-print("2. feladat:")
+print("2. feladat")
 print(f"Összesen {osszeg} kerékpárost számoltak.")
 
 # 3. feladat – óránkénti bontás
 print()
-print("3. feladat:")
+print("3. feladat")
 print("Óránkénti mérések:")
 for i in range(4):
     orankenti_osszeg = 0
@@ -476,7 +476,7 @@ for i in range(4):
         ertek = meresi_adatok[i * 4 + j]
         if ertek != -1:
             orankenti_osszeg += ertek
-    print(f"{6 + i} órától {orankenti_osszeg} kerékpáros haladt át")
+    print(f"{6 + i} órától {orankenti_osszeg} kerékpáros")
 
 # 4. feladat – csúcsforgalom
 max_ertek = -1
@@ -492,8 +492,8 @@ perc    = percek % 60
 idopont = f"{ora}:{perc:02d}"
 
 print()
-print("4. feladat:")
-print(f"Az áthaladás maximális száma: {max_ertek}; A rögzítés időpontja: {idopont}.")</code></pre>
+print("4. feladat")
+print(f"Az áthaladók maximális száma: {max_ertek}; a rögzítés időpontja: {idopont}.")</code></pre>
     </div>
   </div>
 
