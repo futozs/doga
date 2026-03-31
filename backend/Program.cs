@@ -878,6 +878,30 @@ app.MapGet("/api/session/all", (HttpContext ctx, Database db) =>
     return Results.Ok(db.GetAllSessionStats());
 });
 
+// Jelszó visszaállítási kérelem beküldése (nyilvános – tanuló küldi)
+app.MapPost("/api/password-reset-request", (PasswordResetRequestInput req, Database db) =>
+{
+    if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Nev))
+        return Results.BadRequest(new { error = "Hiányzó adatok" });
+    db.SavePasswordResetRequest(req.Email, req.Nev, req.Osztaly, req.Csoport);
+    return Results.Ok(new { success = true });
+}).RequireRateLimiting("auth");
+
+// Jelszó visszaállítási kérelmek listája (csak admin)
+app.MapGet("/api/password-reset-requests", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    return Results.Ok(db.GetPasswordResetRequests());
+});
+
+// Jelszó visszaállítási kérelem törlése (csak admin)
+app.MapDelete("/api/password-reset-request/{id}", (HttpContext ctx, int id, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    db.DeletePasswordResetRequest(id);
+    return Results.Ok(new { success = true });
+});
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
 
@@ -888,4 +912,5 @@ namespace KandoTest
     public record DeleteAccountRequest(string Email, string Jelszo);
     public record ResetPasswordRequest(string Email, string NewPassword);
     public record UpdateUserRequest(string Vezeteknev, string Keresztnev, string? Csoport);
+    public record PasswordResetRequestInput(string Email, string Nev, string? Osztaly, string? Csoport);
 }

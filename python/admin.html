@@ -749,6 +749,15 @@
                 <button onclick="bulkSetKCsoport()" style="padding:7px 16px;background:rgba(83,109,254,0.15);border:1px solid #536dfe;border-radius:8px;color:#818cf8;font-weight:600;cursor:pointer;font-size:0.85rem;"><i class="fas fa-wand-magic-sparkles"></i> K osztály → infó csoport beállítása</button>
             </div>
 
+            <!-- Jelszó visszaállítási kérelmek -->
+            <div id="pw-reset-requests-panel" style="margin-bottom:18px;background:#1a0a0a;border:2px solid #f59e0b;border-radius:12px;padding:14px 18px;display:none;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <span style="font-weight:700;color:#fcd34d;font-size:0.97rem;"><i class="fas fa-key"></i> Jelszó visszaállítási kérelmek <span id="pw-reset-badge" style="background:#f59e0b;color:#1a0a0a;border-radius:99px;padding:1px 9px;font-size:0.82rem;margin-left:6px;"></span></span>
+                    <button onclick="loadPwResetRequests()" style="padding:4px 12px;background:transparent;border:1px solid #555;border-radius:8px;color:#aaa;cursor:pointer;font-size:0.82rem;"><i class="fas fa-rotate"></i></button>
+                </div>
+                <div id="pw-reset-list"></div>
+            </div>
+
             <!-- Névsor ellenőrzés -->
             <details style="margin-bottom:18px;background:#0f1e35;border:1px solid #1f3460;border-radius:12px;padding:14px 18px;">
                 <summary style="cursor:pointer;font-weight:700;color:#7dd3fc;font-size:0.95rem;user-select:none;">
@@ -1307,6 +1316,38 @@
             `;
         }
 
+        // ── Jelszó visszaállítási kérelmek ──────────────────────────────────
+        async function loadPwResetRequests() {
+            const res = await authFetch(`${RAILWAY_URL}/api/password-reset-requests`);
+            if (!res.ok) return;
+            const data = await res.json();
+            const panel = document.getElementById('pw-reset-requests-panel');
+            const list = document.getElementById('pw-reset-list');
+            const badge = document.getElementById('pw-reset-badge');
+            if (!data.length) {
+                panel.style.display = 'none';
+                return;
+            }
+            panel.style.display = 'block';
+            badge.textContent = data.length + ' db';
+            list.innerHTML = data.map(r => `
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid #2a1500;">
+                    <span style="color:#e0e0e0;font-weight:600;min-width:140px;">${r.nev}</span>
+                    <span style="color:#94a3b8;font-size:0.85rem;min-width:180px;">${r.email}</span>
+                    <span style="color:#94a3b8;font-size:0.85rem;">${r.osztaly || ''}${r.csoport ? ' / ' + r.csoport + '. cs.' : ''}</span>
+                    <span style="color:#6b7280;font-size:0.78rem;margin-left:auto;">${r.createdAt}</span>
+                    <button onclick="openResetPassword('${r.email}', ${r.id})" style="padding:4px 12px;background:transparent;border:1px solid #f59e0b;border-radius:6px;color:#fcd34d;cursor:pointer;font-size:0.85rem;font-weight:600;">Visszaállítás</button>
+                    <button onclick="dismissPwResetRequest(${r.id})" style="padding:4px 10px;background:transparent;border:1px solid #374151;border-radius:6px;color:#6b7280;cursor:pointer;font-size:0.82rem;">Elvetve</button>
+                </div>`).join('');
+        }
+
+        async function dismissPwResetRequest(id) {
+            await authFetch(`${RAILWAY_URL}/api/password-reset-request/${id}`, { method: 'DELETE' });
+            loadPwResetRequests();
+        }
+
+        let _pwResetRequestId = null;
+
         let editUserTargetEmail = '';
         function openEditUser(idx) {
             const u = _cachedUsers[idx];
@@ -1353,8 +1394,9 @@
             }
         }
 
-        function openResetPassword(email) {
+        function openResetPassword(email, requestId = null) {
             resetPwTargetEmail = email;
+            _pwResetRequestId = requestId;
             document.getElementById('reset-pw-email-display').textContent = 'Email: ' + email;
             document.getElementById('reset-pw-new').value = '';
             document.getElementById('reset-pw-error').style.display = 'none';
@@ -1374,6 +1416,11 @@
                 });
                 if (res.ok) {
                     document.getElementById('reset-pw-modal').style.display = 'none';
+                    if (_pwResetRequestId !== null) {
+                        await authFetch(`${RAILWAY_URL}/api/password-reset-request/${_pwResetRequestId}`, { method: 'DELETE' });
+                        _pwResetRequestId = null;
+                        loadPwResetRequests();
+                    }
                     alert('Jelszó sikeresen visszaállítva!');
                 } else {
                     const d = await res.json();
@@ -1415,6 +1462,7 @@
             if (name === 'otlet-lada') { loadOtletek(); loadTesztelők(); loadUzenetStatusz(); }
             if (name === 'feladatok')  { loadFeladatkeszitok(); loadFeladatStats(); loadFeladatJavaslatok(); }
             if (name === 'kovetelmenyek' && kovData.length === 0) loadKovetelmenyek();
+            if (name === 'felhasznalok') loadPwResetRequests();
         }
 
         // Check auth on page load

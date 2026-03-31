@@ -475,14 +475,21 @@
         btn.disabled = true;
         btn.textContent = 'Küldés...';
         try {
-            await emailjs.send('service_zxskntr', 'template_jelszo_reset', {
-                to_email:  'sandornef@kkszki.hu',
-                tanulo_nev: nev,
-                tanulo_email: email,
-                tanulo_osztaly: osztaly,
-                tanulo_csoport: csoport
+            // Mentés a backendre (admin panelen látható lesz)
+            await fetch(`${RAILWAY_URL}/api/password-reset-request`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, nev, osztaly, csoport })
             });
-            succEl.textContent = 'Kérelem elküldve! A tanárod értesítést kapott, hamarosan visszaállítja a jelszavadat.';
+            // EmailJS értesítő (ha működik)
+            try {
+                await emailjs.send('service_zxskntr', 'template_jelszo_reset', {
+                    to_email: 'sandornef@kkszki.hu',
+                    tanulo_nev: nev, tanulo_email: email,
+                    tanulo_osztaly: osztaly, tanulo_csoport: csoport
+                });
+            } catch(_) {}
+            succEl.textContent = 'Kérelem elküldve! A tanárod hamarosan visszaállítja a jelszavadat.';
             succEl.style.display = 'block';
             btn.textContent = 'Elküldve ✓';
             setTimeout(() => closeForgotModal(), 3000);

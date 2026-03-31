@@ -153,6 +153,14 @@ public class Database
                 logout_at      TEXT,
                 duration_sec   INTEGER NOT NULL DEFAULT 0
             );
+            CREATE TABLE IF NOT EXISTS password_reset_requests (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                email      TEXT NOT NULL,
+                nev        TEXT NOT NULL,
+                osztaly    TEXT,
+                csoport    TEXT,
+                created_at TEXT DEFAULT (datetime('now','localtime'))
+            );
         ");
         try { Exec(conn, "ALTER TABLE submissions ADD COLUMN subject TEXT"); } catch { }
         try { Exec(conn, "ALTER TABLE progress ADD COLUMN mode TEXT DEFAULT 'gyakorlo'"); } catch { }
@@ -1605,4 +1613,51 @@ public class Database
         }
         return byEmail.Values.OrderByDescending(x => x.TotalSec).ToList();
     }
+
+    // ── Jelszó visszaállítási kérelmek ───────────────────────────────────────
+
+    public void SavePasswordResetRequest(string email, string nev, string? osztaly, string? csoport)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            DELETE FROM password_reset_requests WHERE LOWER(email) = LOWER($email);
+            INSERT INTO password_reset_requests (email, nev, osztaly, csoport)
+            VALUES ($email, $nev, $osztaly, $csoport)";
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        cmd.Parameters.AddWithValue("$nev", nev);
+        cmd.Parameters.AddWithValue("$osztaly", (object?)osztaly ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$csoport", (object?)csoport ?? DBNull.Value);
+        cmd.ExecuteNonQuery();
+    }
+
+    public List<PasswordResetRequestRow> GetPasswordResetRequests()
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT id, email, nev, osztaly, csoport, created_at FROM password_reset_requests ORDER BY created_at DESC";
+        var list = new List<PasswordResetRequestRow>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new PasswordResetRequestRow(
+                r.GetInt32(0),
+                r.GetString(1),
+                r.GetString(2),
+                r.IsDBNull(3) ? null : r.GetString(3),
+                r.IsDBNull(4) ? null : r.GetString(4),
+                r.GetString(5)
+            ));
+        return list;
+    }
+
+    public void DeletePasswordResetRequest(int id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM password_reset_requests WHERE id = $id";
+        cmd.Parameters.AddWithValue("$id", id);
+        cmd.ExecuteNonQuery();
+    }
 }
+
+public record PasswordResetRequestRow(int Id, string Email, string Nev, string? Osztaly, string? Csoport, string CreatedAt);
