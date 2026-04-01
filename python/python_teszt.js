@@ -808,8 +808,9 @@ function renderCustomModal() {
 function renderCustomTaskList() {
     const filterType = document.querySelector('.custom-type-btn.active')?.dataset.type || 'all';
     const allPastNums = new Set(customTaskHistory.flat());
-    const tasks8 = tasks.filter(t => t.points === 8);
+    const tasks8  = tasks.filter(t => t.points === 8);
     const tasks14 = tasks.filter(t => t.points === 14);
+    const tasks18 = tasks.filter(t => t.points === 18);
 
     function matches(task) {
         if (filterType === 'all') return true;
@@ -836,8 +837,9 @@ function renderCustomTaskList() {
     }
 
     document.getElementById('custom-task-list').innerHTML =
-        renderGroup(tasks8, '8 pontos feladatok') +
-        renderGroup(tasks14, '14 pontos feladatok');
+        renderGroup(tasks8,  '8 pontos feladatok') +
+        renderGroup(tasks14, '14 pontos feladatok') +
+        renderGroup(tasks18, '18 pontos feladatok');
 
     document.querySelectorAll('.custom-cb').forEach(cb =>
         cb.addEventListener('change', updateCustomCount));
@@ -846,13 +848,19 @@ function renderCustomTaskList() {
 
 function updateCustomCount() {
     const comp = document.getElementById('custom-composition').value;
-    const [need8, need14] = comp.split('+').map(Number);
+    const parts = comp.split('+').map(Number);
+    const [need8, need14, need18 = 0] = parts;
     const checked = [...document.querySelectorAll('.custom-cb:checked')];
     const sel8  = checked.filter(c => c.dataset.points === '8').length;
     const sel14 = checked.filter(c => c.dataset.points === '14').length;
-    const ok = sel8 === need8 && sel14 === need14;
+    const sel18 = checked.filter(c => c.dataset.points === '18').length;
+    const ok = sel8 === need8 && sel14 === need14 && sel18 === need18;
     const el = document.getElementById('custom-count-label');
-    el.textContent = `Kiválasztva: ${sel8} db 8p, ${sel14} db 14p — kell: ${need8} db 8p, ${need14} db 14p`;
+    if (need18 > 0) {
+        el.textContent = `Kiválasztva: ${sel18} db 18p — kell: ${need18} db 18p`;
+    } else {
+        el.textContent = `Kiválasztva: ${sel8} db 8p, ${sel14} db 14p — kell: ${need8} db 8p, ${need14} db 14p`;
+    }
     el.style.color = ok ? '#4ade80' : '#fbbf24';
     document.getElementById('btn-custom-start').disabled = !ok;
 }
@@ -871,8 +879,11 @@ function customRandomFill() {
         pool.sort(() => 0.5 - Math.random()).slice(0, n).forEach(c => c.checked = true);
     }
 
-    pickRandom([...document.querySelectorAll('.custom-cb[data-points="8"]')], need8);
+    const parts2 = comp.split('+').map(Number);
+    const [, , need18 = 0] = parts2;
+    pickRandom([...document.querySelectorAll('.custom-cb[data-points="8"]')],  need8);
     pickRandom([...document.querySelectorAll('.custom-cb[data-points="14"]')], need14);
+    pickRandom([...document.querySelectorAll('.custom-cb[data-points="18"]')], need18);
     updateCustomCount();
 }
 
