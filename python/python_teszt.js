@@ -508,6 +508,9 @@ function parseTasks(text) {
         const modulNevMatch = line.match(/^ModulNev:\s*(.+)/i);
         if (modulNevMatch && currentTask) { currentTask.modulNev = modulNevMatch[1].trim(); continue; }
 
+        const nehezMatch = line.match(/^Nehezseg:\s*(.+)/i);
+        if (nehezMatch && currentTask) { currentTask.nehezseg = nehezMatch[1].trim(); continue; }
+
         if (line.trim() === 'Pontozas:')     { resetSections(); inCriteria       = true; continue; }
         if (line.trim() === 'Tippek:')       { resetSections(); inTippek         = true; continue; }
         if (line.trim() === 'Megoldas:')     { resetSections(); inMegoldas       = true; continue; }
