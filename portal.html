@@ -1470,6 +1470,11 @@
             // Python kártya → gyakorló választó (mint vendég/Teszt Elek módban)
             const cardPy = document.getElementById('card-python');
             if (cardPy) cardPy.onclick = function(e) { e.preventDefault(); document.getElementById('vendeg-python-modal').style.display = 'flex'; };
+            // WEB kártya → vizsgamódban web-exam-modal (mint Teszt Elek módban)
+            if (portalExamMode) {
+                const cardWebEl = document.getElementById('card-web');
+                if (cardWebEl) cardWebEl.onclick = function(e) { e.preventDefault(); document.getElementById('web-exam-modal').style.display = 'flex'; };
+            }
         }
     }
 
