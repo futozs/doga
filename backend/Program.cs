@@ -128,6 +128,16 @@ var turnstileSecret = app.Configuration["SECRET_SITE"];
 // Életjelzés
 app.MapGet("/", () => Results.Ok(new { status = "Kandó Teszt Backend fut", version = "1.0" }));
 
+// Oktatói token alapú admin belépés (portál tokennel, jelszó nélkül)
+app.MapPost("/api/teachers/token-login", (HttpContext ctx) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var (_, payload) = InspectToken(ctx);
+    var username = payload.Split(':')[0].Split('|')[0];
+    var adminToken = CreateToken(username);
+    return Results.Ok(new { token = adminToken, username });
+});
+
 // Bejelentkezés
 app.MapPost("/api/auth/login", (LoginRequest req, Database db) =>
 {

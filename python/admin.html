@@ -1070,7 +1070,7 @@
             return false;
         }
 
-        function checkAuth() {
+        async function checkAuth() {
             const isAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
             authToken = localStorage.getItem('admin_token') || '';
 
@@ -1083,7 +1083,34 @@
                 loadSubmissions();
                 loadUsers();
                 loadTaskSets();
+                return;
             }
+
+            // Auto-login: ha van oktató session a portálról
+            try {
+                const portalUser = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+                if (portalUser.token && portalUser.szerep === 'oktato') {
+                    const res = await fetch(`${RAILWAY_URL}/api/teachers/token-login`, {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + portalUser.token }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        authToken = data.token;
+                        localStorage.setItem('admin_token', authToken);
+                        localStorage.setItem('admin_authenticated', 'true');
+                        localStorage.setItem('admin_username', data.username);
+                        document.getElementById('login-screen').style.display = 'none';
+                        document.getElementById('admin-content').style.display = 'block';
+                        const savedTab = localStorage.getItem('admin_tab') || 'vezerlot';
+                        switchTab(savedTab);
+                        loadConfig();
+                        loadSubmissions();
+                        loadUsers();
+                        loadTaskSets();
+                    }
+                }
+            } catch (e) { /* nincs portál session, marad a login képernyő */ }
         }
 
         // ── Felhasználókezelés ─────────────────────────────────────────────
