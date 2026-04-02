@@ -1544,7 +1544,21 @@
             if (name === 'otlet-lada') { loadOtletek(); loadTesztelők(); loadUzenetStatusz(); }
             if (name === 'feladatok')  { loadFeladatkeszitok(); loadFeladatStats(); loadFeladatJavaslatok(); }
             if (name === 'kovetelmenyek' && kovData.length === 0) loadKovetelmenyek();
-            if (name === 'felhasznalok') loadPwResetRequests();
+            if (name === 'felhasznalok') {
+                loadPwResetRequests();
+                startUsersAutoRefresh();
+            } else {
+                stopUsersAutoRefresh();
+            }
+        }
+
+        let _usersAutoRefreshTimer = null;
+        function startUsersAutoRefresh() {
+            stopUsersAutoRefresh();
+            _usersAutoRefreshTimer = setInterval(() => loadUsers(), 60000);
+        }
+        function stopUsersAutoRefresh() {
+            if (_usersAutoRefreshTimer) { clearInterval(_usersAutoRefreshTimer); _usersAutoRefreshTimer = null; }
         }
 
         // Check auth on page load
