@@ -34,7 +34,7 @@ builder.Services.AddCors(o => {
             "http://localhost:5500",
             "http://127.0.0.1:5500",
             "http://localhost:3000",
-            "http://192.168.0.250"
+            "https://agazati.up.railway.app"
         ).AllowAnyHeader().AllowAnyMethod());
     o.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
