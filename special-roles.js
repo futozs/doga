@@ -202,7 +202,7 @@
         }
     });
 
-    // ── Kandó logó bug aktiválása ─────────────────────────────────────────────
+    // ── Kandó logó bug aktiválása (tesztelőknek) ─────────────────────────────
     function activateBugLogo() {
         const wrap = document.getElementById('kando-logo-wrap');
         if (!wrap || wrap.dataset.bugActive) return;
@@ -215,6 +215,30 @@
         wrap.addEventListener('click', function(e) {
             e.preventDefault();
             window._srHibaOpen();
+        });
+    }
+
+    // ── Kandó logó → vissza az oktatói felületre (_tesztMod esetén) ──────────
+    function activateExitLogo() {
+        const wrap = document.getElementById('kando-logo-wrap');
+        if (!wrap || wrap.dataset.exitActive) return;
+        wrap.dataset.exitActive = '1';
+        wrap.style.cursor = 'pointer';
+        wrap.title = 'Vissza az oktatói felületre';
+        const link = wrap.querySelector('a');
+        if (link) link.style.pointerEvents = 'none';
+        wrap.addEventListener('mouseenter', function() { wrap.style.filter = 'brightness(1.3)'; });
+        wrap.addEventListener('mouseleave', function() { wrap.style.filter = ''; });
+        wrap.addEventListener('click', function(e) {
+            e.preventDefault();
+            const backup = localStorage.getItem('kandoTeacherBackup');
+            if (backup) {
+                sessionStorage.setItem('kandoUser', backup);
+                localStorage.removeItem('kandoTeacherBackup');
+            }
+            const path = window.location.pathname;
+            const portalPath = (path.includes('/python/') || path.includes('/web/')) ? '../portal.html' : 'portal.html';
+            location.replace(portalPath);
         });
     }
 
@@ -321,9 +345,9 @@
     async function init() {
         const user = getUser();
 
-        // _tesztMod (Teszt Elek): tanár tesztel diák-ként → bug logó mindenhol
+        // _tesztMod: tanár diák nézetben → logó kattintásra visszatér az oktatói felületre
         if (user._tesztMod) {
-            injectCSS(); injectHTML(); activateBugLogo();
+            activateExitLogo();
             return;
         }
 

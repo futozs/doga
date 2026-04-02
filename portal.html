@@ -179,22 +179,6 @@
         }
         .toggle-view-btn:hover { background: #536dfe; color: white; }
         /* Teszt mód visszaváltó sáv */
-        #teszt-mod-banner {
-            display: none;
-            position: fixed; bottom: 20px; right: 20px; z-index: 99999;
-            background: #1a1a2e; color: #94a3b8;
-            padding: 8px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 500;
-            align-items: center; gap: 8px;
-            border: 1px solid #2d3748; box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-        }
-        #teszt-mod-banner.active { display: flex; }
-        #teszt-mod-banner button {
-            padding: 3px 12px; background: transparent;
-            border: 1px solid #4a5568; border-radius: 6px;
-            color: #94a3b8; font-size: 0.76rem; font-weight: 600; cursor: pointer;
-            transition: all 0.2s;
-        }
-        #teszt-mod-banner button:hover { border-color: #e94560; color: #e94560; }
         /* Diák mód kártya a tanári portálban */
         .option-card.diak-mod {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -781,12 +765,6 @@
 </head>
 <body>
 
-<div id="teszt-mod-banner">
-    <i class="fas fa-user-graduate"></i>
-    <span>Diák teszt mód – <strong>Teszt Elek</strong> nézetében vagy</span>
-    <button onclick="exitStudentTestMode()"><i class="fas fa-arrow-left"></i> Vissza az oktatói felületre</button>
-</div>
-
 <div class="topbar">
     <div class="topbar-left">
         <span id="kando-logo-wrap" title="">
@@ -892,6 +870,11 @@
                 <span class="icon"><i class="fas fa-screwdriver-wrench"></i></span>
                 <span class="label">Admin</span>
                 <span class="desc">Mód beállítása, statisztikák, jelszócsere</span>
+            </a>
+            <a class="option-card diak-mod" href="#" onclick="event.preventDefault(); enterStudentTestMode()">
+                <span class="icon"><i class="fas fa-user-graduate"></i></span>
+                <span class="label">Diák mód</span>
+                <span class="desc">Teljes diáknézet – logóra kattintva visszatérhetsz</span>
             </a>
         </div>
     </div>
@@ -1334,14 +1317,6 @@
         const nevReszek = (user.nev || '').trim().split(' ');
         const keresztnev = nevReszek[nevReszek.length - 1] || 'felhasználó';
         document.getElementById('portal-title').textContent = `Üdvözöllek, ${keresztnev}!`;
-
-        if (user._tesztMod) {
-            const _banner = document.getElementById('teszt-mod-banner');
-            _banner.classList.add('active');
-            const _bh = _banner.offsetHeight || 28;
-            document.querySelector('.topbar').style.top = _bh + 'px';
-            document.body.style.paddingTop = (56 + _bh) + 'px';
-        }
 
         if (user.szerep === 'oktato') {
             if (user.email === 'sandornef@kkszki.hu') {
