@@ -327,10 +327,10 @@ const tasks = [
 </body>
 </html>`,
     checks:[
-      { label:'Bootstrap CDN van a &lt;head&gt;-ben',         fn:(h,d)=>h.includes('bootstrap') },
-      { label:'Van .container osztály',                       fn:(h,d)=>h.includes('container') },
+      { label:'Bootstrap CDN van a &lt;head&gt;-ben',         fn:(h,d)=>/bootstrap[^"\']*\.css/.test(h)||/bootstrap@[\d]/.test(h) },
+      { label:'Van .container osztály',                       fn:(h,d)=>/class="[^"]*\bcontainer\b/.test(h)||/class='[^']*\bcontainer\b/.test(h) },
       { label:'Van display-* (display-1..6) osztály',        fn:(h,d)=>/class="[^"]*display-[1-6]/.test(h)||/class='[^']*display-[1-6]/.test(h) },
-      { label:'Van .lead osztály',                           fn:(h,d)=>h.includes('lead') }
+      { label:'Van .lead osztály',                           fn:(h,d)=>/class="[^"]*\blead\b/.test(h)||/class='[^']*\blead\b/.test(h) }
     ]
   },
 
@@ -423,8 +423,8 @@ const tasks = [
 </body>
 </html>`,
     checks:[
-      { label:'Van .container osztály',                          fn:(h,d)=>h.includes('container') },
-      { label:'Van .row osztály',                               fn:(h,d)=>h.includes('row') },
+      { label:'Van .container osztály',                          fn:(h,d)=>/class="[^"]*\bcontainer\b/.test(h)||/class='[^']*\bcontainer\b/.test(h) },
+      { label:'Van .row osztály',                               fn:(h,d)=>/class="[^"]*\brow\b/.test(h)||/class='[^']*\brow\b/.test(h) },
       { label:'Van legalább 2 db col-md-6 (vagy col-*) osztály',fn:(h,d)=>(h.match(/col-[a-z]{0,3}-?\d+/g)||[]).length>=2 },
       { label:'Az oszlopokban van &lt;h2&gt; cím',              fn:(h,d)=>d.querySelectorAll('h2').length>=1 },
       { label:'Az oszlopokban van &lt;p&gt; szöveg',            fn:(h,d)=>d.querySelectorAll('p').length>=1 }
@@ -523,10 +523,10 @@ const tasks = [
 </html>`,
     checks:[
       { label:'Van display-* (display-1..6) osztály',          fn:(h,d)=>/class="[^"]*display-[1-6]/.test(h)||/class='[^']*display-[1-6]/.test(h) },
-      { label:'Van .text-center osztály',                      fn:(h,d)=>h.includes('text-center') },
-      { label:'Van .lead osztály',                             fn:(h,d)=>h.includes('lead') },
-      { label:'Van .text-muted osztály',                       fn:(h,d)=>h.includes('text-muted') },
-      { label:'Van img-fluid osztályú kép',                    fn:(h,d)=>!!d.querySelector('img.img-fluid')||h.includes('img-fluid') }
+      { label:'Van .text-center osztály',                      fn:(h,d)=>/class="[^"]*text-center/.test(h)||/class='[^']*text-center/.test(h) },
+      { label:'Van .lead osztály',                             fn:(h,d)=>/class="[^"]*\blead\b/.test(h)||/class='[^']*\blead\b/.test(h) },
+      { label:'Van .text-muted osztály',                       fn:(h,d)=>/class="[^"]*text-muted/.test(h)||/class='[^']*text-muted/.test(h) },
+      { label:'Van img-fluid osztályú kép',                    fn:(h,d)=>!!d.querySelector('img.img-fluid') }
     ]
   },
 
@@ -627,12 +627,12 @@ const tasks = [
 </body>
 </html>`,
     checks:[
-      { label:'Van btn-primary gomb',                          fn:(h,d)=>h.includes('btn-primary') },
-      { label:'Van btn-danger gomb',                           fn:(h,d)=>h.includes('btn-danger') },
-      { label:'Van btn-outline-* vagy btn-secondary gomb',    fn:(h,d)=>h.includes('btn-outline')||h.includes('btn-secondary') },
-      { label:'Van img-fluid osztályú kép',                   fn:(h,d)=>h.includes('img-fluid') },
-      { label:'Van .rounded osztály',                         fn:(h,d)=>h.includes('rounded') },
-      { label:'Van d-flex és gap-* osztály',                  fn:(h,d)=>h.includes('d-flex')&&/gap-\d/.test(h) }
+      { label:'Van btn-primary gomb',                          fn:(h,d)=>/class="[^"]*btn-primary/.test(h)||/class='[^']*btn-primary/.test(h) },
+      { label:'Van btn-danger gomb',                           fn:(h,d)=>/class="[^"]*btn-danger/.test(h)||/class='[^']*btn-danger/.test(h) },
+      { label:'Van btn-outline-* vagy btn-secondary gomb',    fn:(h,d)=>/class="[^"]*btn-outline/.test(h)||/class='[^']*btn-outline/.test(h)||/class="[^"]*btn-secondary/.test(h) },
+      { label:'Van img-fluid osztályú kép',                   fn:(h,d)=>!!d.querySelector('img.img-fluid') },
+      { label:'Van .rounded osztály',                         fn:(h,d)=>/class="[^"]*\brounded\b/.test(h)||/class='[^']*\brounded\b/.test(h) },
+      { label:'Van d-flex és gap-* osztály',                  fn:(h,d)=>(/class="[^"]*d-flex/.test(h)||/class='[^']*d-flex/.test(h))&&/gap-\d/.test(h) }
     ]
   },
 
@@ -726,7 +726,7 @@ const tasks = [
       { label:'Van .card-body osztály',                       fn:(h,d)=>!!d.querySelector('.card-body') },
       { label:'Van .card-title osztály',                      fn:(h,d)=>!!d.querySelector('.card-title') },
       { label:'Van .card-text osztály',                       fn:(h,d)=>!!d.querySelector('.card-text') },
-      { label:'Van table-striped táblázat',                   fn:(h,d)=>h.includes('table-striped') },
+      { label:'Van table-striped táblázat',                   fn:(h,d)=>/class="[^"]*table-striped/.test(h)||/class='[^']*table-striped/.test(h) },
       { label:'Van &lt;thead&gt; és &lt;tbody&gt;',           fn:(h,d)=>!!d.querySelector('thead')&&!!d.querySelector('tbody') },
       { label:'Van legalább 3 &lt;tr&gt; sor',               fn:(h,d)=>d.querySelectorAll('tr').length>=3 }
     ]
