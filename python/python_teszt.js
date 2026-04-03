@@ -2801,7 +2801,7 @@ function updateFrissFeladatokBox() {
             <i class="fa-solid fa-arrows-rotate" style="color:#3b82f6;"></i> Új feladatok érkeztek
         </div>
         ${ujTasks.length ? `<div style="margin-bottom:${hasTanulo?'0.5':'0'}rem;">
-            Az <strong>Egyéni összeállításban</strong> találod őket ${ujBadge} jellel megjelölve.
+            Az <strong>Egyéni összeállításban</strong> találod őket ${ujBadge}-ként megjelölve.
         </div>` : ''}
         ${hasTanulo ? `<div><i class="fa-solid fa-graduation-cap" style="color:#3b82f6;"></i> <strong>Feladatkészítők feladatai</strong> csak Egyéni összeállításban érhetők el — próbáld ki őket, szavazz rájuk, hogy bekerülhessenek a gyakorló feladatok közé!</div>` : ''}
     `;
