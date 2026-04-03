@@ -2755,9 +2755,10 @@ function renderVegyesDots() {
         if (!el) return;
         if (selectedTaskType !== 'vegyes') { el.style.display = 'none'; return; }
         el.style.display = 'flex';
-        el.innerHTML = VEGYES_COMBOS.map((c, i) =>
-            `<span title="${c.label}" onclick="jumpVegyesCombo(${i})" style="cursor:pointer;font-size:${i===selectedVegyesIndex?'1.1':'0.85'}rem;color:${i===selectedVegyesIndex?'#60a5fa':'#334d6e'};transition:all 0.15s;">&#9679;</span>`
-        ).join('') + `<span style="font-size:0.72rem;color:#4a7fa8;margin-left:4px;">${selectedVegyesIndex+1}/${VEGYES_COMBOS.length} — kattints újra a gombra a következőhöz</span>`;
+        el.innerHTML = VEGYES_COMBOS.map((c, i) => {
+            const active = i === selectedVegyesIndex;
+            return `<span title="${c.label}" onclick="jumpVegyesCombo(${i})" style="cursor:pointer;font-size:${active?'1.4':'1.1'}rem;color:${active?'#60a5fa':'#3d6494'};transition:all 0.15s;line-height:1;">&#9679;</span>`;
+        }).join('') + `<span style="font-size:0.78rem;color:#7db8e8;margin-left:8px;font-weight:600;">${selectedVegyesIndex+1} / ${VEGYES_COMBOS.length}</span><span style="font-size:0.75rem;color:#4a7fa8;margin-left:6px;">— kattints a gombra a következőhöz</span>`;
     });
 }
 
