@@ -41,7 +41,16 @@ let lastCodeLengths = [];
 let testSubmitted = false;
 let megoldasok = {}; // { "1": { solution, hints: [] }, ... }
 let tippIndex = []; // per task: how many hints shown
-let selectedTaskType = 'agazati'; // 'agazati' | 'csak8' | 'csak14' | 'csak18'
+let selectedTaskType = 'agazati'; // 'agazati' | 'csak8' | 'csak14' | 'csak18' | 'vegyes'
+let selectedVegyesIndex = 0;
+const VEGYES_COMBOS = [
+    { label: '2 × 8p + 1 × 14p', counts: [2,1,0], pts: [8,8,14] },
+    { label: '1 × 8p + 2 × 14p', counts: [1,2,0], pts: [8,14,14] },
+    { label: '2 × 8p + 1 × 18p', counts: [2,0,1], pts: [8,8,18] },
+    { label: '2 × 14p + 1 × 18p', counts: [0,2,1], pts: [14,14,18] },
+    { label: '1 × 8p + 2 × 18p',  counts: [1,0,2], pts: [8,18,18] },
+    { label: '1 × 14p + 2 × 18p', counts: [0,1,2], pts: [14,18,18] },
+];
 let solutionViewedTasks = []; // taskIndex-ek ahol megoldást nézett ebben a körben
 let lastRoundTaskNumbers = new Set(); // előző kör feladatszámai – elkerüljük az ismétlést
 let customTaskHistory = []; // utolsó 5 kör feladatszámai [[n,n,n], ...]
@@ -779,6 +788,19 @@ async function selectRandomTasks() {
     } else if (selectedTaskType === 'csak18') {
         const pool = fresh18.length >= 3 ? fresh18 : tasks18;
         selectedTasks = shuffle(pool).slice(0, 3);
+    } else if (selectedTaskType === 'vegyes') {
+        const combo = VEGYES_COMBOS[selectedVegyesIndex];
+        const need8  = combo.pts.filter(p => p===8).length;
+        const need14 = combo.pts.filter(p => p===14).length;
+        const need18 = combo.pts.filter(p => p===18).length;
+        const pool8  = fresh8.length  >= need8  ? fresh8  : tasks8;
+        const pool14 = fresh14.length >= need14 ? fresh14 : tasks14;
+        const pool18 = fresh18.length >= need18 ? fresh18 : tasks18;
+        selectedTasks = shuffle([
+            ...shuffle(pool8).slice(0, need8),
+            ...shuffle(pool14).slice(0, need14),
+            ...shuffle(pool18).slice(0, need18),
+        ]);
     } else {
         // agazati: 1×8 + 1×14 + 1×18
         const pool8  = fresh8.length  >= 1 ? fresh8  : tasks8;
@@ -2714,11 +2736,35 @@ function changeFontSize(delta) {
 }
 
 function setTaskType(type, btn) {
+    if (type === 'vegyes' && selectedTaskType === 'vegyes') {
+        selectedVegyesIndex = (selectedVegyesIndex + 1) % VEGYES_COMBOS.length;
+    } else {
+        selectedVegyesIndex = 0;
+    }
     selectedTaskType = type;
     document.querySelectorAll('.task-type-btn[data-type]').forEach(b => {
         b.classList.toggle('active', b.dataset.type === type);
     });
     updateTaskBreakdown();
+    renderVegyesDots();
+}
+
+function renderVegyesDots() {
+    ['vegyes-dots-1','vegyes-dots-2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (selectedTaskType !== 'vegyes') { el.style.display = 'none'; return; }
+        el.style.display = 'flex';
+        el.innerHTML = VEGYES_COMBOS.map((c, i) =>
+            `<span title="${c.label}" onclick="jumpVegyesCombo(${i})" style="cursor:pointer;font-size:${i===selectedVegyesIndex?'1.1':'0.85'}rem;color:${i===selectedVegyesIndex?'#60a5fa':'#334d6e'};transition:all 0.15s;">&#9679;</span>`
+        ).join('') + `<span style="font-size:0.72rem;color:#4a7fa8;margin-left:4px;">${selectedVegyesIndex+1}/${VEGYES_COMBOS.length} — kattints újra a gombra a következőhöz</span>`;
+    });
+}
+
+function jumpVegyesCombo(i) {
+    selectedVegyesIndex = i;
+    updateTaskBreakdown();
+    renderVegyesDots();
 }
 
 function updateTaskBreakdown() {
@@ -2754,6 +2800,18 @@ function updateTaskBreakdown() {
                 <span class="task-row-time">~35 perc/feladat</span>
             </div>`;
         totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">54 pont</strong> &nbsp;|&nbsp; ~105 perc';
+    } else if (selectedTaskType === 'vegyes') {
+        const combo = VEGYES_COMBOS[selectedVegyesIndex];
+        const ptMap = { 8: ['pt8','Könnyű','8–15 perc'], 14: ['pt14','Közepes','~25 perc'], 18: ['pt18','Nehéz','~35 perc'] };
+        const counted = combo.pts.reduce((acc, p) => { acc[p] = (acc[p]||0)+1; return acc; }, {});
+        const rows = Object.entries(counted).map(([p,n]) => {
+            const [cls,desc,time] = ptMap[p];
+            return `<div class="task-row"><span class="task-badge ${cls}">${p} pont × ${n}</span><span class="task-row-desc">${desc} feladat</span><span class="task-row-time">${time}</span></div>`;
+        }).join('');
+        const total = combo.pts.reduce((s,p) => s+p, 0);
+        titleEl.textContent = combo.label + ':';
+        rowsEl.innerHTML = rows;
+        totalEl.innerHTML = `Összesen: <strong style="color:#e0e0e0;">${total} pont</strong>`;
     } else {
         // agazati
         titleEl.textContent = 'Ágazati alapvizsga összeállítás:';
@@ -2851,7 +2909,7 @@ function renderPracticeHistory(solutionPeeked) {
         if (solutionPeeked) {
             el.style.display = 'block';
             const prevRoundsHtml = rounds.length >= 1 ? (() => {
-                const typeLabel = { agazati: 'Ágazati', csak8: '3×Könnyű', csak14: '3×Közepes', csak18: '3×Nehéz', random: 'Vegyes' };
+                const typeLabel = { agazati: 'Ágazati', csak8: '3×Könnyű', csak14: '3×Közepes', csak18: '3×Nehéz', vegyes: 'Vegyes', random: 'Vegyes' };
                 const last5 = rounds.slice(-5).reverse();
                 const rows = last5.map((r, i) => {
                     const min = Math.floor(r.elapsedSec / 60);
@@ -2883,7 +2941,7 @@ function renderPracticeHistory(solutionPeeked) {
 
         if (rounds.length < 2) { el.style.display = 'none'; return; }
 
-        const typeLabel = { agazati: 'Ágazati', csak8: '3×Könnyű', csak14: '3×Közepes', csak18: '3×Nehéz', random: 'Vegyes' };
+        const typeLabel = { agazati: 'Ágazati', csak8: '3×Könnyű', csak14: '3×Közepes', csak18: '3×Nehéz', vegyes: 'Vegyes', random: 'Vegyes' };
         const last5 = rounds.slice(-5).reverse();
         const rows = last5.map((r, i) => {
             const min = Math.floor(r.elapsedSec / 60);
