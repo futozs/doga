@@ -857,20 +857,14 @@ function renderCustomModal() {
 }
 
 function renderCustomTaskList() {
-    const filterType = document.querySelector('.custom-type-btn.active')?.dataset.type || 'all';
+    const filterCat = document.querySelector('.custom-cat-btn.active')?.dataset.cat || 'all';
     const allPastNums = new Set(customTaskHistory.flat());
-    const tasks8  = tasks.filter(t => t.points === 8);
-    const tasks14 = tasks.filter(t => t.points === 14);
-    const tasks18 = tasks.filter(t => t.points === 18 && t.modulNev);
+    const tanuloNums = window._tanuloFeladatok || new Set();
 
-    function matches(task) {
-        if (filterType === 'all') return true;
-        const types = (task.tipus || '').split(',').map(s => s.trim());
-        if (filterType === 'if') return types.includes('if');
-        if (filterType === 'ciklus') return types.some(t => t === 'for' || t === 'while');
-        if (filterType === 'függvény') return types.includes('függvény');
-        return true;
-    }
+    const tasks8      = tasks.filter(t => t.points === 8  && !tanuloNums.has(t.number));
+    const tasks14     = tasks.filter(t => t.points === 14 && !tanuloNums.has(t.number));
+    const tasks18     = tasks.filter(t => t.points === 18 && t.modulNev && !tanuloNums.has(t.number));
+    const tasksTanulo = tasks.filter(t => tanuloNums.has(t.number));
 
     function diffBadge(neh) {
         if (!neh) return '';
@@ -879,19 +873,23 @@ function renderCustomTaskList() {
         return `<span class="card-diff-badge ${cls}">${label}</span>`;
     }
 
-    function renderGroup(list, title, ptsCls) {
-        const filtered = list.filter(matches);
-        if (!filtered.length) return '';
+    function ptsCls(pts) {
+        return pts === 8 ? 'card-pts-8' : pts === 14 ? 'card-pts-14' : pts === 18 ? 'card-pts-18' : 'card-pts-8';
+    }
+
+    function renderGroup(list, title, cls, extraTag) {
+        if (!list.length) return '';
         const header = `<div class="custom-group-divider"><span class="custom-group-divider-label">${title}</span></div>`;
-        const cards = filtered.map(t => {
+        const cards = list.map(t => {
             const past = allPastNums.has(t.number);
             return `<label class="custom-task-card${past ? ' past' : ''}">
                 <input type="checkbox" class="custom-cb" value="${t.number}" data-points="${t.points}">
                 <div class="card-check-icon"><i class="fa-solid fa-check"></i></div>
-                <div class="card-pts-badge ${ptsCls}">${t.points}p</div>
+                <div class="card-pts-badge ${cls || ptsCls(t.points)}">${t.points}p</div>
                 <div class="card-title">${t.cim}</div>
                 <div class="card-tags">
                     ${diffBadge(t.nehezseg)}
+                    ${extraTag || ''}
                     ${past ? '<span class="custom-past-tag"><i class="fa-solid fa-rotate-left"></i> volt már</span>' : ''}
                 </div>
             </label>`;
@@ -899,10 +897,15 @@ function renderCustomTaskList() {
         return `${header}<div class="custom-card-grid">${cards}</div>`;
     }
 
-    document.getElementById('custom-task-list').innerHTML =
-        renderGroup(tasks8,  '8 pontos feladatok', 'card-pts-8') +
-        renderGroup(tasks14, '14 pontos feladatok', 'card-pts-14') +
-        renderGroup(tasks18, '18 pontos feladatok', 'card-pts-18');
+    const tanuloTag = '<span class="custom-tanulo-tag"><i class="fa-solid fa-graduation-cap"></i> feladatkészítő</span>';
+    let html = '';
+    if (filterCat === 'all' || filterCat === '8')      html += renderGroup(tasks8,      '8 pontos feladatok',             'card-pts-8',  '');
+    if (filterCat === 'all' || filterCat === '14')     html += renderGroup(tasks14,     '14 pontos feladatok',            'card-pts-14', '');
+    if (filterCat === 'all' || filterCat === '18')     html += renderGroup(tasks18,     '18 pontos feladatok',            'card-pts-18', '');
+    if (filterCat === 'all' || filterCat === 'tanulo') html += renderGroup(tasksTanulo, 'Feladatkészítők feladatai',      '',            tanuloTag);
+    if (!html) html = '<div style="color:#64748b;text-align:center;padding:1.5rem;font-size:0.88rem;">Nincs feladat ebben a kategóriában.</div>';
+
+    document.getElementById('custom-task-list').innerHTML = html;
 
     document.querySelectorAll('.custom-cb').forEach(cb =>
         cb.addEventListener('change', updateCustomCount));

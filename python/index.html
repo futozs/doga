@@ -2024,6 +2024,16 @@
     background:#1a2740;border:1px solid #2d4a6b;border-radius:20px;
     padding:3px 11px;font-size:0.78rem;color:#7da0c0;cursor:default;
 }
+.custom-cat-filters { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.2rem; }
+.custom-cat-btn {
+    padding:5px 14px;border-radius:20px;border:1px solid #2a3f5a;
+    background:#162035;color:#7da0c0;font-size:0.82rem;font-weight:600;cursor:pointer;
+    transition:all 0.15s;white-space:nowrap;
+}
+.custom-cat-btn:hover { border-color:#3b82f6;color:#93c5fd; }
+.custom-cat-btn.active { background:rgba(59,130,246,0.15);border-color:#3b82f6;color:#93c5fd; }
+.custom-cat-btn[data-cat="tanulo"].active { background:rgba(192,132,252,0.15);border-color:#c084fc;color:#c084fc; }
+.custom-cat-btn[data-cat="tanulo"] { border-color:#4a3a6a;color:#9d7fc0; }
 .custom-composition-select {
     width:100%;padding:9px 12px;background:#162035;border:1px solid #2a3f5a;
     border-radius:10px;color:#e2e8f0;font-size:0.88rem;cursor:pointer;
@@ -2154,9 +2164,19 @@
         </select>
       </div>
 
+      <!-- Kategória szűrő -->
+      <div>
+        <div class="custom-cat-filters" id="custom-cat-filters">
+          <button class="custom-cat-btn active" data-cat="all"    onclick="customCatFilter(this)">Összes</button>
+          <button class="custom-cat-btn" data-cat="8"      onclick="customCatFilter(this)">8 pontos</button>
+          <button class="custom-cat-btn" data-cat="14"     onclick="customCatFilter(this)">14 pontos</button>
+          <button class="custom-cat-btn" data-cat="18"     onclick="customCatFilter(this)">18 pontos</button>
+          <button class="custom-cat-btn" data-cat="tanulo" onclick="customCatFilter(this)"><i class="fa-solid fa-graduation-cap"></i> Feladatkészítők feladatai</button>
+        </div>
+      </div>
+
       <!-- Feladat lista -->
       <div style="flex:1;">
-        <div class="custom-section-title"><i class="fa-solid fa-list-check" style="color: #3b82f6;"></i> Feladatok</div>
         <div id="custom-task-list"></div>
         <div id="custom-count-label" class="custom-count-label"></div>
       </div>
@@ -2171,6 +2191,11 @@
 </div>
 
 <script>
+function customCatFilter(btn) {
+    document.querySelectorAll('.custom-cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCustomTaskList();
+}
 
 // ÚJ! badge – itt fut, mert a #custom-task-list elem itt már létezik a DOM-ban
 (function() {
