@@ -1918,21 +1918,7 @@
             });
         };
 
-        window._addTanulosBadges = function() {
-            document.querySelectorAll('.custom-cb').forEach(function(cb) {
-                const num = parseInt(cb.value);
-                if (!window._tanuloFeladatok.has(num)) return;
-                const label = cb.closest('label');
-                if (!label || label.querySelector('.custom-tanulo-tag')) return;
-                const badge = document.createElement('span');
-                badge.className = 'custom-tanulo-tag';
-                badge.title = 'Ezt a feladatot egy tanuló készítette';
-                badge.textContent = 'tanuló feladat';
-                const tags = label.querySelector('.card-tags');
-                if (tags) tags.appendChild(badge);
-                else label.appendChild(badge);
-            });
-        };
+        window._addTanulosBadges = function() {};
 
         // ── Plusz idő kérés – autoSubmitTest() felülírása ──────────────────────
         window.autoSubmitTest = function() {
