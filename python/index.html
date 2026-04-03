@@ -1762,6 +1762,24 @@
         // ── Feedback / visszajelzés rendszer ──────────────────────────────────
         const RAILWAY_URL_FB = 'https://agazati.up.railway.app';
 
+        // Pendingben maradt (offline) szavazatok újraküldése
+        (async function retrySavedFeedback() {
+            const pending = JSON.parse(localStorage.getItem('_pendingFeedback') || '[]');
+            if (!pending.length) return;
+            const stillPending = [];
+            for (const item of pending) {
+                try {
+                    const res = await fetch(`${RAILWAY_URL_FB}/api/feedback`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(item)
+                    });
+                    if (!res.ok) stillPending.push(item);
+                } catch(e) { stillPending.push(item); }
+            }
+            localStorage.setItem('_pendingFeedback', JSON.stringify(stillPending));
+        })();
+
         // Friss feladatok chip-ek renderelése (csak szöveg, gombok nélkül)
         document.querySelectorAll('.vote-task-list').forEach(container => {
             const tasks = (container.dataset.tasks || '').split(',').map(t => t.trim()).filter(Boolean);
@@ -1820,22 +1838,23 @@
                 }
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Küldés...';
-                let ok = true;
+                const pending = JSON.parse(localStorage.getItem('_pendingFeedback') || '[]');
                 for (const [feladatNev, ertek] of entries) {
-                    if (userEmail) {
-                        try {
-                            const res = await fetch(`${RAILWAY_URL_FB}/api/feedback`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ email: userEmail, feladatNev, tipus: 'reaction', ertek })
-                            });
-                            if (!res.ok) ok = false;
-                        } catch(e) { ok = false; }
-                    }
+                    if (!userEmail) continue;
+                    const payload = { email: userEmail, feladatNev, tipus: 'reaction', ertek };
+                    try {
+                        const res = await fetch(`${RAILWAY_URL_FB}/api/feedback`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!res.ok) pending.push(payload);
+                    } catch(e) { pending.push(payload); }
                 }
+                localStorage.setItem('_pendingFeedback', JSON.stringify(pending));
                 content.style.display = 'none';
                 thankyou.style.display = 'block';
-                thankyou.textContent = ok ? 'Köszönjük! 🎉' : 'Elmentve (offline). 🎉';
+                thankyou.textContent = 'Köszönjük! 🎉';
                 setTimeout(() => { popup.style.display = 'none'; }, 2000);
             };
 
