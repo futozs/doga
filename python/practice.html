@@ -1405,14 +1405,9 @@ hallgatok = [
     Hallgato("Dóra", 95),
 ]
 
-# Kezdj az első hallgatóval mint "eddigi legjobb":
-legjobb = hallgatok[0]
-
-for h in hallgatok:
-    # Ha h.pont nagyobb mint legjobb.pont:
-    # frissítsd a legjobbat
-
-print(f"Legjobb hallgató: {legjobb.nev}, {legjobb.pont} pont")
+# Keresd meg a legjobb pontszámú hallgatót!
+# Kezdj az első elemmel, for ciklussal hasonlítsd össze a többivel,
+# majd írd ki a nevét és pontszámát!
 `,
       solution: `class Hallgato:
     def __init__(self, nev, pont):
@@ -1511,14 +1506,9 @@ termekek = [
     Termek("Monitor", 89000),
 ]
 
-# Kezdj az első termékkel mint "eddigi legolcsóbb":
-legolcsobb = termekek[0]
-
-for t in termekek:
-    # Ha t.ar kisebb mint legolcsobb.ar:
-    # frissítsd a legolcsóbbat
-
-print(f"Legolcsóbb termék: {legolcsobb.nev}, {legolcsobb.ar} Ft")
+# Keresd meg a legolcsóbb terméket!
+# Kezdj az első elemmel, for ciklussal hasonlítsd össze a többivel,
+# majd írd ki a nevét és árát!
 `,
       solution: `class Termek:
     def __init__(self, nev, ar):
