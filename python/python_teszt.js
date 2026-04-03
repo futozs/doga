@@ -2793,21 +2793,17 @@ function updateFrissFeladatokBox() {
     const hasTanulo = tanuloNums.size > 0;
     if (!ujTasks.length && !hasTanulo) { box.style.display = 'none'; return; }
 
-    const counts = ujTasks.reduce((acc, t) => { acc[t.points] = (acc[t.points]||0)+1; return acc; }, {});
-    const countParts = Object.entries(counts)
-        .sort(([a],[b]) => a-b)
-        .map(([p,n]) => `<strong>${n} db ${p} pontos</strong>`)
-        .join(' · ');
+    const ujBadge = `<span style="display:inline-block;background:#3b82f6;color:#fff;border-radius:4px;padding:1px 6px;font-size:0.7rem;font-weight:700;letter-spacing:.05em;vertical-align:middle;margin-left:4px;">ÚJ</span>`;
 
     box.style.display = '';
     box.innerHTML = `
-        <div style="font-weight:700;margin-bottom:0.4rem;color:#92400e;">
-            <i class="fa-solid fa-star" style="color:#f59e0b;"></i> Új feladatok
+        <div style="font-weight:700;margin-bottom:0.4rem;color:#1e40af;">
+            <i class="fa-solid fa-arrows-rotate" style="color:#3b82f6;"></i> Új feladatok érkeztek
         </div>
         ${ujTasks.length ? `<div style="margin-bottom:${hasTanulo?'0.5':'0'}rem;">
-            ${countParts} feladat érkezett — keresd az <strong>Egyéni összeállításban</strong> <span style="font-size:0.82rem;color:#b45309;">(ÚJ! jellel jelölve)</span>
+            Keresd az <strong>Egyéni összeállításban</strong> — az újak ${ujBadge} badge-dzsel jelölve.
         </div>` : ''}
-        ${hasTanulo ? `<div><i class="fa-solid fa-graduation-cap" style="color:#b45309;"></i> <strong>Feladatkészítők feladatai</strong> szintén csak Egyéni összeállításban érhetők el — ott szavazhatsz is rájuk!</div>` : ''}
+        ${hasTanulo ? `<div><i class="fa-solid fa-graduation-cap" style="color:#3b82f6;"></i> <strong>Feladatkészítők feladatai</strong> szintén csak Egyéni összeállításban érhetők el — ott szavazhatsz is rájuk!</div>` : ''}
     `;
 }
 
