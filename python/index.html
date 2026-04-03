@@ -1264,29 +1264,34 @@
                     <div id="practice-task-type" style="display:none; margin-bottom:0.8rem;">
                         <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:0.5rem;">Milyen feladatokat szeretnél gyakorolni?</p>
                         <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                            <button class="task-type-btn active" data-type="random" onclick="setTaskType('random', this)"><i class="fa-solid fa-shuffle"></i> Vegyes</button>
-                            <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)">8 pontos × 3</button>
-                            <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)">14 pontos × 3</button>
-                            <button class="task-type-btn" data-type="csak18" onclick="setTaskType('csak18', this)">18 pontos × 1</button>
+                            <button class="task-type-btn active" data-type="agazati" onclick="setTaskType('agazati', this)"><i class="fa-solid fa-graduation-cap"></i> Ágazati mód</button>
+                            <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)"><i class="fa-solid fa-circle" style="color:#fbbf24;font-size:0.6em"></i> 3 × Könnyű</button>
+                            <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)"><i class="fa-solid fa-circle" style="color:#c084fc;font-size:0.6em"></i> 3 × Közepes</button>
+                            <button class="task-type-btn" data-type="csak18" onclick="setTaskType('csak18', this)"><i class="fa-solid fa-circle" style="color:#2dd4bf;font-size:0.6em"></i> 3 × Nehéz</button>
                         </div>
                     </div>
 
                     <!-- Feladat breakdown (mindig látszik) -->
                     <div class="task-breakdown" id="task-breakdown">
-                        <p id="task-breakdown-title">Véletlenszerűen kiosztott feladatok:</p>
+                        <p id="task-breakdown-title">Ágazati alapvizsga összeállítás:</p>
                         <div id="task-breakdown-rows">
                             <div class="task-row">
-                                <span class="task-badge pt8">8 pont × 2</span>
-                                <span class="task-row-desc">Egyszerűbb feladatok</span>
-                                <span class="task-row-time">8–15 perc/feladat</span>
+                                <span class="task-badge pt8">8 pont × 1</span>
+                                <span class="task-row-desc">Könnyű feladat</span>
+                                <span class="task-row-time">8–15 perc</span>
                             </div>
                             <div class="task-row">
                                 <span class="task-badge pt14">14 pont × 1</span>
-                                <span class="task-row-desc">Összetettebb feladat</span>
+                                <span class="task-row-desc">Közepes feladat</span>
                                 <span class="task-row-time">~25 perc</span>
                             </div>
+                            <div class="task-row">
+                                <span class="task-badge pt18">18 pont × 1</span>
+                                <span class="task-row-desc">Nehéz feladat</span>
+                                <span class="task-row-time">~35 perc</span>
+                            </div>
                         </div>
-                        <div class="task-total" id="task-breakdown-total">Összesen: <strong style="color:#e0e0e0;">30 pont</strong> &nbsp;|&nbsp; ~45 perc</div>
+                        <div class="task-total" id="task-breakdown-total">Összesen: <strong style="color:#e0e0e0;">40 pont</strong> &nbsp;|&nbsp; ~60 perc</div>
                     </div>
 
                     <!-- ════════════════════════════════════════════════════════
@@ -1459,10 +1464,10 @@
                     <div id="end-practice-restart" style="display:none;margin-top:1.2rem;">
                         <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:0.6rem;">Szeretnél még gyakorolni?</p>
                         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem;">
-                            <button class="task-type-btn active" data-type="random" onclick="setTaskType('random', this)"><i class="fa-solid fa-shuffle"></i> Vegyes</button>
-                            <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)">8 pontos × 3</button>
-                            <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)">14 pontos × 3</button>
-                            <button class="task-type-btn" data-type="csak18" onclick="setTaskType('csak18', this)">18 pontos × 1</button>
+                            <button class="task-type-btn active" data-type="agazati" onclick="setTaskType('agazati', this)"><i class="fa-solid fa-graduation-cap"></i> Ágazati mód</button>
+                            <button class="task-type-btn" data-type="csak8" onclick="setTaskType('csak8', this)"><i class="fa-solid fa-circle" style="color:#fbbf24;font-size:0.6em"></i> 3 × Könnyű</button>
+                            <button class="task-type-btn" data-type="csak14" onclick="setTaskType('csak14', this)"><i class="fa-solid fa-circle" style="color:#c084fc;font-size:0.6em"></i> 3 × Közepes</button>
+                            <button class="task-type-btn" data-type="csak18" onclick="setTaskType('csak18', this)"><i class="fa-solid fa-circle" style="color:#2dd4bf;font-size:0.6em"></i> 3 × Nehéz</button>
                         </div>
                         <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
                             <button onclick="restartPractice()" style="padding:0.65rem 1.6rem;background:linear-gradient(135deg,#059669,#10b981);color:white;border:none;border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;">🔄 Még egy kör!</button>

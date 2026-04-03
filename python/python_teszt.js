@@ -41,7 +41,7 @@ let lastCodeLengths = [];
 let testSubmitted = false;
 let megoldasok = {}; // { "1": { solution, hints: [] }, ... }
 let tippIndex = []; // per task: how many hints shown
-let selectedTaskType = 'random'; // 'random' | 'csak8' | 'csak14'
+let selectedTaskType = 'agazati'; // 'agazati' | 'csak8' | 'csak14' | 'csak18'
 let solutionViewedTasks = []; // taskIndex-ek ahol megoldást nézett ebben a körben
 let lastRoundTaskNumbers = new Set(); // előző kör feladatszámai – elkerüljük az ismétlést
 let customTaskHistory = []; // utolsó 5 kör feladatszámai [[n,n,n], ...]
@@ -572,8 +572,19 @@ async function startTest() {
             alert(`Nincs 18 pontos feladat betöltve! Ellenőrizd a feladatok.txt fájlt.`);
             return;
         }
-    } else if (tasks8.length < 2 || tasks14.length < 1) {
-        alert(`Nincs elég feladat! Szükséges: legalább 2 db 8 pontos és 1 db 14 pontos feladat.\nJelenleg: ${tasks8.length} db 8 pontos, ${tasks14.length} db 14 pontos.`);
+    } else if (selectedTaskType === 'agazati') {
+        if (tasks8.length < 1 || tasks14.length < 1 || tasks18check.length < 1) {
+            alert(`Ágazati módhoz szükséges: legalább 1 db 8, 14 és 18 pontos feladat.\nJelenleg: ${tasks8.length} db 8p, ${tasks14.length} db 14p, ${tasks18check.length} db 18p.`);
+            return;
+        }
+    } else if (tasks8.length < 3 && selectedTaskType === 'csak8') {
+        alert(`3 × Könnyű módhoz legalább 3 db 8 pontos feladat szükséges.`);
+        return;
+    } else if (tasks14.length < 3 && selectedTaskType === 'csak14') {
+        alert(`3 × Közepes módhoz legalább 3 db 14 pontos feladat szükséges.`);
+        return;
+    } else if (tasks8.length < 1 || tasks14.length < 1) {
+        alert(`Nincs elég feladat! Szükséges: legalább 1 db 8 pontos és 1 db 14 pontos feladat.`);
         return;
     }
 
@@ -766,13 +777,18 @@ async function selectRandomTasks() {
         const pool = fresh14.length >= 3 ? fresh14 : tasks14;
         selectedTasks = shuffle(pool).slice(0, 3);
     } else if (selectedTaskType === 'csak18') {
-        const pool = fresh18.length >= 1 ? fresh18 : tasks18;
-        selectedTasks = shuffle(pool).slice(0, 1);
+        const pool = fresh18.length >= 3 ? fresh18 : tasks18;
+        selectedTasks = shuffle(pool).slice(0, 3);
     } else {
-        // random: 2×8 + 1×14
-        const pool8 = fresh8.length >= 2 ? fresh8 : tasks8;
+        // agazati: 1×8 + 1×14 + 1×18
+        const pool8  = fresh8.length  >= 1 ? fresh8  : tasks8;
         const pool14 = fresh14.length >= 1 ? fresh14 : tasks14;
-        selectedTasks = [...shuffle(pool8).slice(0, 2), ...shuffle(pool14).slice(0, 1)].sort(() => 0.5 - Math.random());
+        const pool18 = fresh18.length >= 1 ? fresh18 : tasks18;
+        selectedTasks = shuffle([
+            ...shuffle(pool8).slice(0, 1),
+            ...shuffle(pool14).slice(0, 1),
+            ...shuffle(pool18).slice(0, 1)
+        ]);
     }
 
     // Aktuális kör feladatait eltároljuk a következő kör kizárásához (backend + localStorage fallback)
@@ -2712,46 +2728,52 @@ function updateTaskBreakdown() {
     if (!rowsEl || !totalEl || !titleEl) return;
 
     if (selectedTaskType === 'csak8') {
-        titleEl.textContent = '3 db 8 pontos feladat:';
+        titleEl.textContent = '3 db könnyű feladat:';
         rowsEl.innerHTML = `
             <div class="task-row">
                 <span class="task-badge pt8">8 pont × 3</span>
-                <span class="task-row-desc">Egyszerűbb feladatok</span>
+                <span class="task-row-desc">Könnyű feladatok</span>
                 <span class="task-row-time">8–15 perc/feladat</span>
             </div>`;
-        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">24 pont</strong>';
+        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">24 pont</strong> &nbsp;|&nbsp; ~30–45 perc';
     } else if (selectedTaskType === 'csak14') {
-        titleEl.textContent = '3 db 14 pontos feladat:';
+        titleEl.textContent = '3 db közepes feladat:';
         rowsEl.innerHTML = `
             <div class="task-row">
                 <span class="task-badge pt14">14 pont × 3</span>
-                <span class="task-row-desc">Összetettebb feladatok</span>
+                <span class="task-row-desc">Közepes feladatok</span>
                 <span class="task-row-time">~25 perc/feladat</span>
             </div>`;
-        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">42 pont</strong>';
+        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">42 pont</strong> &nbsp;|&nbsp; ~75 perc';
     } else if (selectedTaskType === 'csak18') {
-        titleEl.textContent = '1 db 18 pontos feladat:';
+        titleEl.textContent = '3 db nehéz feladat:';
         rowsEl.innerHTML = `
             <div class="task-row">
-                <span class="task-badge pt18">18 pont × 1</span>
-                <span class="task-row-desc">OOP + fájlkezelés</span>
-                <span class="task-row-time">~35 perc</span>
+                <span class="task-badge pt18">18 pont × 3</span>
+                <span class="task-row-desc">Nehéz feladatok</span>
+                <span class="task-row-time">~35 perc/feladat</span>
             </div>`;
-        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">18 pont</strong> &nbsp;|&nbsp; ~35 perc';
+        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">54 pont</strong> &nbsp;|&nbsp; ~105 perc';
     } else {
-        titleEl.textContent = 'Véletlenszerűen kiosztott feladatok:';
+        // agazati
+        titleEl.textContent = 'Ágazati alapvizsga összeállítás:';
         rowsEl.innerHTML = `
             <div class="task-row">
-                <span class="task-badge pt8">8 pont × 2</span>
-                <span class="task-row-desc">Egyszerűbb feladatok</span>
-                <span class="task-row-time">8–15 perc/feladat</span>
+                <span class="task-badge pt8">8 pont × 1</span>
+                <span class="task-row-desc">Könnyű feladat</span>
+                <span class="task-row-time">8–15 perc</span>
             </div>
             <div class="task-row">
                 <span class="task-badge pt14">14 pont × 1</span>
-                <span class="task-row-desc">Összetettebb feladat</span>
+                <span class="task-row-desc">Közepes feladat</span>
                 <span class="task-row-time">~25 perc</span>
+            </div>
+            <div class="task-row">
+                <span class="task-badge pt18">18 pont × 1</span>
+                <span class="task-row-desc">Nehéz feladat</span>
+                <span class="task-row-time">~35 perc</span>
             </div>`;
-        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">30 pont</strong> &nbsp;|&nbsp; ~45 perc';
+        totalEl.innerHTML = 'Összesen: <strong style="color:#e0e0e0;">40 pont</strong> &nbsp;|&nbsp; ~60 perc';
     }
 }
 
@@ -2829,7 +2851,7 @@ function renderPracticeHistory(solutionPeeked) {
         if (solutionPeeked) {
             el.style.display = 'block';
             const prevRoundsHtml = rounds.length >= 1 ? (() => {
-                const typeLabel = { random: '🎲 Vegyes', csak8: '8 pt', csak14: '14 pt' };
+                const typeLabel = { agazati: 'Ágazati', csak8: '3×Könnyű', csak14: '3×Közepes', csak18: '3×Nehéz', random: 'Vegyes' };
                 const last5 = rounds.slice(-5).reverse();
                 const rows = last5.map((r, i) => {
                     const min = Math.floor(r.elapsedSec / 60);
@@ -2861,7 +2883,7 @@ function renderPracticeHistory(solutionPeeked) {
 
         if (rounds.length < 2) { el.style.display = 'none'; return; }
 
-        const typeLabel = { random: '🎲 Vegyes', csak8: '8 pt', csak14: '14 pt' };
+        const typeLabel = { agazati: 'Ágazati', csak8: '3×Könnyű', csak14: '3×Közepes', csak18: '3×Nehéz', random: 'Vegyes' };
         const last5 = rounds.slice(-5).reverse();
         const rows = last5.map((r, i) => {
             const min = Math.floor(r.elapsedSec / 60);
