@@ -2915,7 +2915,7 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                         const total = (v[1]||0) + (v[2]||0) + (v[3]||0) + (v[4]||0);
                         const score = 2*(v[4]||0) + 1*(v[3]||0) - 1*(v[2]||0) - 2*(v[1]||0);
                         return { nev, score, total };
-                    }).filter(x => x.total >= 3).sort((a,b) => b.score - a.score || b.total - a.total);
+                    }).filter(x => x.total >= 1).sort((a,b) => b.score - a.score || b.total - a.total);
                     const topFlopEl = document.getElementById('feedback-top-flop');
                     if (scored.length >= 2) {
                         const best = scored[0], worst = scored[scored.length - 1];
