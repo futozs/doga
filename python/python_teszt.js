@@ -1544,6 +1544,21 @@ function showTask(index) {
     document.getElementById('task-description').textContent = task.description;
     document.getElementById('task-example').textContent = task.example;
 
+    // Modul tartalom doboz (18p feladatoknál ahol van forgalom.py / allatok.py stb.)
+    let modulBox = document.getElementById('modul-tartalom-box');
+    if (task.modulNev && task.modulTartalom) {
+        if (!modulBox) {
+            modulBox = document.createElement('div');
+            modulBox.id = 'modul-tartalom-box';
+            modulBox.style.cssText = 'background:#1e293b;border:1px solid #334155;border-left:3px solid #60a5fa;border-radius:7px;padding:0.6rem 0.9rem;margin-top:0.7rem;font-family:monospace;font-size:0.82rem;color:#e2e8f0;white-space:pre;';
+            document.getElementById('task-example').insertAdjacentElement('afterend', modulBox);
+        }
+        modulBox.innerHTML = `<span style="color:#60a5fa;font-size:0.75rem;font-weight:600;font-family:sans-serif;">📄 ${task.modulNev}</span>\n${task.modulTartalom}`;
+        modulBox.style.display = '';
+    } else if (modulBox) {
+        modulBox.style.display = 'none';
+    }
+
     // Pontozás panel kezelése feladatváltáskor
     if (autoCheckTimeout !== null) {
         clearTimeout(autoCheckTimeout);

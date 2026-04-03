@@ -2008,14 +2008,14 @@ ModulVege
 
 Az elkészítendő program egy főútvonal kerékpárforgalmát tárolja objektumokban. A felhasználótól bekéri négy mérési időpont adatait, majd meghatározza és fájlba menti a csúcsforgalom időpontját.
 
-a) Írjon programot forgalomszamlalas.py néven!
-b) A mérési adatok tárolására szolgáló objektumok alapját képező osztály rendelkezésre áll a forgalom.py fájlban. A programjában töltse be ezt a modult, és használja a benne lévő osztályt!
+b) A mérési adatok tárolására szolgáló osztály rendelkezésre áll a forgalom.py fájlban. Töltse be ezt a modult, és használja a benne lévő osztályt!
 c) Kérje be a felhasználótól négy mérési időpont adatait (időpontot és kerékpárosok számát)! Az adatok alapján hozzon létre Meresadat osztályú objektumokat és tárolja őket!
 d) Jelenítse meg az összes mérési adatot!
 e) Határozza meg a csúcsforgalmú időpontot (ahol a legtöbb kerékpáros haladt át), és írja be az „eredmeny.txt" szövegfájlba!
 
-A program üzeneteinek megfogalmazásában kövesse az alábbi példát! Azokat a részeket, amiket a felhasználó gépel be, a mintában vastagított és dőlt betűkkel emeltük ki. A feladat hibátlan elvégzéséért 18 pont jár.
+A program üzeneteinek megfogalmazásában kövesse az alábbi mintát! A feladat hibátlan elvégzéséért 18 pont jár.
 
+```
 C:\Users\tanuló\programok>forgalomszamlalas.py
 Add meg a mérés időpontját! 06:00
 Hány kerékpáros haladt át? 36
@@ -2030,13 +2030,7 @@ A(z) 07:00 mérés: 48 kerékpáros
 A(z) 08:00 mérés: 87 kerékpáros
 A(z) 09:00 mérés: 63 kerékpáros
 A csúcsforgalom időpontja: 08:00, kerékpáros: 87.
-
-A forgalom.py modul tartalma:
-
-class Meresadat:
-    def __init__(self, idopont, darab):
-        self.idopont = idopont
-        self.darab = darab
+```
 
 Pontozas:
 import:forgalom|Betölti a forgalom nevű modult|A forgalom.py fájlban van az osztály – be kell importálni. Melyik kulcsszóval? 📦|📦 A forgalom modul betöltve – az osztály használható!
@@ -2107,8 +2101,7 @@ ModulVege
 
 Az elkészítendő program állatfajok nevét és tömegét tárolja objektumokban. A felhasználótól bekéri három állatfaj nevét és tömegét, majd ezt követően meghatározza és fájlba kiírja a legnehezebb állatfaj nevét.
 
-a) Írjon programot nehez.py néven!
-b) Az állatfajok adatainak tárolására szolgáló objektumok alapját képező osztály rendelkezésre áll az allat.py fájlban. A programjában töltse be ezt a modult, és használja a benne lévő osztályt!
+b) Az állatfajok adatainak tárolására szolgáló osztály rendelkezésre áll az allat.py fájlban. Töltse be ezt a modult, és használja a benne lévő osztályt!
 c) Kérje be a felhasználótól három állatfaj nevét és tömegét! Az adatok alapján hozzon létre Állatfaj osztályú objektumokat és tárolja őket!
 d) Határozza meg a legnehezebb állatfajhoz tartozó tömeget! Feltételezheti, hogy a felhasználó nem ad meg egyező tömegadatokat.
 e) Határozza meg, hogy ez a tömeg melyik fajhoz tartozik, és a faj nevét írja be a „legnehezebb.txt" szövegfájlba!
