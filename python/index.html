@@ -2103,14 +2103,16 @@
     background:rgba(13,21,38,0.6);
 }
 .custom-modal-footer button {
-    padding:9px 18px;border-radius:10px;font-size:0.88rem;font-weight:600;
-    cursor:pointer;border:1px solid transparent;transition:all 0.15s;
+    flex:1;padding:13px;border-radius:10px;font-size:0.95rem;font-weight:700;
+    cursor:pointer;border:1px solid transparent;transition:all 0.15s;text-align:center;
 }
-#btn-custom-cancel { background:transparent;border-color:#1e3254;color:#4a6a8a; }
-#btn-custom-cancel:hover { color:#7da0c0; }
+#btn-custom-cancel {
+    background:transparent;border-color:#2a3f5a;color:#7da0c0;
+}
+#btn-custom-cancel:hover { background:#162035;color:#e2e8f0; }
 #btn-custom-start {
     background:linear-gradient(135deg,#1d4ed8,#2563eb);border-color:#3b82f6;
-    color:#fff;padding:9px 28px;box-shadow:0 4px 14px rgba(37,99,235,0.35);
+    color:#fff;box-shadow:0 4px 14px rgba(37,99,235,0.35);
 }
 #btn-custom-start:hover:not(:disabled) { background:linear-gradient(135deg,#2563eb,#3b82f6); }
 #btn-custom-start:disabled { opacity:0.35;cursor:not-allowed;box-shadow:none; }
