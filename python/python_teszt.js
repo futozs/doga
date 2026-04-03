@@ -935,10 +935,10 @@ function renderCustomTaskList() {
             return `<label class="custom-task-card${past ? ' past' : ''}${ptsCls}">
                 <input type="checkbox" class="custom-cb" value="${t.number}" data-points="${t.points}">
                 <div class="card-check-icon"><i class="fa-solid fa-check"></i></div>
+                ${t.uj ? '<span class="custom-new-tag">ÚJ!</span>' : ''}
                 <div class="card-title">${t.cim}</div>
                 <div class="card-tags">
                     ${diffBadge(t.nehezseg)}
-                    ${t.uj ? '<span class="custom-new-tag">ÚJ!</span>' : ''}
                     ${past ? '<span class="custom-past-tag"><i class="fa-solid fa-rotate-left"></i> volt már</span>' : ''}
                 </div>
                 ${voteBtn}
