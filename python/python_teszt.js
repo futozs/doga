@@ -912,43 +912,32 @@ function renderCustomTaskList() {
 }
 
 function updateCustomCount() {
-    const comp = document.getElementById('custom-composition').value;
-    const parts = comp.split('+').map(Number);
-    const [need8, need14, need18 = 0] = parts;
     const checked = [...document.querySelectorAll('.custom-cb:checked')];
-    const sel8  = checked.filter(c => c.dataset.points === '8').length;
-    const sel14 = checked.filter(c => c.dataset.points === '14').length;
-    const sel18 = checked.filter(c => c.dataset.points === '18').length;
-    const ok = sel8 === need8 && sel14 === need14 && sel18 === need18;
+    const n = checked.length;
     const el = document.getElementById('custom-count-label');
-    if (need18 > 0) {
-        el.textContent = `Kiválasztva: ${sel18} db 18p — kell: ${need18} db 18p`;
+    if (n === 0) {
+        el.textContent = 'Válassz legalább 1 feladatot a kezdéshez';
+        el.style.color = '#fbbf24';
+    } else if (n < 3) {
+        el.textContent = `Kiválasztva: ${n} feladat — még választhatsz ${3 - n}-et`;
+        el.style.color = '#fbbf24';
+    } else if (n === 3) {
+        el.textContent = '3 feladat kiválasztva ✓';
+        el.style.color = '#4ade80';
     } else {
-        el.textContent = `Kiválasztva: ${sel8} db 8p, ${sel14} db 14p — kell: ${need8} db 8p, ${need14} db 14p`;
+        el.textContent = `Kiválasztva: ${n} feladat (max. 3 ajánlott)`;
+        el.style.color = '#fbbf24';
     }
-    el.style.color = ok ? '#4ade80' : '#fbbf24';
-    document.getElementById('btn-custom-start').disabled = !ok;
+    document.getElementById('btn-custom-start').disabled = n < 1 || n > 3;
 }
 
 function customRandomFill() {
-    const comp = document.getElementById('custom-composition').value;
-    const [need8, need14] = comp.split('+').map(Number);
     const allPastNums = new Set(customTaskHistory.flat());
+    const all = [...document.querySelectorAll('.custom-cb')];
     document.querySelectorAll('.custom-cb').forEach(cb => cb.checked = false);
-
-    function pickRandom(cbs, n) {
-        if (n === 0) return;
-        const arr = [...cbs];
-        const fresh = arr.filter(c => !allPastNums.has(parseInt(c.value)));
-        const pool = fresh.length >= n ? fresh : arr;
-        pool.sort(() => 0.5 - Math.random()).slice(0, n).forEach(c => c.checked = true);
-    }
-
-    const parts2 = comp.split('+').map(Number);
-    const [, , need18 = 0] = parts2;
-    pickRandom([...document.querySelectorAll('.custom-cb[data-points="8"]')],  need8);
-    pickRandom([...document.querySelectorAll('.custom-cb[data-points="14"]')], need14);
-    pickRandom([...document.querySelectorAll('.custom-cb[data-points="18"]')], need18);
+    const fresh = all.filter(c => !allPastNums.has(parseInt(c.value)));
+    const pool = fresh.length >= 3 ? fresh : all;
+    pool.sort(() => 0.5 - Math.random()).slice(0, 3).forEach(c => c.checked = true);
     updateCustomCount();
 }
 

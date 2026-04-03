@@ -2020,12 +2020,6 @@
 .custom-cat-btn.active { background:rgba(59,130,246,0.15);border-color:#3b82f6;color:#93c5fd; }
 .custom-cat-btn[data-cat="tanulo"].active { background:rgba(192,132,252,0.15);border-color:#c084fc;color:#c084fc; }
 .custom-cat-btn[data-cat="tanulo"] { border-color:#4a3a6a;color:#9d7fc0; }
-.custom-composition-select {
-    width:100%;padding:9px 12px;background:#162035;border:1px solid #2a3f5a;
-    border-radius:10px;color:#e2e8f0;font-size:0.88rem;cursor:pointer;
-    outline:none;transition:border-color 0.15s;
-}
-.custom-composition-select:focus { border-color:#3b82f6; }
 /* ── Szekció elválasztó ── */
 .custom-group-divider {
     display:flex;align-items:center;gap:10px;margin:6px 0 8px;
@@ -2133,21 +2127,6 @@
       <div>
         <div class="custom-section-title"><i class="fa-solid fa-clock-rotate-left" style="color: #3b82f6;"></i> Előzmények (utolsó 5 alkalom)</div>
         <div class="custom-hist-badges" id="custom-history-badges"></div>
-      </div>
-
-      <!-- Összeállítás -->
-      <div>
-        <div class="custom-section-title"><i class="fa-solid fa-layer-group" style="color: #3b82f6;"></i> Összeállítás</div>
-        <select id="custom-composition" class="custom-composition-select" onchange="updateCustomCount()">
-          <option value="2+1">2× 8 pontos + 1× 14 pontos (alapértelmezett)</option>
-          <option value="3+0">3× 8 pontos</option>
-          <option value="2+0">2× 8 pontos</option>
-          <option value="1+1">1× 8 pontos + 1× 14 pontos</option>
-          <option value="0+2">2× 14 pontos</option>
-          <option value="1+0">1× 8 pontos</option>
-          <option value="0+1">1× 14 pontos</option>
-          <option value="0+0+1">1× 18 pontos (OOP + fájlkezelés)</option>
-        </select>
       </div>
 
       <!-- Kategória szűrő -->
