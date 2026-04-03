@@ -2008,10 +2008,10 @@ ModulVege
 
 Az elkészítendő program egy főútvonal kerékpárforgalmát tárolja objektumokban. A felhasználótól bekéri négy mérési időpont adatait, majd meghatározza és fájlba menti a csúcsforgalom időpontját.
 
-b) A mérési adatok tárolására szolgáló osztály rendelkezésre áll a forgalom.py fájlban. Töltse be ezt a modult, és használja a benne lévő osztályt!
-c) Kérje be a felhasználótól négy mérési időpont adatait (időpontot és kerékpárosok számát)! Az adatok alapján hozzon létre Meresadat osztályú objektumokat és tárolja őket!
-d) Jelenítse meg az összes mérési adatot!
-e) Határozza meg a csúcsforgalmú időpontot (ahol a legtöbb kerékpáros haladt át), és írja be az „eredmeny.txt" szövegfájlba!
+a) A mérési adatok tárolására szolgáló osztály rendelkezésre áll a forgalom.py fájlban. Töltse be ezt a modult, és használja a benne lévő osztályt!
+b) Kérje be a felhasználótól négy mérési időpont adatait (időpontot és kerékpárosok számát)! Az adatok alapján hozzon létre Meresadat osztályú objektumokat és tárolja őket!
+c) Jelenítse meg az összes mérési adatot!
+d) Határozza meg a csúcsforgalmú időpontot (ahol a legtöbb kerékpáros haladt át), és írja be az „eredmeny.txt" szövegfájlba!
 
 A program üzeneteinek megfogalmazásában kövesse az alábbi mintát! A feladat hibátlan elvégzéséért 18 pont jár.
 
@@ -2101,10 +2101,10 @@ ModulVege
 
 Az elkészítendő program állatfajok nevét és tömegét tárolja objektumokban. A felhasználótól bekéri három állatfaj nevét és tömegét, majd ezt követően meghatározza és fájlba kiírja a legnehezebb állatfaj nevét.
 
-b) Az állatfajok adatainak tárolására szolgáló osztály rendelkezésre áll az allat.py fájlban. Töltse be ezt a modult, és használja a benne lévő osztályt!
-c) Kérje be a felhasználótól három állatfaj nevét és tömegét! Az adatok alapján hozzon létre Állatfaj osztályú objektumokat és tárolja őket!
-d) Határozza meg a legnehezebb állatfajhoz tartozó tömeget! Feltételezheti, hogy a felhasználó nem ad meg egyező tömegadatokat.
-e) Határozza meg, hogy ez a tömeg melyik fajhoz tartozik, és a faj nevét írja be a „legnehezebb.txt" szövegfájlba!
+a) Az állatfajok adatainak tárolására szolgáló osztály rendelkezésre áll az allat.py fájlban. Töltse be ezt a modult, és használja a benne lévő osztályt!
+b) Kérje be a felhasználótól három állatfaj nevét és tömegét! Az adatok alapján hozzon létre Állatfaj osztályú objektumokat és tárolja őket!
+c) Határozza meg a legnehezebb állatfajhoz tartozó tömeget! Feltételezheti, hogy a felhasználó nem ad meg egyező tömegadatokat.
+d) Határozza meg, hogy ez a tömeg melyik fajhoz tartozik, és a faj nevét írja be a „legnehezebb.txt" szövegfájlba!
 
 Minta kód:
 
