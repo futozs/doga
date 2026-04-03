@@ -2037,17 +2037,24 @@
 }
 /* ── Feladat kártya ── */
 .custom-task-card {
-    position:relative;background:#111e35;border:2px solid #1e3254;border-radius:9px;
-    padding:7px 8px 6px;cursor:pointer;transition:all 0.15s;
-    display:flex;flex-direction:column;gap:4px;user-select:none;
+    position:relative;background:#111e35;
+    border:1px solid #1e3254;border-left:3px solid #2d5986;
+    border-radius:9px;padding:7px 8px 7px 10px;cursor:pointer;transition:all 0.15s;
+    display:flex;flex-direction:column;justify-content:center;
+    gap:0;user-select:none;height:54px;overflow:hidden;
 }
-.custom-task-card:hover { border-color:#2d5986;background:#152240; }
+.custom-task-card:hover { background:#152240;border-color:#2d5986; }
 .custom-task-card:has(input:checked) {
-    border-color:#3b82f6;background:rgba(59,130,246,0.08);
-    box-shadow:0 0 0 1px rgba(59,130,246,0.25),0 4px 20px rgba(59,130,246,0.12);
+    border-color:#3b82f6;border-left-color:#3b82f6;background:rgba(59,130,246,0.08);
+    box-shadow:0 0 0 1px rgba(59,130,246,0.15);
 }
 .custom-task-card.past { opacity:0.75; }
 .custom-task-card input[type=checkbox] { display:none; }
+/* Nehézség bal szegély */
+.custom-task-card.pts-8  { border-left-color:#fbbf24; }
+.custom-task-card.pts-14 { border-left-color:#c084fc; }
+.custom-task-card.pts-18 { border-left-color:#2dd4bf; }
+.custom-task-card:has(input:checked) { border-left-color:#3b82f6 !important; }
 /* Pipa ikon jobb felső sarokban */
 .card-check-icon {
     position:absolute;top:6px;right:6px;
@@ -2069,16 +2076,12 @@
 .card-pts-18 { background:rgba(20,184,166,0.13);color:#2dd4bf;border:1px solid rgba(20,184,166,0.28); }
 /* Feladat neve */
 .card-title {
-    font-size:0.73rem;color:#dde6f0;font-weight:600;line-height:1.25;padding-right:18px;margin-top:2px;
+    font-size:0.73rem;color:#dde6f0;font-weight:600;line-height:1.3;padding-right:18px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
 /* Tagek (nehézség, volt már) */
 .card-tags { display:flex;flex-wrap:wrap;gap:4px; }
-.card-diff-badge {
-    font-size:0.67rem;border-radius:8px;padding:1px 7px;font-weight:600;
-}
-.card-diff-badge.konnyu  { background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.22); }
-.card-diff-badge.kozepes { background:rgba(245,158,11,0.1);color:#fbbf24;border:1px solid rgba(245,158,11,0.22); }
-.card-diff-badge.nehez   { background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.22); }
+.card-diff-badge { display:none; }
 .custom-past-tag {
     font-size:0.67rem;color:#4ade80;background:rgba(34,197,94,0.08);
     border:1px solid rgba(34,197,94,0.22);border-radius:8px;padding:1px 7px;

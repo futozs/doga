@@ -882,7 +882,8 @@ function renderCustomTaskList() {
         const header = `<div class="custom-group-divider"><span class="custom-group-divider-label">${title}</span></div>`;
         const cards = list.map(t => {
             const past = allPastNums.has(t.number);
-            return `<label class="custom-task-card${past ? ' past' : ''}">
+            const ptsCls = t.points ? ` pts-${t.points}` : '';
+            return `<label class="custom-task-card${past ? ' past' : ''}${ptsCls}">
                 <input type="checkbox" class="custom-cb" value="${t.number}" data-points="${t.points}">
                 <div class="card-check-icon"><i class="fa-solid fa-check"></i></div>
                 <div class="card-title">${t.cim}</div>
