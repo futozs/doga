@@ -2031,6 +2031,9 @@
     font-size:0.78rem;font-weight:700;color:#7db8e8;text-transform:uppercase;
     letter-spacing:1.2px;white-space:nowrap;
 }
+.custom-group-divider-label .pts-sub {
+    font-size:0.7rem;font-weight:500;color:#4a7fa8;letter-spacing:0.5px;text-transform:none;
+}
 /* ── Kártya rács ── */
 .custom-card-grid {
     display:grid;grid-template-columns:repeat(6,1fr);gap:5px;
@@ -2038,23 +2041,26 @@
 /* ── Feladat kártya ── */
 .custom-task-card {
     position:relative;background:#111e35;
-    border:1px solid #1e3254;border-left:3px solid #2d5986;
+    border:1px solid #1e3254;
     border-radius:9px;padding:7px 8px 7px 10px;cursor:pointer;transition:all 0.15s;
     display:flex;flex-direction:column;justify-content:center;
     gap:0;user-select:none;height:54px;overflow:hidden;
 }
-.custom-task-card:hover { background:#152240;border-color:#2d5986; }
+.custom-task-card:hover { background:#152240; }
 .custom-task-card:has(input:checked) {
-    border-color:#3b82f6;border-left-color:#3b82f6;background:rgba(59,130,246,0.08);
+    border-color:#3b82f6;background:rgba(59,130,246,0.08);
     box-shadow:0 0 0 1px rgba(59,130,246,0.15);
 }
 .custom-task-card.past { opacity:0.75; }
 .custom-task-card input[type=checkbox] { display:none; }
-/* Nehézség bal szegély */
-.custom-task-card.pts-8  { border-left-color:#fbbf24; }
-.custom-task-card.pts-14 { border-left-color:#c084fc; }
-.custom-task-card.pts-18 { border-left-color:#2dd4bf; }
-.custom-task-card:has(input:checked) { border-left-color:#3b82f6 !important; }
+/* Pont kategória keret szín */
+.custom-task-card.pts-8  { border-color:rgba(251,191,36,0.45); }
+.custom-task-card.pts-14 { border-color:rgba(192,132,252,0.45); }
+.custom-task-card.pts-18 { border-color:rgba(45,212,191,0.45); }
+.custom-task-card.pts-8:hover  { border-color:rgba(251,191,36,0.7); }
+.custom-task-card.pts-14:hover { border-color:rgba(192,132,252,0.7); }
+.custom-task-card.pts-18:hover { border-color:rgba(45,212,191,0.7); }
+.custom-task-card:has(input:checked) { border-color:#3b82f6 !important; }
 /* Pipa ikon jobb felső sarokban */
 .card-check-icon {
     position:absolute;top:6px;right:6px;
