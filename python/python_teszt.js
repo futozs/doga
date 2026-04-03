@@ -2749,6 +2749,15 @@ function setTaskType(type, btn) {
 }
 
 function renderVegyesDots() {
+    // Vegyes gombok feliratának frissítése
+    document.querySelectorAll('.task-type-btn[data-type="vegyes"]').forEach(btn => {
+        if (selectedTaskType === 'vegyes') {
+            btn.innerHTML = `<i class="fa-solid fa-shuffle"></i> Vegyes <span style="font-size:0.72rem;opacity:0.85;">(${selectedVegyesIndex+1}/${VEGYES_COMBOS.length} — kattints újra)</span>`;
+        } else {
+            btn.innerHTML = `<i class="fa-solid fa-shuffle"></i> Vegyes`;
+        }
+    });
+
     ['vegyes-dots-1','vegyes-dots-2'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -2757,7 +2766,7 @@ function renderVegyesDots() {
         el.innerHTML = VEGYES_COMBOS.map((c, i) => {
             const active = i === selectedVegyesIndex;
             return `<span title="${c.label}" onclick="jumpVegyesCombo(${i})" style="cursor:pointer;font-size:${active?'1.4':'1.1'}rem;color:${active?'#60a5fa':'#3d6494'};transition:all 0.15s;line-height:1;">&#9679;</span>`;
-        }).join('') + `<span style="font-size:0.78rem;color:#7db8e8;margin-left:8px;font-weight:600;">${selectedVegyesIndex+1} / ${VEGYES_COMBOS.length}</span><span style="font-size:0.75rem;color:#4a7fa8;margin-left:6px;">— kattints a gombra a következőhöz</span>`;
+        }).join('');
     });
 }
 
