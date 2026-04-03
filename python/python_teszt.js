@@ -2760,13 +2760,7 @@ function renderVegyesDots() {
 
     ['vegyes-dots-1','vegyes-dots-2'].forEach(id => {
         const el = document.getElementById(id);
-        if (!el) return;
-        if (selectedTaskType !== 'vegyes') { el.style.display = 'none'; return; }
-        el.style.display = 'flex';
-        el.innerHTML = VEGYES_COMBOS.map((c, i) => {
-            const active = i === selectedVegyesIndex;
-            return `<span title="${c.label}" onclick="jumpVegyesCombo(${i})" style="cursor:pointer;font-size:${active?'1.4':'1.1'}rem;color:${active?'#60a5fa':'#3d6494'};transition:all 0.15s;line-height:1;">&#9679;</span>`;
-        }).join('');
+        if (el) el.style.display = 'none';
     });
 }
 
