@@ -62,9 +62,6 @@
     .pill-group-label.class{color:#a78bfa;}
     .pill-group-label.algoritmus{color:#fbbf24;}
     .pill-group-label.file{color:#34d399;}
-    .pill-group-label.hiba{color:#f87171;}
-    .pill-group-label.adat{color:#fb923c;}
-    .pill-group-label.modul{color:#a78bfa;}
     .pill {
       flex-shrink: 0; width: 30px; height: 26px;
       border-radius: 6px; border: 1.5px solid #374151;
@@ -1844,6 +1841,8 @@ with open("eredmeny.txt", "a", encoding="utf-8") as f:
   }
 },
 
+]; // end tasks - removed hiba/adat/modul → moved to pro.html
+/*
 {
   id: 20, emoji: '🛡️', topicGroup: 'hiba',
   title: 'try / except – hibakezelés',
@@ -2145,8 +2144,7 @@ print(f"Átfogó: {c}")    # 13.0` }
     ]
   }
 },
-
-]; // end tasks
+*/
 
 // ═══════════════════════════════════════════════════════════════════════════
 // STATE
@@ -2436,8 +2434,8 @@ function restartPractice() {
 // ═══════════════════════════════════════════════════════════════════════════
 // PILLS
 // ═══════════════════════════════════════════════════════════════════════════
-const GROUP_ORDER = ['dict', 'class', 'algoritmus', 'file', 'hiba', 'adat', 'modul'];
-const GROUP_LABEL = { dict: 'Szótár (dict)', class: 'Osztály (class)', algoritmus: 'Algoritmusok', file: 'Fájlkezelés', hiba: 'Hibakezelés', adat: 'Tuple & Set', modul: 'Modulok' };
+const GROUP_ORDER = ['dict', 'class', 'algoritmus', 'file'];
+const GROUP_LABEL = { dict: 'Szótár (dict)', class: 'Osztály (class)', algoritmus: 'Algoritmusok', file: 'Fájlkezelés' };
 
 function buildPills() {
   const wrapper = document.getElementById('pills-wrapper');
