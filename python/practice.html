@@ -60,6 +60,7 @@
     .pill-group-label{flex-shrink:0;font-size:0.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 6px;color:var(--muted);white-space:nowrap;}
     .pill-group-label.dict{color:#60a5fa;}
     .pill-group-label.class{color:#a78bfa;}
+    .pill-group-label.algoritmus{color:#fbbf24;}
     .pill-group-label.file{color:#34d399;}
     .pill-group-label.hiba{color:#f87171;}
     .pill-group-label.adat{color:#fb923c;}
@@ -2435,8 +2436,8 @@ function restartPractice() {
 // ═══════════════════════════════════════════════════════════════════════════
 // PILLS
 // ═══════════════════════════════════════════════════════════════════════════
-const GROUP_ORDER = ['dict', 'class', 'file', 'hiba', 'adat', 'modul'];
-const GROUP_LABEL = { dict: 'Szótár (dict)', class: 'Osztály (class)', file: 'Fájlkezelés', hiba: 'Hibakezelés', adat: 'Tuple & Set', modul: 'Modulok' };
+const GROUP_ORDER = ['dict', 'class', 'algoritmus', 'file', 'hiba', 'adat', 'modul'];
+const GROUP_LABEL = { dict: 'Szótár (dict)', class: 'Osztály (class)', algoritmus: 'Algoritmusok', file: 'Fájlkezelés', hiba: 'Hibakezelés', adat: 'Tuple & Set', modul: 'Modulok' };
 
 function buildPills() {
   const wrapper = document.getElementById('pills-wrapper');
