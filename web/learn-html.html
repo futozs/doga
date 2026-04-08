@@ -1279,7 +1279,6 @@ function buildTag(parsed, content, indent='') {
 function showWrapWidget(editor, onConfirm) {
   const WIDGET_ID = 'wrap-abbr-input-widget';
   try { editor.removeOverlayWidget({ getId:()=>WIDGET_ID }); } catch(e) {}
-  editor.updateOptions({ readOnly: true });
   const dom = document.createElement('div');
   dom.style.cssText = [
     'position:absolute;top:0;left:50%;transform:translateX(-50%)',
@@ -1303,20 +1302,21 @@ function showWrapWidget(editor, onConfirm) {
   const widget = { getId:()=>WIDGET_ID, getDomNode:()=>dom, getPosition:()=>null };
   editor.addOverlayWidget(widget);
   setTimeout(()=>{ input.focus(); input.select(); }, 50);
-  function close() {
-    editor.updateOptions({ readOnly: false });
-    try{editor.removeOverlayWidget(widget);}catch(e){}
-    editor.focus();
-  }
+  function close() { try{editor.removeOverlayWidget(widget);}catch(e){} editor.focus(); }
   input.addEventListener('keydown', e=>{
-    if (e.key==='Enter') { const abbr=input.value.trim(); close(); if(abbr) onConfirm(abbr); }
-    else if (e.key==='Escape') close();
-    e.stopPropagation();
-    e.preventDefault();
+    if (e.key==='Enter') {
+      e.stopPropagation(); e.preventDefault();
+      const abbr=input.value.trim(); close(); if(abbr) onConfirm(abbr);
+    } else if (e.key==='Escape') {
+      e.stopPropagation(); e.preventDefault();
+      close();
+    } else {
+      e.stopPropagation();
+    }
   });
   const disposable = editor.onDidChangeCursorPosition(()=>{});
   input.addEventListener('blur', ()=>{
-    setTimeout(()=>{ editor.updateOptions({ readOnly: false }); try{editor.removeOverlayWidget(widget);}catch(e){} }, 150);
+    setTimeout(()=>{ try{editor.removeOverlayWidget(widget);}catch(e){} }, 150);
     disposable.dispose();
   });
 }
