@@ -1420,14 +1420,101 @@ ___ {
       { label:'Van .gomb:hover szabály',                fn:(h)=>/\.gomb\s*:\s*hover\s*\{|\.gomb:hover\s*\{/i.test(cssOf(h)) },
       { label:'.gomb:hover-ban van box-shadow',         fn:(h)=>/\.gomb\s*:hover\s*\{[^}]*box-shadow\s*:|\.gomb:hover\s*\{[^}]*box-shadow\s*:/i.test(cssOf(h)) }
     ]
+  },
+
+  // ── BLOKK 11: Kommentek ───────────────────────────── (kiegészítő)
+  {
+    id:31, block:11, blockName:'Kommentek', emoji:'💬',
+    type:'fillin',
+    title:'CSS komment szintaxisa',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A CSS-ben a komment <strong>csillag-perjel</strong> jelekkel működik:
+      <br><br>
+      <code>/* ide írsz megjegyzést */</code>
+      <br><br>
+      Mire jó?
+      <ul>
+        <li>Kódblokkok elnevezése (pl. <code>/* Navigáció */</code>)</li>
+        <li>CSS szabály "kikapcsolása" törlés nélkül</li>
+        <li>Értékek magyarázata (pl. miért épp 1.6 a line-height)</li>
+      </ul>
+      Pl.:
+      <code>/* ── Fejléc ── */<br>header {<br>&nbsp;&nbsp;background: #1e293b; /* sötét háttér */<br>&nbsp;&nbsp;/* color: red; */ /* ez ki van kapcsolva */<br>}</code>`,
+    codeTemplate:
+`___ Navigáció */
+nav {
+  background: #1e293b;
+  padding: 10px; /* belső margó minden oldalon ___
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  ___ font-size: 2rem; ___
+}`,
+    blanks:[
+      { answer:'/*',  hint:'CSS komment nyitójele: perjel + csillag' },
+      { answer:'*/',  hint:'CSS komment zárójele: csillag + perjel' },
+      { answer:'/*',  hint:'Ezzel lehet egy sort kikapcsolni' },
+      { answer:'*/',  hint:'Ne felejtsd el lezárni a kommentet!' }
+    ]
+  },
+
+  {
+    id:32, block:11, blockName:'Kommentek', emoji:'💬',
+    type:'monaco',
+    title:'Írj kommenteket a CSS kódba!',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Egészítsd ki a CSS kódot <strong>kommentekkel</strong>:
+      <ul>
+        <li>Írj egy kommentet az egyik CSS szabály <strong>elé</strong> (pl. <code>/* Főcím stílusa */</code>)</li>
+        <li>Írj egy kommentet egy CSS <strong>értéket magyarázva</strong> (pl. a padding után)</li>
+        <li>Kapcsolj ki egy CSS tulajdonságot kommenttel!</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS komment feladat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+    }
+
+    h1 {
+      color: #1e40af;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    p {
+      line-height: 1.6;
+      color: #334155;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>CSS kommentek</h1>
+  <p>Ez egy bekezdés szövege.</p>
+</body>
+</html>`,
+    checks:[
+      { label:'Legalább 2 CSS komment van a kódban',        fn:(h)=>(h.match(/\/\*/g)||[]).length>=2 },
+      { label:'Legalább egy komment egy szabály elé kerül', fn:(h)=>(/\/\*[^*]*\*\/\s*\n\s*[a-z.#]/).test(h) },
+      { label:'Legalább egy CSS tulajdonság ki van kapcsolva', fn:(h)=>(/\/\*[^*]*[a-z-]+\s*:[^*]+\*\//).test(h) }
+    ]
   }
+
 ];
 
 // ══════════════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'lcss_v2';
+const SKEY = 'lcss_v3';
 const state = {
   cur: 0,
   done:      JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),

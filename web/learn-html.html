@@ -1015,6 +1015,82 @@ const tasks = [
       { label:'A &lt;figure&gt;-ben van &lt;img&gt;',                 fn:(h,d)=>!!d.querySelector('figure img') },
       { label:'Van &lt;figcaption&gt; szöveggel',                     fn:(h,d)=>{ const fc=d.querySelector('figcaption'); return !!(fc&&fc.textContent.trim()!==''); } }
     ]
+  },
+
+  // ── BLOKK 9: Kommentek ────────────────────────────── (kiegészítő)
+  {
+    id:27, block:9, blockName:'Kommentek', emoji:'💬',
+    type:'fillin',
+    title:'HTML komment szintaxisa',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A <strong>komment</strong> olyan szöveg a kódban, amit a <strong>böngésző figyelmen kívül hagy</strong> – csak a fejlesztőnek szól.
+      <br><br>
+      <strong>HTML komment szintaxisa:</strong>
+      <code>&lt;!-- ide írsz megjegyzést --&gt;</code>
+      <br><br>
+      Mire jó?
+      <ul>
+        <li>Emlékeztető: mire való egy kódblokk</li>
+        <li>Kód "kikapcsolása" törlés nélkül</li>
+        <li>Csapatmunka: magyarázat a kollégának</li>
+      </ul>
+      Pl.:
+      <code>&lt;!-- Navigációs sáv --&gt;<br>&lt;nav&gt;...&lt;/nav&gt;<br><br>&lt;!-- Ez most ki van kapcsolva:<br>&lt;p&gt;Régi szöveg&lt;/p&gt;<br>--&gt;</code>`,
+    codeTemplate:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <!-- A title megadja az oldal nevét -->
+  <title>Kommentek</title>
+</head>
+<body>
+  <!___ Főcím szekció -->
+  <h1>Helló!</h1>
+  <!-- ___ szekció:
+  <p>Ez a bekezdés ki van kapcsolva.</p>
+  ___>
+</body>
+</html>`,
+    blanks:[
+      { answer:'--',   hint:'A nyitójel: &lt;!-- két kötőjellel kezdődik' },
+      { answer:'Régi', hint:'Szabad szöveg – ez a komment magyarázza, mi van kikapcsolva' },
+      { answer:'--',   hint:'A zárójel: --> két kötőjellel végződik' }
+    ]
+  },
+
+  {
+    id:28, block:9, blockName:'Kommentek', emoji:'💬',
+    type:'monaco',
+    title:'Írj kommenteket a kódba!',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Egészítsd ki a kódot <strong>HTML kommentekkel</strong>:
+      <ul>
+        <li>Írj egy kommentet a <code>&lt;head&gt;</code> belsejébe (pl. mire való ez az oldal)</li>
+        <li>Írj egy kommentet a <code>&lt;body&gt;</code> belsejébe (pl. "Navigáció" vagy "Tartalom")</li>
+        <li>Kapcsolj ki egy HTML elemet kommenttel! (a bekezdések egyikét tedd <code>&lt;!--</code> és <code>--&gt;</code> közé)</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Komment feladat</title>
+
+</head>
+<body>
+
+  <h1>A weboldalam</h1>
+  <p>Első bekezdés – ezt hagyd meg!</p>
+  <p>Második bekezdés – ezt kapcsold ki kommenttel!</p>
+</body>
+</html>`,
+    checks:[
+      { label:'Legalább 2 HTML komment van a kódban',         fn:(h)=>(h.match(/<!--/g)||[]).length>=2 },
+      { label:'Van komment a &lt;head&gt; belsejében',        fn:(h)=>/\<head[^>]*\>[\s\S]*?<!--/.test(h) },
+      { label:'Van komment a &lt;body&gt; belsejében',        fn:(h)=>/\<body[^>]*\>[\s\S]*?<!--/.test(h) },
+      { label:'Legalább egy elem ki van kapcsolva kommenttel',fn:(h)=>(/<!--[\s\S]*?<[a-z][\s\S]*?-->/).test(h) }
+    ]
   }
 
 ];
@@ -1023,7 +1099,7 @@ const tasks = [
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'lhtml_v5';
+const SKEY = 'lhtml_v6';
 const state = {
   cur: 0,
   done:     JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),

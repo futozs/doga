@@ -1465,6 +1465,56 @@ else:
   }
 },
 
+{
+  id:21, emoji:'💬', topicGroup:'alap', title:'Kommentek (#)',
+  description:`<p>A <strong>komment</strong> olyan sor a kódban, amit a Python figyelmen kívül hagy – csak a fejlesztőnek szól.</p>
+<p>Szintaxisa: <code># ide írsz megjegyzést</code></p>
+<p>Egészítsd ki a programot legalább <strong>3 kommenttel</strong>:<br>
+– magyarázd el, mit csinál az egyes sorok!<br>
+– kapcsolj ki egy sort kommenttel (ne futtasson le)!</p>`,
+  starterCode:`# 21. feladat: Kommentek
+nev = input("Add meg a neved: ")
+kor = int(input("Hány éves vagy? "))
+print(f"Szia, {nev}! {kor} éves vagy.")
+print("Jövőre", kor + 1, "éves leszel.")
+`,
+  solution:`# Változók bekérése a felhasználótól
+nev = input("Add meg a neved: ")
+kor = int(input("Hány éves vagy? "))  # int()-tel számmá alakítjuk
+
+# Köszöntés kiírása
+print(f"Szia, {nev}! {kor} éves vagy.")
+print("Jövőre", kor + 1, "éves leszel.")
+# print("Ez a sor ki van kapcsolva.")  # kikapcsolt sor`,
+  hint:`# ___ bekérése a felhasználótól
+nev = input("Add meg a neved: ")
+kor = int(input("Hány éves vagy? "))  # ___ számot kérünk be
+
+# ___
+print(f"Szia, {nev}! {kor} éves vagy.")
+print("Jövőre", kor + 1, "éves leszel.")`,
+  mockInputs:['Réka','16'],
+  checks:[
+    {label:'Legalább 3 komment (#) van a kódban', fn:(c,o)=>(c.split('\n').filter(l=>l.trim().startsWith('#')).length)>=3},
+    {label:'Legalább egy sor ki van kapcsolva (#-tel kezdődik, nem üres)', fn:(c,o)=>c.split('\n').some(l=>l.trim().startsWith('#')&&l.trim().length>1&&!/^#\s*\d+\.\s*feladat/.test(l.trim()))},
+    {label:'Kimenet tartalmaz köszöntést (a program lefut)', fn:(c,o)=>/[Ss]zia|R[eé]ka|16/i.test(o)},
+  ],
+  tutorial:{
+    intro:`<h3>Kommentek – megjegyzések a kódban</h3>
+<p>A <code>#</code> jel után minden szöveg <strong>komment</strong> – a Python egyszerűen átugrik rajta. Nem jelenik meg, nem fut le, semmi hatása nincs a programra.</p>
+<p>Mire jó? Emlékeztetőnek, magyarázatnak – neked és a kollégáidnak. Azt is meg lehet csinálni, hogy egy sort "kikapcsolsz" úgy, hogy <code>#</code>-t írsz elé – így törlés nélkül ki tudod hagyni a futtatásból.</p>`,
+    examples:[
+      {title:'Komment típusok', code:`# Ez egy egész soros komment
+
+nev = "Anna"       # ez sorvégi komment
+kor  = 16          # egész szám
+
+# print("Ez ki van kapcsolva")  ← nem fut le
+print(nev, kor)    # Kimenet: Anna 16`},
+    ]
+  }
+},
+
 ]; // end tasks
 
 // ═══════════════════════════════════════════════════════════════════════════
