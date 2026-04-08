@@ -694,6 +694,80 @@ gomb.addEventListener("_____", reagal);`,
       { label:'Van style.backgroundColor értékadás',       fn:(h,d)=>/style\.backgroundColor/.test(h) },
       { label:'"#f59e0b" szín szerepel a kódban',          fn:(h,d)=>h.includes('#f59e0b') }
     ]
+  },
+
+  // ── BLOKK 5: Kommentek ────────────────────────────── (kiegészítő)
+  {
+    id:16, block:5, blockName:'Kommentek', emoji:'💬',
+    type:'fillin',
+    title:'JavaScript komment szintaxisa',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A JavaScript-ben kétféle komment létezik:
+      <br><br>
+      <strong>1. Egysoros komment</strong> – <code>// szöveg</code><br>
+      A <code>//</code> után minden az adott sorban komment lesz.
+      <br><br>
+      <strong>2. Többsoros komment</strong> – <code>/* szöveg */</code><br>
+      Több soron átnyúlhat, pontosan mint a CSS-ben.
+      <br><br>
+      Pl.:
+      <code>// Ez egysoros komment<br>let szam = 5; // értékadás<br><br>/*<br>&nbsp;&nbsp;Ez egy<br>&nbsp;&nbsp;többsoros komment<br>*/<br>console.log(szam);</code>`,
+    codeTemplate:
+`<script>
+  __ Ez a függvény köszön
+  function koszont(nev) {
+    let uzenet = "Helló, " + nev + "!"; __ értékadás
+    console.log(uzenet);
+  }
+
+  /*
+    ___ szkript betöltés után hívjuk meg
+    a függvényt
+  ___
+  koszont("Réka");
+</script>`,
+    blanks:[
+      { answer:'//',  hint:'Egysoros komment jele JavaScriptben' },
+      { answer:'//',  hint:'Sorvégi egysoros komment – értékadás magyarázata' },
+      { answer:'Ez',  hint:'Szabad szöveg – a többsoros komment belseje bármi lehet' },
+      { answer:'*/',  hint:'A többsoros komment zárójele: csillag + perjel' }
+    ]
+  },
+
+  {
+    id:17, block:5, blockName:'Kommentek', emoji:'💬',
+    type:'monaco',
+    title:'Írj kommenteket a JavaScript kódba!',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Egészítsd ki a kódot <strong>JavaScript kommentekkel</strong>:
+      <ul>
+        <li>Írj legalább <strong>2 egysoros kommentet</strong> (<code>//</code>) a kódba</li>
+        <li>Írj legalább <strong>1 többsoros kommentet</strong> (<code>/* ... */</code>) a kódba</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>JS komment feladat</title>
+</head>
+<body>
+  <h1 id="cim">JS kommentek</h1>
+  <button onclick="valtoztasCimet()">Változtasd a címet!</button>
+
+  <script>
+    function valtoztasCimet() {
+      let cim = document.getElementById("cim");
+      cim.textContent = "Megváltozott!";
+      cim.style.color = "green";
+    }
+  <\/script>
+</body>
+</html>`,
+    checks:[
+      { label:'Legalább 2 egysoros JS komment (//)',      fn:(h)=>(h.match(/\/\//g)||[]).length>=2 },
+      { label:'Legalább 1 többsoros JS komment (/* */)',  fn:(h)=>(h.match(/\/\*/g)||[]).length>=1 }
+    ]
   }
 
 ];
@@ -702,7 +776,7 @@ gomb.addEventListener("_____", reagal);`,
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'ljs_v1';
+const SKEY = 'ljs_v2';
 const state = {
   cur: 0,
   done:      JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),
