@@ -1981,8 +1981,6 @@
         wrap.title = '🐛 Hibajelentés';
         wrap.addEventListener('click', openHibaModal);
     }
-    // _tesztMod (Teszt Elek) szintén kap bug logót
-    (function(){ const u=JSON.parse(sessionStorage.getItem('kandoUser')||'{}'); if(u._tesztMod) activateBugLogo(); })();
 
     function openHibaModal() {
         document.getElementById('hiba-szoveg').value = '';

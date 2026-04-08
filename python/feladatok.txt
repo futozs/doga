@@ -2016,7 +2016,6 @@ d) Határozza meg a csúcsforgalmú időpontot (ahol a legtöbb kerékpáros hal
 A program üzeneteinek megfogalmazásában kövesse az alábbi mintát! A feladat hibátlan elvégzéséért 18 pont jár.
 
 ```
-C:\Users\tanuló\programok>forgalomszamlalas.py
 Add meg a mérés időpontját! 06:00
 Hány kerékpáros haladt át? 36
 Add meg a mérés időpontját! 07:00
