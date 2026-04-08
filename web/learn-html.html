@@ -774,9 +774,74 @@ const tasks = [
     ]
   },
 
+  {
+    id:19, block:6, blockName:'Táblázatok', emoji:'📊', exam:true,
+    type:'fillin',
+    title:'Cellák összevonása: colspan és rowspan',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Néha egy cella több oszlopot vagy sort foglal el:
+      <ul>
+        <li><code>colspan="2"</code> — a cella <strong>2 oszlopot</strong> von össze (vízszintesen terjed)</li>
+        <li><code>rowspan="2"</code> — a cella <strong>2 sort</strong> von össze (függőlegesen terjed)</li>
+      </ul>
+      <code>&lt;td colspan="2"&gt;</code> — ez a cella kétszer akkora szélességű<br><br>
+      <code>&lt;td rowspan="2"&gt;</code> — ez a cella két soron át nyúlik le`,
+    codeTemplate:
+`<table border="1">
+  <tr>
+    <td ___="3">Összevont fejléc (3 oszlop)</td>
+  </tr>
+  <tr>
+    <td ___="2">Összevont cella (2 sor)</td>
+    <td>B</td>
+    <td>C</td>
+  </tr>
+  <tr>
+    <td>D</td>
+    <td>E</td>
+  </tr>
+</table>`,
+    blanks:[
+      { answer:'colspan', hint:'Vízszintes összevonás – oszlopokat von össze' },
+      { answer:'rowspan', hint:'Függőleges összevonás – sorokat von össze' }
+    ]
+  },
+
+  {
+    id:20, block:6, blockName:'Táblázatok', emoji:'📊', exam:true,
+    type:'monaco',
+    title:'Készíts összevont cellás táblázatot!',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Készíts táblázatot colspan és rowspan használatával:
+      <ul>
+        <li>Az első sorban legyen egy cella ami <strong>3 oszlopot</strong> von össze (<code>colspan="3"</code>)</li>
+        <li>A második sorban legyen egy cella ami <strong>2 sort</strong> von össze (<code>rowspan="2"</code>)</li>
+        <li>A táblázatnak összesen <strong>3 sora</strong> legyen</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Összevont cellák</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    checks:[
+      { label:'Van &lt;table&gt; a &lt;body&gt;-ban',                    fn:(h,d)=>!!d.querySelector('body table') },
+      { label:'Van colspan attribútum a táblázatban',                   fn:(h,d)=>!!d.querySelector('table [colspan]') },
+      { label:'Van colspan="3" cella',                                  fn:(h,d)=>!!d.querySelector('[colspan="3"]') },
+      { label:'Van rowspan attribútum a táblázatban',                   fn:(h,d)=>!!d.querySelector('table [rowspan]') },
+      { label:'Van rowspan="2" cella',                                  fn:(h,d)=>!!d.querySelector('[rowspan="2"]') },
+      { label:'A táblázatnak legalább 3 sora van',                     fn:(h,d)=>d.querySelectorAll('table tr').length>=3 }
+    ]
+  },
+
   // ── BLOKK 7: Szemantikus váz ──────────────────────── (kiegészítő)
   {
-    id:19, block:7, blockName:'Szemantikus váz', emoji:'🏛️',
+    id:21, block:7, blockName:'Szemantikus váz', emoji:'🏛️',
     type:'quiz',
     title:'Szemantikus elemek – ki mit jelöl?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -798,7 +863,7 @@ const tasks = [
   },
 
   {
-    id:20, block:7, blockName:'Szemantikus váz', emoji:'🏛️',
+    id:22, block:7, blockName:'Szemantikus váz', emoji:'🏛️',
     type:'fillin',
     title:'Szemantikus oldal váza',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -839,7 +904,7 @@ const tasks = [
   },
 
   {
-    id:21, block:7, blockName:'Szemantikus váz', emoji:'🏛️',
+    id:23, block:7, blockName:'Szemantikus váz', emoji:'🏛️',
     type:'monaco',
     title:'Szemantikus oldal felépítése',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -872,7 +937,7 @@ const tasks = [
 
   // ── BLOKK 8: Div és figure ────────────────────────── (kiegészítő)
   {
-    id:22, block:8, blockName:'Div és figure', emoji:'📦',
+    id:24, block:8, blockName:'Div és figure', emoji:'📦',
     type:'quiz',
     title:'Mi a különbség a div és a figure között?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -891,7 +956,7 @@ const tasks = [
   },
 
   {
-    id:23, block:8, blockName:'Div és figure', emoji:'📦',
+    id:25, block:8, blockName:'Div és figure', emoji:'📦',
     type:'fillin',
     title:'Div és figure használata',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -918,7 +983,7 @@ const tasks = [
   },
 
   {
-    id:24, block:8, blockName:'Div és figure', emoji:'📦',
+    id:26, block:8, blockName:'Div és figure', emoji:'📦',
     type:'monaco',
     title:'Div és figure a gyakorlatban',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -958,7 +1023,7 @@ const tasks = [
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'lhtml_v4';
+const SKEY = 'lhtml_v5';
 const state = {
   cur: 0,
   done:     JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),
