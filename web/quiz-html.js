@@ -390,7 +390,7 @@ const htmlQuizBank = {
   fillin: [
 
     {
-      id:'f1',
+      id:'f1', points:5,
       question:'Helyezd el az img mappában található kiscica.jpg képet a főcím után! Ha a kép nem jeleníthető meg, vagy ha az egeret a kép fölé viszed, a kiscica felirat jelenjen meg.',
       starterHtml:
 `<!DOCTYPE html>
@@ -414,7 +414,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f2',
+      id:'f2', points:4,
       question:'Tedd kattinthatóvá a Google szót úgy, hogy a https://www.google.com oldalra mutasson és új lapon nyíljon meg!',
       starterHtml:
 `<!DOCTYPE html>
@@ -437,7 +437,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f3',
+      id:'f3', points:1,
       question:'Az oldal nyelve angolra van állítva. Változtasd magyarrá!',
       starterHtml:
 `<!DOCTYPE html>
@@ -456,7 +456,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f4',
+      id:'f4', points:3,
       question:'A navigációs menüpont linkjére kattintva ugorjon az oldal a Kapcsolat részre! Ahhoz hogy ez működjön, előbb lásd el a megfelelő címsort a kapcsolat egyedi azonosítóval.',
       starterHtml:
 `<!DOCTYPE html>
@@ -483,7 +483,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f5',
+      id:'f5', points:3,
       question:'Készíts egy számozott felsorolást a kedvenc tantárgyaiddal!',
       starterHtml:
 `<!DOCTYPE html>
@@ -504,7 +504,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f6',
+      id:'f6', points:3,
       question:'Készíts bevásárlólistát számozatlan felsorolás segítségével, legyen benne legalább 3 megvásárolni kívánt termék.',
       starterHtml:
 `<!DOCTYPE html>
@@ -525,7 +525,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f7',
+      id:'f7', points:4,
       question:'A táblázat fejrészéből hiányoznak a fejléc cellák. Helyezd el a Név, Kor, Nem szavakat a megfelelő helyre!',
       starterHtml:
 `<!DOCTYPE html>
@@ -565,7 +565,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f8',
+      id:'f8', points:5,
       question:'A táblázat sorait és oszlopait rendezd el úgy, hogy a fejléc cellákat tartalmazó sor kerüljön a fejrészbe (thead), az adatcellákat tartalmazó sorok pedig a táblázat törzsrészébe (tbody)!',
       starterHtml:
 `<!DOCTYPE html>
@@ -604,7 +604,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f9',
+      id:'f9', points:2,
       question:'A táblázatból hiányzik egy adat. Egészítsd ki a hiányos sort a megfelelő cellával!',
       starterHtml:
 `<!DOCTYPE html>
@@ -648,7 +648,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f10',
+      id:'f10', points:5,
       question:'Készíts egy táblázatot, amelynek első sora fejléc cellákat tartalmaz, a többi sor adatcellákat! A táblázatnak 3 oszlopa és összesen 3 sora legyen.',
       starterHtml:
 `<!DOCTYPE html>
@@ -671,7 +671,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f11',
+      id:'f11', points:3,
       question:'A táblázatban az első sor adatcellákat tartalmaz, holott fejléc celláknak kellene lenniük. Javítsd ki!',
       starterHtml:
 `<!DOCTYPE html>
@@ -712,7 +712,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f12',
+      id:'f12', points:2,
       question:'A táblázat fejlécében a "Személyes adatok" cella két oszlopot von össze. Végezd el a szükséges módosítást!',
       starterHtml:
 `<!DOCTYPE html>
@@ -751,7 +751,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f13',
+      id:'f13', points:2,
       question:'Az alábbi versszak sorai folyamatosan futnak egymás után. Tördeld sortörésekkel úgy, hogy minden sor külön sorban jelenjen meg!\n\nTalpra magyar, hí a haza!\nItt az idő, most vagy soha!\nRabok legyünk vagy szabadok?\nEz a kérdés, válasszatok!',
       starterHtml:
 `<!DOCTYPE html>
@@ -772,7 +772,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f14',
+      id:'f14', points:3,
       question:'Az alábbi bekezdésben tedd félkövérré a "HTML" szót, aláhúzottá a "nélkülözhetetlen" szót, és dőlttá a "webfejlesztő" szót!',
       starterHtml:
 `<!DOCTYPE html>
@@ -793,7 +793,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f15',
+      id:'f15', points:5,
       question:'Írj egy főcímet "HTML tananyag" szöveggel, alá egy alcímet "Alapok" szöveggel, az alcím után pedig egy bekezdést "A HTML a weboldalak alapja." szöveggel!',
       starterHtml:
 `<!DOCTYPE html>
@@ -816,7 +816,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f16',
+      id:'f16', points:4,
       question:'Kattintható kép! Ha a képre kattintunk, új oldalon nyissa meg a https://hu.wikipedia.org/wiki/Macska weboldalt!',
       starterHtml:
 `<!DOCTYPE html>
@@ -839,7 +839,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f17',
+      id:'f17', points:2,
       question:'A bekezdésben a "Fontos" szó legyen piros és félkövér! A stílus már el van készítve a <style> blokkban — olvasd ki belőle az osztály nevét és rendeld hozzá a span elemhez!',
       starterHtml:
 `<!DOCTYPE html>
@@ -862,7 +862,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f18',
+      id:'f18', points:5,
       question:'A főcím után írd be a következő 3 mondatot, mindegyiket külön bekezdésbe!\n\n1. A HTML a weboldalak szerkezetét határozza meg.\n2. A CSS a weboldalak megjelenéséért felelős.\n3. A JavaScript a weboldalak interaktivitását biztosítja.',
       starterHtml:
 `<!DOCTYPE html>
@@ -886,7 +886,7 @@ const htmlQuizBank = {
     },
 
     {
-      id:'f19',
+      id:'f19', points:1,
       question:'Az oldalon az ékezetes betűk kérdőjelként jelennek meg. Javítsd ki!',
       starterHtml:
 `<!DOCTYPE html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Tudáspróba</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    :root {
+      --bg:#0f172a; --surface:#1e293b; --border:#334155;
+      --text:#e2e8f0; --muted:#94a3b8; --yellow:#fbbf24;
+      --blue:#3b82f6; --green:#22c55e; --red:#ef4444;
+      --radius:10px;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-serif; min-height:100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--border); }
+    .topbar-left { display:flex; align-items:center; gap:12px; }
+    .topbar img { height:32px; }
+    .topbar-title { font-size:1rem; font-weight:600; }
+    .topbar-sub { font-size:0.78rem; color:var(--muted); }
+    .progress-bar-wrap { flex:1; max-width:300px; margin:0 20px; }
+    .progress-bar-bg { background:var(--border); border-radius:99px; height:6px; }
+    .progress-bar-fill { background:var(--blue); border-radius:99px; height:6px; transition:width .3s; }
+    .progress-label { font-size:0.75rem; color:var(--muted); text-align:right; margin-top:3px; }
+
+    /* ── MODAL (figyelmeztetés) ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:1000; }
+    .modal-overlay.hidden { display:none; }
+    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:32px; max-width:480px; width:90%; text-align:center; }
+    .modal-icon { font-size:2.5rem; color:var(--yellow); margin-bottom:16px; }
+    .modal-title { font-size:1.1rem; font-weight:700; margin-bottom:12px; }
+    .modal-text { color:var(--muted); font-size:0.9rem; line-height:1.6; margin-bottom:24px; }
+    .modal-btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .btn { padding:9px 20px; border-radius:8px; border:none; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all .18s; }
+    .btn-primary { background:var(--blue); color:#fff; }
+    .btn-primary:hover { background:#2563eb; }
+    .btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--muted); }
+    .btn-outline:hover { border-color:var(--blue); color:var(--blue); }
+    .btn-yellow { background:var(--yellow); color:#0f172a; }
+    .btn-yellow:hover { background:#f59e0b; }
+    .btn-green { background:var(--green); color:#fff; }
+    .btn-green:hover { background:#16a34a; }
+
+    /* ── FŐ TERÜLET ── */
+    .quiz-wrap { max-width:860px; margin:0 auto; padding:30px 20px; }
+
+    /* ── KÉRDÉS KÁRTYA ── */
+    .question-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; }
+    .q-meta { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .q-num { background:var(--blue); color:#fff; border-radius:6px; padding:2px 10px; font-size:0.78rem; font-weight:700; }
+    .q-type-badge { background:var(--border); color:var(--muted); border-radius:6px; padding:2px 10px; font-size:0.75rem; }
+    .q-skip-badge { background:#78350f; color:#fde68a; border-radius:6px; padding:2px 10px; font-size:0.75rem; }
+    .q-text { font-size:1rem; font-weight:600; line-height:1.6; white-space:pre-line; margin-bottom:20px; }
+
+    /* ── MC OPTIONS ── */
+    .mc-options { display:flex; flex-direction:column; gap:10px; }
+    .mc-option { display:flex; align-items:flex-start; gap:12px; background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:12px 16px; cursor:pointer; transition:border-color .18s, background .18s; }
+    .mc-option:hover { border-color:var(--blue); }
+    .mc-option.selected { border-color:var(--blue); background:#1e3a5f; }
+    .mc-option input[type=radio] { margin-top:2px; accent-color:var(--blue); flex-shrink:0; }
+    .mc-option-text { font-size:0.92rem; line-height:1.5; font-family:'Consolas',monospace; }
+
+    /* ── FILL-IN (Monaco) ── */
+    .fillin-wrap { display:flex; gap:12px; height:320px; }
+    .monaco-wrap { flex:1; border:1px solid var(--border); border-radius:8px; overflow:hidden; min-width:0; }
+    .preview-wrap { flex:1; display:flex; flex-direction:column; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .preview-label { padding:6px 12px; font-size:0.72rem; color:var(--muted); background:var(--bg); border-bottom:1px solid var(--border); }
+    .preview-wrap iframe { flex:1; border:none; background:#fff; }
+
+    /* ── NAVIGÁCIÓ ── */
+    .q-nav { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .btn-skip { background:transparent; border:1.5px solid var(--border); color:var(--muted); font-size:0.82rem; }
+    .btn-skip:hover { border-color:var(--yellow); color:var(--yellow); }
+    .skip-count { font-size:0.78rem; color:var(--muted); }
+
+    /* ── VÉGEREDMÉNY ── */
+    .result-wrap { display:none; }
+    .result-wrap.visible { display:block; }
+    .result-hero { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:36px; text-align:center; margin-bottom:24px; }
+    .result-grade { font-size:5rem; font-weight:900; color:var(--yellow); line-height:1; }
+    .result-score { font-size:1.1rem; color:var(--muted); margin:8px 0 4px; }
+    .result-pct { font-size:1.8rem; font-weight:700; }
+    .result-details { margin-bottom:24px; }
+    .result-item { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:10px; display:flex; align-items:flex-start; gap:14px; }
+    .result-item-icon { font-size:1.1rem; flex-shrink:0; margin-top:2px; }
+    .result-item-icon.ok { color:var(--green); }
+    .result-item-icon.fail { color:var(--red); }
+    .result-item-icon.partial { color:var(--yellow); }
+    .result-item-q { font-size:0.88rem; font-weight:600; margin-bottom:4px; white-space:pre-line; }
+    .result-item-checks { display:flex; flex-direction:column; gap:3px; margin-top:6px; }
+    .result-check { font-size:0.78rem; color:var(--muted); display:flex; align-items:center; gap:6px; }
+    .result-check.ok { color:var(--green); }
+    .result-check.fail { color:var(--red); }
+    .result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+
+<!-- ── FIGYELMEZTETŐ MODAL ── -->
+<div class="modal-overlay" id="warn-modal">
+  <div class="modal-box">
+    <div class="modal-icon"><i class="fas fa-triangle-exclamation"></i></div>
+    <div class="modal-title">A tudáspróbához tartozó ismeretet még nem sajátítottad el!</div>
+    <div class="modal-text">A jobb eredmény érdekében érdemes előbb végigcsinálni a tananyagot, mert úgy sokkal több kérdésre fogsz tudni válaszolni.</div>
+    <div class="modal-btns">
+      <button class="btn btn-yellow" onclick="goToLearn()"><i class="fas fa-book-open"></i> Tananyaghoz megyek</button>
+      <button class="btn btn-outline" onclick="startQuiz()"><i class="fas fa-play"></i> Így is indítom</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../portal.html"><img src="../kando_logo.png" alt="Kandó"></a>
+    <div>
+      <div class="topbar-title">HTML Tudáspróba</div>
+      <div class="topbar-sub">1. szint · HTML Alapok</div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-label"><span id="prog-done">0</span> / <span id="prog-total">15</span> kérdés</div>
+  </div>
+</div>
+
+<!-- ── FŐ TERÜLET ── -->
+<div class="quiz-wrap">
+
+  <!-- Kérdés nézet -->
+  <div id="question-view">
+    <div class="question-card" id="question-card">
+      <div class="q-meta">
+        <span class="q-num" id="q-num">1. kérdés</span>
+        <span class="q-type-badge" id="q-type-badge">Feleletválasztós</span>
+        <span class="q-skip-badge hidden" id="q-skip-badge"><i class="fas fa-rotate-right"></i> Visszatért</span>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <!-- MC -->
+      <div class="mc-options" id="mc-area"></div>
+      <!-- Fill-in -->
+      <div class="fillin-wrap hidden" id="fillin-area">
+        <div class="monaco-wrap" id="monaco-container"></div>
+        <div class="preview-wrap">
+          <div class="preview-label"><i class="fas fa-eye"></i> Élő előnézet</div>
+          <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="q-nav">
+      <button class="btn btn-skip" id="btn-skip" onclick="skipQuestion()">
+        <i class="fas fa-rotate-right"></i> Visszatérek rá
+      </button>
+      <div class="skip-count" id="skip-info"></div>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">
+        Következő <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Eredmény nézet -->
+  <div class="result-wrap" id="result-view">
+    <div class="result-hero">
+      <div class="result-grade" id="res-grade">5</div>
+      <div class="result-score" id="res-score">12 / 20 pont</div>
+      <div class="result-pct" id="res-pct">80%</div>
+    </div>
+    <div class="result-details" id="res-details"></div>
+    <div class="result-actions">
+      <button class="btn btn-outline" onclick="location.href='learn-html.html'"><i class="fas fa-book-open"></i> Vissza a tananyaghoz</button>
+      <button class="btn btn-yellow" onclick="restartQuiz()"><i class="fas fa-rotate-right"></i> Új próba</button>
+      <button class="btn btn-outline" onclick="location.href='../portal.html'"><i class="fas fa-home"></i> Főmenü</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.min.js"></script>
+<script src="quiz-html.js"></script>
+<script>
+
+const RAILWAY = 'https://agazati.up.railway.app';
+const LEARN_SKEY = 'lhtml_v5_done';
+const MC_COUNT  = 10;
+const FI_COUNT  = 5;
+const FI_BIG_MIN = 2; // minimum nagy pontos (3+) fill-in
+
+// ── ÁLLAPOT ──────────────────────────────────────────────────────────
+let queue = [];       // [{q, skipped}]
+let answers = [];     // [{q, mcSel, fiHtml, earned, max}]
+let curIdx  = 0;
+let monacoEd = null;
+let monacoReady = false;
+const monacoQ = [];
+
+// ── MONACO INIT ───────────────────────────────────────────────────────
+require.config({ paths:{ vs:'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
+require(['vs/editor/editor.main'], ()=>{
+  monacoReady = true;
+  monacoQ.forEach(cb=>cb()); monacoQ.length=0;
+});
+const whenMonaco = cb => monacoReady ? cb() : monacoQ.push(cb);
+
+// ── BOOT ─────────────────────────────────────────────────────────────
+(function(){
+  const done = JSON.parse(localStorage.getItem(LEARN_SKEY)||'null');
+  const allDone = done && done.every(Boolean);
+  if (!allDone) {
+    document.getElementById('warn-modal').classList.remove('hidden');
+  } else {
+    startQuiz();
+  }
+})();
+
+function goToLearn() { location.href = 'learn-html.html'; }
+
+// ── SORSOLÁS ─────────────────────────────────────────────────────────
+function drawQuestions() {
+  const mcAll = [...htmlQuizBank.mc].sort(()=>Math.random()-.5);
+  const mc = mcAll.slice(0, MC_COUNT);
+
+  const fiBig = htmlQuizBank.fillin.filter(q=>q.points>=3).sort(()=>Math.random()-.5);
+  const fiSmall = htmlQuizBank.fillin.filter(q=>q.points<3).sort(()=>Math.random()-.5);
+  const fi = [];
+  // min FI_BIG_MIN nagy pontos
+  fi.push(...fiBig.slice(0, FI_BIG_MIN));
+  // maradék bárhonnan
+  const remaining = [...fiBig.slice(FI_BIG_MIN), ...fiSmall].sort(()=>Math.random()-.5);
+  fi.push(...remaining.slice(0, FI_COUNT - FI_BIG_MIN));
+
+  const all = [...mc, ...fi].sort(()=>Math.random()-.5);
+  return all;
+}
+
+function startQuiz() {
+  document.getElementById('warn-modal').classList.add('hidden');
+  const drawn = drawQuestions();
+  queue = drawn.map(q=>({q, skipped:false}));
+  answers = [];
+  curIdx = 0;
+  document.getElementById('prog-total').textContent = queue.length;
+  showQuestion();
+}
+
+function restartQuiz() {
+  document.getElementById('result-view').classList.remove('visible');
+  document.getElementById('question-view').style.display = '';
+  startQuiz();
+}
+
+// ── KÉRDÉS MEGJELENÍTÉS ───────────────────────────────────────────────
+function showQuestion() {
+  if (curIdx >= queue.length) { showResults(); return; }
+  const {q, skipped} = queue[curIdx];
+  const answered = answers.length;
+
+  // progress
+  document.getElementById('prog-done').textContent = answered;
+  document.getElementById('prog-fill').style.width = (answered / queue.length * 100) + '%';
+
+  document.getElementById('q-num').textContent = (answered + 1) + '. kérdés';
+  document.getElementById('q-text').textContent = q.question || q.question;
+
+  const skipBadge = document.getElementById('q-skip-badge');
+  skipped ? skipBadge.classList.remove('hidden') : skipBadge.classList.add('hidden');
+
+  const skipInfo = document.getElementById('skip-info');
+  const skippedLeft = queue.slice(curIdx+1).filter(x=>x.skipped).length;
+  skipInfo.textContent = skippedLeft > 0 ? skippedLeft + ' kihagyott kérdés vár' : '';
+
+  // Visszatérek rá gomb: ha már skip volt, ne lehessen újra
+  document.getElementById('btn-skip').disabled = skipped;
+  document.getElementById('btn-skip').style.opacity = skipped ? '0.4' : '1';
+
+  if (q.type === 'mc') showMC(q);
+  else showFillin(q);
+}
+
+function showMC(q) {
+  document.getElementById('q-type-badge').textContent = 'Feleletválasztós';
+  document.getElementById('mc-area').classList.remove('hidden');
+  document.getElementById('fillin-area').classList.add('hidden');
+
+  const area = document.getElementById('mc-area');
+  area.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'mc-option';
+    div.innerHTML = `<input type="radio" name="mc-opt" value="${i}">
+      <span class="mc-option-text">${opt}</span>`;
+    div.onclick = () => {
+      document.querySelectorAll('.mc-option').forEach(d=>d.classList.remove('selected'));
+      div.classList.add('selected');
+      div.querySelector('input').checked = true;
+    };
+    area.appendChild(div);
+  });
+}
+
+function showFillin(q) {
+  document.getElementById('q-type-badge').textContent = 'Kódírós';
+  document.getElementById('mc-area').classList.add('hidden');
+  document.getElementById('fillin-area').classList.remove('hidden');
+
+  if (monacoEd) { monacoEd.dispose(); monacoEd = null; }
+  const container = document.getElementById('monaco-container');
+  container.innerHTML = '';
+
+  whenMonaco(() => {
+    monacoEd = monaco.editor.create(container, {
+      value: q.starterHtml,
+      language:'html',
+      theme:'vs-dark',
+      fontSize:13,
+      minimap:{enabled:false},
+      wordWrap:'on',
+      scrollBeyondLastLine:false,
+      tabSize:2,
+      automaticLayout:true
+    });
+    updatePreview();
+    monacoEd.onDidChangeModelContent(()=>updatePreview());
+  });
+}
+
+function updatePreview() {
+  if (!monacoEd) return;
+  const frame = document.getElementById('preview-frame');
+  frame.srcdoc = monacoEd.getValue();
+}
+
+// ── NAVIGÁCIÓ ────────────────────────────────────────────────────────
+function skipQuestion() {
+  const {q} = queue[curIdx];
+  queue.push({q, skipped:true});
+  queue.splice(curIdx, 1);
+  if (monacoEd) { monacoEd.dispose(); monacoEd=null; }
+  showQuestion();
+}
+
+function nextQuestion() {
+  const {q} = queue[curIdx];
+  const result = collectAnswer(q);
+  answers.push({q, ...result});
+  curIdx++;
+  if (monacoEd) { monacoEd.dispose(); monacoEd=null; }
+  showQuestion();
+}
+
+function collectAnswer(q) {
+  if (q.type === 'mc') {
+    const sel = document.querySelector('input[name="mc-opt"]:checked');
+    const chosen = sel ? parseInt(sel.value) : -1;
+    return { mcSel:chosen, earned: chosen===q.correct ? 1 : 0, max:1 };
+  } else {
+    const html = monacoEd ? monacoEd.getValue() : q.starterHtml;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const results = q.checks.map(ch => { try { return !!ch.fn(html,doc); } catch(e){ return false; } });
+    const earned = results.filter(Boolean).length;
+    return { fiHtml:html, checkResults:results, earned, max:q.checks.length };
+  }
+}
+
+// ── VÉGEREDMÉNY ───────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('question-view').style.display = 'none';
+  document.getElementById('result-view').classList.add('visible');
+
+  const totalEarned = answers.reduce((s,a)=>s+a.earned, 0);
+  const totalMax    = answers.reduce((s,a)=>s+a.max, 0);
+  const pct = Math.round(totalEarned / totalMax * 100);
+  const grade = pct>=90?5:pct>=80?4:pct>=70?3:pct>=60?2:1;
+
+  document.getElementById('res-grade').textContent = grade;
+  document.getElementById('res-score').textContent = `${totalEarned} / ${totalMax} pont`;
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-grade').style.color =
+    grade===5?'#22c55e':grade===4?'#3b82f6':grade===3?'#fbbf24':grade===2?'#f97316':'#ef4444';
+
+  const det = document.getElementById('res-details');
+  det.innerHTML = '';
+  answers.forEach((a,i) => {
+    const div = document.createElement('div');
+    div.className = 'result-item';
+    const allOk = a.earned===a.max;
+    const noneOk = a.earned===0;
+    const iconCls = allOk?'ok':noneOk?'fail':'partial';
+    const icon = allOk?'fa-circle-check':noneOk?'fa-circle-xmark':'fa-circle-half-stroke';
+    let checksHtml = '';
+    if (a.q.type !== 'mc' && a.q.checks) {
+      checksHtml = '<div class="result-item-checks">' +
+        a.q.checks.map((ch,ci)=>`
+          <div class="result-check ${a.checkResults[ci]?'ok':'fail'}">
+            <i class="fas ${a.checkResults[ci]?'fa-check':'fa-xmark'}"></i>
+            ${ch.label}
+          </div>`).join('') +
+        '</div>';
+    } else {
+      const mcCorrect = a.q.options[a.q.correct];
+      if (!allOk) checksHtml = `<div class="result-check fail"><i class="fas fa-xmark"></i> Helyes válasz: ${mcCorrect}</div>`;
+    }
+    div.innerHTML = `
+      <div class="result-item-icon ${iconCls}"><i class="fas ${icon}"></i></div>
+      <div style="flex:1">
+        <div class="result-item-q">${i+1}. ${a.q.question?.substring?.(0,80)}${a.q.question?.length>80?'…':''}</div>
+        <div style="font-size:0.78rem;color:var(--muted)">${a.earned} / ${a.max} pont</div>
+        ${checksHtml}
+      </div>`;
+    det.appendChild(div);
+  });
+
+  saveResult(totalEarned, totalMax, pct, grade);
+}
+
+// ── BACKEND MENTÉS ────────────────────────────────────────────────────
+function saveResult(earned, max, pct, grade) {
+  const u = JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+  if (!u.token || !u.email) return;
+  fetch(`${RAILWAY}/api/quiz-result`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+u.token},
+    body:JSON.stringify({
+      email: u.email,
+      subject: 'html',
+      earned, max, pct, grade,
+      timestamp: new Date().toISOString()
+    })
+  }).catch(()=>{});
+}
+
+</script>
+<script src="../special-roles.js"></script>
+</body>
+</html>
