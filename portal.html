@@ -1170,8 +1170,8 @@
         <h3 style="color:#e0e0e0;font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:0.4rem;">WEBOLDAL KÓDOLÁS</h3>
         <p style="color:#888;font-size:0.84rem;text-align:center;margin-bottom:1.4rem;">Mit szeretnél csinálni?</p>
 
-        <!-- 1. szint: két kártya -->
-        <div id="web-modal-foMenu" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <!-- 1. szint: három kártya -->
+        <div id="web-modal-foMenu" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1rem;">
             <button onclick="document.getElementById('web-modal-foMenu').style.display='none';document.getElementById('web-modal-tanulas').style.display='block';"
                 style="padding:20px 12px;background:#0a1a2e;border:2px solid #0ea5e9;border-radius:12px;color:#7dd3fc;cursor:pointer;text-align:center;line-height:1.4;" onmouseover="this.style.background='#0c4a6e'" onmouseout="this.style.background='#0a1a2e'">
                 <div style="font-size:1.5rem;margin-bottom:6px;"><i class="fas fa-book-open"></i></div>
@@ -1186,6 +1186,44 @@
                 <div style="font-size:0.72rem;color:#bbf7d0;font-weight:400;margin-top:4px;">Weboldal lépésről<br>lépésre · Ágazati</div>
                 <div style="font-size:0.7rem;color:#475569;margin-top:5px;">2 mód</div>
             </button>
+            <button onclick="document.getElementById('web-modal-foMenu').style.display='none';document.getElementById('web-modal-tudasproba').style.display='block';"
+                style="padding:20px 12px;background:#1a1400;border:2px solid #fbbf24;border-radius:12px;color:#fcd34d;cursor:pointer;text-align:center;line-height:1.4;" onmouseover="this.style.background='#78350f'" onmouseout="this.style.background='#1a1400'">
+                <div style="font-size:1.5rem;margin-bottom:6px;"><i class="fas fa-graduation-cap"></i></div>
+                <div style="font-size:0.95rem;font-weight:800;">Tudáspróba</div>
+                <div style="font-size:0.72rem;color:#fde68a;font-weight:400;margin-top:4px;">Teszteld a tudásod!<br>Elméleti kérdések</div>
+                <div style="font-size:0.7rem;color:#475569;margin-top:5px;">32 MC + 19 kódírós</div>
+            </button>
+        </div>
+
+        <!-- Tudáspróba szekció -->
+        <div id="web-modal-tudasproba" style="display:none;margin-bottom:1rem;">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+                <button onclick="location.replace('web/quiz-html.html')"
+                    style="padding:16px 10px;background:#0a1a2e;border:2px solid #0ea5e9;border-radius:12px;color:#7dd3fc;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:center;line-height:1.4;" onmouseover="this.style.background='#0c4a6e'" onmouseout="this.style.background='#0a1a2e'">
+                    <div style="font-size:1.5rem;margin-bottom:5px;"><i class="fab fa-html5"></i></div>
+                    <div style="font-size:0.95rem;font-weight:800;">HTML</div>
+                    <div style="font-size:0.72rem;color:#93c5fd;font-weight:400;margin-top:4px;">Alapstruktúra, tagek,<br>táblázat, listák</div>
+                    <div style="font-size:0.7rem;color:#22c55e;margin-top:5px;"><i class="fas fa-circle-check"></i> Elérhető</div>
+                </button>
+                <button disabled
+                    style="padding:16px 10px;background:#0f172a;border:2px solid #334155;border-radius:12px;color:#475569;font-size:0.88rem;font-weight:700;cursor:not-allowed;text-align:center;line-height:1.4;opacity:0.5;">
+                    <div style="font-size:1.5rem;margin-bottom:5px;"><i class="fab fa-css3-alt"></i></div>
+                    <div style="font-size:0.95rem;font-weight:800;">CSS</div>
+                    <div style="font-size:0.72rem;color:#475569;font-weight:400;margin-top:4px;">Hamarosan</div>
+                    <div style="font-size:0.7rem;color:#475569;margin-top:5px;"><i class="fas fa-clock"></i> Fejlesztés alatt</div>
+                </button>
+                <button disabled
+                    style="padding:16px 10px;background:#0f172a;border:2px solid #334155;border-radius:12px;color:#475569;font-size:0.88rem;font-weight:700;cursor:not-allowed;text-align:center;line-height:1.4;opacity:0.5;">
+                    <div style="font-size:1.5rem;margin-bottom:5px;"><i class="fab fa-bootstrap"></i></div>
+                    <div style="font-size:0.95rem;font-weight:800;">Bootstrap</div>
+                    <div style="font-size:0.72rem;color:#475569;font-weight:400;margin-top:4px;">Hamarosan</div>
+                    <div style="font-size:0.7rem;color:#475569;margin-top:5px;"><i class="fas fa-clock"></i> Fejlesztés alatt</div>
+                </button>
+            </div>
+            <button onclick="document.getElementById('web-modal-tudasproba').style.display='none';document.getElementById('web-modal-foMenu').style.display='grid';"
+                style="width:100%;padding:8px;background:transparent;border:1px solid #334155;border-radius:8px;color:#94a3b8;font-size:0.8rem;cursor:pointer;">
+                <i class="fas fa-arrow-left"></i> Vissza
+            </button>
         </div>
 
         <!-- 2. szint: tananyagok – 3×2-es kártyarács -->
@@ -1195,7 +1233,7 @@
                     <div style="font-size:1.5rem;margin-bottom:5px;"><i class="fab fa-html5"></i></div>
                     <div style="font-size:0.95rem;font-weight:800;">HTML</div>
                     <div style="font-size:0.72rem;color:#93c5fd;font-weight:400;margin-top:4px;">Tagek, struktúra,<br>képek, táblázat</div>
-                    <div style="font-size:0.7rem;color:#475569;margin-top:5px;">21 feladat</div>
+                    <div style="font-size:0.7rem;color:#475569;margin-top:5px;">26 feladat</div>
                 </button>
                 <button onclick="location.replace('web/learn-css.html')" style="padding:16px 10px;background:#1a0a2e;border:2px solid #a855f7;border-radius:12px;color:#d8b4fe;font-size:0.88rem;font-weight:700;cursor:pointer;text-align:center;line-height:1.4;" onmouseover="this.style.background='#4c1d95'" onmouseout="this.style.background='#1a0a2e'">
                     <div style="font-size:1.5rem;margin-bottom:5px;"><i class="fab fa-css3-alt"></i></div>
