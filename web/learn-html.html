@@ -356,7 +356,7 @@ const tasks = [
         <li><code>&lt;strong&gt;</code> vagy <code>&lt;b&gt;</code> — <strong>félkövér</strong> szöveg</li>
         <li><code>&lt;em&gt;</code> vagy <code>&lt;i&gt;</code> — <em>dőlt</em> szöveg</li>
         <li><code>&lt;u&gt;</code> vagy <code>&lt;ins&gt;</code> — <u>aláhúzott</u> szöveg</li>
-        <li><code>&lt;br&gt;</code> — sortörés, önzáró (nincs záró tagje!)</li>
+        <li><code>&lt;br&gt;</code> — sortörés, páratlan tag (nincs záró tagje!)</li>
       </ul>
       💡 A <code>&lt;strong&gt;</code>/<code>&lt;em&gt;</code> szemantikusan hangsúlyt jelöl, a <code>&lt;b&gt;</code>/<code>&lt;i&gt;</code> csak vizuálisan formáz – de mindkét változat elfogadott a vizsgán.`,
     codeTemplate:
@@ -374,7 +374,7 @@ const tasks = [
       { answer:'strong', alts:['b'],   hint:'Félkövér – strong vagy b' },
       { answer:'em',     alts:['i'],   hint:'Dőlt – em vagy i' },
       { answer:'u',      alts:['ins'], hint:'Aláhúzott – u vagy ins' },
-      { answer:'br',                   hint:'Sortörés – önzáró elem, nincs záró tagje!' }
+      { answer:'br',                   hint:'Sortörés – páratlan tag, nincs záró tagje!' }
     ]
   },
 
@@ -1279,6 +1279,7 @@ function buildTag(parsed, content, indent='') {
 function showWrapWidget(editor, onConfirm) {
   const WIDGET_ID = 'wrap-abbr-input-widget';
   try { editor.removeOverlayWidget({ getId:()=>WIDGET_ID }); } catch(e) {}
+  editor.updateOptions({ readOnly: true });
   const dom = document.createElement('div');
   dom.style.cssText = [
     'position:absolute;top:0;left:50%;transform:translateX(-50%)',
@@ -1302,15 +1303,20 @@ function showWrapWidget(editor, onConfirm) {
   const widget = { getId:()=>WIDGET_ID, getDomNode:()=>dom, getPosition:()=>null };
   editor.addOverlayWidget(widget);
   setTimeout(()=>{ input.focus(); input.select(); }, 50);
-  function close() { try{editor.removeOverlayWidget(widget);}catch(e){} editor.focus(); }
+  function close() {
+    editor.updateOptions({ readOnly: false });
+    try{editor.removeOverlayWidget(widget);}catch(e){}
+    editor.focus();
+  }
   input.addEventListener('keydown', e=>{
     if (e.key==='Enter') { const abbr=input.value.trim(); close(); if(abbr) onConfirm(abbr); }
     else if (e.key==='Escape') close();
     e.stopPropagation();
+    e.preventDefault();
   });
   const disposable = editor.onDidChangeCursorPosition(()=>{});
   input.addEventListener('blur', ()=>{
-    setTimeout(()=>{ try{editor.removeOverlayWidget(widget);}catch(e){} }, 150);
+    setTimeout(()=>{ editor.updateOptions({ readOnly: false }); try{editor.removeOverlayWidget(widget);}catch(e){} }, 150);
     disposable.dispose();
   });
 }
