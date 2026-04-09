@@ -646,7 +646,7 @@ const htmlQuizBank = {
 
     {
       id:'f10', points:5,
-      question:'Készíts egy táblázatot, amelynek első sora fejléc cellákat tartalmaz, a többi sor adatcellákat! A táblázatnak 3 oszlopa és összesen 3 sora legyen.',
+      question:'Készíts egy táblázatot, amelynek első sora fejléc cellákat tartalmaz, a többi sor adatcellákat! A táblázatnak 3 oszlopa és összesen 3 sora legyen. Minden cellát tölts fel valamilyen szöveggel!',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
