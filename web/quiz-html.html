@@ -332,6 +332,7 @@ function showFillin(q) {
     });
     updatePreview();
     monacoEd.onDidChangeModelContent(()=>updatePreview());
+    monacoEd.addCommand(monaco.KeyMod.Shift|monaco.KeyMod.Alt|monaco.KeyCode.KeyW, ()=>wrapWithAbbreviation(monacoEd));
   });
 }
 
@@ -339,6 +340,102 @@ function updatePreview() {
   if (!monacoEd) return;
   const frame = document.getElementById('preview-frame');
   frame.srcdoc = monacoEd.getValue();
+}
+
+function parseTagAbbr(abbr) {
+  const tagMatch = abbr.match(/^([a-zA-Z][\w-]*)/);
+  const classMatch = abbr.match(/\.([a-zA-Z0-9_-]+)/g);
+  const idMatch = abbr.match(/#([a-zA-Z0-9_-]+)/);
+  return {
+    tag: tagMatch ? tagMatch[1] : 'div',
+    id: idMatch ? idMatch[1] : '',
+    className: classMatch ? classMatch.map(c=>c.substring(1)).join(' ') : ''
+  };
+}
+
+function buildTag(parsed, content, indent='') {
+  let openTag = `<${parsed.tag}`;
+  if (parsed.id) openTag += ` id="${parsed.id}"`;
+  if (parsed.className) openTag += ` class="${parsed.className}"`;
+  openTag += '>';
+  const closeTag = `</${parsed.tag}>`;
+  if (content.includes('\n'))
+    return `${openTag}\n${indent}  ${content.split('\n').join('\n'+indent+'  ')}\n${indent}${closeTag}`;
+  return `${openTag}${content}${closeTag}`;
+}
+
+function showWrapWidget(editor, onConfirm) {
+  const WIDGET_ID = 'wrap-abbr-input-widget';
+  try { editor.removeOverlayWidget({ getId:()=>WIDGET_ID }); } catch(e) {}
+  const dom = document.createElement('div');
+  dom.style.cssText = [
+    'position:absolute;top:0;left:50%;transform:translateX(-50%)',
+    'display:flex;align-items:center;gap:10px',
+    'background:#2d2d2d;border:1px solid #007acc',
+    'border-top:none;padding:8px 16px',
+    'font-family:Consolas,monospace;font-size:14px',
+    'box-shadow:0 4px 12px rgba(0,0,0,0.6);z-index:100'
+  ].join(';');
+  const label = document.createElement('span');
+  label.textContent = 'Wrap with Abbreviation:';
+  label.style.cssText = 'color:#cccccc;white-space:nowrap;font-size:14px;';
+  const input = document.createElement('input');
+  input.type='text'; input.value='div';
+  input.style.cssText = [
+    'background:#3c3c3c;border:1px solid #555',
+    'color:#d4d4d4;padding:5px 10px;font-size:14px',
+    'font-family:Consolas,monospace;outline:none;width:220px'
+  ].join(';');
+  dom.appendChild(label); dom.appendChild(input);
+  const widget = { getId:()=>WIDGET_ID, getDomNode:()=>dom, getPosition:()=>null };
+  editor.addOverlayWidget(widget);
+  setTimeout(()=>{ input.focus(); input.select(); }, 50);
+  function close() { try{editor.removeOverlayWidget(widget);}catch(e){} editor.focus(); }
+  input.addEventListener('keydown', e=>{
+    if (e.key==='Enter') {
+      e.stopPropagation(); e.preventDefault();
+      const abbr=input.value.trim(); close(); if(abbr) onConfirm(abbr);
+    } else if (e.key==='Escape') {
+      e.stopPropagation(); e.preventDefault();
+      close();
+    } else {
+      e.stopPropagation();
+    }
+  });
+  const disposable = editor.onDidChangeCursorPosition(()=>{});
+  input.addEventListener('blur', ()=>{
+    setTimeout(()=>{ try{editor.removeOverlayWidget(widget);}catch(e){} }, 150);
+    disposable.dispose();
+  });
+}
+
+function wrapWithAbbreviation(editor, abbreviation) {
+  const selection = editor.getSelection();
+  const model = editor.getModel();
+  const selectedText = selection && !selection.isEmpty() ? model.getValueInRange(selection) : '';
+  if (!selectedText) { alert('Jelölj ki szöveget a becsomagoláshoz!'); return; }
+  if (!abbreviation) { showWrapWidget(editor, abbr=>wrapWithAbbreviation(editor, abbr)); return; }
+  const lines = selectedText.split('\n').filter(l=>l.trim()!=='');
+  let wrappedText;
+  const wrapEachMatch = abbreviation.match(/^([a-zA-Z][\w.-]*(?:#[a-zA-Z0-9_-]+)?(?:\.[a-zA-Z0-9_-]+)*)>([a-zA-Z][\w.-]*(?:#[a-zA-Z0-9_-]+)?(?:\.[a-zA-Z0-9_-]+)*)\*$/);
+  const wrapEachSimpleMatch = abbreviation.match(/^([a-zA-Z][\w.-]*(?:#[a-zA-Z0-9_-]+)?(?:\.[a-zA-Z0-9_-]+)*)\*$/);
+  if (wrapEachMatch) {
+    const outerParsed = parseTagAbbr(wrapEachMatch[1]);
+    const innerParsed = parseTagAbbr(wrapEachMatch[2]);
+    const innerItems = lines.map(line=>`  ${buildTag(innerParsed, line.trim())}`).join('\n');
+    wrappedText = buildTag(outerParsed, '\n'+innerItems+'\n', '');
+  } else if (wrapEachSimpleMatch) {
+    const parsed = parseTagAbbr(wrapEachSimpleMatch[1]);
+    wrappedText = lines.map(line=>buildTag(parsed, line.trim())).join('\n');
+  } else if (abbreviation.includes('>')) {
+    const parts = abbreviation.split('>');
+    let content = selectedText;
+    for (let i=parts.length-1; i>=0; i--) content = buildTag(parseTagAbbr(parts[i]), content, '');
+    wrappedText = content;
+  } else {
+    wrappedText = buildTag(parseTagAbbr(abbreviation), selectedText, '');
+  }
+  editor.executeEdits('wrap-with-abbreviation', [{ range:selection, text:wrappedText, forceMoveMarkers:true }]);
 }
 
 // ── NAVIGÁCIÓ ────────────────────────────────────────────────────────
