@@ -322,7 +322,7 @@ const htmlQuizBank = {
       id:'mc28',
       question:'Mit csinál a <thead> elem?',
       options:[
-        'A táblázat fejlécsorát fogja össze — segít az áttekinthetőségben és a CSS stílusozásban',
+        'A táblázat fejléc része, segít az áttekinthetőségben',
         'Egy fejléc cellát jelöl',
         'A táblázat szélességét adja meg',
         'Kötelező elem, nélküle nem jelenik meg a táblázat'
