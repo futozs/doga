@@ -770,7 +770,7 @@ const htmlQuizBank = {
 
     {
       id:'f14', points:3,
-      question:'Az alábbi bekezdésben tedd félkövérré a "HTML" szót, aláhúzottá a "nélkülözhetetlen" szót, és dőlttá a "webfejlesztő" szót!',
+      question:'Az alábbi bekezdésben tedd félkövérré a "HTML" szót, aláhúzottá a "nélkülözhetetlen" szót, és dőltté a "webfejlesztő" szót!',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
