@@ -289,10 +289,10 @@ const htmlQuizBank = {
       id:'mc25',
       question:'Mit fog megjeleníteni ez?\n<p>Ez <b>félkövér</b>, ez <i>dőlt</i>, ez <u>aláhúzott</u>.</p>',
       options:[
-        'Semmi, ezek elavult tagek',
-        'Egy bekezdés ahol a szavak a jelzett stílussal jelennek meg',
-        'Három külön bekezdés',
-        'Hibaüzenet'
+        'Semmit, ezek elavult tag-ek',
+        'Egy bekezdést, ahol a szavak a jelzett stílussal jelennek meg',
+        'Három külön bekezdést',
+        'Hibaüzenetet'
       ],
       correct:1,
       explanation:'A <b>, <i>, <u> tagek ma is érvényes HTML elemek, a jelzett vizuális stílust alkalmazzák.'
