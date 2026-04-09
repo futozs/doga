@@ -373,6 +373,8 @@ function updatePreview() {
   let html = monacoEd.getValue();
   const q = queue[curIdx]?.q;
   if (q?.previewTransform) html = q.previewTransform(html);
+  const base = `<base href="${window.location.href}">`;
+  html = html.replace(/<head>/i, `<head>${base}`);
   frame.srcdoc = html;
 }
 
