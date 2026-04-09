@@ -884,7 +884,7 @@ const htmlQuizBank = {
 
     {
       id:'f19', points:1,
-      question:'Az oldalon az ékezetes betűk kérdőjelként jelennek meg. Javítsd ki!',
+      question:'Az oldalon az ékezetes betűk kérdőjelként jelennek meg. Javítsd ki a charset értékét! (Az előnézet ettől függetlenül helyesen mutatja a betűket, de valódi oldalon számít.)',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
