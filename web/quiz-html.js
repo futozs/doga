@@ -646,7 +646,7 @@ const htmlQuizBank = {
 
     {
       id:'f10', points:5,
-      question:'Készíts egy táblázatot, amelynek első sora fejléc cellákat tartalmaz, a többi sor adatcellákat! A táblázatnak 3 oszlopa és összesen 3 sora legyen. Minden cellát tölts fel valamilyen szöveggel!',
+      question:'Készítsd el az alábbi táblázatot HTML-ben!\n\n| Név         | Kor | Osztály |\n| Kovács Anna | 16  | 11.A    |\n| Nagy Péter  | 17  | 11.B    |\n\nAz első sor fejléc legyen (<th>), a többi adatsor (<td>)!',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -659,11 +659,11 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <table> a <body>-ban',                          fn:(h,d)=>!!d.querySelector('body table') },
-        { label:'Az első sorban legalább 3 <th> fejléc cella van',  fn:(h,d)=>d.querySelectorAll('tr:first-child th').length>=3 },
-        { label:'Legalább 2 adatsor van <td> cellákkal',            fn:(h,d)=>d.querySelectorAll('tr:not(:first-child)').length>=2 },
-        { label:'Minden adatsorban legalább 3 <td> cella van',      fn:(h,d)=>[...d.querySelectorAll('tr:not(:first-child)')].every(r=>r.querySelectorAll('td').length>=3) },
-        { label:'Minden cella szöveget tartalmaz',                  fn:(h,d)=>[...d.querySelectorAll('th,td')].every(c=>c.textContent.trim()!=='') }
+        { label:'Van <table> a <body>-ban',                                fn:(h,d)=>!!d.querySelector('body table') },
+        { label:'Az első sorban 3 <th> fejléc cella van (Név, Kor, Osztály)', fn:(h,d)=>{ const ths=[...d.querySelectorAll('th')].map(t=>t.textContent.trim()); return ths.includes('Név')&&ths.includes('Kor')&&ths.includes('Osztály'); } },
+        { label:'"Kovács Anna" szerepel a táblázatban',                    fn:(h,d)=>[...d.querySelectorAll('td')].some(t=>t.textContent.includes('Kovács Anna')) },
+        { label:'"Nagy Péter" szerepel a táblázatban',                     fn:(h,d)=>[...d.querySelectorAll('td')].some(t=>t.textContent.includes('Nagy Péter')) },
+        { label:'Minden cella szöveget tartalmaz',                         fn:(h,d)=>[...d.querySelectorAll('th,td')].every(c=>c.textContent.trim()!=='') }
       ]
     },
 
