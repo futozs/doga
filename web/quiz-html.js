@@ -602,7 +602,7 @@ const htmlQuizBank = {
 
     {
       id:'f9', points:2,
-      question:'A táblázatból hiányzik egy adat. Egészítsd ki a hiányos sort a megfelelő cellával!',
+      question:'A munkatársad elkészítette az alábbi táblázatot, de valami kimaradt belőle. Pótold a hiányzó tartalmat!\n\nAz adatok:\n– Anna, 25, Budapest\n– Béla, 30, Miskolc\n– Csilla, 22, Győr',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -640,7 +640,7 @@ const htmlQuizBank = {
 </html>`,
       checks:[
         { label:'Minden adatsorban pontosan 3 <td> cella van',   fn:(h,d)=>[...d.querySelectorAll('tbody tr')].every(r=>r.querySelectorAll('td').length===3) },
-        { label:'A hiányos sor ki van egészítve szöveggel',      fn:(h,d)=>{ const rows=[...d.querySelectorAll('tbody tr')]; return rows.length>=3 && rows[1].querySelectorAll('td').length===3 && rows[1].querySelectorAll('td')[2].textContent.trim()!==''; } }
+        { label:'Béla sora tartalmazza a hiányzó várost (Miskolc)', fn:(h,d)=>{ const rows=[...d.querySelectorAll('tbody tr')]; return rows.length>=3 && rows[1].querySelectorAll('td').length===3 && rows[1].querySelectorAll('td')[2].textContent.trim()==='Miskolc'; } }
       ]
     },
 

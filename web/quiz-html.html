@@ -228,26 +228,35 @@ const whenMonaco = cb => monacoReady ? cb() : monacoQ.push(cb);
 function goToLearn() { location.href = 'learn-html.html'; }
 
 // ── SORSOLÁS ─────────────────────────────────────────────────────────
-function drawQuestions() {
-  const mcAll = [...htmlQuizBank.mc].sort(()=>Math.random()-.5);
-  const mc = mcAll.slice(0, MC_COUNT);
+function shuffle(arr) { return [...arr].sort(()=>Math.random()-.5); }
 
-  const fiBig = htmlQuizBank.fillin.filter(q=>q.points>=3).sort(()=>Math.random()-.5);
-  const fiSmall = htmlQuizBank.fillin.filter(q=>q.points<3).sort(()=>Math.random()-.5);
+function prioritize(pool, recentIds) {
+  // Előre a friss (előző próbában nem szerepelt) kérdések, mögé a régiek
+  const fresh = pool.filter(q=>!recentIds.has(q.id));
+  const used  = pool.filter(q=> recentIds.has(q.id));
+  return [...shuffle(fresh), ...shuffle(used)];
+}
+
+function drawQuestions() {
+  const recent = new Set(JSON.parse(localStorage.getItem('htmlQuizRecent')||'[]'));
+
+  const mc = prioritize(htmlQuizBank.mc, recent).slice(0, MC_COUNT);
+
+  const fiBig   = prioritize(htmlQuizBank.fillin.filter(q=>q.points>=3), recent);
+  const fiSmall = prioritize(htmlQuizBank.fillin.filter(q=>q.points<3),  recent);
   const fi = [];
-  // min FI_BIG_MIN nagy pontos
   fi.push(...fiBig.slice(0, FI_BIG_MIN));
-  // maradék bárhonnan
-  const remaining = [...fiBig.slice(FI_BIG_MIN), ...fiSmall].sort(()=>Math.random()-.5);
+  const remaining = shuffle([...fiBig.slice(FI_BIG_MIN), ...fiSmall]);
   fi.push(...remaining.slice(0, FI_COUNT - FI_BIG_MIN));
 
-  const all = [...mc, ...fi].sort(()=>Math.random()-.5);
-  return all;
+  return shuffle([...mc, ...fi]);
 }
 
 function startQuiz() {
   document.getElementById('warn-modal').classList.add('hidden');
   const drawn = drawQuestions();
+  // Elmentjük az aktuális próba kérdésazonosítóit a következő húzáshoz
+  localStorage.setItem('htmlQuizRecent', JSON.stringify(drawn.map(q=>q.id)));
   queue = drawn.map(q=>({q, skipped:false}));
   answers = [];
   curIdx = 0;

@@ -1515,6 +1515,15 @@ nav a {
 // ══════════════════════════════════════════════════════════════════════
 
 const SKEY = 'lcss_v3';
+(function migrate() {
+  if (!localStorage.getItem(SKEY+'_done')) {
+    const prev = JSON.parse(localStorage.getItem('lcss_v2_done')||'null');
+    if (prev && Array.isArray(prev)) {
+      while (prev.length < tasks.length) prev.push(false);
+      localStorage.setItem(SKEY+'_done', JSON.stringify(prev.slice(0, tasks.length)));
+    }
+  }
+})();
 const state = {
   cur: 0,
   done:      JSON.parse(localStorage.getItem(SKEY+'_done')||'null') || Array(tasks.length).fill(false),
