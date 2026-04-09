@@ -343,7 +343,10 @@ function showFillin(q) {
     monacoEd.onDidChangeModelContent(()=>{ updatePreview(); setNextEnabled(true); });
     monacoEd.addAction({
       id:'wrap-with-abbreviation', label:'Wrap with Abbreviation',
-      keybindings:[monaco.KeyMod.Shift|monaco.KeyMod.Alt|monaco.KeyCode.KeyW],
+      keybindings:[
+        monaco.KeyMod.Shift|monaco.KeyMod.Alt|monaco.KeyCode.KeyW,
+        monaco.KeyCode.F1
+      ],
       run: ed => wrapWithAbbreviation(ed)
     });
   });
