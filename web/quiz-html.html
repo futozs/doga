@@ -28,6 +28,7 @@
 
     /* ── MODAL (figyelmeztetés) ── */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:1000; }
+    .hidden { display:none !important; }
     .modal-overlay.hidden { display:none; }
     .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:32px; max-width:480px; width:90%; text-align:center; }
     .modal-icon { font-size:2.5rem; color:var(--yellow); margin-bottom:16px; }
@@ -115,7 +116,7 @@
 <!-- ── TOPBAR ── -->
 <div class="topbar">
   <div class="topbar-left">
-    <a href="../portal.html"><img src="../kando_logo.png" alt="Kandó"></a>
+    <a href="../portal.html"><img src="../kandologo.png" alt="Kandó"></a>
     <div>
       <div class="topbar-title">HTML Tudáspróba</div>
       <div class="topbar-sub">1. szint · HTML Alapok</div>
