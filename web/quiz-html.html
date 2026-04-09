@@ -490,10 +490,17 @@ function collectAnswer(q) {
   }
 }
 
+// ── SEGÉDFÜGGVÉNY: HTML escape ────────────────────────────────────────
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // ── VÉGEREDMÉNY ───────────────────────────────────────────────────────
 function showResults() {
   document.getElementById('question-view').style.display = 'none';
   document.getElementById('result-view').classList.add('visible');
+  document.getElementById('prog-done').textContent = queue.length;
+  document.getElementById('prog-fill').style.width = '100%';
 
   const totalEarned = answers.reduce((s,a)=>s+a.earned, 0);
   const totalMax    = answers.reduce((s,a)=>s+a.max, 0);
@@ -521,17 +528,19 @@ function showResults() {
         a.q.checks.map((ch,ci)=>`
           <div class="result-check ${a.checkResults[ci]?'ok':'fail'}">
             <i class="fas ${a.checkResults[ci]?'fa-check':'fa-xmark'}"></i>
-            ${ch.label}
+            ${esc(ch.label)}
           </div>`).join('') +
         '</div>';
     } else {
       const mcCorrect = a.q.options[a.q.correct];
-      if (!allOk) checksHtml = `<div class="result-check fail"><i class="fas fa-xmark"></i> Helyes válasz: ${mcCorrect}</div>`;
+      if (!allOk) checksHtml = `<div class="result-check fail"><i class="fas fa-xmark"></i> Helyes válasz: ${esc(mcCorrect)}</div>`;
     }
+    const qText = a.q.question||'';
+    const qShort = esc(qText.substring(0,80)) + (qText.length>80?'…':'');
     div.innerHTML = `
       <div class="result-item-icon ${iconCls}"><i class="fas ${icon}"></i></div>
       <div style="flex:1">
-        <div class="result-item-q">${i+1}. ${a.q.question?.substring?.(0,80)}${a.q.question?.length>80?'…':''}</div>
+        <div class="result-item-q">${i+1}. ${qShort}</div>
         <div style="font-size:0.78rem;color:var(--muted)">${a.earned} / ${a.max} pont</div>
         ${checksHtml}
       </div>`;
