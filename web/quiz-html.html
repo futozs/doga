@@ -399,10 +399,21 @@ function parseTagAbbr(abbr) {
   };
 }
 
+const TAG_DEFAULT_ATTRS = {
+  a:      ' href=""',
+  img:    ' src="" alt=""',
+  input:  ' type="text"',
+  link:   ' rel="stylesheet" href=""',
+  script: ' src=""',
+  form:   ' action="" method="get"',
+  td:     '', th:   '', tr: '', li: '', option: ''
+};
+
 function buildTag(parsed, content, indent='') {
   let openTag = `<${parsed.tag}`;
   if (parsed.id) openTag += ` id="${parsed.id}"`;
   if (parsed.className) openTag += ` class="${parsed.className}"`;
+  if (TAG_DEFAULT_ATTRS[parsed.tag] !== undefined) openTag += TAG_DEFAULT_ATTRS[parsed.tag];
   openTag += '>';
   const closeTag = `</${parsed.tag}>`;
   if (content.includes('\n'))
