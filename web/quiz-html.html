@@ -291,8 +291,13 @@ function showMC(q) {
   q.options.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'mc-option';
-    div.innerHTML = `<input type="radio" name="mc-opt" value="${i}">
-      <span class="mc-option-text">${opt}</span>`;
+    const radio = document.createElement('input');
+    radio.type = 'radio'; radio.name = 'mc-opt'; radio.value = i;
+    const span = document.createElement('span');
+    span.className = 'mc-option-text';
+    span.textContent = opt;
+    div.appendChild(radio);
+    div.appendChild(span);
     div.onclick = () => {
       document.querySelectorAll('.mc-option').forEach(d=>d.classList.remove('selected'));
       div.classList.add('selected');
