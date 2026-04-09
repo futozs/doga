@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fejlesztői eszközök – WEB Tananyag</title>
+  <title>Webfejlesztő eszközök – WEB Tananyag</title>
   <link rel="icon" href="../kando_favion_dark.png" type="image/png" media="(prefers-color-scheme: light)">
   <link rel="icon" href="../kando_favion_light.png" type="image/png" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -62,7 +62,25 @@
     .step-body { flex:1; color:#cbd5e1; font-size:0.92rem; line-height:1.65; }
     .step-body strong { color:#f1f5f9; }
 
-    .key-badge { display:inline-block; background:#1e293b; border:1px solid #374151; border-radius:5px; padding:2px 8px; font-family:'Consolas',monospace; font-size:0.8rem; color:#e2e8f0; margin:0 2px; }
+    .key-badge { display:inline-block; background:#1e293b; border:1px solid #374151; border-bottom:2px solid #374151; border-radius:5px; padding:2px 8px; font-family:'Consolas',monospace; font-size:0.8rem; color:#e2e8f0; margin:0 2px; }
+
+    /* Billentyűkombináció kártyák */
+    .shortcut-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .shortcut-item { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; display:flex; align-items:flex-start; gap:14px; }
+    .shortcut-keys { flex-shrink:0; min-width:130px; line-height:2; }
+    .shortcut-desc { font-size:0.88rem; color:#cbd5e1; line-height:1.6; }
+    .shortcut-desc strong { color:#f1f5f9; display:block; margin-bottom:2px; }
+    .shortcut-desc span { color:var(--muted); font-size:0.82rem; }
+
+    /* Extension kártyák */
+    .ext-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+    .ext-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:16px 18px; display:flex; gap:14px; align-items:flex-start; text-decoration:none; transition:border-color .2s,background .2s; }
+    .ext-card:hover { border-color:var(--accent); background:#0f1e35; }
+    .ext-icon { width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+    .ext-info { flex:1; }
+    .ext-name { font-size:0.92rem; font-weight:700; color:var(--text); margin-bottom:3px; }
+    .ext-desc { font-size:0.8rem; color:var(--muted); line-height:1.5; }
+    .ext-badge { display:inline-block; font-size:0.68rem; background:#1e293b; border:1px solid #374151; border-radius:4px; padding:1px 6px; color:#7dd3fc; margin-top:5px; font-family:'Consolas',monospace; }
 
     .bottom-nav { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:40px; padding-top:24px; border-top:1px solid var(--border); }
     .btn-nav { padding:11px 22px; border-radius:10px; font-size:0.9rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
@@ -70,6 +88,11 @@
     .btn-nav-p:hover { background:var(--accent); }
     .btn-nav-s { background:transparent; color:#94a3b8; border:1.5px solid var(--border); }
     .btn-nav-s:hover { color:#f1f5f9; border-color:#64748b; }
+
+    @media(max-width:640px) {
+      .shortcut-grid, .ext-grid { grid-template-columns:1fr; }
+      .shortcut-keys { min-width:auto; }
+    }
 
     ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
   </style>
@@ -87,15 +110,233 @@
   <a href="../portal.html"><img src="kandologo2.png" alt="Kandó" class="topbar-logo"></a>
   <a href="../portal.html" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
   <div class="topbar-info">
-    <div class="topbar-title">🔧 WEB Tananyag</div>
-    <div class="topbar-sub">6. szint · Fejlesztői eszközök</div>
+    <div class="topbar-title"><i class="fas fa-screwdriver-wrench"></i> WEB Tananyag</div>
+    <div class="topbar-sub">6. szint · Webfejlesztő eszközök</div>
   </div>
   <div class="topbar-spacer"></div>
 </header>
 
 <div class="page">
-  <h1>🔧 Fejlesztői eszközök és hasznos oldalak</h1>
-  <p class="subtitle">Megismered a webfejlesztők leghasznosabb eszközeit: referencia oldalakat, validátort és a böngésző beépített fejlesztői eszközeit.</p>
+  <h1><i class="fas fa-screwdriver-wrench" style="color:var(--accent);margin-right:10px;"></i>Webfejlesztő eszközök</h1>
+  <p class="subtitle">VS Code tippek és kiegészítők, referencia oldalak, validátor és böngésző DevTools — minden egy helyen.</p>
+
+  <!-- VS CODE -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-code"></i> Visual Studio Code – a fejlesztői szerkesztő</div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-laptop-code" style="color:#38bdf8;"></i> Mi a VS Code?</div>
+      <p>A <strong>Visual Studio Code</strong> (röviden VS Code) a világ legnépszerűbb kódszerkesztője — ingyenes, gyors, és rengeteg kiegészítővel bővíthető. Webfejlesztéshez tökéletes választás: kiemelés, automatikus kiegészítés, és élő előnézet is elérhető benne.</p>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> Ha még nincs telepítve: <strong>code.visualstudio.com</strong> — Windows, Mac és Linux alá egyaránt ingyenesen letölthető.
+      </div>
+    </div>
+  </div>
+
+  <!-- KIEGÉSZÍTŐK -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-puzzle-piece"></i> Ajánlott kiegészítők (Extensions)</div>
+
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title"><i class="fas fa-download" style="color:#4ade80;"></i> Hogyan telepíts kiegészítőt?</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">VS Code-ban nyomd meg a <span class="key-badge">Ctrl</span> + <span class="key-badge">Shift</span> + <span class="key-badge">X</span> billentyűkombinációt — megnyílik a kiegészítők oldalsávja</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">A keresőmezőbe írd be a kiegészítő nevét, kattints rá, majd az <strong>Install</strong> gombra</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ext-grid">
+      <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer" target="_blank" rel="noopener" class="ext-card">
+        <div class="ext-icon" style="background:rgba(74,222,128,.12);color:#4ade80;"><i class="fas fa-play"></i></div>
+        <div class="ext-info">
+          <div class="ext-name">Live Server</div>
+          <div class="ext-desc">Mentéskor a böngésző azonnal frissül — nem kell kézzel újratölteni az oldalt.</div>
+          <div class="ext-badge">ritwickdey.LiveServer</div>
+        </div>
+      </a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag" target="_blank" rel="noopener" class="ext-card">
+        <div class="ext-icon" style="background:rgba(56,189,248,.12);color:#38bdf8;"><i class="fas fa-tag"></i></div>
+        <div class="ext-info">
+          <div class="ext-name">Auto Rename Tag</div>
+          <div class="ext-desc">Ha átírod a nyitó taget (pl. <code>div</code> → <code>section</code>), a záró tag automatikusan követi.</div>
+          <div class="ext-badge">formulahendry.auto-rename-tag</div>
+        </div>
+      </a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag" target="_blank" rel="noopener" class="ext-card">
+        <div class="ext-icon" style="background:rgba(56,189,248,.12);color:#38bdf8;"><i class="fas fa-code"></i></div>
+        <div class="ext-info">
+          <div class="ext-name">Auto Close Tag</div>
+          <div class="ext-desc">A nyitó tag beírása után automatikusan megírja a záró taget is. Gyorsabb kódolás, kevesebb elírás.</div>
+          <div class="ext-badge">formulahendry.auto-close-tag</div>
+        </div>
+      </a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode" target="_blank" rel="noopener" class="ext-card">
+        <div class="ext-icon" style="background:rgba(245,158,11,.12);color:#f59e0b;"><i class="fas fa-wand-magic-sparkles"></i></div>
+        <div class="ext-info">
+          <div class="ext-name">Prettier</div>
+          <div class="ext-desc">Egy gombnyomásra (<span class="key-badge" style="font-size:0.72rem;">Shift+Alt+F</span>) rendezett, egységes kódformázás. Behúzások, sortörések automatikusan.</div>
+          <div class="ext-badge">esbenp.prettier-vscode</div>
+        </div>
+      </a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=ecmel.vscode-html-css" target="_blank" rel="noopener" class="ext-card">
+        <div class="ext-icon" style="background:rgba(168,85,247,.12);color:#a855f7;"><i class="fab fa-css3-alt"></i></div>
+        <div class="ext-info">
+          <div class="ext-name">HTML CSS Support</div>
+          <div class="ext-desc">HTML fájlban automatikus kiegészítést ad a CSS fájlodban definiált osztálynevekhez.</div>
+          <div class="ext-badge">ecmel.vscode-html-css</div>
+        </div>
+      </a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=xabikos.JavaScriptSnippets" target="_blank" rel="noopener" class="ext-card">
+        <div class="ext-icon" style="background:rgba(234,179,8,.12);color:#eab308;"><i class="fab fa-js"></i></div>
+        <div class="ext-info">
+          <div class="ext-name">JavaScript (ES6) Snippets</div>
+          <div class="ext-desc">Emmet-szerű rövidítések JS-hez: pl. <code>clg</code> → <code>console.log()</code>, <code>afn</code> → nyílf&uuml;ggvény.</div>
+          <div class="ext-badge">xabikos.JavaScriptSnippets</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- BILLENTYŰKOMBINÁCIÓK -->
+  <div class="section">
+    <div class="section-title"><i class="fas fa-keyboard"></i> Hasznos billentyűkombinációk</div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title"><i class="fas fa-computer-mouse" style="color:#38bdf8;"></i> Többsoros szerkesztés</div>
+      <p style="margin-bottom:12px;">Az egyik leghasznosabb funkció: <strong>egyszerre több helyen írhatsz</strong> a fájlban.</p>
+      <div class="shortcut-grid">
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Alt</span> + <span class="key-badge">Kattintás</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Több kurzor egyszerre</strong>
+            <span>Kattints több sorra tartva az Alt-ot — mindenhol egyszerre írhatsz.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">D</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Következő egyező kijelölése</strong>
+            <span>Jelölj ki egy szót, majd Ctrl+D-vel a következő előfordulás is kijelölődik — így egyszerre átírhatod mindet.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">Shift</span> + <span class="key-badge">L</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Összes egyező kijelölése</strong>
+            <span>Egy lépésben kijelöli a fájlban szereplő összes egyező szöveget.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">Alt</span> + <span class="key-badge">Le</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Kurzor hozzáadása lejjebb</strong>
+            <span>Egymás alatti sorokhoz ad kurzort — hasznos ha több egymás alatti sort kell egyformán módosítani.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title"><i class="fas fa-magnifying-glass" style="color:#4ade80;"></i> Keresés és csere</div>
+      <div class="shortcut-grid">
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">H</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Keresés és csere</strong>
+            <span>Megnyílik a csere panel — pl. minden "szin" szót kicserélhetsz "color"-ra egyszerre.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">F</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Keresés a fájlban</strong>
+            <span>Megkeresi a beírt szöveget az aktuális fájlban. Enter-rel lép a következő találatra.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">Shift</span> + <span class="key-badge">F</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Keresés minden fájlban</strong>
+            <span>Az összes megnyitott fájlban keres — hasznos ha egy változónevet mindenhol át kell írni.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">P</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Gyors fájlnyitás</strong>
+            <span>Fájlnév begépelésével azonnal megnyit bármely fájlt a projektből, mappák böngészése nélkül.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-list" style="color:#a855f7;"></i> Sorok kezelése és egyéb trükkök</div>
+      <div class="shortcut-grid">
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Alt</span> + <span class="key-badge">Fel/Le</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Sor mozgatása</strong>
+            <span>A kurzort tartalmazó sort felfelé vagy lefelé mozgatja anélkül, hogy ki-be kellene másolni.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Alt</span> + <span class="key-badge">Shift</span> + <span class="key-badge">Le</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Sor duplikálása</strong>
+            <span>Az aktuális sort azonnal lemásolja az alá — gyors ha hasonló sorokat kell egymás után írni.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Ctrl</span> + <span class="key-badge">/</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Sor kikommentezése</strong>
+            <span>Kommentté alakítja a sort (és vissza). HTML-ben <code>&lt;!-- --&gt;</code>, JS-ben <code>//</code> kerül elé.</span>
+          </div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys">
+            <span class="key-badge">Shift</span> + <span class="key-badge">Alt</span> + <span class="key-badge">F</span>
+          </div>
+          <div class="shortcut-desc">
+            <strong>Kód formázása</strong>
+            <span>Prettier telepítése után az egész fájlt rendezett, egységes formátumba hozza.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top:14px;">
+        <i class="fas fa-lightbulb"></i> <strong>Parancspaletta:</strong> Ha nem emlékszel egy billentyűkombinációra, nyomd meg a <span class="key-badge">Ctrl</span> + <span class="key-badge">Shift</span> + <span class="key-badge">P</span> billentyűket — megkeresi és végrehajtja a parancsokat, rájuk kattintva a billentyűkombinációt is megmutatja.
+      </div>
+    </div>
+  </div>
 
   <!-- W3SCHOOLS -->
   <div class="section">
@@ -110,12 +351,12 @@
         <li><strong>Oktató feladatokat</strong> – kvízek, gyakorlatok</li>
       </ul>
       <div class="tip-box">
-        💡 Ha elfelejtesz valamit (pl. melyik CSS tulajdonsággal lehet keretezni?), a W3Schools az első hely ahol érdemes keresni.
+        <i class="fas fa-lightbulb"></i> Ha elfelejtesz valamit (pl. melyik CSS tulajdonsággal lehet keretezni?), a W3Schools az első hely ahol érdemes keresni.
       </div>
     </div>
 
     <a href="https://www.w3schools.com/html/" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(74,222,128,.1);">📄</div>
+      <div class="link-icon" style="background:rgba(74,222,128,.1);color:#4ade80;"><i class="fab fa-html5"></i></div>
       <div class="link-info">
         <div class="link-name">W3Schools – HTML referencia</div>
         <div class="link-desc">Összes HTML tag leírása, példákkal</div>
@@ -123,7 +364,7 @@
       <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
     </a>
     <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(59,130,246,.1);">🎨</div>
+      <div class="link-icon" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fab fa-css3-alt"></i></div>
       <div class="link-info">
         <div class="link-name">W3Schools – CSS referencia</div>
         <div class="link-desc">CSS tulajdonságok, szelektorok, példák</div>
@@ -131,7 +372,7 @@
       <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
     </a>
     <a href="https://www.w3schools.com/js/" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(245,158,11,.1);">🟨</div>
+      <div class="link-icon" style="background:rgba(234,179,8,.1);color:#eab308;"><i class="fab fa-js"></i></div>
       <div class="link-info">
         <div class="link-name">W3Schools – JavaScript referencia</div>
         <div class="link-desc">JS alapok, DOM, események, függvények</div>
@@ -139,7 +380,7 @@
       <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
     </a>
     <a href="https://www.w3schools.com/bootstrap5/" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(168,85,247,.1);">🅱️</div>
+      <div class="link-icon" style="background:rgba(168,85,247,.1);color:#a855f7;"><i class="fab fa-bootstrap"></i></div>
       <div class="link-info">
         <div class="link-name">W3Schools – Bootstrap 5 referencia</div>
         <div class="link-desc">Grid, komponensek, utility osztályok</div>
@@ -163,7 +404,7 @@
     </div>
 
     <a href="https://developer.mozilla.org/hu/docs/Web/HTML" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(249,115,22,.1);">🦊</div>
+      <div class="link-icon" style="background:rgba(249,115,22,.1);color:#f97316;"><i class="fab fa-firefox-browser"></i></div>
       <div class="link-info">
         <div class="link-name">MDN Web Docs – HTML</div>
         <div class="link-desc">Mozilla teljes HTML dokumentációja (részben magyarul is)</div>
@@ -171,7 +412,7 @@
       <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
     </a>
     <a href="https://developer.mozilla.org/hu/docs/Web/CSS" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(249,115,22,.1);">🦊</div>
+      <div class="link-icon" style="background:rgba(249,115,22,.1);color:#f97316;"><i class="fab fa-firefox-browser"></i></div>
       <div class="link-info">
         <div class="link-name">MDN Web Docs – CSS</div>
         <div class="link-desc">Böngészőkompatibilitás, részletes CSS referencia</div>
@@ -195,7 +436,7 @@
         <li>Keresőoptimalizálás (SEO) szempontjából is számít a tiszta kód</li>
       </ul>
       <div class="tip-box">
-        💡 Mielőtt beadod a feladatot, mindig futtasd le a validátoron! Egy záratlan <code>&lt;/div&gt;</code> az egész oldal elrendezését tönkreteheti.
+        <i class="fas fa-lightbulb"></i> Mielőtt beadod a feladatot, mindig futtasd le a validátoron! Egy záratlan <code>&lt;/div&gt;</code> az egész oldal elrendezését tönkreteheti.
       </div>
     </div>
 
@@ -222,7 +463,7 @@
     </div>
 
     <a href="https://validator.w3.org/#validate_by_input" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(74,222,128,.1);">✅</div>
+      <div class="link-icon" style="background:rgba(74,222,128,.1);color:#4ade80;"><i class="fas fa-circle-check"></i></div>
       <div class="link-info">
         <div class="link-name">W3C HTML Validátor</div>
         <div class="link-desc">Ellenőrizd le a HTML kódod helyességét</div>
@@ -230,7 +471,7 @@
       <span class="link-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
     </a>
     <a href="https://jigsaw.w3.org/css-validator/#validate_by_input" target="_blank" rel="noopener" class="link-card">
-      <div class="link-icon" style="background:rgba(59,130,246,.1);">✅</div>
+      <div class="link-icon" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fas fa-circle-check"></i></div>
       <div class="link-info">
         <div class="link-name">W3C CSS Validátor</div>
         <div class="link-desc">Ellenőrizd le a CSS kódod helyességét</div>
@@ -258,7 +499,7 @@
         <li><strong>Network (Hálózat)</strong> – betöltési idők, kérések figyelése</li>
       </ul>
       <div class="tip-box">
-        💡 <strong>Tipp:</strong> Az Elements fülön kattints egy elemre jobb gombbal az oldalon → <em>"Inspect"</em> (Vizsgálat) – azonnal az adott elem CSS-énél ugrik a DevTools.
+        <i class="fas fa-lightbulb"></i> <strong>Tipp:</strong> Az Elements fülön kattints egy elemre jobb gombbal az oldalon → <em>"Inspect"</em> (Vizsgálat) – azonnal az adott elem CSS-énél ugrik a DevTools.
       </div>
     </div>
 
