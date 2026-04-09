@@ -101,6 +101,7 @@
     .result-check i { flex-shrink:0; margin-top:2px; }
     .result-check.ok { color:var(--green); }
     .result-check.fail { color:var(--red); }
+    .check-hint { display:block; margin-top:3px; font-size:0.78rem; color:#94a3b8; background:#1e293b; padding:2px 8px; border-radius:4px; font-family:Consolas,monospace; }
     .result-mc-answers { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
     .result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
   </style>
@@ -571,7 +572,7 @@ function showResults() {
       const checksList = a.q.checks.map((ch,ci)=>`
         <div class="result-check ${a.checkResults[ci]?'ok':'fail'}">
           <i class="fas ${a.checkResults[ci]?'fa-check':'fa-xmark'}"></i>
-          ${esc(ch.label)}
+          <span>${esc(ch.label)}${!a.checkResults[ci]&&ch.hint?`<code class="check-hint">${esc(ch.hint)}</code>`:''}</span>
         </div>`).join('');
       bodyHtml = `
         <div class="result-panels">

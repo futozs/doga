@@ -402,11 +402,11 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <img> elem',                              fn:(h,d)=>!!d.querySelector('img') },
-        { label:'A kép forrása: img/kiscica.jpg',             fn:(h,d)=>d.querySelector('img')?.getAttribute('src')==='img/kiscica.jpg' },
-        { label:'Az alt attribútum értéke: kiscica',          fn:(h,d)=>d.querySelector('img')?.getAttribute('alt')?.trim()==='kiscica' },
-        { label:'A title attribútum értéke: kiscica',         fn:(h,d)=>d.querySelector('img')?.getAttribute('title')?.trim()==='kiscica' },
-        { label:'A kép a <h1> után van',                      fn:(h,d)=>{ const h1=d.querySelector('h1'), img=d.querySelector('img'); return !!(h1&&img&&(h1.compareDocumentPosition(img)&Node.DOCUMENT_POSITION_FOLLOWING)); } }
+        { label:'Van <img> elem',                              hint:'<img src="img/kiscica.jpg" alt="kiscica" title="kiscica">',  fn:(h,d)=>!!d.querySelector('img') },
+        { label:'A kép forrása: img/kiscica.jpg',             hint:'src="img/kiscica.jpg"',                                        fn:(h,d)=>d.querySelector('img')?.getAttribute('src')==='img/kiscica.jpg' },
+        { label:'Az alt attribútum értéke: kiscica',          hint:'alt="kiscica"',                                                fn:(h,d)=>d.querySelector('img')?.getAttribute('alt')?.trim()==='kiscica' },
+        { label:'A title attribútum értéke: kiscica',         hint:'title="kiscica"',                                             fn:(h,d)=>d.querySelector('img')?.getAttribute('title')?.trim()==='kiscica' },
+        { label:'A kép a <h1> után van',                      hint:'<h1>...</h1>  <img ...>  ← ebben a sorrendben',              fn:(h,d)=>{ const h1=d.querySelector('h1'), img=d.querySelector('img'); return !!(h1&&img&&(h1.compareDocumentPosition(img)&Node.DOCUMENT_POSITION_FOLLOWING)); } }
       ]
     },
 
@@ -426,10 +426,10 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <a> link',                                    fn:(h,d)=>!!d.querySelector('a') },
-        { label:'A link a Google oldalra mutat',                   fn:(h,d)=>d.querySelector('a')?.getAttribute('href')==='https://www.google.com' },
-        { label:'A link új lapon nyílik meg (target="_blank")',    fn:(h,d)=>d.querySelector('a[target="_blank"]')?.textContent?.trim()==='Google' },
-        { label:'A link szövege: Google',                          fn:(h,d)=>d.querySelector('a')?.textContent?.trim()==='Google' }
+        { label:'Van <a> link',                                    hint:'<a href="https://www.google.com" target="_blank">Google</a>', fn:(h,d)=>!!d.querySelector('a') },
+        { label:'A link a Google oldalra mutat',                   hint:'href="https://www.google.com"',                                fn:(h,d)=>d.querySelector('a')?.getAttribute('href')==='https://www.google.com' },
+        { label:'A link új lapon nyílik meg (target="_blank")',    hint:'target="_blank"',                                              fn:(h,d)=>d.querySelector('a[target="_blank"]')?.textContent?.trim()==='Google' },
+        { label:'A link szövege: Google',                          hint:'<a ...>Google</a>  ← a tag között pontosan "Google" legyen',   fn:(h,d)=>d.querySelector('a')?.textContent?.trim()==='Google' }
       ]
     },
 
@@ -448,7 +448,7 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'A html tag lang attribútuma: hu',   fn:(h,d)=>d.querySelector('html')?.getAttribute('lang')==='hu' }
+        { label:'A html tag lang attribútuma: hu',   hint:'<html lang="hu">',   fn:(h,d)=>d.querySelector('html')?.getAttribute('lang')==='hu' }
       ]
     },
 
@@ -473,9 +473,9 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'A Kapcsolat címsornak van id attribútuma',        fn:(h,d)=>!!d.querySelector('h2[id]') },
-        { label:'Az id értéke: kapcsolat',                         fn:(h,d)=>!!d.querySelector('[id="kapcsolat"]') },
-        { label:'A navigációs link a #kapcsolat-ra mutat',        fn:(h,d)=>!!d.querySelector('a[href="#kapcsolat"]') }
+        { label:'A Kapcsolat címsornak van id attribútuma',        hint:'<h2 id="kapcsolat">Kapcsolat</h2>',   fn:(h,d)=>!!d.querySelector('h2[id]') },
+        { label:'Az id értéke: kapcsolat',                         hint:'id="kapcsolat"',                         fn:(h,d)=>!!d.querySelector('[id="kapcsolat"]') },
+        { label:'A navigációs link a #kapcsolat-ra mutat',        hint:'href="#kapcsolat"',                       fn:(h,d)=>!!d.querySelector('a[href="#kapcsolat"]') }
       ]
     },
 
@@ -494,9 +494,9 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <ol> elem',                          fn:(h,d)=>!!d.querySelector('ol') },
-        { label:'Legalább 3 <li> elem van benne',        fn:(h,d)=>d.querySelectorAll('ol li').length>=3 },
-        { label:'Minden listaelem szöveget tartalmaz',   fn:(h,d)=>[...d.querySelectorAll('ol li')].every(li=>li.textContent.trim()!=='') }
+        { label:'Van <ol> elem',                          hint:'<ol><li>...</li><li>...</li><li>...</li></ol>',  fn:(h,d)=>!!d.querySelector('ol') },
+        { label:'Legalább 3 <li> elem van benne',        hint:'<li>Tantárgy neve</li>  ← legalább 3 ilyen sor',  fn:(h,d)=>d.querySelectorAll('ol li').length>=3 },
+        { label:'Minden listaelem szöveget tartalmaz',   hint:'<li>Matematika</li>  ← minden <li> legyen kitöltve', fn:(h,d)=>[...d.querySelectorAll('ol li')].every(li=>li.textContent.trim()!=='') }
       ]
     },
 
@@ -515,9 +515,9 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <ul> elem',                          fn:(h,d)=>!!d.querySelector('ul') },
-        { label:'Legalább 3 <li> elem van benne',        fn:(h,d)=>d.querySelectorAll('ul li').length>=3 },
-        { label:'Minden listaelem szöveget tartalmaz',   fn:(h,d)=>[...d.querySelectorAll('ul li')].every(li=>li.textContent.trim()!=='') }
+        { label:'Van <ul> elem',                          hint:'<ul><li>...</li><li>...</li><li>...</li></ul>',    fn:(h,d)=>!!d.querySelector('ul') },
+        { label:'Legalább 3 <li> elem van benne',        hint:'<li>Tej</li>  ← legalább 3 ilyen sor',              fn:(h,d)=>d.querySelectorAll('ul li').length>=3 },
+        { label:'Minden listaelem szöveget tartalmaz',   hint:'<li>Kenyér</li>  ← minden <li> legyen kitöltve',     fn:(h,d)=>[...d.querySelectorAll('ul li')].every(li=>li.textContent.trim()!=='') }
       ]
     },
 
@@ -554,10 +554,10 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van legalább 3 <th> cella a fejlécsorban',      fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
-        { label:'A fejléc tartalmazza a "Név" szót',             fn:(h,d)=>[...d.querySelectorAll('thead th')].some(th=>th.textContent.trim()==='Név') },
-        { label:'A fejléc tartalmazza a "Kor" szót',             fn:(h,d)=>[...d.querySelectorAll('thead th')].some(th=>th.textContent.trim()==='Kor') },
-        { label:'A fejléc tartalmazza a "Nem" szót',             fn:(h,d)=>[...d.querySelectorAll('thead th')].some(th=>th.textContent.trim()==='Nem') }
+        { label:'Van legalább 3 <th> cella a fejlécsorban',      hint:'<th>Név</th><th>Kor</th><th>Nem</th>',  fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
+        { label:'A fejléc tartalmazza a "Név" szót',             hint:'<th>Név</th>',                           fn:(h,d)=>[...d.querySelectorAll('thead th')].some(th=>th.textContent.trim()==='Név') },
+        { label:'A fejléc tartalmazza a "Kor" szót',             hint:'<th>Kor</th>',                           fn:(h,d)=>[...d.querySelectorAll('thead th')].some(th=>th.textContent.trim()==='Kor') },
+        { label:'A fejléc tartalmazza a "Nem" szót',             hint:'<th>Nem</th>',                           fn:(h,d)=>[...d.querySelectorAll('thead th')].some(th=>th.textContent.trim()==='Nem') }
       ]
     },
 
@@ -592,11 +592,11 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <thead> a táblázatban',                         fn:(h,d)=>!!d.querySelector('table thead') },
-        { label:'Van <tbody> a táblázatban',                         fn:(h,d)=>!!d.querySelector('table tbody') },
-        { label:'A <th> cellák a <thead>-ben vannak',               fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
-        { label:'Az adatsorok a <tbody>-ban vannak',                 fn:(h,d)=>d.querySelectorAll('tbody tr').length>=2 },
-        { label:'A <tbody>-ban csak <td> cellák vannak',            fn:(h,d)=>d.querySelectorAll('tbody td').length>=6 }
+        { label:'Van <thead> a táblázatban',                         hint:'<table><thead><tr>...</tr></thead>...</table>',          fn:(h,d)=>!!d.querySelector('table thead') },
+        { label:'Van <tbody> a táblázatban',                         hint:'<table>...<tbody><tr>...</tr></tbody></table>',           fn:(h,d)=>!!d.querySelector('table tbody') },
+        { label:'A <th> cellák a <thead>-ben vannak',               hint:'<thead><tr><th>Név</th><th>Kor</th><th>Város</th></tr></thead>', fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
+        { label:'Az adatsorok a <tbody>-ban vannak',                 hint:'<tbody><tr><td>...</td></tr></tbody>',                    fn:(h,d)=>d.querySelectorAll('tbody tr').length>=2 },
+        { label:'A <tbody>-ban csak <td> cellák vannak',            hint:'<tbody> soraiban <td>-t használj, nem <th>-t',            fn:(h,d)=>d.querySelectorAll('tbody td').length>=6 }
       ]
     },
 
@@ -639,8 +639,8 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Minden adatsorban pontosan 3 <td> cella van',   fn:(h,d)=>[...d.querySelectorAll('tbody tr')].every(r=>r.querySelectorAll('td').length===3) },
-        { label:'Béla sora tartalmazza a hiányzó várost (Miskolc)', fn:(h,d)=>{ const rows=[...d.querySelectorAll('tbody tr')]; return rows.length>=3 && rows[1].querySelectorAll('td').length===3 && rows[1].querySelectorAll('td')[2].textContent.trim()==='Miskolc'; } }
+        { label:'Minden adatsorban pontosan 3 <td> cella van',   hint:'<tr><td>Béla</td><td>30</td><td>Miskolc</td></tr>',         fn:(h,d)=>[...d.querySelectorAll('tbody tr')].every(r=>r.querySelectorAll('td').length===3) },
+        { label:'Béla sora tartalmazza a hiányzó várost (Miskolc)', hint:'<td>Miskolc</td>  ← ezt a cellát kell pótolni Béla sorában', fn:(h,d)=>{ const rows=[...d.querySelectorAll('tbody tr')]; return rows.length>=3 && rows[1].querySelectorAll('td').length===3 && rows[1].querySelectorAll('td')[2].textContent.trim()==='Miskolc'; } }
       ]
     },
 
@@ -702,9 +702,9 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'A fejlécsorban nincsenek <td> cellák',            fn:(h,d)=>d.querySelectorAll('thead td').length===0 },
-        { label:'A fejlécsorban legalább 3 <th> cella van',        fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
-        { label:'Az adatsorok <td> cellái megmaradtak',            fn:(h,d)=>d.querySelectorAll('tbody td').length>=6 }
+        { label:'A fejlécsorban nincsenek <td> cellák',            hint:'<thead>-ben <td> helyett <th>-t kell használni',           fn:(h,d)=>d.querySelectorAll('thead td').length===0 },
+        { label:'A fejlécsorban legalább 3 <th> cella van',        hint:'<th>Tantárgy</th><th>Tanár</th><th>Terem</th>',             fn:(h,d)=>d.querySelectorAll('thead th').length>=3 },
+        { label:'Az adatsorok <td> cellái megmaradtak',            hint:'<tbody> soraiban maradjanak <td> cellák',                   fn:(h,d)=>d.querySelectorAll('tbody td').length>=6 }
       ]
     },
 
@@ -742,8 +742,8 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'A "Személyes adatok" cellán van colspan attribútum',   fn:(h,d)=>{ const th=[...d.querySelectorAll('thead th')].find(t=>t.textContent.trim()==='Személyes adatok'); return !!(th&&th.hasAttribute('colspan')); } },
-        { label:'A colspan értéke 2',                                   fn:(h,d)=>{ const th=[...d.querySelectorAll('thead th')].find(t=>t.textContent.trim()==='Személyes adatok'); return th?.getAttribute('colspan')==='2'; } }
+        { label:'A "Személyes adatok" cellán van colspan attribútum',   hint:'<th colspan="2">Személyes adatok</th>',  fn:(h,d)=>{ const th=[...d.querySelectorAll('thead th')].find(t=>t.textContent.trim()==='Személyes adatok'); return !!(th&&th.hasAttribute('colspan')); } },
+        { label:'A colspan értéke 2',                                   hint:'colspan="2"',                             fn:(h,d)=>{ const th=[...d.querySelectorAll('thead th')].find(t=>t.textContent.trim()==='Személyes adatok'); return th?.getAttribute('colspan')==='2'; } }
       ]
     },
 
@@ -763,7 +763,7 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van legalább 3 <br> tag a bekezdésben',         fn:(h,d)=>d.querySelectorAll('p br').length>=3 },
+        { label:'Van legalább 3 <br> tag a bekezdésben',         hint:'Talpra magyar...<br>Itt az idő...<br>Rabok legyünk...<br>Ez a kérdés...',  fn:(h,d)=>d.querySelectorAll('p br').length>=3 },
         { label:'A vers szövege megmaradt',                       fn:(h,d)=>{ const p=d.querySelector('p'); return !!(p&&p.textContent.includes('Talpra')&&p.textContent.includes('válasszatok')); } }
       ]
     },
@@ -783,9 +783,9 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'"HTML" szó félkövér',           fn:(h,d)=>{ const el=d.querySelector('b,strong'); return !!(el&&el.textContent.includes('HTML')); } },
-        { label:'"nélkülözhetetlen" szó aláhúzott', fn:(h,d)=>{ const el=d.querySelector('u,ins'); return !!(el&&el.textContent.includes('nélkülözhetetlen')); } },
-        { label:'"webfejlesztő" szó dőlt',        fn:(h,d)=>{ const el=d.querySelector('em,i'); return !!(el&&el.textContent.includes('webfejlesztő')); } }
+        { label:'"HTML" szó félkövér',           hint:'<b>HTML</b>',                           fn:(h,d)=>{ const el=d.querySelector('b,strong'); return !!(el&&el.textContent.includes('HTML')); } },
+        { label:'"nélkülözhetetlen" szó aláhúzott', hint:'<u>nélkülözhetetlen</u>',             fn:(h,d)=>{ const el=d.querySelector('u,ins'); return !!(el&&el.textContent.includes('nélkülözhetetlen')); } },
+        { label:'"webfejlesztő" szó dőlt',        hint:'<i>webfejlesztő</i>',                  fn:(h,d)=>{ const el=d.querySelector('em,i'); return !!(el&&el.textContent.includes('webfejlesztő')); } }
       ]
     },
 
@@ -828,10 +828,10 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'Van <a> link az oldalon',                                fn:(h,d)=>!!d.querySelector('a') },
-        { label:'A link a Wikipedia macska oldalra mutat',               fn:(h,d)=>d.querySelector('a')?.getAttribute('href')==='https://hu.wikipedia.org/wiki/Macska' },
-        { label:'A link új lapon nyílik meg (target="_blank")',          fn:(h,d)=>!!d.querySelector('a[target="_blank"]') },
-        { label:'A kép az <a> tagen belül van',                          fn:(h,d)=>!!d.querySelector('a img') }
+        { label:'Van <a> link az oldalon',                                hint:'<a href="https://hu.wikipedia.org/wiki/Macska" target="_blank"><img ...></a>', fn:(h,d)=>!!d.querySelector('a') },
+        { label:'A link a Wikipedia macska oldalra mutat',               hint:'href="https://hu.wikipedia.org/wiki/Macska"',              fn:(h,d)=>d.querySelector('a')?.getAttribute('href')==='https://hu.wikipedia.org/wiki/Macska' },
+        { label:'A link új lapon nyílik meg (target="_blank")',          hint:'target="_blank"',                                           fn:(h,d)=>!!d.querySelector('a[target="_blank"]') },
+        { label:'A kép az <a> tagen belül van',                          hint:'<a href="..."><img src="..." alt="..."></a>',               fn:(h,d)=>!!d.querySelector('a img') }
       ]
     },
 
@@ -853,8 +853,8 @@ const htmlQuizBank = {
 </body>
 </html>`,
       checks:[
-        { label:'A span-on van class attribútum',          fn:(h,d)=>d.querySelector('span')?.hasAttribute('class') },
-        { label:'A class értéke: kiemelt',                 fn:(h,d)=>d.querySelector('span.kiemelt')!==null }
+        { label:'A span-on van class attribútum',          hint:'<span class="kiemelt">Fontos</span>',  fn:(h,d)=>d.querySelector('span')?.hasAttribute('class') },
+        { label:'A class értéke: kiemelt',                 hint:'class="kiemelt"',                       fn:(h,d)=>d.querySelector('span.kiemelt')!==null }
       ]
     },
 
@@ -907,7 +907,7 @@ const htmlQuizBank = {
         return html;
       },
       checks:[
-        { label:'A charset értéke UTF-8',   fn:(h,d)=>{ const m=d.querySelector('meta[charset]'); return m?.getAttribute('charset')?.toUpperCase()==='UTF-8'; } }
+        { label:'A charset értéke UTF-8',   hint:'<meta charset="UTF-8">',   fn:(h,d)=>{ const m=d.querySelector('meta[charset]'); return m?.getAttribute('charset')?.toUpperCase()==='UTF-8'; } }
       ]
     }
 
