@@ -92,10 +92,16 @@
     .result-item-icon.fail { color:var(--red); }
     .result-item-icon.partial { color:var(--yellow); }
     .result-item-q { font-size:0.88rem; font-weight:600; margin-bottom:4px; white-space:pre-line; }
-    .result-item-checks { display:flex; flex-direction:column; gap:3px; margin-top:6px; }
-    .result-check { font-size:0.78rem; color:var(--muted); display:flex; align-items:center; gap:6px; }
+    .result-panels { display:flex; gap:10px; margin-top:8px; }
+    .result-code-panel { flex:1; background:#020617; border:1px solid #1e3a5f; border-radius:6px; padding:8px 10px; overflow:auto; max-height:180px; }
+    .result-code-panel pre { margin:0; font-size:0.72rem; font-family:'Consolas',monospace; color:#94a3b8; white-space:pre; }
+    .result-code-label { font-size:0.7rem; color:var(--muted); margin-bottom:4px; }
+    .result-item-checks { flex:1; display:flex; flex-direction:column; gap:4px; }
+    .result-check { font-size:0.78rem; color:var(--muted); display:flex; align-items:flex-start; gap:6px; }
+    .result-check i { flex-shrink:0; margin-top:2px; }
     .result-check.ok { color:var(--green); }
     .result-check.fail { color:var(--red); }
+    .result-mc-answers { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
     .result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
   </style>
 </head>
@@ -173,7 +179,7 @@
     <div class="result-details" id="res-details"></div>
     <div class="result-actions">
       <button class="btn btn-outline" onclick="location.href='learn-html.html'"><i class="fas fa-book-open"></i> Vissza a tananyaghoz</button>
-      <button class="btn btn-yellow" onclick="restartQuiz()"><i class="fas fa-rotate-right"></i> Új próba</button>
+      <button class="btn btn-yellow" onclick="restartQuiz()"><i class="fas fa-rotate-right"></i> Új Tudáspróba</button>
       <button class="btn btn-outline" onclick="location.href='../portal.html'"><i class="fas fa-home"></i> Főmenü</button>
     </div>
   </div>
@@ -522,27 +528,47 @@ function showResults() {
     const noneOk = a.earned===0;
     const iconCls = allOk?'ok':noneOk?'fail':'partial';
     const icon = allOk?'fa-circle-check':noneOk?'fa-circle-xmark':'fa-circle-half-stroke';
-    let checksHtml = '';
-    if (!a.q.options && a.q.checks) {
-      checksHtml = '<div class="result-item-checks">' +
-        a.q.checks.map((ch,ci)=>`
-          <div class="result-check ${a.checkResults[ci]?'ok':'fail'}">
-            <i class="fas ${a.checkResults[ci]?'fa-check':'fa-xmark'}"></i>
-            ${esc(ch.label)}
-          </div>`).join('') +
-        '</div>';
-    } else {
-      const mcCorrect = a.q.options[a.q.correct];
-      if (!allOk) checksHtml = `<div class="result-check fail"><i class="fas fa-xmark"></i> Helyes válasz: ${esc(mcCorrect)}</div>`;
-    }
+    let bodyHtml = '';
     const qText = a.q.question||'';
     const qShort = esc(qText.substring(0,80)) + (qText.length>80?'…':'');
+
+    if (!a.q.options && a.q.checks) {
+      // ── Kódírós: két panel ──
+      const codeEsc = esc(a.fiHtml||'');
+      const checksList = a.q.checks.map((ch,ci)=>`
+        <div class="result-check ${a.checkResults[ci]?'ok':'fail'}">
+          <i class="fas ${a.checkResults[ci]?'fa-check':'fa-xmark'}"></i>
+          ${esc(ch.label)}
+        </div>`).join('');
+      bodyHtml = `
+        <div class="result-panels">
+          <div class="result-code-panel">
+            <div class="result-code-label"><i class="fas fa-code"></i> A te kódod</div>
+            <pre>${codeEsc}</pre>
+          </div>
+          <div class="result-item-checks">
+            <div class="result-code-label"><i class="fas fa-list-check"></i> Ellenőrzés</div>
+            ${checksList}
+          </div>
+        </div>`;
+    } else {
+      // ── Feleletválasztós ──
+      const chosen = a.mcSel>=0 ? a.q.options[a.mcSel] : null;
+      const correct = a.q.options[a.q.correct];
+      if (!allOk) {
+        bodyHtml = `<div class="result-mc-answers">
+          ${chosen!==null ? `<div class="result-check fail"><i class="fas fa-xmark"></i> Te: ${esc(chosen)}</div>` : ''}
+          <div class="result-check ok"><i class="fas fa-check"></i> Helyes: ${esc(correct)}</div>
+        </div>`;
+      }
+    }
+
     div.innerHTML = `
       <div class="result-item-icon ${iconCls}"><i class="fas ${icon}"></i></div>
-      <div style="flex:1">
+      <div style="flex:1;min-width:0">
         <div class="result-item-q">${i+1}. ${qShort}</div>
-        <div style="font-size:0.78rem;color:var(--muted)">${a.earned} / ${a.max} pont</div>
-        ${checksHtml}
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">${a.earned} / ${a.max} pont</div>
+        ${bodyHtml}
       </div>`;
     det.appendChild(div);
   });
