@@ -332,7 +332,11 @@ function showFillin(q) {
     });
     updatePreview();
     monacoEd.onDidChangeModelContent(()=>updatePreview());
-    monacoEd.addCommand(monaco.KeyMod.Shift|monaco.KeyMod.Alt|monaco.KeyCode.KeyW, ()=>wrapWithAbbreviation(monacoEd));
+    monacoEd.addAction({
+      id:'wrap-with-abbreviation', label:'Wrap with Abbreviation',
+      keybindings:[monaco.KeyMod.Shift|monaco.KeyMod.Alt|monaco.KeyCode.KeyW],
+      run: ed => wrapWithAbbreviation(ed)
+    });
   });
 }
 
