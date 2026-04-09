@@ -2437,6 +2437,13 @@
 </script>
 <script src="special-roles.js"></script>
 <script>
+if (location.hash === '#web-tanulas') {
+  history.replaceState(null, '', location.pathname);
+  document.getElementById('web-valaszto-modal').style.display = 'flex';
+  document.getElementById('web-modal-foMenu').style.display = 'none';
+  document.getElementById('web-modal-tanulas').style.display = 'block';
+}
+
 (async function frissitFeladatSzamok() {
   const tananyagok = [
     { kulcs: 'html',      fajl: 'web/learn-html.html' },
