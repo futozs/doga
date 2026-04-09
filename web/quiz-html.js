@@ -60,7 +60,7 @@ const htmlQuizBank = {
     },
     {
       id:'mc5',
-      question:'Hol jelenik meg a <title> tartalma?',
+      question:'Hol jelenik meg a <head>-ben lévő <title> elem tartalma?',
       options:[
         'Az oldal tetején nagy betűkkel',
         'A böngésző fülén',
