@@ -183,7 +183,7 @@
 <script>
 
 const RAILWAY = 'https://agazati.up.railway.app';
-const LEARN_SKEY = 'lhtml_v5_done';
+const LEARN_SKEY = 'lhtml_v6_done';
 const MC_COUNT  = 10;
 const FI_COUNT  = 5;
 const FI_BIG_MIN = 2; // minimum nagy pontos (3+) fill-in
@@ -275,7 +275,7 @@ function showQuestion() {
   document.getElementById('btn-skip').disabled = skipped;
   document.getElementById('btn-skip').style.opacity = skipped ? '0.4' : '1';
 
-  if (q.type === 'mc') showMC(q);
+  if (q.options) showMC(q);
   else showFillin(q);
 }
 
@@ -351,7 +351,7 @@ function nextQuestion() {
 }
 
 function collectAnswer(q) {
-  if (q.type === 'mc') {
+  if (q.options) {
     const sel = document.querySelector('input[name="mc-opt"]:checked');
     const chosen = sel ? parseInt(sel.value) : -1;
     return { mcSel:chosen, earned: chosen===q.correct ? 1 : 0, max:1 };
@@ -391,7 +391,7 @@ function showResults() {
     const iconCls = allOk?'ok':noneOk?'fail':'partial';
     const icon = allOk?'fa-circle-check':noneOk?'fa-circle-xmark':'fa-circle-half-stroke';
     let checksHtml = '';
-    if (a.q.type !== 'mc' && a.q.checks) {
+    if (!a.q.options && a.q.checks) {
       checksHtml = '<div class="result-item-checks">' +
         a.q.checks.map((ch,ci)=>`
           <div class="result-check ${a.checkResults[ci]?'ok':'fail'}">
