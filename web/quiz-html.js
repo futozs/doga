@@ -530,6 +530,11 @@ const htmlQuizBank = {
 <head>
   <meta charset="UTF-8">
   <title>Táblázat</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 6px 12px; text-align: left; }
+    th { background: #e8f0fe; }
+  </style>
 </head>
 <body>
   <table border="1">
@@ -570,6 +575,11 @@ const htmlQuizBank = {
 <head>
   <meta charset="UTF-8">
   <title>Táblázat</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 6px 12px; text-align: left; }
+    th { background: #e8f0fe; }
+  </style>
 </head>
 <body>
   <table border="1">
@@ -609,6 +619,11 @@ const htmlQuizBank = {
 <head>
   <meta charset="UTF-8">
   <title>Táblázat</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 6px 12px; text-align: left; }
+    th { background: #e8f0fe; }
+  </style>
 </head>
 <body>
   <table border="1">
@@ -653,6 +668,11 @@ const htmlQuizBank = {
 <head>
   <meta charset="UTF-8">
   <title>Táblázat</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 6px 12px; text-align: left; }
+    th { background: #e8f0fe; }
+  </style>
 </head>
 <body>
 
@@ -676,6 +696,11 @@ const htmlQuizBank = {
 <head>
   <meta charset="UTF-8">
   <title>Táblázat</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 6px 12px; text-align: left; }
+    th { background: #e8f0fe; }
+  </style>
 </head>
 <body>
   <table border="1">
@@ -717,6 +742,11 @@ const htmlQuizBank = {
 <head>
   <meta charset="UTF-8">
   <title>Táblázat</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 6px 12px; text-align: left; }
+    th { background: #e8f0fe; }
+  </style>
 </head>
 <body>
   <table border="1">
