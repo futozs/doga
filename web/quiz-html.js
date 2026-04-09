@@ -884,7 +884,7 @@ const htmlQuizBank = {
 
     {
       id:'f19', points:1,
-      question:'Az oldalon az ékezetes betűk kérdőjelként jelennek meg. Javítsd ki a charset értékét! (Az előnézet ettől függetlenül helyesen mutatja a betűket, de valódi oldalon számít.)',
+      question:'Az oldalon az ékezetes betűk kérdőjelként jelennek meg. Javítsd ki!',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -897,6 +897,15 @@ const htmlQuizBank = {
   <p>Az ékezetes betűk: á, é, í, ó, ö, ő, ú, ü, ű</p>
 </body>
 </html>`,
+      previewTransform(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const charset = doc.querySelector('meta[charset]')?.getAttribute('charset') || '';
+        if (charset.toUpperCase() !== 'UTF-8') {
+          return html.replace(/[áéíóöőúüűÁÉÍÓÖŐÚÜŰ]/g, '?');
+        }
+        return html;
+      },
       checks:[
         { label:'A charset értéke UTF-8',   fn:(h,d)=>{ const m=d.querySelector('meta[charset]'); return m?.getAttribute('charset')?.toUpperCase()==='UTF-8'; } }
       ]

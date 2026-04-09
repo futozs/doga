@@ -355,7 +355,10 @@ function showFillin(q) {
 function updatePreview() {
   if (!monacoEd) return;
   const frame = document.getElementById('preview-frame');
-  frame.srcdoc = monacoEd.getValue();
+  let html = monacoEd.getValue();
+  const q = queue[curIdx]?.q;
+  if (q?.previewTransform) html = q.previewTransform(html);
+  frame.srcdoc = html;
 }
 
 function parseTagAbbr(abbr) {
