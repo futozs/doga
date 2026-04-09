@@ -181,6 +181,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.min.js"></script>
+<script src="emmet-monaco.min.js"></script>
 <script src="quiz-html.js"></script>
 <script>
 
@@ -201,6 +202,7 @@ const monacoQ = [];
 // ── MONACO INIT ───────────────────────────────────────────────────────
 require.config({ paths:{ vs:'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
 require(['vs/editor/editor.main'], ()=>{
+  if(window.emmetMonaco) window.emmetMonaco.emmetHTML(monaco);
   monacoReady = true;
   monacoQ.forEach(cb=>cb()); monacoQ.length=0;
 });
