@@ -353,10 +353,7 @@ const htmlQuizBank = {
       ],
       correct:2,
       explanation:'Szemantikailag helyesebb ha a fejlécsort <thead>, az adatsorokat <tbody> fogja össze.'
-    }
-
-  ],
-
+    },
     {
       id:'mc31',
       question:'Melyik CSS típus a legerősebb (legmagasabb prioritású)?',
@@ -906,9 +903,5 @@ const htmlQuizBank = {
     }
 
   ]   // fillin vége
-
-};
-
-  ]
 
 };
