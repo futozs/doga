@@ -257,7 +257,17 @@ function startQuiz() {
   const drawn = drawQuestions();
   // Elmentjük az aktuális próba kérdésazonosítóit a következő húzáshoz
   localStorage.setItem('htmlQuizRecent', JSON.stringify(drawn.map(q=>q.id)));
-  queue = drawn.map(q=>({q, skipped:false}));
+  queue = drawn.map(q => {
+    if (q.options) {
+      const idx = q.options.map((_,i)=>i).sort(()=>Math.random()-0.5);
+      const shuffledQ = Object.assign({}, q, {
+        options: idx.map(i=>q.options[i]),
+        correct: idx.indexOf(q.correct)
+      });
+      return {q: shuffledQ, skipped: false};
+    }
+    return {q, skipped: false};
+  });
   answers = [];
   curIdx = 0;
   document.getElementById('prog-total').textContent = queue.length;
