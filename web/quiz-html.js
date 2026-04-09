@@ -63,7 +63,7 @@ const htmlQuizBank = {
       question:'Hol jelenik meg a <head>-ben lévő <title> elem tartalma?',
       options:[
         'Az oldal tetején nagy betűkkel',
-        'A böngésző fülén',
+        'Ez a weboldal címe, a böngészőben a lapfülön található',
         'A <header> elemben automatikusan',
         'Sehol, csak keresőmotoroknak szól'
       ],
