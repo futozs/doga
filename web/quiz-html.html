@@ -283,10 +283,17 @@ function showQuestion() {
   else showFillin(q);
 }
 
+function setNextEnabled(enabled) {
+  const btn = document.getElementById('btn-next');
+  btn.disabled = !enabled;
+  btn.style.opacity = enabled ? '1' : '0.4';
+}
+
 function showMC(q) {
   document.getElementById('q-type-badge').textContent = 'Feleletválasztós';
   document.getElementById('mc-area').classList.remove('hidden');
   document.getElementById('fillin-area').classList.add('hidden');
+  setNextEnabled(false);
 
   const area = document.getElementById('mc-area');
   area.innerHTML = '';
@@ -304,6 +311,7 @@ function showMC(q) {
       document.querySelectorAll('.mc-option').forEach(d=>d.classList.remove('selected'));
       div.classList.add('selected');
       div.querySelector('input').checked = true;
+      setNextEnabled(true);
     };
     area.appendChild(div);
   });
@@ -330,8 +338,9 @@ function showFillin(q) {
       tabSize:2,
       automaticLayout:true
     });
+    setNextEnabled(false);
     updatePreview();
-    monacoEd.onDidChangeModelContent(()=>updatePreview());
+    monacoEd.onDidChangeModelContent(()=>{ updatePreview(); setNextEnabled(true); });
     monacoEd.addAction({
       id:'wrap-with-abbreviation', label:'Wrap with Abbreviation',
       keybindings:[monaco.KeyMod.Shift|monaco.KeyMod.Alt|monaco.KeyCode.KeyW],
