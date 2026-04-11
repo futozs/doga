@@ -250,14 +250,21 @@ const tasks = [
     type:'quiz',
     title:'Mi a HTML?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>HTML</strong> (HyperText Markup Language) egy <strong>jelölőnyelv</strong> – nem programozás!
-      Olyan mint egy Word dokumentum, csak kézzel írjuk a formázást
-      <code>&lt; &gt;</code> jelek közé – ezeket hívjük <strong>tageknek</strong>.
+      Képzeld el, hogy egy cikket írsz Wordben: van benne cím, alcím, félkövér szó, felsorolás.
+      A Word automatikusan "tudja", mi micsoda, mert te rákattintottál a megfelelő gombra.
+      De egy weboldalnál ezt <strong>kézzel kell leírni</strong> – ezt csinálja a HTML.
       <br><br>
-      A böngésző (Chrome, Firefox) olvassa el és jeleníti meg.
+      A <strong>HTML</strong> (HyperText Markup Language = hiperszöveges jelölőnyelv) nem programozás –
+      nem számol, nem dönt, nem csinál semmit magától.
+      Egyetlen dolga: <strong>leírja az oldal szerkezetét</strong> a böngészőnek.
       <br><br>
-      Pl. a <code>&lt;p&gt;</code> egy nyitó tag, a <code>&lt;/p&gt;</code> a záró tag –
-      a kettő között van a tartalom.`,
+      Ezt "jelölőcédulákkal" (tagekkel) teszi, amelyek <code>&lt; &gt;</code> jelek közé kerülnek.
+      Általában párban vannak: <strong>nyitó tag</strong> + tartalom + <strong>záró tag</strong>:<br>
+      <code>&lt;p&gt;</code>Ez egy bekezdés.<code>&lt;/p&gt;</code><br>
+      A perjel (<code>/</code>) jelzi, hogy ez a záró tag.
+      <br><br>
+      A böngésző (Chrome, Firefox, Edge) elolvassa a HTML-t és szép weboldalt jelenít meg belőle –
+      magát a <code>&lt; &gt;</code> jeleket nem látja a látogató, csak az eredményt.`,
     question:'Mire való a HTML?',
     options:[
       'Programokat futtat a számítógépen',
@@ -274,15 +281,23 @@ const tasks = [
     type:'fillin',
     title:'A HTML váz felépítése',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Minden HTML oldal ugyanígy kezdődik:
-      <ul>
-        <li><code>&lt;!DOCTYPE html&gt;</code> — "ez HTML5 oldal"</li>
-        <li><code>&lt;html lang="hu"&gt;</code> — az egész oldal, <code>lang="hu"</code> = magyar</li>
-        <li><code>&lt;head&gt;</code> — beállítások (nem látszik az oldalon)</li>
-        <li><code>&lt;meta charset="UTF-8"&gt;</code> — nélküle az ékezetek (á,é,ő) rosszul jelennek meg</li>
-        <li><code>&lt;link rel="stylesheet" href="style.css"&gt;</code> — CSS fájl bekapcsolása</li>
-        <li><code>&lt;body&gt;</code> — ide kerül minden amit a látogató lát</li>
-      </ul>`,
+      Minden HTML oldal ugyanolyan "vázból" indul – mint ahogy minden könyvnek van borítója, tartalomjegyzéke és maga a szöveg.
+      A váz három fő részből áll:
+      <br><br>
+      <strong>1. A DOCTYPE sor</strong><br>
+      <code>&lt;!DOCTYPE html&gt;</code> — Ez nem tag, hanem egy nyilatkozat: "Ez egy HTML5 szabványú oldal."
+      A böngésző ezért fogja helyesen értelmezni az egész kódot. Mindig ez az első sor!
+      <br><br>
+      <strong>2. A &lt;head&gt; – a "háttér beállítások"</strong><br>
+      A head tartalmát a látogató <em>nem látja</em> az oldalon – de a böngésző igen.
+      Ide kerül:<br>
+      &nbsp;&nbsp;<code>&lt;html lang="hu"&gt;</code> — jelzi, hogy az oldal magyar nyelvű (a keresők és képernyőolvasók értik)<br>
+      &nbsp;&nbsp;<code>&lt;meta charset="UTF-8"&gt;</code> — nélküle az á, é, ő, ú betűk nem jelennek meg helyesen<br>
+      &nbsp;&nbsp;<code>&lt;title&gt;</code> — a böngésző fülén megjelenő szöveg<br>
+      &nbsp;&nbsp;<code>&lt;link rel="stylesheet" href="style.css"&gt;</code> — bekapcsolja a CSS stíluslapot
+      <br><br>
+      <strong>3. A &lt;body&gt; – amit a látogató lát</strong><br>
+      Minden szöveg, kép, gomb, menü – a teljes látható tartalom – a body-ba kerül.`,
     codeTemplate:
 `<!___ html>
 <html ___="hu">
@@ -334,14 +349,22 @@ const tasks = [
     type:'quiz',
     title:'Fejléc elemek: h1–h6',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A HTML-ben 6 szintű fejléc (cím) létezik. Képzeld el mint egy könyvben:
-      <ul>
-        <li><code>&lt;h1&gt;</code> — A könyv főcíme (nagy, vastag). <strong>Oldalanként csak egy!</strong></li>
-        <li><code>&lt;h2&gt;</code> — Fejezet cím</li>
-        <li><code>&lt;h3&gt;</code> — Alfejezet</li>
-        <li><code>&lt;h6&gt;</code> — A legkisebb alcím</li>
-      </ul>
-      A <code>&lt;p&gt;</code> elem a <strong>bekezdés</strong> – a legtöbb szöveg ide kerül.`,
+      Gondolj egy tankönyvre: van egy nagy főcím az elején, alatta fejezetek, fejezeten belül alfejezetek.
+      A HTML-ben ugyanígy működik a <strong>6 szintű fejléc-rendszer</strong>:
+      <br><br>
+      <code>&lt;h1&gt;</code> — főcím, a legnagyobb (h = heading, azaz cím)<br>
+      <code>&lt;h2&gt;</code> — fejezet cím<br>
+      <code>&lt;h3&gt;</code> — alfejezet<br>
+      &nbsp;&nbsp;…<br>
+      <code>&lt;h6&gt;</code> — a legkisebb alcím
+      <br><br>
+      <strong>Fontos szabály:</strong> az oldalon <code>&lt;h1&gt;</code>-ből csak <strong>egy</strong> legyen –
+      ez az oldal "főcíme", amit a Google is kiemelten kezel kereséskor.
+      <br><br>
+      A szöveg zömét <code>&lt;p&gt;</code> elemek tartalmazzák – ez a <strong>bekezdés</strong> (paragraph).
+      Ha valamit megírsz egy bekezdésben, a böngésző előtte és utána automatikusan kis helyet hagy.
+      <br><br>
+      <em>Tipp:</em> H1 → H2 → H3 sorrendben haladj – ne ugorj pl. H1-ről H4-re!`,
     question:'Melyik HTML elem a legfontosabb (legnagyobb) főcím?',
     options:['&lt;h6&gt;','&lt;title&gt;','&lt;h1&gt;','&lt;header&gt;'],
     correct:2,
@@ -353,14 +376,19 @@ const tasks = [
     type:'fillin',
     title:'Szöveg formázó elemek',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A legfontosabb szövegformázó elemek:
-      <ul>
-        <li><code>&lt;strong&gt;</code> vagy <code>&lt;b&gt;</code> — <strong>félkövér</strong> szöveg</li>
-        <li><code>&lt;em&gt;</code> vagy <code>&lt;i&gt;</code> — <em>dőlt</em> szöveg</li>
-        <li><code>&lt;u&gt;</code> vagy <code>&lt;ins&gt;</code> — <u>aláhúzott</u> szöveg</li>
-        <li><code>&lt;br&gt;</code> — sortörés, páratlan tag (nincs záró tagje!)</li>
-      </ul>
-      💡 A <code>&lt;strong&gt;</code>/<code>&lt;em&gt;</code> szemantikusan hangsúlyt jelöl, a <code>&lt;b&gt;</code>/<code>&lt;i&gt;</code> csak vizuálisan formáz – de mindkét változat elfogadott a vizsgán.`,
+      Ha Wordben kiemelünk egy szót, rákattintunk a "B" vagy "I" gombra. HTML-ben ugyanezt tagekkel írjuk le – körbe"csukjuk" az adott szót:
+      <br><br>
+      <code>&lt;strong&gt;</code>fontos szó<code>&lt;/strong&gt;</code> → <strong>félkövér</strong> (vagy: <code>&lt;b&gt;</code>)<br>
+      <code>&lt;em&gt;</code>hangsúlyos szó<code>&lt;/em&gt;</code> → <em>dőlt</em> (vagy: <code>&lt;i&gt;</code>)<br>
+      <code>&lt;u&gt;</code>aláhúzott szó<code>&lt;/u&gt;</code> → <u>aláhúzott</u> (vagy: <code>&lt;ins&gt;</code>)
+      <br><br>
+      <strong>Miért két változat?</strong><br>
+      A <code>&lt;strong&gt;</code> és <code>&lt;em&gt;</code> "okosabb": azt is jelzi, hogy a szó <em>tartalmilag</em> fontos vagy hangsúlyos
+      (a Google és a képernyőolvasók is értik). A <code>&lt;b&gt;</code> és <code>&lt;i&gt;</code> csak vizuálisan formáz.
+      A vizsgán mindkét változat elfogadott.
+      <br><br>
+      <code>&lt;br&gt;</code> — sortörés: a szöveg a következő sorba ugrik. Ez <strong>páratlan tag</strong> –
+      nincs záró tagje, mert nem fog közre semmit!`,
     codeTemplate:
 `<h1>Kedvenc ételeim</h1>
 
@@ -420,16 +448,23 @@ const tasks = [
     type:'quiz',
     title:'Hogyan működik a hivatkozás?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <code>&lt;a&gt;</code> elem (anchor = horgony) hoz létre kattintható linket.
-      A <code>href</code> attribútum mondja meg, hova vezet:<br><br>
-      <code>&lt;a href="https://google.com"&gt;Google&lt;/a&gt;</code><br><br>
-      Ha <code>target="_blank"</code>-et is megadsz, új lapon nyílik meg.<br><br>
-      A <code>&lt;img&gt;</code> elem képet szúr be – páratlan tag, nincs záró tagje:
-      <code>&lt;img src="kep.jpg" alt="leírás" title="tooltip"&gt;</code><br><br>
+      Az internet lényege, hogy az oldalak össze vannak "kötve" – erre való a link, HTML-ben az <code>&lt;a&gt;</code> elem
+      (az "anchor" szóból, ami horgonyt jelent – a link "lehorgonyozza" az oldalakat egymáshoz).
+      <br><br>
+      <strong>Hogyan írunk linket?</strong><br>
+      <code>&lt;a href="https://google.com"&gt;Google&lt;/a&gt;</code><br>
+      A <code>href</code> attribútum (hypertext reference = hivatkozás) mondja meg, <em>hova vezessen</em> a link.
+      A tag-ek közötti szöveg az, amire kattint a felhasználó.
+      <br><br>
+      Ha azt akarod, hogy <strong>új lapon nyíljon meg</strong> a link, add hozzá: <code>target="_blank"</code>
+      <br><br>
+      <strong>Hogyan szúrunk be képet?</strong><br>
+      <code>&lt;img src="kep.jpg" alt="Kép leírása"&gt;</code><br>
+      Az <code>&lt;img&gt;</code> <strong>páratlan tag</strong> – nincs záró tagje, mert nem fog közre tartalmat.
       <ul>
-        <li><strong>src</strong> — a kép fájlneve</li>
-        <li><strong>alt</strong> — kötelező szöveges leírás (ha a kép nem tölt be)</li>
-        <li><strong>title</strong> — egérmutatóra megjelenő buborék szöveg</li>
+        <li><code>src</code> — a kép fájlneve (source = forrás)</li>
+        <li><code>alt</code> — szöveges leírás: ha a kép nem tölt be, ezt mutatja; <strong>kötelező megadni!</strong> (akadálymentesség)</li>
+        <li><code>title</code> — buborékszöveg, ami akkor jelenik meg, ha az egeret a képre viszed</li>
       </ul>`,
     question:'Melyik attribútum adja meg a link célját az <a> elemnél?',
     options:['src','target','href','alt'],
@@ -442,14 +477,18 @@ const tasks = [
     type:'fillin',
     title:'Link és kép attribútumai',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Két alapelem attribútumaival:
-      <ul>
-        <li><code>&lt;a href="..."&gt;</code> — <strong>href</strong>: a cél URL</li>
-        <li><code>&lt;a target="_blank"&gt;</code> — új lapon nyílik</li>
-        <li><code>&lt;img src="..."&gt;</code> — <strong>src</strong>: a kép fájlneve</li>
-        <li><code>&lt;img alt="..."&gt;</code> — <strong>alt</strong>: szöveges leírás (kötelező!)</li>
-        <li><code>&lt;img title="..."&gt;</code> — <strong>title</strong>: buborék szöveg egérmutatóra</li>
-      </ul>`,
+      Összefoglalás – a link (<code>&lt;a&gt;</code>) és kép (<code>&lt;img&gt;</code>) attribútumai:
+      <br><br>
+      <strong>Link:</strong><br>
+      &nbsp;&nbsp;<code>href="https://..."</code> — hova mutat a link (kötelező!)<br>
+      &nbsp;&nbsp;<code>target="_blank"</code> — új lapon nyíljon meg (nem kötelező)
+      <br><br>
+      <strong>Kép:</strong><br>
+      &nbsp;&nbsp;<code>src="kep.jpg"</code> — a kép fájlneve (kötelező!)<br>
+      &nbsp;&nbsp;<code>alt="leírás"</code> — ha a kép nem tölt be, ezt látja a felhasználó; a vak emberek képernyőolvasója is ezt "olvassa fel" (kötelező!)<br>
+      &nbsp;&nbsp;<code>title="szöveg"</code> — buborékszöveg, egérmutatóra jelenik meg
+      <br><br>
+      <em>Emlékező trükk:</em> a href a <u>h</u>ov<u>a</u> vezessen? kérdésre felel, a src a <u>s</u>ou<u>r</u><u>c</u>e (forrás) szóból ered.`,
     codeTemplate:
 `<p>
   <a ___="https://kando.hu">Kandó Kálmán</a>
@@ -515,18 +554,22 @@ const tasks = [
     type:'quiz',
     title:'Rendezett és rendezetlen lista',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Kétféle lista létezik, de mindkettő felépítése azonos:
+      Két alapvető listafajta létezik – a különbség az, hogy <em>számít-e a sorrend</em>:
       <br><br>
-      <code>&lt;ul&gt;</code> — a konténer (rendezetlen, pontok)<br>
-      &nbsp;&nbsp;<code>&lt;li&gt;</code>Elem 1<code>&lt;/li&gt;</code><br>
-      &nbsp;&nbsp;<code>&lt;li&gt;</code>Elem 2<code>&lt;/li&gt;</code><br>
-      <code>&lt;/ul&gt;</code>
+      <strong>Rendezetlen lista</strong> (<code>&lt;ul&gt;</code> = unordered list):<br>
+      Pontokkal jelöli az elemeket. Akkor használd, ha a sorrend nem fontos.<br>
+      Pl. bevásárlólista – mindegy, hogy a tejet vagy a kenyeret veszed-e előbb.
       <br><br>
-      <ul>
-        <li><code>&lt;ul&gt;</code> — <strong>rendezetlen lista</strong>: pontokkal jelölt – belső tagja: <code>&lt;li&gt;</code></li>
-        <li><code>&lt;ol&gt;</code> — <strong>rendezett lista</strong>: számokkal jelölt – belső tagja: <code>&lt;li&gt;</code></li>
-      </ul>
-      Bevásárlólistánál <code>&lt;ul&gt;</code>, lépéssoroknál (recept, utasítás) <code>&lt;ol&gt;</code>.`,
+      <strong>Rendezett lista</strong> (<code>&lt;ol&gt;</code> = ordered list):<br>
+      Számokkal (1, 2, 3…) jelöli az elemeket. Akkor használd, ha a sorrend fontos.<br>
+      Pl. recept lépései, útmutatás, teendők sorban – 1. lépés, 2. lépés…
+      <br><br>
+      Mindkét listában az elemeket <code>&lt;li&gt;</code> tag-ek jelölik (list item = listaelem):
+      <br>
+      <code>&lt;ul&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;li&gt;</code>Tej<code>&lt;/li&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;li&gt;</code>Kenyér<code>&lt;/li&gt;</code><br>
+      <code>&lt;/ul&gt;</code>`,
     question:'Melyik listát használd ha a sorrend fontos (pl. lépések)?',
     options:['&lt;ul&gt; – rendezetlen lista','&lt;li&gt; – listaelem','&lt;ol&gt; – rendezett lista','&lt;dl&gt; – leíró lista'],
     correct:2,
@@ -538,18 +581,19 @@ const tasks = [
     type:'fillin',
     title:'Lista elemek',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Minden lista ugyanígy épül fel – a konténer tartalmazza az elemeket:
+      Gondolj rá úgy: a lista (<code>&lt;ul&gt;</code> vagy <code>&lt;ol&gt;</code>) egy <strong>doboz</strong>,
+      a listaelemek (<code>&lt;li&gt;</code>) pedig a doboz <strong>tartalma</strong>.
+      A listaelem mindig a lista belsejébe kerül – önmagában nem írhatjuk ki!
       <br><br>
-      <code>&lt;ul&gt;</code> — a lista maga (ez a konténer)<br>
-      &nbsp;&nbsp;<code>&lt;li&gt;</code>Tej<code>&lt;/li&gt;</code> — egy listaelem<br>
+      Ezt a "doboz a dobozban" szerkezetet hívjuk <strong>egymásba ágyazásnak</strong> (nesting).
+      Ez a HTML egyik alapelve: az elemek tartalmazhatnak más elemeket.
+      <br><br>
+      <code>&lt;ul&gt;</code> &nbsp;&nbsp;&nbsp;← a rendezetlen lista<br>
+      &nbsp;&nbsp;<code>&lt;li&gt;</code>Tej<code>&lt;/li&gt;</code> &nbsp;&nbsp;← egy listaelem<br>
       &nbsp;&nbsp;<code>&lt;li&gt;</code>Kenyér<code>&lt;/li&gt;</code><br>
       <code>&lt;/ul&gt;</code>
       <br><br>
-      <ul>
-        <li><code>&lt;ul&gt;</code> — rendezetlen lista konténere, belső tagja: <strong><code>&lt;li&gt;</code></strong></li>
-        <li><code>&lt;ol&gt;</code> — rendezett (számozott) lista konténere, belső tagja: <strong><code>&lt;li&gt;</code></strong></li>
-        <li><code>&lt;li&gt;</code> — maga a listaelem (list item) – mindig a konténerbe kerül!</li>
-      </ul>`,
+      <em>Figyelem:</em> az <code>&lt;li&gt;</code>-t <strong>csak</strong> <code>&lt;ul&gt;</code> vagy <code>&lt;ol&gt;</code> belsejébe szabad írni!`,
     codeTemplate:
 `<h2>Bevásárlólista</h2>
 <___>
@@ -611,15 +655,21 @@ const tasks = [
     type:'quiz',
     title:'Az id és class attribútum',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Két attribútum van, amivel <strong>megnevezhetjük</strong> az elemeinket:
-      <ul>
-        <li><code>id="fo-cim"</code> — <strong>egyedi azonosító</strong>: az oldalon csak egyszer szerepelhet.
-          Oldalon belüli linknél is használjuk: <code>href="#fo-cim"</code></li>
-        <li><code>class="kiemel"</code> — <strong>csoport jelölő</strong>: több elemnek is lehet ugyanolyan class-a.
-          CSS-sel formázhatjuk az összes azonos class-ú elemet egyszerre.</li>
-      </ul>
-      A <code>&lt;span&gt;</code> egy <strong>inline</strong> elem – a szövegfolyamon belül marad,
-      nem kezd új sort. CSS-sel és <code>class</code>-szal szövegrészeket emelhetünk ki vele.`,
+      Hogy a CSS (stíluslap) tudja, <em>melyik</em> HTML elemre vonatkozzon egy szabály, az elemeket meg kell tudnunk nevezni.
+      Erre két attribútum szolgál:
+      <br><br>
+      <strong>id – egyedi azonosító</strong><br>
+      Olyan mint az iskolai diákazonosító: az egész oldalon <strong>csak egyszer</strong> szerepelhet ugyanaz az id.
+      <code>id="fo-cim"</code> → CSS-ben: <code>#fo-cim { ... }</code><br>
+      Extra hasznos: oldalon belüli link célja is lehet: <code>&lt;a href="#fo-cim"&gt;</code> → arra a részre ugrik az oldal.
+      <br><br>
+      <strong>class – csoport jelölő</strong><br>
+      Olyan mint az iskolai osztály: <strong>több elemnek</strong> is lehet ugyanaz a class-neve, és egyszerre formázhatjuk őket.
+      <code>class="kiemel"</code> → CSS-ben: <code>.kiemel { ... }</code>
+      <br><br>
+      <strong>&lt;span&gt; – szövegen belüli kiemelés</strong><br>
+      Ha egy szóra vagy mondatrészre akarunk stílust alkalmazni, a <code>&lt;span&gt;</code>-t használjuk.
+      Nem kezd új sort, belül marad a szövegben – ezért "inline" elem.`,
     question:'Melyik attribútum adható több elemnek is ugyanolyan értékkel?',
     options:['id','class','href','src'],
     correct:1,
@@ -631,12 +681,18 @@ const tasks = [
     type:'fillin',
     title:'Span, id és class a kódban',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Hogyan használjuk a gyakorlatban:
-      <ul>
-        <li><code>&lt;span class="kiemel"&gt;szöveg&lt;/span&gt;</code> — szövegrész kiemelése class-szal</li>
-        <li><code>&lt;h2 id="rolam"&gt;Rólam&lt;/h2&gt;</code> — fejléc egyedi azonosítóval</li>
-        <li><code>&lt;a href="#rolam"&gt;...&lt;/a&gt;</code> — ugrik az id-ra kattintáskor</li>
-      </ul>`,
+      Lássuk a három fogalmat együtt a kódban:
+      <br><br>
+      <code>&lt;span class="kiemel"&gt;Kata&lt;/span&gt;</code><br>
+      → A span nem tesz új sort, csak körbe"öleli" a szót, és a CSS a <code>.kiemel</code> class alapján formázza.
+      <br><br>
+      <code>&lt;h2 id="rolam"&gt;Rólam&lt;/h2&gt;</code><br>
+      → Az id-t a fejléc kapja – így a link pontosan erre az elemre mutathat.
+      <br><br>
+      <code>&lt;a href="#rolam"&gt;Ugrás a Rólam részhez&lt;/a&gt;</code><br>
+      → A <code>#</code> jel jelzi, hogy ez oldalon belüli link. Kattintásra a böngésző a <code>id="rolam"</code> elemre gördít.
+      <br><br>
+      <em>Összefoglalva:</em> id = egy elem neve (egyedi), class = elemek csoportneve (ismételhető).`,
     codeTemplate:
 `<p>Üdvözlet, <___ class="kiemel">Kata</span>!</p>
 
@@ -693,16 +749,21 @@ const tasks = [
     type:'quiz',
     title:'Tábla felépítése HTML-ben',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A HTML tábla elemei (kívülről befelé):
-      <ul>
-        <li><code>&lt;table&gt;</code> — maga a tábla</li>
-        <li><code>&lt;thead&gt;</code> — fejléc sor(ok)</li>
-        <li><code>&lt;tbody&gt;</code> — törzs (az adatok)</li>
-        <li><code>&lt;tfoot&gt;</code> — lábléc sor(ok) (összesítőknél)</li>
-        <li><code>&lt;tr&gt;</code> — tábla sor (table row)</li>
-        <li><code>&lt;th&gt;</code> — fejléc cella (félkövér, középre igazított)</li>
-        <li><code>&lt;td&gt;</code> — adat cella (table data)</li>
-      </ul>`,
+      Gondolj egy Excel-táblázatra: vannak sorok, oszlopok, és a legelső sor általában vastagítva mutatja az oszlopok nevét.
+      HTML-ben ugyanígy épül fel a tábla – csak kívülről befelé haladva kell megírni:
+      <br><br>
+      <strong>A tábla "héjai" (kívülről befelé):</strong><br>
+      <code>&lt;table&gt;</code> — maga a táblázat (a külső "keret")<br>
+      &nbsp;&nbsp;<code>&lt;thead&gt;</code> — fejléc rész (table head): ide kerülnek a fejléc sorok<br>
+      &nbsp;&nbsp;<code>&lt;tbody&gt;</code> — adatrész (table body): az összes adat ide kerül<br>
+      &nbsp;&nbsp;<code>&lt;tfoot&gt;</code> — lábléc rész: összesítőknél (nem kötelező)
+      <br><br>
+      <strong>Sorok és cellák:</strong><br>
+      <code>&lt;tr&gt;</code> — egy egész sor (table row)<br>
+      &nbsp;&nbsp;<code>&lt;th&gt;</code> — fejléc cella: <strong>félkövér, középre igazított</strong> (table header)<br>
+      &nbsp;&nbsp;<code>&lt;td&gt;</code> — adat cella: normál szöveg (table data)
+      <br><br>
+      <em>Fejlesztői szleng:</em> "tr = sor, td = cella" – ezt érdemes fejben tartani!`,
     question:'Melyik elem jelöl egy adatsort a táblázatban?',
     options:['&lt;td&gt;','&lt;th&gt;','&lt;tr&gt;','&lt;table&gt;'],
     correct:2,
@@ -714,12 +775,19 @@ const tasks = [
     type:'fillin',
     title:'Tábla elemei',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Tábla minta – fejléccel és adatsorokkal:
-      <ul>
-        <li><code>&lt;thead&gt;</code> + <code>&lt;th&gt;</code> = fejléc cellák</li>
-        <li><code>&lt;tbody&gt;</code> + <code>&lt;td&gt;</code> = adat cellák</li>
-        <li>Minden sor: <code>&lt;tr&gt;</code></li>
-      </ul>`,
+      A HTML táblázat "kívülről befelé" logika szerint épül:
+      az egész tábla (<code>&lt;table&gt;</code>) tartalmazza a részeit (thead, tbody),
+      azok tartalmazzák a sorokat (<code>&lt;tr&gt;</code>),
+      a sorok tartalmazzák a cellákat (<code>&lt;th&gt;</code> vagy <code>&lt;td&gt;</code>).
+      <br><br>
+      <strong>Fejléc rész (<code>&lt;thead&gt;</code>):</strong><br>
+      &nbsp;&nbsp;→ Sorban (<code>&lt;tr&gt;</code>) <code>&lt;th&gt;</code> cellák: félkövér, középre igazított oszlopnevek
+      <br><br>
+      <strong>Adatrész (<code>&lt;tbody&gt;</code>):</strong><br>
+      &nbsp;&nbsp;→ Sorban (<code>&lt;tr&gt;</code>) <code>&lt;td&gt;</code> cellák: a tényleges adatok
+      <br><br>
+      <em>Tipp:</em> ha egy sor 3 fejléc cellával kezd (<code>&lt;th&gt;</code>),
+      akkor minden adat sorban is 3 cellának kell lennie (<code>&lt;td&gt;</code>) – különben a tábla "elferdül".`,
     codeTemplate:
 `<table>
   <___>
@@ -781,13 +849,18 @@ const tasks = [
     type:'fillin',
     title:'Cellák összevonása: colspan és rowspan',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Néha egy cella több oszlopot vagy sort foglal el:
-      <ul>
-        <li><code>colspan="2"</code> — a cella <strong>2 oszlopot</strong> von össze (vízszintesen terjed)</li>
-        <li><code>rowspan="2"</code> — a cella <strong>2 sort</strong> von össze (függőlegesen terjed)</li>
-      </ul>
-      <code>&lt;td colspan="2"&gt;</code> — ez a cella kétszer akkora szélességű<br><br>
-      <code>&lt;td rowspan="2"&gt;</code> — ez a cella két soron át nyúlik le`,
+      Képzeld el egy menetrendet vagy iskolai órarendet: egyes cellák több oszlopot fognak össze
+      (pl. "Ebédszünet" az egész sor felett), máskor egy cella több soron át tart
+      (pl. egy egész napos esemény a naptárban). HTML-ben ezt két attribútummal jelöljük:
+      <br><br>
+      <code>colspan="2"</code> — a cella <strong>vízszintesen</strong> terjed, 2 oszlopot von össze<br>
+      <code>colspan="3"</code> — 3 oszlopot von össze, stb.
+      <br><br>
+      <code>rowspan="2"</code> — a cella <strong>függőlegesen</strong> terjed, 2 soron nyúlik át<br>
+      <code>rowspan="3"</code> — 3 soron nyúlik át, stb.
+      <br><br>
+      <em>Fontos:</em> ha egy cella összevon pl. 2 oszlopot, a következő sorban eggyel kevesebb cellát kell írni,
+      mert az összevont cella "foglalja a helyet".`,
     codeTemplate:
 `<table border="1">
   <tr>
@@ -847,17 +920,19 @@ const tasks = [
     type:'quiz',
     title:'Szemantikus elemek – ki mit jelöl?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Vannak HTML elemek, amelyek neve már elárulja, mi a szerepük az oldalon.
-      Ezeket hívjuk <strong>szemantikus elemeknek</strong>:
-      <ul>
-        <li><code>&lt;header&gt;</code> — az oldal teteje: logo, cím</li>
-        <li><code>&lt;nav&gt;</code> — a menü, ahol a linkek vannak</li>
-        <li><code>&lt;main&gt;</code> — a fő tartalom (oldalanként csak egy)</li>
-        <li><code>&lt;article&gt;</code> — egy önálló egység, pl. egy hír</li>
-        <li><code>&lt;section&gt;</code> — egy téma szerinti rész</li>
-        <li><code>&lt;footer&gt;</code> — az oldal alja: copyright, kapcsolat</li>
-      </ul>
-      Hasznos, mert a Google és a képernyőolvasók is jobban értik az oldalt.`,
+      Régebben minden "dobozt" <code>&lt;div&gt;</code>-vel jelöltek – de a div nem mondja el, mi van benne.
+      Ma már vannak <strong>szemantikus elemek</strong> (semantic = értelmes, értelemhordozó): ezek neve elárulja a szerepüket.
+      <br><br>
+      Képzeld el az oldalt mint egy újságot: van fejléc (cím, logo), navigáció (menü), fő tartalom, esetleg oldalsáv, és alul a lábléc. HTML-ben:
+      <br><br>
+      <code>&lt;header&gt;</code> — az oldal teteje: logo, cím, esetleg menü<br>
+      <code>&lt;nav&gt;</code> — a navigációs menü (navigation = navigáció)<br>
+      <code>&lt;main&gt;</code> — a fő tartalom; oldalanként <strong>csak egy</strong> lehet!<br>
+      <code>&lt;article&gt;</code> — önálló tartalom egység, pl. egy hír, blogbejegyzés<br>
+      <code>&lt;section&gt;</code> — egy téma szerinti rész (pl. "Rólunk", "Galéria")<br>
+      <code>&lt;footer&gt;</code> — az oldal alja: copyright, elérhetőség
+      <br><br>
+      <strong>Miért jobb a div-nél?</strong> A Google keresője, a képernyőolvasók (vak felhasználóknak) és más fejlesztők mind jobban értik az oldalt, ha értelmes elemeket használsz.`,
     question:'Melyik elemet használjuk a navigációs menü jelölésére?',
     options:['&lt;menu&gt;','&lt;nav&gt;','&lt;header&gt;','&lt;ul&gt;'],
     correct:1,
@@ -869,13 +944,17 @@ const tasks = [
     type:'fillin',
     title:'Szemantikus oldal váza',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Egy tipikus szemantikus oldal szerkezete:
-      <ul>
-        <li><code>&lt;header&gt;</code> – logo, cím, navigáció</li>
-        <li><code>&lt;main&gt;</code> – a fő tartalom</li>
-        <li><code>&lt;article&gt;</code> – egy önálló egység a main-en belül</li>
-        <li><code>&lt;footer&gt;</code> – lábléc</li>
-      </ul>`,
+      Egy tipikus weboldal "váza" szemantikus elemekkel – gondolj rá mint egy újság felépítésére:
+      <br><br>
+      <code>&lt;body&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;header&gt;</code> ← Fejléc: logo, cím, esetleg navigáció<br>
+      &nbsp;&nbsp;<code>&lt;main&gt;</code> ← Fő tartalom (oldalanként csak EGY!)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;article&gt;</code> ← Önálló cikk, hír, bejegyzés<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;section&gt;</code> ← Egy tematikus rész<br>
+      &nbsp;&nbsp;<code>&lt;footer&gt;</code> ← Lábléc: copyright, kapcsolat
+      <br><br>
+      <em>Sorrend és logika:</em> header → main → footer – ugyanúgy, ahogy az oldalt felülről lefelé olvasod.
+      A main-en belül lehet több article vagy section, ezek aztán tartalmazzák a szövegeket, képeket stb.`,
     codeTemplate:
 `<body>
   <___>
@@ -943,14 +1022,23 @@ const tasks = [
     type:'quiz',
     title:'Mi a különbség a div és a figure között?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      <strong>Konténer elemek</strong> – tartalom csoportosítására:
-      <ul>
-        <li><code>&lt;div&gt;</code> — általános <strong>blokk szintű</strong> konténer, CSS-hez és elrendezéshez</li>
-        <li><code>&lt;span&gt;</code> — általános <strong>inline</strong> konténer, szövegen belül</li>
-        <li><code>&lt;figure&gt;</code> — képet vagy médiát és feliratát fogja össze</li>
-        <li><code>&lt;figcaption&gt;</code> — a <code>&lt;figure&gt;</code> felirata (a kép alatt)</li>
-      </ul>
-      <code>&lt;figure&gt;<br>&nbsp;&nbsp;&lt;img src="kep.jpg" alt="..."&gt;<br>&nbsp;&nbsp;&lt;figcaption&gt;Kép felirata&lt;/figcaption&gt;<br>&lt;/figure&gt;</code>`,
+      Ha az oldalon több elemet <strong>össze akarunk fogni</strong> (pl. egy kártyában kép + cím + szöveg együtt),
+      akkor "dobozba" tesszük őket. Erre valók a konténer elemek:
+      <br><br>
+      <code>&lt;div&gt;</code> — az általános "doboz" (division = rész).
+      Új sort kezd (blokk elem), nincs saját vizuális megjelenése – CSS-sel formázzuk.
+      Ha nincs jobb szemantikus elem, div-et használunk.
+      <br><br>
+      <code>&lt;span&gt;</code> — szövegen belüli kiemelő elem (inline, nem kezd új sort).
+      Például ha egy mondaton belül egy szót ki akarunk festeni másik színre.
+      <br><br>
+      <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code> — képhez tartozó felirat kezelésére:
+      <br>
+      <code>&lt;figure&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;img src="kep.jpg" alt="..."&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;figcaption&gt;</code>A kép felirata<code>&lt;/figcaption&gt;</code><br>
+      <code>&lt;/figure&gt;</code><br>
+      → A figcaption pontosan "tudja", melyik képhez tartozik – a keresők és olvasók ezt értik.`,
     question:'Melyik elem fogja össze a képet és a képaláírást?',
     options:['&lt;div&gt;','&lt;section&gt;','&lt;figure&gt;','&lt;img&gt;'],
     correct:2,
@@ -962,13 +1050,19 @@ const tasks = [
     type:'fillin',
     title:'Div és figure használata',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <code>class</code> attribútummal nevezzük meg a dobozt,
-      majd CSS-sel adjuk meg a stílusát:
-      <ul>
-        <li><code>&lt;div class="kártya"&gt;</code> — egy doboz</li>
-        <li><code>&lt;figure&gt;</code> — kép + felirat csoportja</li>
-        <li><code>&lt;figcaption&gt;</code> — a kép szöveges felirata</li>
-      </ul>`,
+      A div-nek és figure-nek önmagában nincs látható stílusa – mi adjuk meg a CSS-sel.
+      A kulcs: a div-nek adjunk <code>class</code> nevet, majd CSS-ben megformázzuk:
+      <br><br>
+      <code>&lt;div class="kártya"&gt;</code> ← ez a doboz neve<br>
+      &nbsp;&nbsp;<code>&lt;h2&gt;</code>Termék neve<code>&lt;/h2&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;figure&gt;</code> ← kép + felirat csoportja<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;img src="termek.jpg" alt="..."&gt;</code><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;figcaption&gt;</code>Felirat<code>&lt;/figcaption&gt;</code><br>
+      &nbsp;&nbsp;<code>&lt;/figure&gt;</code><br>
+      <code>&lt;/div&gt;</code>
+      <br><br>
+      CSS-ben: <code>.kártya { border: 1px solid gray; padding: 10px; }</code><br>
+      → Minden <code>class="kártya"</code> div-nek kerete és belső helye lesz.`,
     codeTemplate:
 `<___ class="kártya">
   <h2>Termék neve</h2>
@@ -1025,19 +1119,20 @@ const tasks = [
     type:'fillin',
     title:'HTML komment szintaxisa',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>komment</strong> olyan szöveg a kódban, amit a <strong>böngésző figyelmen kívül hagy</strong> – csak a fejlesztőnek szól.
+      Képzeld el, hogy egy hónapja írtad a kódot, és most újra megnézed – de nem emlékszel, mire való az egyik blokk.
+      Ha kommenteket írtál, ez nem probléma! A komment egy megjegyzés a kódban, amit <strong>a böngésző teljesen figyelmen kívül hagy</strong>.
       <br><br>
-      <strong>HTML komment szintaxisa:</strong>
-      <code>&lt;!-- ide írsz megjegyzést --&gt;</code>
+      <strong>Szintaxis:</strong><br>
+      <code>&lt;!-- Ide kerül a megjegyzés --&gt;</code><br>
+      Kezdődik: <code>&lt;!--</code> &nbsp;&nbsp; Végződik: <code>--&gt;</code>
       <br><br>
-      Mire jó?
+      <strong>Mire való?</strong>
       <ul>
-        <li>Emlékeztető: mire való egy kódblokk</li>
-        <li>Kód "kikapcsolása" törlés nélkül</li>
-        <li>Csapatmunka: magyarázat a kollégának</li>
+        <li><strong>Magyarázat:</strong> <code>&lt;!-- Navigációs sáv --&gt;</code> – emlékeztető, mi jön utána</li>
+        <li><strong>Kód kikapcsolása:</strong> ha valami nem kell, de még nem akarod törölni, kommentbe teheted</li>
+        <li><strong>Csapatmunka:</strong> megjegyzés a kollégának, aki majd olvasni fogja</li>
       </ul>
-      Pl.:
-      <code>&lt;!-- Navigációs sáv --&gt;<br>&lt;nav&gt;...&lt;/nav&gt;<br><br>&lt;!-- Ez most ki van kapcsolva:<br>&lt;p&gt;Régi szöveg&lt;/p&gt;<br>--&gt;</code>`,
+      <em>Tipp:</em> a böngészőben a "forrás megtekintése" (Ctrl+U) megmutatja a kommenteket is – ne írj bele jelszókat!`,
     codeTemplate:
 `<!DOCTYPE html>
 <html lang="hu">
