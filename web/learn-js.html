@@ -209,16 +209,19 @@ const tasks = [
     type:'quiz',
     title:'Mi a JavaScript?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>JavaScript</strong> egy programozási nyelv, amellyel <strong>interaktívvá</strong> tehetjük a weboldalakat.
+      Képzelj el egy épületet: a <strong>HTML</strong> a falak és a bútorok (a tartalom),
+      a <strong>CSS</strong> a festék és a díszítés (a kinézet),
+      és a <strong>JavaScript</strong> a villanykapcsolók, az ajtócsengő, a mozgásérzékelő –
+      minden, ami <em>történik</em>, amikor valaki valamit csinál.
       <br><br>
-      Míg a HTML az oldal tartalmát, a CSS a megjelenését adja meg, addig a JavaScript a <strong>viselkedést</strong> határozza meg:
+      JavaScript nélkül a weboldal csak egy statikus kép lenne. JS-sel:
       <ul>
-        <li>Gombok eseményei (kattintás, egérmozgás)</li>
-        <li>Tartalom dinamikus módosítása</li>
-        <li>Felugró üzenetek (<code>alert</code>)</li>
-        <li>Animációk és validációk</li>
+        <li>A gomb kattintásra reagál</li>
+        <li>A tartalom percenként frissülhet anélkül, hogy az oldalt újratöltenéd</li>
+        <li>Képes ellenőrizni, hogy jól töltötted-e ki az űrlapot</li>
+        <li>Animációkat, játékokat, interaktív elemeket lehet készíteni</li>
       </ul>
-      A JavaScript közvetlenül a böngészőben fut – nincs szükség szerverre.`,
+      <strong>Fontos:</strong> A JS közvetlenül a böngészőben fut – nincs szükség szerverre.`,
     question:'Mire való a JavaScript a weboldalon?',
     options:[
       'Az oldal tartalmának (szöveg, képek) meghatározására',
@@ -235,15 +238,17 @@ const tasks = [
     type:'fillin',
     title:'JS beágyazása – script tag',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A JavaScriptet a <code>&lt;script&gt;</code> taggel ágyazzuk be az oldalba.
+      A JS kód bekerülhet <strong>közvetlenül a HTML-be</strong> (belső) vagy
+      <strong>külön fájlba</strong> (külső) – ahogy a CSS-nél is volt ez a két lehetőség.
       <br><br>
-      Két módszer:
       <ul>
-        <li><strong>Belső JS:</strong> a kód közvetlenül a <code>&lt;script&gt;</code> tagek között van</li>
-        <li><strong>Külső JS fájl:</strong> a <code>src</code> attribútummal hivatkozunk rá:<br>
-        <code>&lt;script src="script.js"&gt;&lt;/script&gt;</code></li>
+        <li><strong>Belső JS:</strong> a kód a <code>&lt;script&gt;</code> tagek között van közvetlenül</li>
+        <li><strong>Külső JS fájl:</strong> <code>&lt;script src="script.js"&gt;&lt;/script&gt;</code><br>
+          – tisztább, átláthatóbb, nagy projekteknél mindig ezt használjuk</li>
       </ul>
-      A <code>&lt;script&gt;</code> tagot általában a <code>&lt;/body&gt;</code> zárótag elé tesszük, hogy az oldal betöltsön, mielőtt a JS fut.`,
+      <strong>Miért a <code>&lt;/body&gt;</code> elé kerül?</strong><br>
+      Ha a <code>&lt;head&gt;</code>-be tennénk, a JS akkor futna le, amikor az oldal elemei még nem töltöttek be –
+      és nem találná meg a gombokat, szövegeket. A <code>&lt;/body&gt;</code> elé helyezve biztosan minden elem már megvan.`,
     codeTemplate:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -274,16 +279,18 @@ const tasks = [
     type:'quiz',
     title:'Az alert() függvény',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Az <code>alert()</code> egy beépített JavaScript függvény, amely egy <strong>felugró üzenetablakot</strong> jelenít meg.
+      Az <code>alert()</code> olyan, mint egy értesítés a telefonon: megjelenik, elolvasod, OK-t nyomsz, és kész.
+      A weboldal addig "megáll", amíg be nem zárod – ezért éles oldalakon ritkán használják,
+      de tanuláshoz és hibakereséshez nagyon hasznos.
       <br><br>
-      Szintaxis: <code>alert("szöveg");</code>
-      <br><br>
-      Hasonló beépített függvények:
+      A három testvérfüggvény:
       <ul>
-        <li><code>alert("szöveg")</code> – üzenet megjelenítése</li>
-        <li><code>confirm("kérdés")</code> – Igen/Nem választás (igaz/hamis visszatérési érték)</li>
-        <li><code>prompt("kérdés")</code> – szöveges bevitel a felhasználótól</li>
-      </ul>`,
+        <li><code>alert("szöveg")</code> – csak megjelenít egy üzenetet, nincs visszatérési érték</li>
+        <li><code>confirm("kérdés?")</code> – OK/Mégse gombok, <code>true</code> vagy <code>false</code> értéket ad vissza</li>
+        <li><code>prompt("Mit írj be?")</code> – beviteli mező, a beírt szöveget adja vissza</li>
+      </ul>
+      <strong>Tip:</strong> Ha teszteléskor valamit ki akarsz írni, az <code>alert()</code> helyett
+      próbáld a <code>console.log()</code>-ot – az F12 konzolban jelenik meg, az oldalt nem állítja meg.`,
     question:'Mit csinál ez a kód: <code>alert("Szia!");</code>',
     options:[
       'Beállítja az oldal háttérszínét',
@@ -333,14 +340,18 @@ const tasks = [
     type:'quiz',
     title:'let és const',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      JavaScriptben változókat a <code>let</code> és <code>const</code> kulcsszavakkal hozunk létre:
-      <br><br>
+      Gondolj egy whiteboardra és egy tetovált feliratra:
       <ul>
-        <li><code>let nev = "Anna";</code> – <strong>módosítható</strong> változó</li>
-        <li><code>const PI = 3.14;</code> – <strong>állandó</strong>, értéke nem változtatható</li>
+        <li><code>let</code> = <strong>whiteboard</strong> – felírod, törölheted, átírhatod bármikor</li>
+        <li><code>const</code> = <strong>tetoválás</strong> – egyszer megvan, nem változtatható</li>
       </ul>
-      Az értékeket idézőjelbe tesszük, ha szöveg (<em>string</em>).
-      Számokat idézőjel nélkül írunk: <code>let kor = 16;</code>`,
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">let nev = "Anna";   // whiteboard – átírható
+nev = "Béla";       // OK, működik
+
+const PI = 3.14;    // tetoválás – állandó
+PI = 3;             // HIBA! const nem módosítható</pre>
+      <strong>Mikor melyiket?</strong> Ha az értéke változhat (pl. pontszám, felhasználói bevitel) → <code>let</code>.
+      Ha soha nem változik (pl. adószám, matematikai állandó) → <code>const</code>.`,
     question:'Melyik változónak nem lehet új értéket adni?',
     options:[
       'let nev = "Anna";',
@@ -357,16 +368,20 @@ const tasks = [
     type:'fillin',
     title:'Függvény deklarálása',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Egy <strong>függvény</strong> újrafelhasználható kódblokkot jelent. Szintaxis:
+      A függvény olyan, mint egy <strong>recept</strong>: egyszer leírod, és utána
+      bármikor "elkészítheted" – csak meg kell hívni.
       <br><br>
-      <code>function nev() { }</code>
-      <br><br>
-      A függvényt ezután <strong>meghívhatjuk</strong> a nevével és zárójelekkel:
-      <code>nev();</code>
-      <br><br>
-      A <code>return</code> kulcsszóval visszaadhatunk egy értéket:
-      <br>
-      <code>function osszead(a, b) { return a + b; }</code>`,
+      <ul>
+        <li><strong>Deklarálás</strong> = a recept leírása: <code>function koszont() { ... }</code></li>
+        <li><strong>Meghívás</strong> = az étel elkészítése: <code>koszont();</code></li>
+        <li><strong>Paraméter</strong> = hozzávalók megadása: <code>function koszont(nev) { ... }</code></li>
+        <li><strong>return</strong> = a kész étel tálalása – a függvény visszaad egy értéket</li>
+      </ul>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">function osszead(a, b) {
+  return a + b;       // visszaadja az összeget
+}
+let eredmeny = osszead(3, 5);  // eredmeny = 8</pre>
+      <strong>Tip:</strong> Ha egy kódrészletet kétszer írnál le, ideje függvénnyé alakítani!`,
     codeTemplate:
 `// Függvény deklarálása
 ___ koszont() {
@@ -429,15 +444,20 @@ function osszead(a, b) {
     type:'quiz',
     title:'Mi a DOM?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>DOM</strong> (Document Object Model) a weboldal <strong>programozható modellje</strong>.
+      Képzeld el, hogy a HTML oldal egy épület <strong>tervrajza</strong>.
+      A DOM az az élő, módosítható változat, amit a böngésző a tervrajzból felépített –
+      és a JavaScript egy ceruza, amivel az élő tervrajzon <em>valós időben</em> átrajzolhatsz.
       <br><br>
-      Amikor a böngésző betölti a HTML oldalt, egy fa-szerű struktúrát épít fel belőle. JavaScript segítségével ebben a struktúrában:
+      A DOM egy <strong>fa-struktúra</strong>: az elemek egymásba ágyazva alkotják a hierarchiát
+      (ahogy a HTML tagek egymásba vannak ágyazva).
+      <br><br>
+      JavaScript-tel a DOM-on keresztül:
       <ul>
-        <li><strong>Kereshetünk</strong> elemeket (pl. id alapján)</li>
-        <li><strong>Módosíthatjuk</strong> a tartalmat és a stílust</li>
-        <li><strong>Hozzáadhatunk</strong> vagy eltávolíthatunk elemeket</li>
+        <li>Megkeresheted az elemeket (id, osztály, CSS-szelektor alapján)</li>
+        <li>Megváltoztathatod a szövegüket, stílusukat, attribútumaikat</li>
+        <li>Új elemeket adhatsz hozzá vagy törölhetsz meglévőket</li>
       </ul>
-      A DOM-ot a <code>document</code> objektumon keresztül érjük el.`,
+      A belépési pont mindig a <code>document</code> objektum – ez képviseli az egész oldalt.`,
     question:'Mit jelent a DOM a webfejlesztésben?',
     options:[
       'Egy adatbázis-kezelő rendszer weboldalakon',
@@ -454,15 +474,18 @@ function osszead(a, b) {
     type:'fillin',
     title:'getElementById és innerHTML',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A leggyakrabban használt DOM-metódus:
+      Az <code>getElementById</code> olyan, mint egy <strong>csomagkereső szobaszám alapján</strong>:
+      pontosan egy elemet keres meg, méghozzá az <code>id</code> attribútuma alapján.
+      Mivel az <code>id</code>-nak egyedinek kell lennie az oldalon, mindig pontosan egy elemet kap vissza.
       <br><br>
-      <code>document.getElementById("azonosito")</code>
-      <br><br>
-      Ez visszaadja azt az elemet, amelynek <code>id</code> attribútuma megegyezik a megadottal.
-      <br><br>
-      Az elem tartalmát az <code>innerHTML</code> tulajdonsággal érjük el és módosítjuk:
-      <br>
-      <code>elem.innerHTML = "Új szöveg";</code>`,
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">// HTML: &lt;p id="uzenet"&gt;Szia!&lt;/p&gt;
+
+const elem = document.getElementById("uzenet");
+elem.innerHTML = "&lt;strong&gt;Helló!&lt;/strong&gt;";  // HTML is mehet bele
+elem.textContent = "Helló!";               // csak szöveg (HTML tagek nélkül)</pre>
+      <strong>innerHTML vs textContent:</strong><br>
+      Ha HTML tageket is bele akarsz írni (pl. <code>&lt;b&gt;</code>), használj <code>innerHTML</code>-t.
+      Ha csak szöveget, és biztonsági okokból nem akarsz HTML-t értelmeztetni, használj <code>textContent</code>-et.`,
     codeTemplate:
 `// HTML: <p id="uzenet">Eredeti szöveg</p>
 
@@ -482,16 +505,19 @@ elem._______ = "Megváltozott!";`,
     type:'fillin',
     title:'querySelector',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <code>querySelector()</code> CSS-szelektorral keres elemet – rugalmasabb, mint az getElementById:
+      A <code>querySelector()</code> olyan, mint a <strong>Google keresés az oldalon</strong>:
+      CSS-szelektor szintaxissal bármire rákereshetsz, nem csak az id-ra.
       <br><br>
       <ul>
-        <li><code>document.querySelector("#azonosito")</code> – id alapján (<code>#</code> prefix)</li>
-        <li><code>document.querySelector(".osztaly")</code> – class alapján (<code>.</code> prefix)</li>
-        <li><code>document.querySelector("p")</code> – tagname alapján</li>
+        <li><code>document.querySelector("#focim")</code> – id alapján (# prefix) – mint getElementById</li>
+        <li><code>document.querySelector(".kartya")</code> – class alapján (. prefix)</li>
+        <li><code>document.querySelector("p")</code> – az első p elemet adja vissza</li>
+        <li><code>document.querySelector("nav a")</code> – nav-on belüli első a elem</li>
       </ul>
-      A <code>textContent</code> csak szöveget ad vissza (HTML tagek nélkül):
-      <br>
-      <code>elem.textContent = "Szöveg";</code>`,
+      Ha <em>minden</em> találatot akarsz (nem csak az elsőt), használd a
+      <code>querySelectorAll()</code>-t – az egy listát ad vissza.
+      <br><br>
+      <strong>Tip:</strong> Ha már ismered a CSS-t, a <code>querySelector</code> szintaxisa teljesen ismerős lesz!`,
     codeTemplate:
 `// Lekérés CSS-szelektorral:
 // id alapján (# prefix)
@@ -554,19 +580,23 @@ cim.___________ = "Új cím";`,
     type:'quiz',
     title:'Mi az eseménykezelő?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Az <strong>eseménykezelő</strong> (event listener) egy függvény, amely lefut, ha a felhasználó valamit csinál – pl. kattint egy gombra.
+      Az eseménykezelő olyan, mint egy <strong>csengő a bejárati ajtón</strong>:
+      beállítod egyszer, és amikor valaki nyomja, automatikusan lefut a függvény.
+      Te nem figyelsz folyamatosan – a böngésző figyel helyetted, és szól, ha "csengett".
       <br><br>
-      Szintaxis:
-      <br>
-      <code>elem.addEventListener("esemény", függvény);</code>
+      Szintaxis: <code>elem.addEventListener("esemény", függvény);</code>
       <br><br>
       Fontosabb eseménytípusok:
       <ul>
-        <li><code>"click"</code> – kattintás</li>
+        <li><code>"click"</code> – egérkattintás (a leggyakoribb)</li>
         <li><code>"mouseover"</code> – egér az elem fölé kerül</li>
         <li><code>"keydown"</code> – billentyű lenyomása</li>
         <li><code>"submit"</code> – űrlap elküldése</li>
-      </ul>`,
+        <li><code>"input"</code> – valaki gépel egy beviteli mezőbe</li>
+      </ul>
+      <strong>Fontos:</strong> A függvényt <em>zárójel nélkül</em> add át:
+      <code>addEventListener("click", indit)</code> ✅ — nem <code>indit()</code>,
+      mert az azonnal meghívná!`,
     question:'Melyik kód hajtja végre az <code>indit()</code> függvényt gombkattintásra?',
     options:[
       'document.getElementById("gomb").run("click", indit);',
@@ -583,17 +613,20 @@ cim.___________ = "Új cím";`,
     type:'fillin',
     title:'addEventListener szintaxis',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Az eseménykezelőt így csatoljuk:
+      Kétféleképpen adhatod meg a lefutó függvényt – az eredmény ugyanaz:
       <br><br>
-      <code>elem.addEventListener("click", function() { ... });</code>
-      <br><br>
-      Vagy névvel ellátott függvénnyel:
-      <br>
-      <code>elem.addEventListener("click", reagal);</code>
-      <br><br>
-      A <code>this</code> kulcsszóval az eseménykezelőn belül magára az elemre hivatkozhatunk:
-      <br>
-      <code>this.style.background = "red";</code>`,
+      <strong>1. Névtelen függvénnyel</strong> (helyben írva):
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">gomb.addEventListener("click", function() {
+  alert("Kattintottál!");
+});</pre>
+      <strong>2. Névvel ellátott függvénnyel</strong> (átláthatóbb, újrafelhasználható):
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">function reagal() {
+  alert("Kattintottál!");
+}
+gomb.addEventListener("click", reagal); // zárójel nélkül!</pre>
+      <strong>Tip:</strong> A <code>this</code> kulcsszóval az eseménykezelőn belül
+      magára a kattintott elemre hivatkozhatsz:
+      <code>this.style.background = "red";</code> → a kattintott gomb lesz piros.`,
     codeTemplate:
 `const gomb = document.getElementById("gomb");
 
@@ -702,16 +735,24 @@ gomb.addEventListener("_____", reagal);`,
     type:'fillin',
     title:'JavaScript komment szintaxisa',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A JavaScript-ben kétféle komment létezik:
+      A komment olyan, mint egy <strong>cetli a könyvben</strong>: te látod, megkönnyíti a megértést,
+      de a böngésző teljesen figyelmen kívül hagyja, nem fut le.
       <br><br>
-      <strong>1. Egysoros komment</strong> – <code>// szöveg</code><br>
-      A <code>//</code> után minden az adott sorban komment lesz.
-      <br><br>
-      <strong>2. Többsoros komment</strong> – <code>/* szöveg */</code><br>
-      Több soron átnyúlhat, pontosan mint a CSS-ben.
-      <br><br>
-      Pl.:
-      <code>// Ez egysoros komment<br>let szam = 5; // értékadás<br><br>/*<br>&nbsp;&nbsp;Ez egy<br>&nbsp;&nbsp;többsoros komment<br>*/<br>console.log(szam);</code>`,
+      <strong>1. Egysoros komment</strong> – <code>//</code>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">let kor = 16;        // a felhasználó kora
+// ez az egész sor komment</pre>
+      <strong>2. Többsoros komment</strong> – <code>/* ... */</code>
+      <pre style="background:#0f172a;padding:8px;border-radius:6px;font-size:0.82rem;color:#fcd34d;margin:6px 0;">/*
+  Ez a függvény köszönti a felhasználót.
+  Paraméter: nev (string)
+*/
+function koszont(nev) { ... }</pre>
+      <strong>Mire jó a gyakorlatban?</strong>
+      <ul>
+        <li>Megmagyarázod, <em>miért</em> csináltad így (nem csak <em>mit</em>)</li>
+        <li>Átmenetileg kikapcsolsz egy kódrészt hibakereséskor</li>
+        <li>3 hónap múlva is érted a saját kódodat</li>
+      </ul>`,
     codeTemplate:
 `<script>
   __ Ez a függvény köszön
