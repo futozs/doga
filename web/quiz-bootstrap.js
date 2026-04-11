@@ -600,8 +600,8 @@ const bsQuizBank = {
   <title>Bootstrap kép</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 </head>
-<body class="p-4">
-  <div style="max-width:400px; border:1px solid #ccc; padding:10px;">
+<body class="p-3">
+  <div style="max-width:250px; border:1px solid #ccc; padding:8px;">
     <img src="img/kiscica.jpg" alt="Macska" class="">
   </div>
 </body>
@@ -623,8 +623,8 @@ const bsQuizBank = {
   <title>Bootstrap kép</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 </head>
-<body class="p-4">
-  <img src="img/kiscica.jpg" alt="Macska" class="">
+<body class="p-3">
+  <img src="img/kiscica.jpg" alt="Macska" class="" style="max-width:260px; height:auto;">
 </body>
 </html>`,
       checks:[
