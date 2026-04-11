@@ -248,8 +248,10 @@ const tasks = [
     type:'quiz',
     title:'Mi az Emmet gyorsírás?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Az <strong>Emmet</strong> egy fejlesztői eszköz, amely rövid rövidítésekből (abbreviation)
-      teljes HTML vagy CSS kódot generál.
+      Gondolj bele: telefonon mindenki rövidítéseket használ – "jövök" helyett "jövök" de ha nagyon siet, "jvk".
+      Az Emmet ugyanezt csinálja HTML kódban: egy rövid rövidítésből komplett HTML struktúrát generál.
+      <br><br>
+      Beírod, Tab-ot nyomsz → kész! Nem kell &lt;tag&gt;-eket gépelni, nem kell zárótag.
       <br><br>
       Például ez a rövidítés:
       <br><code>ul&gt;li*3&gt;a</code>
@@ -438,14 +440,19 @@ tr___td___3`,
     type:'fillin',
     title:'Osztály, ID és attribútum kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Emlékeztető:
+      Gondolj egy névjegykártyára: a neve az <strong>osztály</strong> (többen viselhetik),
+      a személyi igazolvány száma az <strong>ID</strong> (csak egy emberé lehet).
+      <br><br>
+      Az Emmetben pontosan ugyanígy jelölsz:
       <ul>
-        <li><code>elem.osztaly</code> → <code>class="osztaly"</code></li>
-        <li><code>elem#azonosito</code> → <code>id="azonosito"</code></li>
-        <li><code>elem[attr="érték"]</code> → egyéni attribútum</li>
-        <li>Ha nem adsz tagnevet, alapértelmezés: <code>div</code><br>
-          pl. <code>.wrapper</code> → <code>&lt;div class="wrapper"&gt;</code></li>
-      </ul>`,
+        <li><code>div.kartya</code> → <code>&lt;div class="kartya"&gt;</code> — <em>osztály: pont + név</em></li>
+        <li><code>section#fooldal</code> → <code>&lt;section id="fooldal"&gt;</code> — <em>ID: kettőskereszt + azonosító</em></li>
+        <li><code>a[href="#" target="_blank"]</code> → bármilyen egyéni attribútum szögletes zárójelben</li>
+        <li>Ha nem írsz tagnevet, az alapértelmezés <code>div</code>:<br>
+          <code>.container</code> → <code>&lt;div class="container"&gt;</code></li>
+      </ul>
+      <strong>Tip:</strong> Ugyanazon az elemen kombinálhatod is őket:
+      <code>div.kartya#c1</code> → <code>&lt;div class="kartya" id="c1"&gt;</code>`,
     codeTemplate:
 `/* div "wrapper" osztállyal */
 div___wrapper
@@ -518,13 +525,18 @@ div.elem-$*3  →  class="elem-1", "elem-2", "elem-3"</pre>`,
     type:'fillin',
     title:'Tartalom és számozás kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Összefoglaló:
+      Képzeld el, hogy versenyfeliratos pólókat gyártasz:
+      a szöveg megy a <code>{}</code>-be, a sorszám helyére meg odaírod a <code>$</code>-t
+      – az Emmet automatikusan kitölti 1-től N-ig.
+      <br><br>
       <ul>
-        <li><code>elem{szöveg}</code> — elem tartalma kapcsos zárójelben</li>
-        <li><code>$</code> — sorszám az ismétlésnél (1-től indul)</li>
-        <li><code>$$</code> — kétjegyű sorszám (01, 02, 03...)</li>
-        <li>Kombinálva: <code>div.item-$*3</code> → class="item-1", "item-2", "item-3"</li>
-      </ul>`,
+        <li><code>h2{Főcím}</code> → <code>&lt;h2&gt;Főcím&lt;/h2&gt;</code></li>
+        <li><code>li{Elem $}*3</code> → "Elem 1", "Elem 2", "Elem 3"</li>
+        <li><code>div.item-$*3</code> → class="item-1", "item-2", "item-3" (az osztálynévben is számoz!)</li>
+        <li><code>$$</code> — kétjegyű: 01, 02, 03… (ha szükséges a rendezéshez)</li>
+      </ul>
+      <strong>Tip:</strong> A <code>$</code> és a <code>{}</code> kombinálható:
+      <code>li.sor-${$. tétel}*4</code> → négy li, mindegyiken egyedi osztály és szöveg.`,
     codeTemplate:
 `/* Cím szöveggel */
 h2___Üdvözlet___
@@ -597,14 +609,19 @@ header&gt;h1+(nav&gt;ul&gt;li*3)</pre>`,
     type:'fillin',
     title:'Csoportosítás kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Csoportosítás jellemző felhasználásai:
+      Gondolj egy Excel képletre: a zárójelben lévő részt együtt számítja ki, a szorzó az egészre vonatkozik.
+      Emmetben ugyanígy: <code>(h3+p)*3</code> a <em>teljes h3+p párt</em> ismétli háromszor – nem csak a p-t.
+      <br><br>
+      Tipikus felhasználások:
       <ul>
-        <li>Ismétlés csoportra: <code>(dt+dd)*3</code> — 3 definíció pár</li>
-        <li>Fejléc struktúra: <code>header&gt;h1+(nav&gt;ul&gt;li*3)</code></li>
-        <li>Kártya grid: <code>section&gt;(div.card&gt;h3+p+button)*4</code></li>
+        <li><strong>Kártya-rács:</strong> <code>section&gt;(div.card&gt;h3+p+button)*4</code>
+          — 4 kártya, mindegyikben cím, bekezdés, gomb</li>
+        <li><strong>Definíciós lista:</strong> <code>dl&gt;(dt+dd)*3</code>
+          — 3 fogalom-definíció pár egymás után</li>
+        <li><strong>Fejléc:</strong> <code>header&gt;h1+(nav&gt;ul&gt;li*4)</code>
+          — a nav az ul-lal együtt a csoport</li>
       </ul>
-      💡 A <code>()</code>-n belüli elemek saját szinten vannak –
-      a csoport a szülő gyermeke lesz.`,
+      <strong>Tip:</strong> Ha a <code>()</code> nem lenne ott, az <code>*</code> csak az előtte lévő <em>egy</em> elemre vonatkozna!`,
     codeTemplate:
 `/* 3 cikk, mindegyikben cím + bekezdés */
 main>___article>h2+p___*3
@@ -686,15 +703,16 @@ ___div.col-bal+div.col-jobb___*1`,
     type:'fillin',
     title:'Hány ^ kell?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Számold meg, hány szintet kell felmenni, és annyi <code>^</code>-t írj!
+      Képzeld el, hogy egy emeletes épületben dolgozol és lifttel mész fel:
+      minden <code>^</code> egy emeletet jelent felfelé az elemfa-hierarchiában.
       <br><br>
-      Szabály: annyi <code>^</code> kell, ahány szinttel feljebb kell kerülni az aktuális elemtől.
       <ul>
-        <li><code>ul&gt;li^p</code> — <code>li</code>-ből 1 szint fel → <code>p</code> az <code>ul</code> testvére</li>
-        <li><code>nav&gt;ul&gt;li^^button</code> — <code>li</code>-ből 2 szint fel → <code>button</code> a <code>nav</code> testvére</li>
+        <li><code>ul&gt;li^p</code> — <code>li</code>-ből <strong>1 emelet fel</strong>: <code>p</code> az <code>ul</code> testvéreként jelenik meg</li>
+        <li><code>nav&gt;ul&gt;li^^button</code> — <code>li</code>-ből <strong>2 emelet fel</strong>: <code>button</code> a <code>nav</code> testvéreként jelenik meg</li>
       </ul>
-      💡 A <code>^</code> alternativa a csoportosításhoz: ugyanazt az eredményt adja,
-      mint a <code>()</code>, csak más szintaxissal.`,
+      Trükk a számláláshoz: a <code>^</code> száma = hány <code>&gt;</code>-n kellene "visszafelé" ugrani.
+      <br><br>
+      <strong>Tip:</strong> Ha bonyolult a számolás, használj <code>()</code> csoportosítást – ugyanazt az eredményt adja, csak átláthatóbb!`,
     codeTemplate:
 `/* p az ul UTÁN (testvérként), 1 szinttel feljebb */
 ul>li*3___p{Összefoglalás}
