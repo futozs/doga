@@ -210,6 +210,84 @@ const monacoQ = [];
 require.config({ paths:{ vs:'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
 require(['vs/editor/editor.main'], ()=>{
   if(window.emmetMonaco) window.emmetMonaco.emmetHTML(monaco);
+
+  // ── BOOTSTRAP AUTOCOMPLETE ──────────────────────────────────────────
+  const BS_CLASSES = [
+    // Szöveg
+    'text-center','text-start','text-end','text-uppercase','text-lowercase','text-capitalize',
+    'fw-bold','fw-semibold','fw-normal','fw-light','fst-italic','fst-normal',
+    'text-primary','text-secondary','text-success','text-danger','text-warning',
+    'text-info','text-dark','text-light','text-muted','text-white','text-black',
+    // Háttérszín
+    'bg-primary','bg-secondary','bg-success','bg-danger','bg-warning',
+    'bg-info','bg-dark','bg-light','bg-white','bg-transparent',
+    // Képek
+    'img-fluid','img-thumbnail','rounded','rounded-circle','rounded-pill',
+    'rounded-top','rounded-bottom','rounded-start','rounded-end',
+    // Display / igazítás
+    'd-block','d-none','d-flex','d-inline','d-inline-block','d-grid',
+    'mx-auto','my-auto','ms-auto','me-auto',
+    'justify-content-center','justify-content-between','justify-content-end',
+    'align-items-center','align-items-start','align-items-end',
+    // Táblázat
+    'table','table-bordered','table-striped','table-hover','table-dark',
+    'table-sm','table-responsive','table-success','table-danger','table-warning',
+    // Grid
+    'container','container-fluid','row','col',
+    'col-1','col-2','col-3','col-4','col-5','col-6',
+    'col-7','col-8','col-9','col-10','col-11','col-12',
+    'col-sm-1','col-sm-2','col-sm-3','col-sm-4','col-sm-6','col-sm-8','col-sm-12',
+    'col-md-1','col-md-2','col-md-3','col-md-4','col-md-6','col-md-8','col-md-12',
+    'col-lg-1','col-lg-2','col-lg-3','col-lg-4','col-lg-6','col-lg-8','col-lg-12',
+    'col-xl-1','col-xl-2','col-xl-3','col-xl-4','col-xl-6','col-xl-8','col-xl-12',
+    // Margó (m)
+    'm-0','m-1','m-2','m-3','m-4','m-5','m-auto',
+    'mt-0','mt-1','mt-2','mt-3','mt-4','mt-5',
+    'mb-0','mb-1','mb-2','mb-3','mb-4','mb-5',
+    'ms-0','ms-1','ms-2','ms-3','ms-4','ms-5',
+    'me-0','me-1','me-2','me-3','me-4','me-5',
+    'mx-0','mx-1','mx-2','mx-3','mx-4','mx-5',
+    'my-0','my-1','my-2','my-3','my-4','my-5',
+    // Belső margó (p)
+    'p-0','p-1','p-2','p-3','p-4','p-5',
+    'pt-0','pt-1','pt-2','pt-3','pt-4','pt-5',
+    'pb-0','pb-1','pb-2','pb-3','pb-4','pb-5',
+    'ps-0','ps-1','ps-2','ps-3','ps-4','ps-5',
+    'pe-0','pe-1','pe-2','pe-3','pe-4','pe-5',
+    'px-0','px-1','px-2','px-3','px-4','px-5',
+    'py-0','py-1','py-2','py-3','py-4','py-5',
+    // Méret
+    'w-25','w-50','w-75','w-100','w-auto',
+    'h-25','h-50','h-75','h-100','h-auto',
+  ];
+
+  monaco.languages.registerCompletionItemProvider('html', {
+    triggerCharacters: ['"', "'", ' '],
+    provideCompletionItems(model, position) {
+      const lineContent = model.getLineContent(position.lineNumber);
+      const textBefore = lineContent.substring(0, position.column - 1);
+      // Csak class="..." attribútumon belül aktiválódik
+      const classMatch = textBefore.match(/class=["']([^"']*)$/);
+      if (!classMatch) return { suggestions: [] };
+      const typedClasses = classMatch[1].split(' ');
+      const lastWord = typedClasses[typedClasses.length - 1];
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber, endLineNumber: position.lineNumber,
+        startColumn: word.startColumn, endColumn: word.endColumn
+      };
+      return {
+        suggestions: BS_CLASSES.map(cls => ({
+          label: cls,
+          kind: monaco.languages.CompletionItemKind.Value,
+          insertText: cls,
+          range,
+          detail: 'Bootstrap'
+        }))
+      };
+    }
+  });
+
   monacoReady = true;
   monacoQ.forEach(cb=>cb()); monacoQ.length=0;
 });
