@@ -251,18 +251,20 @@ const tasks = [
     type:'quiz',
     title:'Mi a CSS feladata?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>CSS</strong> (Cascading Style Sheets) adja meg a weboldal <strong>kinézetét</strong>:
-      színeket, betűméretet, elrendezést, háttereket.
+      Képzeld el a weboldalt mint egy embert: a HTML a csontváz és a szervek (mi hol van, mi micsoda),
+      a CSS pedig a ruha, a frizura, a smink (hogy néz ki). Ugyanaz az "emberi alap" teljesen másnak tűnhet
+      különböző stílussal – ugyanígy a CSS teljesen más megjelenést adhat ugyanannak a HTML-nek.
       <br><br>
-      A HTML az oldal <em>vázát</em> adja, a CSS az oldal <em>ruháját</em>.
+      A <strong>CSS</strong> (Cascading Style Sheets = Lépcsőzetes Stíluslapok) meghatározza:
+      a színeket, betűméreteket és típusokat, a dobozok méretét és elrendezését, a háttereket, animációkat.
       <br><br>
-      Háromféleképpen adhatjuk meg:
+      Háromféleképpen adhatjuk meg a stílusokat:
       <ul>
-        <li><strong>Inline</strong>: <code>style="..."</code> az elemen</li>
-        <li><strong>Internal</strong>: <code>&lt;style&gt;</code> tag a <code>&lt;head&gt;</code>-ben</li>
-        <li><strong>External</strong>: külső <code>.css</code> fájl (<code>&lt;link&gt;</code>-kel)</li>
+        <li><strong>Inline</strong>: közvetlenül a tagen — <code>&lt;p style="color:red;"&gt;</code> — csak egyet formáz, kerülendő</li>
+        <li><strong>Internal</strong>: <code>&lt;style&gt;</code> tag a <code>&lt;head&gt;</code>-ben — egy oldalhoz jó</li>
+        <li><strong>External</strong>: külön <code>.css</code> fájl, <code>&lt;link&gt;</code>-kel bekapcsolva — <strong>ez a legjobb!</strong> Egy fájlból formázunk minden oldalt</li>
       </ul>
-      A legjobb megoldás a külső fájl – egy helyen kezeljük az egész oldal stílusát.`,
+      A "Cascading" szó azt jelenti: ha több szabály vonatkozik egy elemre, <strong>a legerősebb nyer</strong> (specificitás).`,
     question:'Mire való a CSS?',
     options:[
       'A weboldal szerkezetét (fejléc, bekezdés) határozza meg',
@@ -357,20 +359,21 @@ const tasks = [
     type:'quiz',
     title:'Abszolút és relatív mértékegységek',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      <strong>Abszolút</strong> (mindig ugyanakkora):
-      <ul>
-        <li><code>px</code> — pixel, a leggyakoribb abszolút egység</li>
-      </ul>
-      <strong>Relatív</strong> (más értékhez viszonyítva):
-      <ul>
-        <li><code>em</code> — a <em>szülő</em> elem betűméretéhez viszonyítva<br>
-          (ha szülő: 16px, akkor 1.5em = 24px)</li>
-        <li><code>rem</code> — a <em>gyökér</em> (<code>html</code>) elem betűméretéhez<br>
-          (alapértelmezés: 1rem = 16px)</li>
-        <li><code>%</code> — a szülő elem szélességéhez viszonyítva</li>
-        <li><code>vw</code> — a viewport (böngészőablak) <em>szélességének</em> 1%-a</li>
-        <li><code>vh</code> — a viewport <em>magasságának</em> 1%-a</li>
-      </ul>`,
+      Mielőtt megadunk egy méretszámot CSS-ben, dönteni kell: <em>mihez viszonyítsunk?</em>
+      <br><br>
+      <strong>Abszolút egység – mindig fix:</strong><br>
+      <code>px</code> (pixel) — a leggyakoribb. <code>font-size: 16px</code> mindenhol ugyanolyan méretű.
+      Jó ha pontosan be akarjuk határolni, hány pixel legyen valami.
+      <br><br>
+      <strong>Relatív egységek – valami máshoz viszonyított:</strong><br>
+      <code>em</code> — a <em>szülő</em> elem betűméretének a szorzója.<br>
+      &nbsp;&nbsp;Pl. szülő: 20px → <code>1.5em</code> = 30px, <code>0.8em</code> = 16px.<br>
+      &nbsp;&nbsp;Gondolj rá mint: "1.5-szor akkora mint a szülőm".<br><br>
+      <code>rem</code> — mindig a <code>&lt;html&gt;</code> (gyökér) elem betűméretéhez viszonyít.<br>
+      &nbsp;&nbsp;Alapból 1rem = 16px. Kiszámíthatóbb mint az em, ezért sokszor ezt részesítik előnyben.<br><br>
+      <code>%</code> — a szülő elem szélességének százaléka. <code>width: 50%</code> = a szülő felébe fér.<br><br>
+      <code>vw</code> / <code>vh</code> — a böngészőablak (viewport) szélességének / magasságának 1%-a.<br>
+      &nbsp;&nbsp;<code>width: 100vw</code> = teljes képernyőszélesség, <code>height: 100vh</code> = teljes magasság.`,
     question:'Ha a body betűmérete 20px, mennyit jelent a p { font-size: 1.5em; }?',
     options:[
       '15px (20 × 0.75)',
@@ -387,15 +390,16 @@ const tasks = [
     type:'fillin',
     title:'Mértékegységek kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Összefoglaló:
+      Melyik egységet mikor érdemes használni? Gyors útmutató:
       <ul>
-        <li><code>px</code> — pixel (abszolút, pl. <code>24px</code>)</li>
-        <li><code>em</code> — szülő betűméretéhez (pl. <code>1.5em</code>)</li>
-        <li><code>rem</code> — gyökér betűméretéhez (pl. <code>2rem</code> = 32px)</li>
-        <li><code>%</code> — szülő szélességéhez (pl. <code>50%</code>)</li>
-        <li><code>vw</code> — viewport szélesség (pl. <code>100vw</code> = teljes szélesség)</li>
-        <li><code>vh</code> — viewport magasság (pl. <code>100vh</code> = teljes magasság)</li>
-      </ul>`,
+        <li><code>px</code> — ha pontosan tudod, hány pixel kell (pl. border, ikon méret)</li>
+        <li><code>em</code> — ha a szülőhöz képest arányosan kell méretezni</li>
+        <li><code>rem</code> — betűméretekhez; kiszámítható, mert mindig 16px-hez mér (alapból)</li>
+        <li><code>%</code> — szélességekhez, ha az elem a szülőjének arányában legyen</li>
+        <li><code>vw</code> — ha a képernyő szélességéhez arányosan kell (pl. hero szekciónak)</li>
+        <li><code>vh</code> — ha a képernyő magasságához arányosan kell (pl. teljes oldalas layout)</li>
+      </ul>
+      <em>Tipp:</em> <code>min-height: 100vh</code> biztosítja, hogy egy elem legalább olyan magas legyen, mint maga a képernyő.`,
     codeTemplate:
 `/* Abszolút: mindig ugyanakkora */
 h1 { font-size: 32___; }
@@ -491,19 +495,19 @@ p { font-size: 1.125___; }
     type:'quiz',
     title:'Szöveg CSS tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A legfontosabb szöveggel kapcsolatos CSS tulajdonságok:
-      <ul>
-        <li><code>color</code> — szöveg színe</li>
-        <li><code>font-size</code> — betűméret</li>
-        <li><code>font-weight: bold</code> — félkövér</li>
-        <li><code>font-style: italic</code> — dőlt</li>
-        <li><code>font-family</code> — betűtípus (pl. <code>sans-serif</code>)</li>
-        <li><code>text-align: center</code> — középre igazítás</li>
-        <li><code>text-decoration: underline</code> — aláhúzás</li>
-        <li><code>text-transform: uppercase</code> — csupa nagybetű</li>
-        <li><code>letter-spacing</code> — betűk közötti tér</li>
-        <li><code>line-height</code> — sormagasság</li>
-      </ul>`,
+      Wordben kattintgatsz a formázógombokra – CSS-ben ugyanezt tulajdonságokkal írjuk le.
+      Íme a legfontosabb szöveg-tulajdonságok:
+      <br><br>
+      <code>color: red</code> — szöveg színe (szín neve, #hex kód, rgb() stb.)<br>
+      <code>font-size: 18px</code> — betűméret<br>
+      <code>font-weight: bold</code> — félkövér (vagy: 400 = normál, 700 = félkövér)<br>
+      <code>font-style: italic</code> — dőlt szöveg<br>
+      <code>font-family: sans-serif</code> — betűtípus; több fallback-et is adj meg: <code>'Arial', sans-serif</code><br>
+      <code>text-align: center</code> — vízszintes igazítás (left, center, right, justify)<br>
+      <code>text-decoration: underline</code> — aláhúzás (none = eltünteti, pl. linkek aláhúzásánál)<br>
+      <code>text-transform: uppercase</code> — nagybetűs (lowercase = kisbetűs, capitalize = minden szó nagy)<br>
+      <code>letter-spacing: 2px</code> — betűk közötti tér (pl. feliratokhoz elegáns hatás)<br>
+      <code>line-height: 1.6</code> — sormagasság szorzóval (1 = normál, 1.5–1.8 = olvasható folyószöveg)`,
     question:'Melyik CSS tulajdonság igazítja középre a szöveget?',
     options:['font-align: center','text-align: center','align: center','center: text'],
     correct:1,
@@ -515,15 +519,15 @@ p { font-size: 1.125___; }
     type:'fillin',
     title:'Szöveg stílus tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Emlékeztető:
+      Összefoglalás és jellemző példák:
       <ul>
-        <li><code>font-size: 32px</code> — betűméret</li>
-        <li><code>text-align: center</code> — középre igazítás</li>
-        <li><code>font-weight: bold</code> — félkövér</li>
-        <li><code>text-transform: uppercase</code> — nagybetűs</li>
-        <li><code>letter-spacing: 2px</code> — betűköz</li>
-        <li><code>line-height: 1.6</code> — sormagasság (szorzó)</li>
-      </ul>`,
+        <li><code>text-align: center</code> — vízszintes igazítás (left / center / right / justify)</li>
+        <li><code>text-transform: uppercase</code> — nagybetűs (csak vizuálisan, a HTML szövege nem változik)</li>
+        <li><code>line-height: 1.7</code> — sormagasság; szorzóval adjuk meg, nem px-ben! 1.6–1.8 kényelmes folyószövegnél</li>
+        <li><code>font-weight: bold</code> — félkövér; vagy szám: 400 = normál, 700 = félkövér, 900 = extra vastag</li>
+      </ul>
+      <em>Tipp:</em> a <code>text-align</code> csak blokk szintű elemeken (pl. p, h1, div) működik –
+      inline elemeken (pl. span) nem hat.`,
     codeTemplate:
 `h1 {
   font-size: 36px;
@@ -595,16 +599,21 @@ p {
     type:'quiz',
     title:'Margin és padding különbsége',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Minden HTML elem egy dobozként viselkedik. A doboznak négy rétege van (kívülről befelé):
+      Képzeld el egy képkeretet: belül a kép (tartalom), körülötte a vastag fa keret (border),
+      a kép és a keret között kis hely (padding), és a keret meg a szomszéd kép között szabad fal (margin).
+      Minden HTML elem pont így épül fel – ezt hívjuk <strong>doboz modellnek</strong>:
       <br><br>
-      <code>margin</code> → szegély → <code>padding</code> → tartalom
+      <strong>Kívülről befelé haladva:</strong><br>
+      <code>margin</code> — külső tér: elválaszt a szomszéd elemektől<br>
+      <code>border</code> — a doboz kerete (látható szegély)<br>
+      <code>padding</code> — belső tér: a tartalom és a keret között hagy helyet<br>
+      tartalom — ami ténylegesen benne van (szöveg, kép stb.)
       <br><br>
-      <ul>
-        <li><strong>margin</strong> — kívüli tér, a szomszédos elemektől való távolság</li>
-        <li><strong>border</strong> — a keret maga</li>
-        <li><strong>padding</strong> — a tartalom és a keret közötti belső tér</li>
-        <li><strong>box-sizing: border-box</strong> — a padding és border beleszámít a megadott szélességbe</li>
-      </ul>`,
+      <strong>Fontos: <code>box-sizing: border-box</code></strong><br>
+      Ha <code>width: 300px</code>-t adsz meg, alapból csak a tartalom 300px –
+      a padding és border még hozzáadódik, meglepő lehet!
+      A <code>box-sizing: border-box</code> hatására a megadott szélességbe <em>beleszámít</em> a padding és border is.
+      Ezért szoktak minden elemre beállítani: <code>* { box-sizing: border-box; }</code>`,
     question:'Mit jelent a padding?',
     options:[
       'A doboz körüli külső tér, a szomszédos elemektől való távolság',
@@ -621,14 +630,19 @@ p {
     type:'fillin',
     title:'Doboz modell + box-sizing',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Rövidített és hosszú forma:
-      <ul>
-        <li><code>margin: 10px</code> — mind a 4 oldalon 10px</li>
-        <li><code>padding: 10px 20px</code> — fent-lent 10px, jobbra-balra 20px</li>
-        <li><code>width: 300px</code> — szélesség</li>
-        <li><code>border: 2px solid #ccc</code> — keret</li>
-        <li><code>box-sizing: border-box</code> — a padding beleszámít a szélességbe</li>
-      </ul>`,
+      A margin és padding megadható rövidítve (shorthand) vagy oldalanként:
+      <br><br>
+      <code>margin: 10px</code> — mind a 4 oldalon 10px<br>
+      <code>margin: 10px 20px</code> — fent-lent 10px, jobbra-balra 20px<br>
+      <code>margin: 10px 15px 20px 5px</code> — fent, jobb, lent, bal (óramutató járása)<br>
+      <code>margin: 0 auto</code> — fent-lent nulla, jobbra-balra auto = <strong>vízszintesen középre</strong>
+      <br><br>
+      <code>border: 2px solid #ccc</code> — keret: vastagság, stílus (solid/dashed/dotted), szín
+      <br><br>
+      <em>Szélességgel kapcsolatos:</em><br>
+      <code>width: 300px</code> — az elem szélessége<br>
+      <code>max-width: 600px</code> — maximum szélesség (mobilon kisebb marad)<br>
+      <code>box-sizing: border-box</code> — a padding és border benne van a width-ben (ajánlott mindig bekapcsolni)`,
     codeTemplate:
 `*, *::before, *::after {
   ___: border-box;  /* padding ne növelje a szélességet */
@@ -702,15 +716,20 @@ p {
     type:'quiz',
     title:'Elem, osztály és ID szelektorok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Négyféle alapszelektor:
-      <ul>
-        <li><strong>Univerzális</strong>: <code>* { }</code> — minden elemre vonatkozik</li>
-        <li><strong>Elem</strong>: <code>p { }</code> — minden <code>&lt;p&gt;</code> elemre</li>
-        <li><strong>Osztály</strong>: <code>.kiemelt { }</code> — minden <code>class="kiemelt"</code> elemre (pont!)</li>
-        <li><strong>ID</strong>: <code>#fooldal { }</code> — egy konkrét <code>id="fooldal"</code> elemre (#)</li>
-      </ul>
-      <strong>Specificitás</strong> (erősség sorrendje): ID > osztály > elem > univerzális.<br>
-      Ha többféle szabály vonatkozik egy elemre, az erősebb nyer.`,
+      A CSS-ben meg kell adni, <em>melyik</em> HTML elemre vonatkozzon a stílusszabály.
+      Ezt a "célzást" végzi a <strong>szelektor</strong> (selector = kiválasztó).
+      <br><br>
+      <strong>A négy alapvető szelektor:</strong><br>
+      <code>*</code> — mindenre vonatkozik (univerzális): pl. <code>* { box-sizing: border-box; }</code><br>
+      <code>p</code> — az összes <code>&lt;p&gt;</code> elemre<br>
+      <code>.kiemelt</code> — minden <code>class="kiemelt"</code> elemre (pont jel + osztálynév)<br>
+      <code>#fooldal</code> — egy konkrét <code>id="fooldal"</code> elemre (kettőskereszt + id)
+      <br><br>
+      <strong>Melyik a "legerősebb"? – Specificitás:</strong><br>
+      Ha több szabály vonatkozik ugyanarra az elemre, a legerősebb érvényesül:<br>
+      ID (#) > osztály (.) > elem (p, h1…) > univerzális (*)<br>
+      Pl. ha egy <code>&lt;p class="kek"&gt;</code>-re vonatkozik <code>p { color: red }</code> és <code>.kek { color: blue }</code>,
+      a kék nyer, mert az osztály-szelektor erősebb.`,
     question:'Hogyan hivatkozunk a class="kiemelt" osztályra CSS-ben?',
     options:['kiemelt { }','#kiemelt { }','.kiemelt { }','@kiemelt { }'],
     correct:2,
@@ -722,14 +741,18 @@ p {
     type:'fillin',
     title:'A négy alapszelektor',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Összefoglalás:
+      Szelektor szintaxis összefoglalás:
       <ul>
-        <li><code>*</code> — univerzális (minden elem)</li>
-        <li><code>p</code> — elem szelektor</li>
-        <li><code>.kiemelt</code> — osztály szelektor (pont + osztálynév)</li>
-        <li><code>#fooldal</code> — ID szelektor (kettőskereszt + ID)</li>
+        <li><code>*</code> — mindenre (csillag): ritkán használjuk, de box-sizing-nál hasznos</li>
+        <li><code>p</code> — elem szelektor: csak a tag nevét írjuk</li>
+        <li><code>.kiemelt</code> — osztály szelektor: <strong>pont</strong> + osztálynév</li>
+        <li><code>#fooldal</code> — ID szelektor: <strong>#</strong> + az id értéke</li>
       </ul>
-      Kombináció is lehetséges: <code>p.kiemelt</code> csak az olyan <code>&lt;p&gt;</code> elemre vonatkozik, amelynek <code>class="kiemelt"</code>.`,
+      <strong>Kombinálás:</strong><br>
+      <code>p.kiemelt</code> — csak az olyan <code>&lt;p&gt;</code> elemre vonatkozik, amelynek <code>class="kiemelt"</code><br>
+      <code>nav a</code> — csak a <code>&lt;nav&gt;</code> belsejében lévő <code>&lt;a&gt;</code> linkekre (leszármazott szelektor)
+      <br><br>
+      <em>Emlékező trükk:</em> pont = class, kettőskereszt = id – pont a "csoportnévhez", kettőskereszt az "egyedi nevekhez".`,
     codeTemplate:
 `/* Minden elemre vonatkozik */
 ___ {
@@ -813,15 +836,17 @@ ___ {
     type:'quiz',
     title:'Lekerekített sarkok és árnyék',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Néhány hasznos CSS tulajdonság:
-      <ul>
-        <li><code>background-color: #f0f4f8</code> — háttérszín</li>
-        <li><code>border: 2px solid #3b82f6</code> — keret (vastagság stílus szín)</li>
-        <li><code>border-radius: 8px</code> — lekerekített sarkok</li>
-        <li><code>border-radius: 50%</code> — tökéletes kör</li>
-        <li><code>box-shadow: 0 4px 12px rgba(0,0,0,0.1)</code> — árnyék</li>
-        <li><code>opacity: 0.7</code> — átlátszóság (0=láthatatlan, 1=teljes)</li>
-      </ul>`,
+      Ma a weboldalak letisztult, elegáns megjelenésének néhány "titka":
+      <br><br>
+      <code>background-color: #f0f4f8</code> — háttérszín (hex kód, rgb, color name stb.)<br>
+      <code>border: 2px solid #3b82f6</code> — keret; három értéket vár: vastagság, stílus (solid/dashed/dotted), szín<br>
+      <code>border-radius: 8px</code> — lekerekített sarkok; minél nagyobb a szám, annál gömbölyűbb<br>
+      <code>border-radius: 50%</code> — tökéletes kör (ha a doboz négyzet alapú)<br>
+      <code>box-shadow: 0 4px 12px rgba(0,0,0,0.1)</code> — árnyék; értékek: X-eltolás Y-eltolás elmosás szín<br>
+      <code>opacity: 0.7</code> — átlátszóság: 0 = teljesen láthatatlan, 1 = teljesen opaque (0.5 = félig látszik)
+      <br><br>
+      <em>Tipp:</em> a lekerekített sarkokkal és a box-shadow-val "modern kártya" hatás érhető el –
+      ez a mai weboldalak egyik leggyakoribb stíluseleme.`,
     question:'Melyik CSS tulajdonság kerekíti le a doboz sarkait?',
     options:['border-style','border-width','border-color','border-radius'],
     correct:3,
@@ -833,14 +858,15 @@ ___ {
     type:'fillin',
     title:'Háttér, szegély, opacity tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Tipikus kártya és gomb stílushoz:
+      Tipikus gomb és profilkép stílus a CSS-ben:
       <ul>
-        <li><code>background-color</code> — háttérszín</li>
-        <li><code>border</code> — keret (none = nincs)</li>
-        <li><code>border-radius</code> — lekerekítés</li>
-        <li><code>opacity</code> — átlátszóság (0–1 között)</li>
-        <li><code>box-shadow</code> — árnyék</li>
-      </ul>`,
+        <li><code>background-color</code> — háttérszín (gomboknál a jellemző kék, zöld stb.)</li>
+        <li><code>border: none</code> — keret törlése (a <code>&lt;button&gt;</code>-oknak van alapból keret)</li>
+        <li><code>border-radius: 8px</code> — lekerekített sarok (gomboknál jellemző)</li>
+        <li><code>border-radius: 50%</code> — tökéletes kör (profilképeknél)</li>
+        <li><code>opacity: 0.5</code> — 50%-os láthatóság (halvány, "disabled" hatáshoz)</li>
+      </ul>
+      <em>Tipp:</em> egy gomb alapelemei általában: <code>background-color</code> + <code>color: white</code> + <code>border: none</code> + <code>border-radius</code> + <code>padding</code> + <code>cursor: pointer</code>`,
     codeTemplate:
 `.gomb {
   ___: #3b82f6;
@@ -927,19 +953,18 @@ ___ {
     type:'quiz',
     title:'Display értékek',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <code>display</code> határozza meg, hogyan jelenik meg az elem:
-      <ul>
-        <li><code>block</code> — teljes sort foglalja el (pl. <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>)</li>
-        <li><code>inline</code> — csak a tartalmának szélességét foglalja (pl. <code>&lt;span&gt;</code>) – nem adható width/height</li>
-        <li><code>inline-block</code> — sorban marad, DE beállítható width/height</li>
-        <li><code>none</code> — el van rejtve, nem foglal helyet</li>
-      </ul>
-      A <code>float</code> az elemet balra vagy jobbra "úsztatja", a szöveg köré folyik:
-      <ul>
-        <li><code>float: left</code> — balra úszik</li>
-        <li><code>float: right</code> — jobbra úszik</li>
-        <li><code>float: none</code> — nincs úsztatás</li>
-      </ul>`,
+      A <code>display</code> tulajdonság mondja meg: hogyan "viselkedjen" az elem a többi elem között?
+      <br><br>
+      <code>block</code> — teljes sort foglalja el, a következő elem új sorban kezdődik.<br>
+      &nbsp;&nbsp;Pl. <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code> – ezek mind block elemek.<br><br>
+      <code>inline</code> — csak annyit foglal, amennyi a tartalma – sorban marad a többi elemmel.<br>
+      &nbsp;&nbsp;Pl. <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>. Fontos: <strong>width és height nem adható nekik!</strong><br><br>
+      <code>inline-block</code> — legjobb a kettőből: sorban marad, DE beállítható width/height.<br>
+      &nbsp;&nbsp;Pl. gomboknál, ikonoknál hasznos.<br><br>
+      <code>none</code> — az elem teljesen eltűnik, helyet sem foglal (mintha nem lenne ott).
+      <br><br>
+      <strong>Float:</strong> régebbi technika – az elemet bal- vagy jobbra "löki", és a szöveg körbefolyik.<br>
+      <code>float: left</code> / <code>float: right</code>. Ha float-ot használsz, a szülőre adj <code>overflow: hidden</code>-t!`,
     question:'Melyik display érték teszi az elemet sorba állíthatóvá ÉS beállítható width/height-tal?',
     options:[
       'display: block',
@@ -956,14 +981,16 @@ ___ {
     type:'fillin',
     title:'Display és float tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Összefoglalás:
+      Összefoglalás – mikor mit használj:
       <ul>
-        <li><code>display: none</code> — el van rejtve</li>
-        <li><code>display: block</code> — teljes sor</li>
-        <li><code>display: inline-block</code> — sorban, de méretezhetõ</li>
-        <li><code>float: left</code> — balra úszik, szöveg köré folyik</li>
-        <li><code>overflow: hidden</code> — clearfix helyett, lezárja a floatot</li>
-      </ul>`,
+        <li><code>display: none</code> — eltüntetés (pl. menü bezárva, hirdetés elrejtve)</li>
+        <li><code>display: block</code> — teljes sort foglal; alapértelmezés a div, p, h1-nél</li>
+        <li><code>display: inline-block</code> — sorban marad, de méretezhető (gombok, badge-ek)</li>
+        <li><code>float: left</code> — balra "úszik", szöveg körbefolyja (pl. cikkfotó)</li>
+        <li><code>overflow: hidden</code> — lezárja a float-ot a szülőn (clearfix helyett, egyszerűbb)</li>
+      </ul>
+      <em>Megjegyzés:</em> ma már a Flexbox és Grid sokkal kényelmesebb az elrendezésnél mint a float,
+      de a float-ot régi kódokban még mindig láthatod.`,
     codeTemplate:
 `/* Elrejtve, nem foglal helyet */
 .rejtett { display: ___; }
@@ -1064,14 +1091,17 @@ ___ {
     type:'quiz',
     title:'position értékek',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <code>position</code> meghatározza, hogyan helyezkedik el az elem:
-      <ul>
-        <li><code>static</code> — alapértelmezett, a normál folyamban van</li>
-        <li><code>relative</code> — saját helyzetéhez képest tolható (<code>top</code>, <code>left</code>)</li>
-        <li><code>absolute</code> — a legközelebbi nem-static szülőhöz képest pozicionálva, kikerül a folyamból</li>
-        <li><code>fixed</code> — a böngészőablakhoz rögzített, görgetéskor sem mozdul</li>
-      </ul>
-      A <code>z-index</code> a rétegzés sorrendjét adja meg (nagyobb = előrébb).`,
+      Alapesetben az elemek egymás után következnek – de néha szeretnénk pontosan meghatározni,
+      hova kerüljön egy elem. Erre való a <code>position</code>:
+      <br><br>
+      <code>static</code> — alapértelmezett; az elem a normál folyamban van, nem tolható el<br>
+      <code>relative</code> — saját "eredeti" helyzetéhez képest tolható: <code>top: 10px</code> = 10px-szel lejjebb kerül<br>
+      <code>absolute</code> — a legközelebbi <code>relative</code> szülőhöz képest pozicionálódik,
+      <em>kikerül a normál folyamból</em> (a többi elem úgy viselkedik, mintha nem lenne ott)<br>
+      <code>fixed</code> — a <em>böngészőablakhoz</em> rögzített, görgetéskor sem mozdul (fix menü, sütiértesítő)
+      <br><br>
+      <code>z-index</code> — rétegzési sorrend: ha elemek átfednek, a nagyobb z-index kerül előre.<br>
+      <em>Fontos:</em> a z-index csak <code>position</code> ≠ <code>static</code> esetén működik!`,
     question:'Melyik position értékkel rögzíthetünk egy fejlécet, hogy görgetéskor sem mozduljon el?',
     options:[
       'position: static',
@@ -1088,13 +1118,19 @@ ___ {
     type:'fillin',
     title:'Pozicionálás tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A pozicionáláshoz ezeket használjuk:
+      A pozicionálás tulajdonságai:
       <ul>
-        <li><code>position: relative/absolute/fixed</code></li>
-        <li><code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code> — eltolás</li>
-        <li><code>z-index</code> — rétegzési sorrend (nagyobb = előrébb)</li>
-        <li>Az <code>absolute</code> szülőjének <code>position: relative</code> kell!</li>
-      </ul>`,
+        <li><code>position: relative</code> / <code>absolute</code> / <code>fixed</code> — a mód megadása</li>
+        <li><code>top: 10px</code> — felülről 10px-re; <code>bottom: 0</code> — alulhoz igazítva</li>
+        <li><code>left: 20px</code> — balról 20px-re; <code>right: 0</code> — jobbhoz igazítva</li>
+        <li><code>z-index: 100</code> — rétegzés: nagyobb szám = előrébb</li>
+      </ul>
+      <strong>Leggyakoribb hiba:</strong> <code>absolute</code>-nál a szülőre <em>kötelező</em>
+      <code>position: relative</code>-t adni, különben az elem az egész oldalhoz képest pozicionálódik!<br>
+      <br>
+      <em>Tipikus felhasználás:</em><br>
+      Badge (pl. "ÚJ" felirat egy kártyán) → <code>absolute</code> + <code>top</code> + <code>right</code><br>
+      Fix fejléc → <code>fixed</code> + <code>top: 0</code> + <code>width: 100%</code>`,
     codeTemplate:
 `/* Saját helyzetéhez képest eltolva */
 .tolt {
@@ -1206,18 +1242,21 @@ ___ {
     type:'quiz',
     title:'Mi a Flexbox?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>Flexbox</strong> a CSS elrendezési rendszere – segít az elemeket sorba vagy oszlopba rendezni.
+      Gondolj bele: hogyan tudod CSS-ben egymás mellé rakni a gombokat, a navigációs linkeket, vagy a kártyákat?
+      Régebben ez bonyolult float és inline-block trükkökkel ment – ma ott a <strong>Flexbox</strong>.
       <br><br>
-      Bekapcsolása: <code>display: flex</code> a szülő elemen.
+      Egyetlen sor: <code>display: flex</code> a szülő elemen →
+      az összes gyermek elem automatikusan sorba rendeződik, és rugalmasan igazítható.
       <br><br>
-      Legfontosabb tulajdonságok:
+      <strong>Legfontosabb flexbox tulajdonságok</strong> (a szülő elemen):
       <ul>
-        <li><code>flex-direction: row</code> — vízszintes sor (ez az alap)</li>
-        <li><code>flex-direction: column</code> — függőleges oszlop</li>
-        <li><code>justify-content: center</code> — vízszintes igazítás</li>
-        <li><code>align-items: center</code> — függőleges igazítás</li>
-        <li><code>gap: 16px</code> — elemek közötti tér</li>
-        <li><code>flex-wrap: wrap</code> — sortörés, ha nem fér el</li>
+        <li><code>flex-direction: row</code> — vízszintes sor (ez az alapértelmezett)</li>
+        <li><code>flex-direction: column</code> — függőleges oszlop (pl. mobil nézet)</li>
+        <li><code>justify-content: center</code> — főtengely mentén igazít (sor esetén vízszintesen)</li>
+        <li><code>justify-content: space-between</code> — szélekre igazít, egyenlő rés közöttük</li>
+        <li><code>align-items: center</code> — kereszttengely mentén igazít (sor esetén függőlegesen)</li>
+        <li><code>gap: 16px</code> — rés az elemek között (régebben margin-nal kellett csinálni)</li>
+        <li><code>flex-wrap: wrap</code> — ha nem fér el, következő sorba töri az elemeket</li>
       </ul>`,
     question:'Melyik CSS tulajdonság kapcsolja be a Flexbox elrendezést?',
     options:['flex: on','display: flex','layout: flex','flex-mode: active'],
@@ -1230,14 +1269,15 @@ ___ {
     type:'fillin',
     title:'Flexbox tulajdonságok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Tipikus Flexbox navigáció:
+      A Flexbox navigáció a legtöbb weboldal alapja – négy sort kell írni:
       <ul>
-        <li><code>display: flex</code> — bekapcsolja</li>
-        <li><code>justify-content</code> — vízszintes elosztás</li>
-        <li><code>align-items</code> — függőleges igazítás</li>
-        <li><code>gap</code> — rés az elemek között</li>
-        <li><code>flex-wrap: wrap</code> — sortörés engedélyezése</li>
-      </ul>`,
+        <li><code>display: flex</code> — bekapcsolja; a nav linkek egymás mellé kerülnek</li>
+        <li><code>justify-content: space-between</code> — szélekre igazít (logo bal, menü jobb)</li>
+        <li><code>align-items: center</code> — függőlegesen középre igazítja a linkeket</li>
+        <li><code>gap: 12px</code> — közbülső rés az egyes linkek között</li>
+      </ul>
+      <em>Tipp: justify-content értékei:</em><br>
+      <code>flex-start</code> (bal) · <code>center</code> (középre) · <code>flex-end</code> (jobb) · <code>space-between</code> (szélekre) · <code>space-around</code> (egyenlő rések mindenhol)`,
     codeTemplate:
 `.navigáció {
   ___: flex;
@@ -1311,16 +1351,18 @@ ___ {
     type:'quiz',
     title:'CSS színfüggvények és calc()',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      CSS-ben vannak beépített függvények:
-      <ul>
-        <li><code>rgb(255, 0, 0)</code> — piros, zöld, kék (0–255)</li>
-        <li><code>rgba(255, 0, 0, 0.5)</code> — ugyanaz + alfa (átlátszóság, 0–1)</li>
-        <li><code>hsl(200, 80%, 50%)</code> — árnyalat, telítettség, világosság</li>
-        <li><code>calc(100% - 40px)</code> — dinamikus számítás (vegyítheti az egységeket!)</li>
-        <li><code>url("kep.jpg")</code> — erőforrás hivatkozás (pl. háttérkép)</li>
-      </ul>
-      A <code>:hover</code> pszeudo-osztály az egér rámutatásakor aktiválódik.<br>
-      A <code>transition</code> sima átmenetet biztosít.`,
+      A CSS-ben vannak beépített <strong>függvények</strong> – zárójelbe írt értékek, amik számítást vagy speciális formátumot jelölnek:
+      <br><br>
+      <code>rgb(255, 0, 0)</code> — piros, zöld, kék értékek (0–255): így adunk meg tetszőleges színt<br>
+      <code>rgba(255, 0, 0, 0.5)</code> — ugyanaz + alfa csatorna (0=átlátszó, 1=opaque). Hátterekkel szuper!<br>
+      <code>hsl(200, 80%, 50%)</code> — árnyalat (0–360°), telítettség, világosság. Intuitívabb szerkesztéshez.<br>
+      <code>calc(100% - 40px)</code> — dinamikus számítás! Vegyítheti a % és px egységeket.<br>
+      &nbsp;&nbsp;Pl. <code>width: calc(100% - 32px)</code> = teljes szélességből kivonunk 32px-t<br>
+      <code>url("kep.jpg")</code> — fájlhivatkozás (háttérképhez stb.)
+      <br><br>
+      <strong>:hover és transition:</strong><br>
+      <code>.gomb:hover { ... }</code> — az egér rámutatásakor aktiválódó stílus<br>
+      <code>transition: 0.3s</code> — simán változik át az eredeti és a hover stílus között (0.3 másodperc alatt)`,
     question:'Melyik CSS értékkel adunk meg félig átlátszó kék háttérszínt?',
     options:[
       'rgb(0, 0, 255)',
@@ -1337,14 +1379,16 @@ ___ {
     type:'fillin',
     title:'Hover, transition és CSS függvények',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Interaktív elem:
+      Egy jó gomb stílusának összetevői:
       <ul>
-        <li><code>transition: 0.3s</code> — sima átmenet 0.3 mp-ig</li>
-        <li><code>cursor: pointer</code> — kézfej kurzor</li>
-        <li><code>:hover</code> — rámutatáskor érvényes stílus</li>
-        <li><code>rgba(0,0,0,0.15)</code> — félig átlátszó árnyék</li>
-        <li><code>calc(100% - 32px)</code> — dinamikus szélességszámítás</li>
-      </ul>`,
+        <li><code>transition: 0.3s</code> — sima animáció, amikor hover-re vált; az idő másodpercben</li>
+        <li><code>cursor: pointer</code> — kézfej kurzor mutatja, hogy kattintható az elem</li>
+        <li><code>.gomb:hover { ... }</code> — az egér rámutatásakor érvényes stílus</li>
+        <li><code>rgba(0,0,0,0.15)</code> — félig átlátszó, sötét árnyék a box-shadow-ban</li>
+        <li><code>calc(100% - 32px)</code> — a szülő teljes szélességéből 32px kivonva (tipikus mobilos trükk)</li>
+      </ul>
+      <em>Tipp:</em> a hover-t nem kell kurzorhoz kötni – más pszeudo-osztályok is vannak:<br>
+      <code>:focus</code> (kijelölve, pl. input-on), <code>:active</code> (kattintás közben), <code>:first-child</code> (első gyerek elem)`,
     codeTemplate:
 `.gomb {
   background-color: #3b82f6;
@@ -1971,7 +2015,7 @@ p { color: ___; }`,
 <body>
   <div class="container">
     <div class="doboz">200px × 100px doboz (border-box)</div>
-    <img class="kep" src="../Képek_fejlesztéshez/kiscica.jpg" alt="kép">
+    <img class="kep" src="img/kiscica.jpg" alt="kép">
     <div class="min-doboz">Ez legalább 100px magas lesz, még ha kevés tartalom is van benne.</div>
   </div>
 </body>
