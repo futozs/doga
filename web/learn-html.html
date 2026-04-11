@@ -1093,6 +1093,149 @@ const tasks = [
       { label:'Van komment a &lt;body&gt; belsejében',        fn:(h)=>/\<body[^>]*\>[\s\S]*?<!--/.test(h) },
       { label:'Legalább egy elem ki van kapcsolva kommenttel',fn:(h)=>(/<!--[\s\S]*?<[a-z][\s\S]*?-->/).test(h) }
     ]
+  },
+
+  // ── BLOKK 10: Űrlapok ─────────────────────────────────── ★ VIZSGA
+  {
+    id:29, block:10, blockName:'Űrlapok', emoji:'📬', exam:true,
+    type:'quiz',
+    title:'Hogyan működik az online űrlap?',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Gondolj bele: minden regisztrációs oldal, bejelentkezési felület, Google Form – mind ugyanazt csinálja:
+      összegyűjti az adataidat, és elküldi valahova (egy szerverre). Ezt teszi a HTML <strong>&lt;form&gt;</strong> elem.
+      <br><br>
+      A <code>&lt;form&gt;</code> a "tartó doboz" – minden mező és gomb ide kerül belülre. Két fontos attribútuma van:
+      <ul>
+        <li><code>action="..."</code> — <strong>hova küldjük?</strong> A szerver URL-je vagy egy PHP fájl neve.</li>
+        <li><code>method="get"</code> — az adatok az <strong>URL-ben jelennek meg</strong>: <code>?nev=Kata&kor=16</code> (keresőmezőknél bevett szokás)</li>
+        <li><code>method="post"</code> — az adatok <strong>rejtve, a háttérben</strong> mennek el (jelszóknál kötelező!)</li>
+      </ul>
+      <br>
+      Az adatmezőket jelölő elemek:
+      <ul>
+        <li><code>&lt;label&gt;</code> — a mező előtti felirat. A <code>for="..."</code> attribútuma az input <code>id</code>-jára mutat – így rákattintva az input aktívvá válik.</li>
+        <li><code>&lt;input&gt;</code> — beviteli mező (páratlan tag – nincs záró tagje!). A <code>type</code> attribútum dönti el, milyen legyen.</li>
+        <li><code>&lt;textarea&gt;</code> — többsoros szövegmező (pl. üzenetek, megjegyzések)</li>
+        <li><code>&lt;select&gt;</code> + <code>&lt;option&gt;</code> — legördülő lista</li>
+      </ul>`,
+    question:'Melyik method értéket használd jelszó vagy bizalmas adat küldésekor?',
+    options:[
+      'get – az URL-ben mutatja az adatokat',
+      'post – az adatok rejtve, a háttérben mennek',
+      'send – ez a biztonságos mód',
+      'action – ez adja meg a titkosítást'
+    ],
+    correct:1,
+    feedback:'✅ Pontosan! A <code>post</code> metódusnál az adatok nem jelennek meg az URL-ben – a jelszó nem látszódik a böngésző sávjában. A <code>get</code>-nél minden adat az URL végére kerül.'
+  },
+
+  {
+    id:30, block:10, blockName:'Űrlapok', emoji:'📬', exam:true,
+    type:'fillin',
+    title:'Input típusok és a gomb',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Az <code>&lt;input&gt;</code> elem "alakváltó": a <code>type</code> attribútum határozza meg, milyen beviteli mezőként jelenik meg:
+      <br><br>
+      <table style="width:100%;border-collapse:collapse;font-size:0.84rem">
+        <tr style="color:#94a3b8;border-bottom:1px solid #1e293b"><th style="text-align:left;padding:4px 6px">type="..."</th><th style="text-align:left;padding:4px 6px">Mit mutat?</th></tr>
+        <tr><td style="padding:4px 6px"><code>text</code></td><td style="padding:4px 6px">Sima egysoros szövegmező</td></tr>
+        <tr><td style="padding:4px 6px"><code>email</code></td><td style="padding:4px 6px">E-mail mező (a @ jelet ellenőrzi)</td></tr>
+        <tr><td style="padding:4px 6px"><code>password</code></td><td style="padding:4px 6px">Jelszómező (pontokkal takarja a betűket)</td></tr>
+        <tr><td style="padding:4px 6px"><code>number</code></td><td style="padding:4px 6px">Csak számot fogad el, nyilakkal léptethető</td></tr>
+        <tr><td style="padding:4px 6px"><code>date</code></td><td style="padding:4px 6px">Dátumválasztó naptár</td></tr>
+        <tr><td style="padding:4px 6px"><code>checkbox</code></td><td style="padding:4px 6px">Jelölőnégyzet – be/ki pipálható</td></tr>
+        <tr><td style="padding:4px 6px"><code>radio</code></td><td style="padding:4px 6px">Választógomb – azonos name-ű csoportból egyszerre csak egy választható</td></tr>
+        <tr><td style="padding:4px 6px"><code>submit</code></td><td style="padding:4px 6px">Beküldő gomb</td></tr>
+      </table>
+      <br>
+      Két hasznos attribútum:
+      <ul>
+        <li><code>placeholder="..."</code> — szürke segítőszöveg a mezőben (pl. "pl. Gipsz Jakab")</li>
+        <li><code>required</code> — kötelező kitölteni, különben nem küldi el a form-ot</li>
+      </ul>
+      <br>
+      <strong>Gomb kétféleképpen:</strong><br>
+      Régebbi mód: <code>&lt;input type="submit" value="Küldés"&gt;</code> – a gomb szövege a <code>value</code>-ban<br>
+      Modernebb mód: <code>&lt;button type="submit"&gt;Küldés&lt;/button&gt;</code> – a szöveg a nyitó és záró tag között van, és HTML is kerülhet bele (pl. ikon)`,
+    codeTemplate:
+`<form action="bekuldes.php" method="___">
+
+  <label for="nev">Teljes neve:</label>
+  <input type="___" id="nev" name="nev" placeholder="pl. Gipsz Jakab">
+
+  <label for="email">E-mail:</label>
+  <input type="___" id="email" name="email" required>
+
+  <label for="jelszo">Jelszó:</label>
+  <input type="___" id="jelszo" name="jelszo">
+
+  <label>
+    <input type="___" name="beleegyezem"> Elfogadom a feltételeket
+  </label>
+
+  <___ type="submit">Regisztráció</button>
+
+</form>`,
+    blanks:[
+      { answer:'post',     hint:'Rejtve küldi az adatokat – jelszónál, bejelentkezésnél kötelező' },
+      { answer:'text',     hint:'Sima egysoros szövegmező – ez a legelterjedtebb' },
+      { answer:'email',    hint:'E-mail mező – ellenőrzi a @ jelet' },
+      { answer:'password', hint:'Jelszómező – pontokkal takarja a betűket' },
+      { answer:'checkbox', hint:'Jelölőnégyzet – be/ki pipálható' },
+      { answer:'button',   hint:'Modernebb gombtag – a szövege a tag-ek között van' }
+    ]
+  },
+
+  {
+    id:31, block:10, blockName:'Űrlapok', emoji:'📬', exam:true,
+    type:'monaco',
+    title:'Készíts bejelentkezési űrlapot!',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Készíts egy bejelentkezési oldalt:
+      <ul>
+        <li><code>&lt;form method="post"&gt;</code> — az adatok rejtve mennek</li>
+        <li><strong>E-mail mező:</strong> <code>&lt;input type="email"&gt;</code> — előtte <code>&lt;label&gt;</code></li>
+        <li><strong>Jelszó mező:</strong> <code>&lt;input type="password"&gt;</code> — előtte <code>&lt;label&gt;</code></li>
+        <li>Legalább <strong>1 mező legyen kötelező</strong> (<code>required</code>)</li>
+        <li><strong>Beküldő gomb</strong>: <code>&lt;input type="submit"&gt;</code> <em>vagy</em> <code>&lt;button type="submit"&gt;</code></li>
+      </ul>
+      💡 Tipp: a <code>&lt;label for="..."&gt;</code> és az <code>&lt;input id="..."&gt;</code> értéke legyen egyforma,
+      hogy kattintásra automatikusan az a mező aktívvá váljon!`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Bejelentkezés</title>
+  <style>
+    body { font-family: sans-serif; max-width: 360px; margin: 40px auto; background: #f8fafc; }
+    h1 { color: #1e293b; margin-bottom: 20px; }
+    label { display: block; margin-top: 14px; font-weight: bold; color: #334155; }
+    input[type="email"], input[type="password"] {
+      width: 100%; padding: 9px 11px; margin-top: 5px;
+      border: 1.5px solid #cbd5e1; border-radius: 7px; font-size: 1rem;
+    }
+    button, input[type="submit"] {
+      margin-top: 20px; padding: 10px 24px;
+      background: #3b82f6; color: white;
+      border: none; border-radius: 7px; cursor: pointer; font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bejelentkezés</h1>
+  <!-- Írj ide egy form-ot! -->
+
+</body>
+</html>`,
+    checks:[
+      { label:'Van &lt;form method="post"&gt;',                                    fn:(h,d)=>!!d.querySelector('form[method="post"]') },
+      { label:'Van e-mail mező (&lt;input type="email"&gt;)',                      fn:(h,d)=>!!d.querySelector('input[type="email"]') },
+      { label:'Van jelszó mező (&lt;input type="password"&gt;)',                   fn:(h,d)=>!!d.querySelector('input[type="password"]') },
+      { label:'Legalább 1 &lt;label&gt; a form-ban',                              fn:(h,d)=>d.querySelectorAll('form label').length>=1 },
+      { label:'Van required attribútum legalább egy mezőn',                       fn:(h,d)=>!!d.querySelector('form [required]') },
+      { label:'Van beküldő gomb (input[type=submit] vagy button)',                fn:(h,d)=>!!(d.querySelector('input[type="submit"]')||d.querySelector('button')) }
+    ]
   }
 
 ];
@@ -1102,10 +1245,10 @@ const tasks = [
 // ══════════════════════════════════════════════════════════════════════
 
 const u = JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
-const SKEY = 'lhtml_v6';
+const SKEY = 'lhtml_v7';
 (function migrate() {
   if (!localStorage.getItem(SKEY+'_done')) {
-    const prev = JSON.parse(localStorage.getItem('lhtml_v5_done')||'null');
+    const prev = JSON.parse(localStorage.getItem('lhtml_v6_done')||'null');
     if (prev && Array.isArray(prev)) {
       while (prev.length < tasks.length) prev.push(false);
       localStorage.setItem(SKEY+'_done', JSON.stringify(prev.slice(0, tasks.length)));
