@@ -1598,23 +1598,31 @@ p { color: ___; }`,
         <li><code>background-size: cover</code> — töltse ki az elemet</li>
         <li><code>background-position: center</code> — középre igazítás</li>
       </ul>
-      <strong>Relatív útvonal az url()-ben:</strong>
+      <strong>Relatív útvonal az url()-ben</strong> (ha a CSS külön fájlban van):
+      <br><br>
+      Tipikus projekt-struktúra:
+      <pre style="background:#0f172a;color:#93c5fd;padding:8px 12px;border-radius:6px;font-size:0.82rem;margin:6px 0;">projekt/
+  css/
+    style.css  ← innen hivatkozunk
+  img/
+    kavezo.jpg ← ezt keressük</pre>
+      <code>background-image: url("../img/kavezo.jpg");</code>
+      <br>Értelmezés lépésről lépésre:
       <ul>
-        <li><code>url("kep.jpg")</code> — ugyanabban a mappában van</li>
-        <li><code>url("../img/kep.jpg")</code> — egy szinttel feljebb, az img mappában</li>
-        <li><code>..</code> = lépj egyet feljebb a mappaszerkezetben</li>
-        <li><code>/</code> = lépj be a következő mappába</li>
-        <li>Az útvonal mindig a <strong>CSS fájl helyéhez képest</strong> értendő</li>
+        <li><code>.</code> (1. pont) = kilépés a <em>style.css</em> fájlból</li>
+        <li><code>.</code> (2. pont) = kilépés a <em>css</em> mappából</li>
+        <li><code>/</code> = belépés az <em>img</em> mappába</li>
+        <li><code>kavezo.jpg</code> = a képfájl neve</li>
       </ul>`,
     question:'Melyik CSS kódrészlet állít be háttérképet?',
     options:[
-      'background-image: url("hatter.jpg")',
-      'background: "hatter.jpg"',
-      'img-background: url("hatter.jpg")',
-      'background-src: hatter.jpg'
+      'background-image: url("../img/kavezo.jpg")',
+      'background: "kavezo.jpg"',
+      'img-background: url("kavezo.jpg")',
+      'background-src: kavezo.jpg'
     ],
     correct:0,
-    feedback:'✅ Helyes! A <code>background-image: url("fájlnév")</code> a helyes szintaxis. Az <code>url()</code>-ben az útvonal a CSS fájlhoz képest értendő – pl. <code>url("../img/hatter.jpg")</code> ha egy szinttel feljebb, az img mappában van a kép.'
+    feedback:'✅ Helyes! A <code>background-image: url("útvonal")</code> a helyes szintaxis. Ha a CSS külön fájlban van (pl. <code>css/style.css</code>), az img mappára így mutatunk: <code>url("../img/kavezo.jpg")</code> – az első pont kilép a CSS fájlból, a második kilép a css mappából, a / belép az img mappába.'
   },
 
   {
@@ -1626,8 +1634,9 @@ p { color: ___; }`,
       <ul>
         <li><code>body</code>: <code>background-color: #f0f4f8</code></li>
         <li><code>.fejlec</code>: <code>background-color: #1e293b</code> és <code>color: white</code></li>
-        <li><code>.hero</code>: <code>background-image: url("../img/hatter.jpg")</code>, <code>background-size: cover</code>, <code>background-position: center</code>, <code>background-repeat: no-repeat</code></li>
-      </ul>`,
+        <li><code>.hero</code>: <code>background-image: url("img/kavezo.jpg")</code>, <code>background-size: cover</code>, <code>background-position: center</code>, <code>background-repeat: no-repeat</code></li>
+      </ul>
+      <div style="font-size:0.8rem;color:#64748b;margin-top:6px;">💡 Ez a feladat beágyazott (<code>&lt;style&gt;</code>) CSS-t használ, ezért az útvonal <code>img/kavezo.jpg</code>. Külön CSS fájlnál (pl. <code>css/style.css</code>) az útvonal <code>../img/kavezo.jpg</code> lenne.</div>`,
     starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -1647,7 +1656,7 @@ p { color: ___; }`,
     }
 
     .hero {
-      /* background-image url(), background-size, background-position, background-repeat ide */
+      /* background-image: url("img/kavezo.jpg"); background-size, background-position, background-repeat ide */
       height: 200px;
     }
 
@@ -2041,6 +2050,10 @@ function registerCssInStyleCompletions(){
     { p:'color',            vals:COLORS },
     { p:'background-color', vals:COLORS },
     { p:'background',       vals:['none','transparent','inherit','url("")','linear-gradient(to right, #f00, #00f)',...COLORS] },
+    { p:'background-image', vals:['none','url("img/kavezo.jpg")','url("../img/kep.jpg")','linear-gradient(to right, #f00, #00f)'] },
+    { p:'background-repeat',vals:['repeat','no-repeat','repeat-x','repeat-y','round','space'] },
+    { p:'background-size',  vals:['auto','cover','contain','100%','50%'] },
+    { p:'background-position', vals:['center','top','bottom','left','right','center center','top left','50% 50%'] },
     { p:'font-size',        vals:['12px','14px','16px','18px','20px','24px','28px','32px','36px','48px','1rem','1.25rem','1.5rem','2rem','0.875rem'] },
     { p:'font-weight',      vals:['normal','bold','lighter','bolder','100','400','700','900'] },
     { p:'font-style',       vals:['normal','italic','oblique'] },
