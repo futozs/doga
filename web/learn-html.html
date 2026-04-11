@@ -188,12 +188,14 @@
   <div class="modal-box">
     <div style="font-size:2.8rem">🏆</div>
     <h2>HTML Alapok – kész!</h2>
-    <p>Gratulálok! Teljesítetted mind a 8 blokkot és elsajátítottad a HTML alapjait.<br>Következő szint: CSS stílusok!</p>
+    <p>Gratulálok! Elsajátítottad a HTML alapjait. Mi legyen a következő lépés?</p>
     <div class="modal-btns">
-      <a class="btn-m btn-m-p" href="learn-css.html"><i class="fas fa-arrow-right"></i> Tovább: CSS</a>
-      <a class="btn-m btn-m-s" href="../portal.html"><i class="fas fa-home"></i> Főmenü</a>
+      <a class="btn-m btn-m-p" href="quiz-html.html"><i class="fas fa-graduation-cap"></i> HTML Tudáspróba</a>
+      <a class="btn-m btn-m-s" href="../portal.html#web-tanulas"><i class="fas fa-book-open"></i> Tananyagválasztó</a>
+      <a class="btn-m btn-m-s" href="../python/agazati-gyakorlo.html"><i class="fas fa-laptop-code"></i> Ágazati feladatok</a>
     </div>
-    <button onclick="document.getElementById('modal-done').classList.remove('show')" style="margin-top:12px;background:transparent;border:none;color:#475569;font-size:0.82rem;cursor:pointer;text-decoration:underline;">Mégse – maradok itt</button>
+    <a href="../portal.html" style="display:block;margin-top:10px;color:#64748b;font-size:0.8rem;text-decoration:underline;"><i class="fas fa-home"></i> Főmenü</a>
+    <button onclick="document.getElementById('modal-done').classList.remove('show')" style="display:block;margin-top:6px;background:transparent;border:none;color:#475569;font-size:0.82rem;cursor:pointer;text-decoration:underline;">Mégse – maradok itt</button>
   </div>
 </div>
 
@@ -1099,6 +1101,7 @@ const tasks = [
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
+const u = JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
 const SKEY = 'lhtml_v6';
 (function migrate() {
   if (!localStorage.getItem(SKEY+'_done')) {
@@ -1168,7 +1171,7 @@ function buildLeft() {
     h.innerHTML = `<span>${bl.emoji}</span><span>${bl.name}</span>`+(allDone?'<span class="block-done-mark">✓ kész</span>':'');
     const lst = document.createElement('div'); lst.className='block-tasks';
     bl.tasks.forEach(({t,i})=>{
-      const locked = i>0 && !state.done[i-1];
+      const locked = !u._tesztMod && i>0 && !state.done[i-1];
       const p = document.createElement('div');
       p.id='pill-'+i;
       const typeIcon = t.type==='quiz'?'❓':t.type==='fillin'?'✏️':'💻';
@@ -1192,7 +1195,7 @@ function updatePillClass(el,i,locked){
 function refreshLeft(){
   tasks.forEach((_,i)=>{
     const p=document.getElementById('pill-'+i); if(!p) return;
-    const locked=i>0&&!state.done[i-1];
+    const locked=!u._tesztMod&&i>0&&!state.done[i-1];
     const t=tasks[i];
     p.querySelector('.pill-icon').textContent=state.done[i]?'✅':locked?'🔒':'⬜';
     updatePillClass(p,i,locked);

@@ -179,12 +179,14 @@
   <div class="modal-box">
     <div style="font-size:2.8rem">🏆</div>
     <h2>CSS Stílusok – kész!</h2>
-    <p>Gratulálok! Elsajátítottad a CSS alapjait. Következő szint: <strong>JavaScript</strong> (3. szint).</p>
+    <p>Gratulálok! Elsajátítottad a CSS stílusokat. Mi legyen a következő lépés?</p>
     <div class="modal-btns">
-      <a class="btn-m btn-m-p" href="learn-js.html"><i class="fas fa-arrow-right"></i> Tovább: JavaScript</a>
-      <a class="btn-m btn-m-s" href="../portal.html"><i class="fas fa-home"></i> Főmenü</a>
+      <a class="btn-m btn-m-p" href="quiz-css.html"><i class="fas fa-graduation-cap"></i> CSS Tudáspróba</a>
+      <a class="btn-m btn-m-s" href="../portal.html#web-tanulas"><i class="fas fa-book-open"></i> Tananyagválasztó</a>
+      <a class="btn-m btn-m-s" href="../python/agazati-gyakorlo.html"><i class="fas fa-laptop-code"></i> Ágazati feladatok</a>
     </div>
-    <button onclick="document.getElementById('modal-done').classList.remove('show')" style="margin-top:12px;background:transparent;border:none;color:#475569;font-size:0.82rem;cursor:pointer;text-decoration:underline;">Mégse – maradok itt</button>
+    <a href="../portal.html" style="display:block;margin-top:10px;color:#64748b;font-size:0.8rem;text-decoration:underline;"><i class="fas fa-home"></i> Főmenü</a>
+    <button onclick="document.getElementById('modal-done').classList.remove('show')" style="display:block;margin-top:6px;background:transparent;border:none;color:#475569;font-size:0.82rem;cursor:pointer;text-decoration:underline;">Mégse – maradok itt</button>
   </div>
 </div>
 
@@ -1506,6 +1508,472 @@ nav a {
       { label:'Legalább egy komment egy szabály elé kerül', fn:(h)=>(/\/\*[^*]*\*\/\s*\n\s*[a-z.#]/).test(h) },
       { label:'Legalább egy CSS tulajdonság ki van kapcsolva', fn:(h)=>(/\/\*[^*]*[a-z-]+\s*:[^*]+\*\//).test(h) }
     ]
+  },
+
+  // ── BLOKK 12: Színkezelés ─────────────────────────────────────────────
+  {
+    id:33, block:12, blockName:'Színkezelés', emoji:'🎨',
+    type:'quiz',
+    title:'Szín megadási módszerek',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      CSS-ben háromféleképpen adhatunk meg színeket:
+      <br><br>
+      <strong>1. Névvel ellátott színek</strong> (140+):
+      <br><code>color: red;</code>&nbsp;&nbsp;<code>color: navy;</code>&nbsp;&nbsp;<code>color: teal;</code>
+      <br><br>
+      <strong>2. RGB / RGBA</strong> – Piros / Zöld / Kék (0–255):
+      <br><code>rgb(255, 0, 0)</code> → piros&nbsp;&nbsp;|&nbsp;&nbsp;<code>rgb(0, 0, 0)</code> → fekete
+      <br><strong>RGBA</strong> = RGB + <em>alfa</em> (átlátszóság, 0.0–1.0):
+      <br><code>rgba(0, 0, 255, 0.5)</code> → félig átlátszó kék
+      <br><br>
+      <strong>3. Hex kód</strong> – <code>#RRGGBB</code>:
+      <ul>
+        <li>Mindig <code>#</code> jellel kezdődik</li>
+        <li>6 hexadecimális jegy: 0–9 és a–f</li>
+        <li>Első 2 jegy = piros, középső 2 = zöld, utolsó 2 = kék</li>
+        <li><code>#ff0000</code> = piros&nbsp;&nbsp;|&nbsp;&nbsp;<code>#00ff00</code> = zöld&nbsp;&nbsp;|&nbsp;&nbsp;<code>#0000ff</code> = kék</li>
+        <li><code>#000000</code> = fekete&nbsp;&nbsp;|&nbsp;&nbsp;<code>#ffffff</code> = fehér</li>
+      </ul>`,
+    question:'Mit jelenít meg a color: rgba(255, 0, 0, 0.5); tulajdonság?',
+    options:[
+      'Félig átlátszó piros szöveget',
+      'Teljesen átlátszó piros szöveget',
+      'Teljesen opák piros szöveget',
+      'Szürke szöveget (a 0.5 köztes értéket jelent)'
+    ],
+    correct:0,
+    feedback:'✅ Helyes! Az <code>rgba()</code> 4. paramétere az alfa csatorna: 0 = teljesen átlátszó, 1 = teljesen opák, 0.5 = félig átlátszó. A szín maga piros (255, 0, 0).'
+  },
+
+  {
+    id:34, block:12, blockName:'Színkezelés', emoji:'🎨',
+    type:'fillin',
+    title:'Szín megadási módszerek kiegészítés',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Összefoglalás:
+      <ul>
+        <li>Névvel: <code>color: navy;</code></li>
+        <li>RGB: <code>rgb(piros, zöld, kék)</code> – minden érték 0–255</li>
+        <li>RGBA: <code>rgba(r, g, b, alfa)</code> – alfa 0.0–1.0 (átlátszóság)</li>
+        <li>Hex: <code>#RRGGBB</code> – # + 6 hexadecimális jegy (0–9, a–f)</li>
+      </ul>
+      Fontos hex értékek:
+      <ul>
+        <li><code>ff</code> = 255 (maximális)</li>
+        <li><code>00</code> = 0 (semmi)</li>
+        <li><code>#ff0000</code> = teljes piros&nbsp;&nbsp;|&nbsp;&nbsp;<code>#00ff00</code> = teljes zöld</li>
+        <li><code>#000000</code> = fekete&nbsp;&nbsp;|&nbsp;&nbsp;<code>#ffffff</code> = fehér</li>
+      </ul>`,
+    codeTemplate:
+`/* Névvel megadott szín */
+h1 { color: ___; }
+
+/* RGB: teljesen zöld (a max érték 255) */
+.zold { color: rgb(0, ___, 0); }
+
+/* RGBA: félig átlátszó kék */
+.felkek { background-color: rgba(0, 0, 255, ___); }
+
+/* Hex: sötétszürke */
+p { color: ___; }`,
+    blanks:[
+      { answer:'navy', hint:'Sötétkék névvel megadott szín' },
+      { answer:'255',  hint:'A zöld csatorna maximális értéke (0–255 skálán)' },
+      { answer:'0.5',  hint:'Alfa csatorna: 0=teljesen átlátszó, 1=opák, 0.5=félig átlátszó' },
+      { answer:'#333333', hint:'Hex kód: # + 6 jegy – mindhárom csatorna 33 (33=51 decimálisan)' }
+    ]
+  },
+
+  // ── BLOKK 13: Háttér (background) ────────────────────────────────────
+  {
+    id:35, block:13, blockName:'Háttér (background)', emoji:'🖼️',
+    type:'quiz',
+    title:'Background tulajdonságok',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A <code>background</code> al-tulajdonságai:
+      <ul>
+        <li><code>background-color: #3b82f6</code> — háttérszín</li>
+        <li><code>background-image: url("kep.jpg")</code> — háttérkép</li>
+        <li><code>background-repeat: no-repeat</code> — ne ismételje meg</li>
+        <li><code>background-size: cover</code> — töltse ki az elemet</li>
+        <li><code>background-position: center</code> — középre igazítás</li>
+      </ul>
+      <strong>Relatív útvonal az url()-ben:</strong>
+      <ul>
+        <li><code>url("kep.jpg")</code> — ugyanabban a mappában van</li>
+        <li><code>url("../img/kep.jpg")</code> — egy szinttel feljebb, az img mappában</li>
+        <li><code>..</code> = lépj egyet feljebb a mappaszerkezetben</li>
+        <li><code>/</code> = lépj be a következő mappába</li>
+        <li>Az útvonal mindig a <strong>CSS fájl helyéhez képest</strong> értendő</li>
+      </ul>`,
+    question:'Melyik CSS kódrészlet állít be háttérképet?',
+    options:[
+      'background-image: url("hatter.jpg")',
+      'background: "hatter.jpg"',
+      'img-background: url("hatter.jpg")',
+      'background-src: hatter.jpg'
+    ],
+    correct:0,
+    feedback:'✅ Helyes! A <code>background-image: url("fájlnév")</code> a helyes szintaxis. Az <code>url()</code>-ben az útvonal a CSS fájlhoz képest értendő – pl. <code>url("../img/hatter.jpg")</code> ha egy szinttel feljebb, az img mappában van a kép.'
+  },
+
+  {
+    id:36, block:13, blockName:'Háttér (background)', emoji:'🖼️',
+    type:'monaco',
+    title:'Háttér beállítása',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Állítsd be a háttér tulajdonságokat:
+      <ul>
+        <li><code>body</code>: <code>background-color: #f0f4f8</code></li>
+        <li><code>.fejlec</code>: <code>background-color: #1e293b</code> és <code>color: white</code></li>
+        <li><code>.hero</code>: <code>background-image: url("../img/hatter.jpg")</code>, <code>background-size: cover</code>, <code>background-position: center</code>, <code>background-repeat: no-repeat</code></li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Háttér stílus</title>
+  <style>
+    body {
+      /* background-color ide */
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .fejlec {
+      /* background-color és color ide */
+      padding: 16px 24px;
+    }
+
+    .hero {
+      /* background-image url(), background-size, background-position, background-repeat ide */
+      height: 200px;
+    }
+
+    .tartalom {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="fejlec"><h1>Bemutatkozás</h1></div>
+  <div class="hero"></div>
+  <div class="tartalom"><p>Tartalom szövege</p></div>
+</body>
+</html>`,
+    checks:[
+      { label:'body: background-color van beállítva',          fn:(h)=>/body\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
+      { label:'.fejlec: háttérszín van',                       fn:(h)=>/\.fejlec\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
+      { label:'.fejlec: fehér szövegszín',                     fn:(h)=>/\.fejlec\s*\{[^}]*color\s*:\s*(white|#fff|#ffffff)/i.test(cssOf(h)) },
+      { label:'.hero: background-image url() van',             fn:(h)=>/\.hero\s*\{[^}]*background-image\s*:\s*url\s*\(/i.test(cssOf(h)) },
+      { label:'.hero: background-size van',                    fn:(h)=>/\.hero\s*\{[^}]*background-size\s*:/i.test(cssOf(h)) }
+    ]
+  },
+
+  // ── BLOKK 14: Lista stílusok ──────────────────────────────────────────
+  {
+    id:37, block:14, blockName:'Lista stílusok', emoji:'📋',
+    type:'quiz',
+    title:'list-style-type értékek',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      A lista jelölőjét a <code>list-style-type</code> szabályozza:
+      <br><br>
+      <strong>Rendezetlen lista (ul) típusai:</strong>
+      <ul>
+        <li><code>disc</code> — kitöltött kör ● (alapértelmezett)</li>
+        <li><code>circle</code> — üres kör ○</li>
+        <li><code>square</code> — négyzet ■</li>
+        <li><code>none</code> — nincs jelölő (pl. navigációs menüknél)</li>
+      </ul>
+      <strong>Számozott lista (ol) típusai:</strong>
+      <ul>
+        <li><code>decimal</code> — 1, 2, 3... (alapértelmezett)</li>
+        <li><code>lower-alpha</code> — a, b, c...</li>
+        <li><code>upper-alpha</code> — A, B, C...</li>
+        <li><code>lower-roman</code> — i, ii, iii...</li>
+        <li><code>upper-roman</code> — I, II, III...</li>
+      </ul>
+      <strong>Saját kép jelölőként:</strong>
+      <br><code>list-style-image: url("jelolo.png");</code>
+      <br><br>
+      HTML-ben is megadható a típus: <code>&lt;ol type="a"&gt;</code> vagy <code>&lt;ul type="square"&gt;</code>`,
+    question:'Melyik CSS értékkel lesznek az ol listaelemek a, b, c... jelölőkkel ellátva?',
+    options:[
+      'list-style-type: lower-alpha',
+      'list-style-type: decimal',
+      'list-style-type: circle',
+      'list-style-type: lower-roman'
+    ],
+    correct:0,
+    feedback:'✅ Helyes! A <code>lower-alpha</code> kisbetűs abc sorrendet jelent (a, b, c...). A <code>decimal</code> arabszámokat (1, 2, 3...), a <code>lower-roman</code> kisbetűs latin számokat (i, ii, iii...) ad.'
+  },
+
+  {
+    id:38, block:14, blockName:'Lista stílusok', emoji:'📋',
+    type:'monaco',
+    title:'Lista stílusok alkalmazása',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Stílusozd meg a listákat:
+      <ul>
+        <li><code>ul.navigacio</code>: <code>list-style-type: none</code>, <code>padding: 0</code></li>
+        <li><code>ul.navigacio li</code>: <code>display: inline-block</code>, <code>margin-right: 16px</code></li>
+        <li><code>ol.rangsor</code>: <code>list-style-type: upper-roman</code></li>
+        <li><code>ol.rangsor li</code>: <code>padding: 4px 0</code>, <code>color: #1e40af</code></li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista stílusok</title>
+  <style>
+    /* Navigációs lista – jelölő nélkül, vízszintesen */
+    ul.navigacio {
+
+    }
+    ul.navigacio li {
+
+    }
+
+    /* Rangsor – nagy római számozás */
+    ol.rangsor {
+
+    }
+    ol.rangsor li {
+
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <ul class="navigacio">
+      <li>Főoldal</li>
+      <li>Rólunk</li>
+      <li>Képzések</li>
+    </ul>
+  </nav>
+
+  <h3>Top 3 eredmény:</h3>
+  <ol class="rangsor">
+    <li>Kovács Anna</li>
+    <li>Nagy Péter</li>
+    <li>Tóth Judit</li>
+  </ol>
+</body>
+</html>`,
+    checks:[
+      { label:'ul.navigacio: list-style (none) van',           fn:(h)=>/ul\.navigacio\s*\{[^}]*list-style(-type)?\s*:\s*none/i.test(cssOf(h)) },
+      { label:'ul.navigacio: padding: 0',                      fn:(h)=>/ul\.navigacio\s*\{[^}]*padding\s*:\s*0/i.test(cssOf(h)) },
+      { label:'ul.navigacio li: display: inline-block',        fn:(h)=>/ul\.navigacio\s+li\s*\{[^}]*display\s*:\s*inline-block/i.test(cssOf(h)) },
+      { label:'ol.rangsor: list-style-type: upper-roman',      fn:(h)=>/ol\.rangsor\s*\{[^}]*list-style(-type)?\s*:\s*upper-roman/i.test(cssOf(h)) }
+    ]
+  },
+
+  // ── BLOKK 15: Táblázat stílusok ───────────────────────────────────────
+  {
+    id:39, block:15, blockName:'Táblázat stílusok', emoji:'🗂️',
+    type:'quiz',
+    title:'Táblázat CSS – border-collapse',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Táblázat stílusozásakor a legfontosabb tulajdonságok:
+      <br><br>
+      <strong>border-collapse</strong>:
+      <ul>
+        <li><code>separate</code> — alapértelmezett: minden cellának saját szegélye → dupla vonal</li>
+        <li><code>collapse</code> — szomszédos cellák szegélye összeolvad → egyszeres vonal</li>
+      </ul>
+      <strong>Csoportos szelektor</strong> – több elemre egyszerre:
+      <br><code>table, th, td { border: 1px solid #ccc; }</code>
+      <br><br>
+      <strong>Sorok kiemelése:</strong>
+      <ul>
+        <li><code>th</code> — fejléc cellák (első sor) külön formázhatók</li>
+        <li><code>tr:nth-child(even)</code> — páros sorok (2., 4., ...)</li>
+        <li><code>tr:nth-child(odd)</code> — páratlan sorok (1., 3., ...)</li>
+        <li><code>tr:first-child</code> — az első sor</li>
+      </ul>`,
+    question:'Mit csinál a border-collapse: collapse; a táblázaton?',
+    options:[
+      'A szomszédos cellák szegélyei összeolvadnak, egyszeres vonal lesz',
+      'A táblázat összeomlik és eltűnik',
+      'A cellák szegélye teljesen eltűnik',
+      'A cellák közötti rés megnő'
+    ],
+    correct:0,
+    feedback:'✅ Helyes! Alapértelmezés szerint (separate) minden cellának külön szegélye van, ami dupla vonalat okoz. A <code>collapse</code> ezt megszünteti: a szomszédos szegélyek összeolvadnak eggyé.'
+  },
+
+  {
+    id:40, block:15, blockName:'Táblázat stílusok', emoji:'🗂️',
+    type:'monaco',
+    title:'Táblázat stílusozása',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Formázd meg a táblázatot:
+      <ul>
+        <li><code>table</code>: <code>border-collapse: collapse</code>, <code>width: 100%</code></li>
+        <li><code>th, td</code>: <code>border: 1px solid #ccc</code>, <code>padding: 8px 12px</code>, <code>text-align: left</code></li>
+        <li><code>th</code>: <code>background-color: #1e293b</code>, <code>color: white</code></li>
+        <li><code>tr:nth-child(even)</code>: <code>background-color: #f8fafc</code> (páros sorok)</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Táblázat stílus</title>
+  <style>
+    table {
+
+    }
+
+    th, td {
+
+    }
+
+    th {
+
+    }
+
+    tr:nth-child(even) {
+
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>Név</th>
+      <th>Osztály</th>
+      <th>Eredmény</th>
+    </tr>
+    <tr>
+      <td>Kovács Anna</td>
+      <td>13A</td>
+      <td>Jeles</td>
+    </tr>
+    <tr>
+      <td>Nagy Péter</td>
+      <td>13B</td>
+      <td>Jó</td>
+    </tr>
+    <tr>
+      <td>Tóth Judit</td>
+      <td>13A</td>
+      <td>Jeles</td>
+    </tr>
+  </table>
+</body>
+</html>`,
+    checks:[
+      { label:'table: border-collapse: collapse',          fn:(h)=>/table\s*\{[^}]*border-collapse\s*:\s*collapse/i.test(cssOf(h)) },
+      { label:'th, td: van szegély (border)',              fn:(h)=>/(th\s*,\s*td|td\s*,\s*th)\s*\{[^}]*border\s*:/i.test(cssOf(h)) },
+      { label:'th, td: van padding',                       fn:(h)=>/(th\s*,\s*td|td\s*,\s*th)\s*\{[^}]*padding\s*:/i.test(cssOf(h)) },
+      { label:'th: sötét háttérszín van',                  fn:(h)=>/\bth\s*\{[^}]*background(-color)?\s*:/i.test(cssOf(h)) },
+      { label:'tr:nth-child(even) van stílusban',          fn:(h)=>/tr\s*:\s*nth-child\s*\(\s*even\s*\)/i.test(cssOf(h)) }
+    ]
+  },
+
+  // ── BLOKK 16: Méretek ─────────────────────────────────────────────────
+  {
+    id:41, block:16, blockName:'Méretek', emoji:'📏',
+    type:'quiz',
+    title:'width, height, max-width, max-height',
+    explanation:`<div class="exp-label">📖 Tananyag</div>
+      Az elem méretét a következő tulajdonságok szabályozzák:
+      <ul>
+        <li><code>width</code> — pontos szélesség (pl. <code>400px</code> vagy <code>100%</code>)</li>
+        <li><code>height</code> — pontos magasság</li>
+        <li><code>max-width</code> — felső határ: ennél nem lesz szélesebb</li>
+        <li><code>max-height</code> — felső határ: ennél nem lesz magasabb</li>
+        <li><code>min-width</code> — alsó határ: ennél nem lesz keskenyebb</li>
+        <li><code>min-height</code> — alsó határ: ennél nem lesz alacsonyabb</li>
+      </ul>
+      <strong>Hogyan adódnak össze a méretek?</strong>
+      <br>Alapértelmezés: <code>box-sizing: content-box</code>
+      <br><em>Tényleges szélesség = width + padding-jobb + padding-bal + border-jobb + border-bal</em>
+      <br><br>
+      <code>box-sizing: border-box</code> esetén:
+      <br><em>Tényleges szélesség = width</em> (a padding és border beleszámít!)
+      <br><br>
+      💡 <strong>Tipikus kombináció:</strong>
+      <br><code>width: 100%; max-width: 800px;</code> → kisebb képernyőn 100%-os, nagy képernyőn max 800px széles`,
+    question:'Mire jó a max-width tulajdonság?',
+    options:[
+      'Megadja azt a szélességet, amelynél az elem nem lehet szélesebb',
+      'Megadja azt a szélességet, amelynél az elem nem lehet keskenyebb',
+      'Pontosan ennyi szélességre állítja az elemet',
+      'Az elem szülőjének szélességét korlátozza'
+    ],
+    correct:0,
+    feedback:'✅ Helyes! A <code>max-width</code> felső határt szab: az elem ennél soha nem lesz szélesebb, de lehet keskenyebb (ha az ablak kisebb). Tipikus használat: <code>max-width: 1200px; width: 100%;</code>'
+  },
+
+  {
+    id:42, block:16, blockName:'Méretek', emoji:'📏',
+    type:'monaco',
+    title:'Méretek alkalmazása',
+    explanation:`<div class="exp-label">✏️ Feladat</div>
+      Alkalmazz különböző méret tulajdonságokat:
+      <ul>
+        <li><code>.container</code>: <code>width: 100%</code>, <code>max-width: 800px</code>, <code>margin: 0 auto</code></li>
+        <li><code>.doboz</code>: <code>width: 200px</code>, <code>height: 100px</code>, <code>box-sizing: border-box</code></li>
+        <li><code>.kep</code>: <code>width: 100%</code>, <code>max-width: 400px</code>, <code>height: auto</code></li>
+        <li><code>.min-doboz</code>: <code>min-height: 100px</code> (legalább 100px magas)</li>
+      </ul>`,
+    starterHtml:
+`<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Méretek</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f8fafc; }
+
+    .container {
+      /* width 100%, max-width 800px, margin: 0 auto */
+      background: white;
+      padding: 20px;
+    }
+
+    .doboz {
+      /* width 200px, height 100px, box-sizing: border-box */
+      background: #3b82f6;
+      color: white;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kep {
+      /* width 100%, max-width 400px, height auto */
+      background: #e2e8f0;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .min-doboz {
+      /* min-height 100px */
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="doboz">200px × 100px doboz (border-box)</div>
+    <img class="kep" src="../Képek_fejlesztéshez/kiscica.jpg" alt="kép">
+    <div class="min-doboz">Ez legalább 100px magas lesz, még ha kevés tartalom is van benne.</div>
+  </div>
+</body>
+</html>`,
+    checks:[
+      { label:'.container: max-width megadva',            fn:(h)=>/\.container\s*\{[^}]*max-width\s*:/i.test(cssOf(h)) },
+      { label:'.container: margin: 0 auto (középre)',     fn:(h)=>/\.container\s*\{[^}]*margin\s*:[^;]*auto/i.test(cssOf(h)) },
+      { label:'.doboz: width és height megadva',          fn:(h)=>/\.doboz\s*\{[^}]*width\s*:/i.test(cssOf(h))&&/\.doboz\s*\{[^}]*height\s*:/i.test(cssOf(h)) },
+      { label:'.kep: max-width megadva',                  fn:(h)=>/\.kep\s*\{[^}]*max-width\s*:/i.test(cssOf(h)) },
+      { label:'.min-doboz: min-height megadva',           fn:(h)=>/\.min-doboz\s*\{[^}]*min-height\s*:/i.test(cssOf(h)) }
+    ]
   }
 
 ];
@@ -1514,10 +1982,12 @@ nav a {
 // STATE
 // ══════════════════════════════════════════════════════════════════════
 
-const SKEY = 'lcss_v3';
+const u = JSON.parse(sessionStorage.getItem('kandoUser')||'{}');
+const SKEY = 'lcss_v4';
 (function migrate() {
   if (!localStorage.getItem(SKEY+'_done')) {
-    const prev = JSON.parse(localStorage.getItem('lcss_v2_done')||'null');
+    const prev = JSON.parse(localStorage.getItem('lcss_v3_done')||'null') ||
+                 JSON.parse(localStorage.getItem('lcss_v2_done')||'null');
     if (prev && Array.isArray(prev)) {
       while (prev.length < tasks.length) prev.push(false);
       localStorage.setItem(SKEY+'_done', JSON.stringify(prev.slice(0, tasks.length)));
@@ -1777,7 +2247,7 @@ function buildLeft() {
     h.innerHTML = `<span>${bl.emoji}</span><span>${bl.name}</span>`+(allDone?'<span class="block-done-mark">✓ kész</span>':'');
     const lst = document.createElement('div'); lst.className='block-tasks';
     bl.tasks.forEach(({t,i})=>{
-      const locked = i>0 && !state.done[i-1];
+      const locked = !u._tesztMod && i>0 && !state.done[i-1];
       const p = document.createElement('div');
       p.id='pill-'+i;
       const typeIcon = t.type==='quiz'?'❓':t.type==='fillin'?'✏️':'💻';
@@ -1800,7 +2270,7 @@ function updatePillClass(el,i,locked){
 function refreshLeft(){
   tasks.forEach((_,i)=>{
     const p=document.getElementById('pill-'+i); if(!p) return;
-    const locked=i>0&&!state.done[i-1];
+    const locked=!u._tesztMod&&i>0&&!state.done[i-1];
     p.querySelector('.pill-icon').textContent=state.done[i]?'✅':locked?'🔒':'⬜';
     updatePillClass(p,i,locked);
     if(!locked) p.onclick=()=>loadTask(i); else p.onclick=null;
