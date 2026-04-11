@@ -93,7 +93,7 @@ const bsQuizBank = {
 
     {
       id:'mc7',
-      question:'Melyik Bootstrap osztály teszi dőlté a szöveget?',
+      question:'Melyik Bootstrap osztály teszi dőltté a szöveget?',
       options:[
         'fw-italic',
         'text-italic',
@@ -101,7 +101,7 @@ const bsQuizBank = {
         'font-italic'
       ],
       correct:2,
-      explanation:'A fst-italic (font-style: italic) dőlté teszi a szöveget – ugyanazt éri el, mint a <i> vagy <em> HTML tag, illetve a CSS font-style: italic.'
+      explanation:'A fst-italic (font-style: italic) dőltté teszi a szöveget – ugyanazt éri el, mint a <i> vagy <em> HTML tag, illetve a CSS font-style: italic.'
     },
 
     {
@@ -380,7 +380,7 @@ const bsQuizBank = {
 
     {
       id:'f3', points:2,
-      question:'Tedd dőlté (fst-italic) a bekezdést és igazítsd jobbra (text-end)!\n\nAdd mindkét Bootstrap osztályt a <p> elemre.',
+      question:'Tedd dőltté (fst-italic) a bekezdést és igazítsd jobbra (text-end)!\n\nAdd mindkét Bootstrap osztályt a <p> elemre.',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
