@@ -506,10 +506,10 @@ const bsQuizBank = {
   <div class="container">
     <div class="row">
       <div class="">
-        <p>Bal hasáb tartalma</p>
+        <div style="background:#3b82f6;color:#fff;padding:24px;text-align:center;border-radius:6px;">Bal hasáb</div>
       </div>
       <div class="">
-        <p>Jobb hasáb tartalma</p>
+        <div style="background:#22c55e;color:#fff;padding:24px;text-align:center;border-radius:6px;">Jobb hasáb</div>
       </div>
     </div>
   </div>
@@ -537,10 +537,10 @@ const bsQuizBank = {
   <div class="container">
     <div class="row">
       <div class="">
-        <p>Kisebb hasáb (1/3)</p>
+        <div style="background:#f59e0b;color:#fff;padding:24px;text-align:center;border-radius:6px;">Kisebb (1/3)</div>
       </div>
       <div class="">
-        <p>Nagyobb hasáb (2/3)</p>
+        <div style="background:#8b5cf6;color:#fff;padding:24px;text-align:center;border-radius:6px;">Nagyobb (2/3)</div>
       </div>
     </div>
   </div>
@@ -568,13 +568,13 @@ const bsQuizBank = {
   <div class="container">
     <div class="row">
       <div class="">
-        <p>1. hasáb</p>
+        <div style="background:#ef4444;color:#fff;padding:24px;text-align:center;border-radius:6px;">1. hasáb</div>
       </div>
       <div class="">
-        <p>2. hasáb</p>
+        <div style="background:#f97316;color:#fff;padding:24px;text-align:center;border-radius:6px;">2. hasáb</div>
       </div>
       <div class="">
-        <p>3. hasáb</p>
+        <div style="background:#eab308;color:#fff;padding:24px;text-align:center;border-radius:6px;">3. hasáb</div>
       </div>
     </div>
   </div>
