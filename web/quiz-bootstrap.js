@@ -493,7 +493,7 @@ const bsQuizBank = {
 
     {
       id:'f8', points:3,
-      question:'Egészítsd ki a rácsot fele-fele elrendezéssel közepes kijelzőn!\n\n– A sor div-en maradjon a row osztály\n– Mindkét hasáb div-re add a col-md-6 osztályt',
+      question:'Egészítsd ki a rácsot fele-fele (50%–50%) elrendezéssel!\n\n– A sor div-en maradjon a row osztály\n– Mindkét hasáb div-re add a col-6 osztályt',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -517,14 +517,14 @@ const bsQuizBank = {
 </html>`,
       checks:[
         { label:'Van row osztályú div',              hint:'<div class="row">',     fn:(h,d)=>!!d.querySelector('.row') },
-        { label:'Van col-md-6 osztályú elem',        hint:'class="col-md-6"',      fn:(h,d)=>!!d.querySelector('.col-md-6') },
-        { label:'Legalább 2 col-md-6 osztályú elem', hint:'class="col-md-6"',      fn:(h,d)=>d.querySelectorAll('.col-md-6').length>=2 }
+        { label:'Van col-6 osztályú elem',        hint:'class="col-6"',      fn:(h,d)=>!!d.querySelector('.col-6') },
+        { label:'Legalább 2 col-6 osztályú elem', hint:'class="col-6"',      fn:(h,d)=>d.querySelectorAll('.col-6').length>=2 }
       ]
     },
 
     {
       id:'f9', points:3,
-      question:'Hozz létre 1/3 – 2/3 arányú hasábos elrendezést közepes kijelzőn!\n\n– A kisebb hasábra add a col-md-4 osztályt\n– A nagyobb hasábra add a col-md-8 osztályt',
+      question:'Hozz létre 1/3 – 2/3 arányú hasábos elrendezést!\n\n– A kisebb hasábra add a col-4 osztályt\n– A nagyobb hasábra add a col-8 osztályt',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -548,14 +548,14 @@ const bsQuizBank = {
 </html>`,
       checks:[
         { label:'Van row osztályú div',    hint:'<div class="row">',    fn:(h,d)=>!!d.querySelector('.row') },
-        { label:'Van col-md-4 osztály',    hint:'class="col-md-4"',     fn:(h,d)=>!!d.querySelector('.col-md-4') },
-        { label:'Van col-md-8 osztály',    hint:'class="col-md-8"',     fn:(h,d)=>!!d.querySelector('.col-md-8') }
+        { label:'Van col-4 osztály',    hint:'class="col-4"',     fn:(h,d)=>!!d.querySelector('.col-4') },
+        { label:'Van col-8 osztály',    hint:'class="col-8"',     fn:(h,d)=>!!d.querySelector('.col-8') }
       ]
     },
 
     {
       id:'f10', points:3,
-      question:'Hozz létre három egyforma szélességű hasábot nagy kijelzőn!\n\nMindhárom hasáb div-re add a col-lg-4 Bootstrap osztályt.',
+      question:'Hozz létre három egyforma szélességű hasábot!\n\nMindhárom hasáb div-re add a col-4 Bootstrap osztályt.',
       starterHtml:
 `<!DOCTYPE html>
 <html lang="hu">
@@ -582,8 +582,8 @@ const bsQuizBank = {
 </html>`,
       checks:[
         { label:'Van row osztályú div',                hint:'<div class="row">',  fn:(h,d)=>!!d.querySelector('.row') },
-        { label:'Van col-lg-4 osztályú elem',          hint:'class="col-lg-4"',   fn:(h,d)=>!!d.querySelector('.col-lg-4') },
-        { label:'Mindhárom hasábon col-lg-4 osztály',  hint:'class="col-lg-4"',   fn:(h,d)=>d.querySelectorAll('.col-lg-4').length>=3 }
+        { label:'Van col-4 osztályú elem',          hint:'class="col-4"',   fn:(h,d)=>!!d.querySelector('.col-4') },
+        { label:'Mindhárom hasábon col-4 osztály',  hint:'class="col-4"',   fn:(h,d)=>d.querySelectorAll('.col-4').length>=3 }
       ]
     },
 
