@@ -238,18 +238,20 @@ const tasks = [
     type:'quiz',
     title:'Mi a Bootstrap?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A <strong>Bootstrap</strong> egy nyílt forráskódú CSS keretrendszer, amellyel
-      gyorsan készíthetsz <strong>reszponzív</strong> (mobilra is alkalmazkodó) weboldalakat.
+      Képzeld el, hogy minden weboldalhoz ugyanazokat a gombokat, kártyákat, navigációkat kellene CSS-ből felépíteni nulláról.
+      Elvenne heteket, mire valami szépet kapnál. A <strong>Bootstrap</strong> pont erre a problémára ad megoldást.
       <br><br>
-      A <strong>reszponzív webdizájn</strong> alapelve: az oldal automatikusan igazodik a képernyő méretéhez –
-      mobilon, tableten és asztalon egyaránt jól néz ki.
+      A Bootstrap egy <strong>CSS keretrendszer</strong>: több ezer elő-definiált CSS osztályt tartalmaz,
+      amelyeket csak hozzá kell adni a HTML elemekhez. Nem kell CSS-t írni, csak osztályokat.
       <br><br>
-      Két fontos elv:
-      <ul>
-        <li><strong>Mobile first</strong> – először a mobilra tervezünk, majd bővítjük</li>
-        <li><strong>Progressive enhancement</strong> – alap funkció mindig működik, a jobb eszközökön több is</li>
-      </ul>
-      A Bootstrap CDN-ről betölthető – nem kell letölteni, csak egy <code>&lt;link&gt;</code> tag kell.`,
+      A legnagyobb előnye: <strong>reszponzív</strong> – az oldal automatikusan igazodik a képernyő méretéhez.
+      Mobilon, tableten és asztalon mind jól néz ki, anélkül hogy külön mobilos CSS-t kellene írni.
+      <br><br>
+      <strong>Mobile first</strong> elv: Bootstrap úgy tervezi az elrendezést, hogy mobilon is elsőként jó legyen,
+      és nagyobb képernyőn bővül a megjelenés (nem fordítva!).
+      <br><br>
+      Betöltése egy CDN link a <code>&lt;head&gt;</code>-be – nem kell semmi telepíteni:
+      <br><code>&lt;link rel="stylesheet" href="https://cdn.../bootstrap.min.css"&gt;</code>`,
     question:'Mire való a Bootstrap keretrendszer?',
     options:[
       'Python programok futtatására böngészőben',
@@ -341,23 +343,23 @@ const tasks = [
     type:'quiz',
     title:'A Bootstrap rácsrendszer',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A Bootstrap <strong>12 oszlopos rácsrendszert</strong> használ.
-      Az oldal szélességét 12 egyenlő részre osztja – az elemek ezeket foglalhatják el.
+      Gondolj egy újság lapjára: a szöveg néha 1 teljes széles hasáb, néha 2, néha 3 egymás melletti hasáb.
+      A Bootstrap pont így működik – az oldal szélességét <strong>12 egyenlő oszlopra</strong> osztja,
+      és Te döntöd el, melyik elem hányat foglaljon el.
       <br><br>
-      Felépítés:
-      <ul>
-        <li><code>.container</code> — a rácsot befoglaló elem (középre igazít)</li>
-        <li><code>.row</code> — egy sor a rácson belül</li>
-        <li><code>.col-md-6</code> — fél szélességű oszlop közepes (md) mérettől</li>
-      </ul>
-      <strong>Törési pontok</strong> (breakpoints):
-      <ul>
-        <li><code>sm</code> ≥576px (kisebb telefon vízszintesen)</li>
-        <li><code>md</code> ≥768px (tablet)</li>
-        <li><code>lg</code> ≥992px (laptop)</li>
-        <li><code>xl</code> ≥1200px (asztali)</li>
-      </ul>
-      12 oszlopot összesen kell kitölteni egy sorban: <code>col-md-6 + col-md-6 = 12</code>.`,
+      <strong>A 12 miért jó szám?</strong> Mert könnyen osztható:<br>
+      &nbsp;&nbsp;12 / 2 = 6 → fele az oldalnak → <code>col-md-6</code><br>
+      &nbsp;&nbsp;12 / 3 = 4 → harmada → <code>col-md-4</code><br>
+      &nbsp;&nbsp;12 / 4 = 3 → negyede → <code>col-md-3</code>
+      <br><br>
+      <strong>Felépítés 3 szintből áll:</strong><br>
+      <code>.container</code> → a rácsot befoglaló keret (középre igazít, max. szélességet ad)<br>
+      &nbsp;&nbsp;<code>.row</code> → egy sor (flexboxot hoz létre belül)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>.col-md-6</code> → egy oszlop: közepes képernyőtől (≥768px) 6 oszlop széles
+      <br><br>
+      A <strong>törési pont (breakpoint)</strong> meghatározza, mettől érvényes az elrendezés:<br>
+      <code>sm</code> ≥576px · <code>md</code> ≥768px · <code>lg</code> ≥992px · <code>xl</code> ≥1200px<br>
+      <em>Mobilon (md alatti méretben) minden col automatikusan teljes szélességre vált!</em>`,
     question:'Hány oszlopos a Bootstrap rácsrendszere?',
     options:['6 oszlopos','10 oszlopos','12 oszlopos','16 oszlopos'],
     correct:2,
@@ -369,15 +371,20 @@ const tasks = [
     type:'fillin',
     title:'Grid osztályok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Kétoszlopos elrendezés Bootstrappal:
+      A Bootstrap rács felépítése – mindig 3 szint:
       <ul>
-        <li><code>.container</code> — befoglaló, középre igazít</li>
-        <li><code>.row</code> — sor (flex konténer)</li>
-        <li><code>.col-md-6</code> — 12-ből 6 oszlopot foglal el (fele az oldalnak)</li>
-        <li><code>.col-md-4</code> — 12-ből 4 oszlop (harmad)</li>
-        <li><code>.col-md-3</code> — 12-ből 3 oszlop (negyed)</li>
+        <li><code>.container</code> — befoglaló keret: középre igazítja és bekeretezi a tartalmat</li>
+        <li><code>.row</code> — sor: flexboxként viselkedik, a col-ok egymás mellé kerülnek benne</li>
+        <li><code>.col-md-6</code> — oszlop: közepes képernyőtől 6/12-ös (fél) szélességű</li>
       </ul>
-      Mobilon (md alatti méretben) minden oszlop automatikusan teljes szélességre vált.`,
+      Hány oszlopot foglal? A szám mondja meg:
+      <ul>
+        <li><code>col-md-12</code> — teljes sor (12/12)</li>
+        <li><code>col-md-6</code> — fele (6/12)</li>
+        <li><code>col-md-4</code> — harmada (4/12)</li>
+        <li><code>col-md-3</code> — negyede (3/12)</li>
+      </ul>
+      <em>Mobilon (md = 768px alatt) minden col automatikusan 100%-ra vált – ezért nincs külön mobilos kód!</em>`,
     codeTemplate:
 `<div class="___">
   <div class="___">
@@ -438,17 +445,24 @@ const tasks = [
     type:'quiz',
     title:'Bootstrap tipográfiai osztályok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      A Bootstrap számos hasznos szövegformázó osztályt ad:
-      <ul>
-        <li><code>display-1</code> … <code>display-6</code> — óriási főcímek</li>
-        <li><code>lead</code> — kiemelt, nagyobb bevezető szöveg</li>
-        <li><code>text-muted</code> — halványabb (szürke) szöveg</li>
-        <li><code>text-center</code> / <code>text-end</code> — igazítás</li>
-        <li><code>fw-bold</code> — félkövér szöveg</li>
-        <li><code>fst-italic</code> — dőlt szöveg</li>
-        <li><code>text-primary</code>, <code>text-danger</code>, <code>text-success</code> — Bootstrap színek</li>
-      </ul>
-      Képekhez: <code>img-fluid</code> — reszponzív kép (100%-ra szűkül, ha kell).`,
+      A Bootstrap szöveg és tipográfiai osztályai gyors, egységes formázást adnak – CSS írás nélkül:
+      <br><br>
+      <strong>Cím méretek:</strong><br>
+      <code>display-1</code> … <code>display-6</code> — óriás főcímek (display-1 a legnagyobb, display-6 a legkisebb)<br>
+      Ezek nagyobbak a normál h1-h6-nál, főként hero/landing szekciókhoz.
+      <br><br>
+      <strong>Szöveg stílusok:</strong><br>
+      <code>lead</code> — kiemelt bevezető bekezdés (nagyobb, nem félkövér)<br>
+      <code>text-muted</code> — halvány, szürkés szöveg (másodlagos infók, apró megjegyzések)<br>
+      <code>fw-bold</code> — félkövér (font-weight: bold) / <code>fst-italic</code> — dőlt
+      <br><br>
+      <strong>Igazítás:</strong><br>
+      <code>text-start</code> (bal) · <code>text-center</code> (közép) · <code>text-end</code> (jobb)
+      <br><br>
+      <strong>Szín:</strong><br>
+      <code>text-primary</code> (kék) · <code>text-success</code> (zöld) · <code>text-danger</code> (piros)
+      <br><br>
+      <strong>Képekhez:</strong> <code>img-fluid</code> — a kép 100%-ra szűkül, ha a szülője szűkebb (reszponzív!)`,
     question:'Melyik Bootstrap osztály teszi a szöveget halványabbá (szürkévé)?',
     options:['text-light','text-muted','text-secondary','text-gray'],
     correct:1,
@@ -460,14 +474,15 @@ const tasks = [
     type:'fillin',
     title:'Tipográfiai osztályok a gyakorlatban',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Összefoglalás:
+      A tipográfiai osztályok neve leírja a funkciójukat:
       <ul>
-        <li><code>display-4</code> — óriás főcím</li>
-        <li><code>lead</code> — kiemelkedő bevezető szöveg</li>
-        <li><code>text-muted</code> — halvány szöveg</li>
-        <li><code>img-fluid</code> — reszponzív kép</li>
+        <li><code>display-4</code> — óriás főcím (a "4" a méret: 1 a legnagyobb, 6 a legkisebb)</li>
+        <li><code>lead</code> — bevezető bekezdés kiemelve – "lead" = újságírásban a bevezető mondat</li>
+        <li><code>text-muted</code> — halvány szöveg – "muted" = elnémított, visszafogott</li>
+        <li><code>img-fluid</code> — reszponzív kép – "fluid" = folyékony, igazodik a térhez</li>
         <li><code>text-center</code> — középre igazítás</li>
-      </ul>`,
+      </ul>
+      <em>Tipp:</em> Bootstrap osztályokat kombinálni is szabad: <code>class="display-4 text-center text-primary fw-bold"</code>`,
     codeTemplate:
 `<!-- Óriás főcím -->
 <h1 class="___-4">Főcím</h1>
@@ -537,18 +552,23 @@ const tasks = [
     type:'quiz',
     title:'Bootstrap gombok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Bootstrap gombok: minden gombnak kell <code>btn</code> alap osztály, plusz egy szín-osztály:
-      <ul>
-        <li><code>btn btn-primary</code> — kék (elsődleges)</li>
-        <li><code>btn btn-secondary</code> — szürke</li>
-        <li><code>btn btn-success</code> — zöld</li>
-        <li><code>btn btn-danger</code> — piros (veszélyes/törlés)</li>
-        <li><code>btn btn-warning</code> — sárga</li>
-        <li><code>btn btn-info</code> — cián</li>
-        <li><code>btn btn-outline-primary</code> — keretezett kék</li>
-        <li><code>btn btn-outline-danger</code> — keretezett piros</li>
-      </ul>
-      Méret: <code>btn-lg</code> (nagy), <code>btn-sm</code> (kis).`,
+      A Bootstrap gomb osztályai <strong>szemantikus neveket</strong> használnak – a név mondja meg, mire való:
+      <br><br>
+      Minden gombhoz kell az alap <code>btn</code> osztály, plusz egy szín-osztály:
+      <br><br>
+      <code>btn-primary</code> — kék: a fő cselekvés (pl. "Mentés", "Tovább")<br>
+      <code>btn-secondary</code> — szürke: másodlagos gomb (pl. "Mégse")<br>
+      <code>btn-success</code> — zöld: sikeres, megerősítő (pl. "Fizetés")<br>
+      <code>btn-danger</code> — piros: veszélyes, törlő (pl. "Törlés")<br>
+      <code>btn-warning</code> — sárga: figyelmeztetés<br>
+      <code>btn-info</code> — világoskék: tájékoztató
+      <br><br>
+      <strong>Outline (keretezett) változat:</strong> teli háttér nélkül<br>
+      <code>btn-outline-primary</code>, <code>btn-outline-danger</code> stb.
+      <br><br>
+      <strong>Méret:</strong> <code>btn-lg</code> (nagy), <code>btn-sm</code> (kis)
+      <br><br>
+      <em>Emlékező trükk:</em> primary = főszín, danger = veszélyes → ezeket a neveket a Bootstrap egységesen használja (szövegnél is: text-danger = piros szöveg).`,
     question:'Melyik osztály kombinációval lesz egy Bootstrap gomb PIROS?',
     options:[
       'btn btn-red',
@@ -565,13 +585,15 @@ const tasks = [
     type:'fillin',
     title:'Gomb osztályok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Mindig kell az alap <code>btn</code>, majd a szín:
+      Gomb osztályok összefoglalása:
       <ul>
-        <li><code>btn btn-primary</code> — kék</li>
-        <li><code>btn btn-danger</code> — piros</li>
-        <li><code>btn btn-outline-secondary</code> — keretezett szürke</li>
-        <li><code>btn btn-success btn-lg</code> — nagy zöld gomb</li>
-      </ul>`,
+        <li><code>btn btn-primary</code> — teli kék gomb: az alap <code>btn</code> mindig kell!</li>
+        <li><code>btn btn-danger</code> — teli piros gomb</li>
+        <li><code>btn btn-outline-secondary</code> — keretezett szürke (tele nincs, csak a keret)</li>
+        <li><code>btn btn-success btn-lg</code> — nagy zöld gomb (egyszerre több osztály is adható!)</li>
+      </ul>
+      <em>Tipikus hiba:</em> ha csak <code>btn-primary</code>-t írsz <code>btn</code> nélkül, nem lesz gombstílus –
+      az alap <code>btn</code> osztály adja az alap padding/border/cursor stílusokat, a többi csak a színt változtatja.`,
     codeTemplate:
 `<!-- Kék gomb -->
 <button class="___ btn-primary">Mentés</button>
@@ -643,19 +665,24 @@ const tasks = [
     type:'quiz',
     title:'Bootstrap táblázat és kártya',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      <strong>Táblázat</strong> Bootstrap osztályokkal:
+      <strong>Bootstrap táblázat:</strong><br>
+      Egy alap Bootstrap táblázathoz az összes CSS-t a Bootstrap csinálja – neked csak az osztályokat kell felsorolni:
       <ul>
-        <li><code>table</code> — alap Bootstrap stílus</li>
-        <li><code>table-striped</code> — csíkos sorok</li>
-        <li><code>table-bordered</code> — keretezett cellák</li>
-        <li><code>table-hover</code> — rámutatáskor kiemel</li>
+        <li><code>table</code> — alap Bootstrap stílus (kötelező kiindulópont!)</li>
+        <li><code>table-striped</code> — csíkos sorok (páros sorok halvány háttere → könnyebb olvasni)</li>
+        <li><code>table-bordered</code> — minden cellának kerete van</li>
+        <li><code>table-hover</code> — rámutatáskor a sor kiemelkedik</li>
       </ul>
-      <strong>Card (kártya)</strong> – tartalom elkülönítése panelekkel:
+      Kombinálható: <code>class="table table-striped table-hover"</code>
+      <br><br>
+      <strong>Card (kártya):</strong><br>
+      Képzeld el mint egy névjegykártyát: van egy kerete (card), benne tartalom (card-body),
+      és a tartalom lehet cím, szöveg, gomb.
       <ul>
-        <li><code>card</code> — kártya alap</li>
-        <li><code>card-body</code> — kártya tartalmi része</li>
-        <li><code>card-title</code> — kártya cím</li>
-        <li><code>card-text</code> — kártya szöveg</li>
+        <li><code>card</code> — a kártya külső kerete (lekerekített sarok, árnyék)</li>
+        <li><code>card-body</code> — a kártya belső tartalmi területe (padding)</li>
+        <li><code>card-title</code> — a kártya főcíme (h5-re teszik általában)</li>
+        <li><code>card-text</code> — a kártya szöveges leírása</li>
       </ul>`,
     question:'Melyik Bootstrap osztály teszi a táblázat sorait váltakozva csíkossá?',
     options:['table-dark','table-striped','table-light','table-zebra'],
@@ -668,14 +695,17 @@ const tasks = [
     type:'fillin',
     title:'Card és táblázat osztályok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
-      Card felépítése:
-      <ul>
-        <li><code>div.card</code> — külső keret</li>
-        <li><code>div.card-body</code> — belső tartalom</li>
-        <li><code>h5.card-title</code> — cím a kártyán</li>
-        <li><code>p.card-text</code> — szöveg a kártyán</li>
-        <li><code>a.btn.btn-primary</code> — gomb a kártyán</li>
-      </ul>`,
+      A Bootstrap card "beágyazott" struktúra – minden rész a saját helyén kell legyen:
+      <br><br>
+      <code>&lt;div class="card"&gt;</code> ← a keret<br>
+      &nbsp;&nbsp;<code>&lt;div class="card-body"&gt;</code> ← a belső tartalom<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;h5 class="card-title"&gt;</code> ← cím<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;p class="card-text"&gt;</code> ← szöveg<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<code>&lt;a class="btn btn-primary"&gt;</code> ← gomb<br>
+      &nbsp;&nbsp;<code>&lt;/div&gt;</code><br>
+      <code>&lt;/div&gt;</code>
+      <br><br>
+      <em>Tipp:</em> a <code>card</code> osztály neve elöljáró: <code>card-body</code>, <code>card-title</code>, <code>card-text</code> – mind "card-" előtaggal indul, így könnyű megjegyezni.`,
     codeTemplate:
 `<div class="___">
   <div class="___-body">
