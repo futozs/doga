@@ -1763,7 +1763,9 @@
             const url = `${RAILWAY_URL}/api/quiz-results${tipus ? '?tipus=' + tipus : ''}`;
             const res = await authFetch(url);
             if (!res.ok) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Hiba a betöltés során.</td></tr>'; return; }
-            const data = await res.json();
+            const raw = await res.json();
+            const TUDASPROBA_TIPUSOK = ['html','css','bootstrap'];
+            const data = tipus ? raw : raw.filter(r => TUDASPROBA_TIPUSOK.includes(r.tipus));
             renderQuizStats(data, statsEl);
             if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs eredmény.</td></tr>'; return; }
             const tipusNev = { html:'HTML', css:'CSS', bootstrap:'Bootstrap' };
