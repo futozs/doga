@@ -836,6 +836,18 @@
                 </div>
                 <div id="feladat-javaslatok-lista"></div>
             </div>
+
+            <!-- Practice szavazatok -->
+            <div style="border-top:1px solid #1a3a5c;padding-top:14px;margin-top:14px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="font-weight:600;color:#2dd4bf;font-size:0.85rem;"><i class="fas fa-thumbs-up"></i> Practice szavazatok</div>
+                    <button onclick="loadPracticeVotesFK()" style="padding:3px 10px;background:#1e3a5f;border:1px solid #2a4a7f;border-radius:6px;color:#94a3b8;cursor:pointer;font-size:0.78rem;"><i class="fas fa-rotate"></i> Frissítés</button>
+                </div>
+                <p style="color:#64748b;font-size:0.82rem;margin-bottom:10px;">Ha egy feladat eléri a küszöbértéket, érdemes bevenni a rendes practice pool-ba.</p>
+                <div id="fk-practice-votes-wrap">
+                    <span style="color:#555;font-size:0.83rem;font-style:italic;">Kattints a Frissítés gombra</span>
+                </div>
+            </div>
         </div>
 
         <!-- Felhasználók -->
@@ -1698,7 +1710,7 @@
             if (name === 'rangsor' && leaderboardData.length === 0) loadLeaderboard();
             if (name === 'visszajelzesek') loadFeedbackStats();
             if (name === 'otlet-lada') { loadOtletek(); loadTesztelők(); loadUzenetStatusz(); }
-            if (name === 'feladatok')  { loadFeladatkeszitok(); loadFeladatStats(); loadFeladatJavaslatok(); }
+            if (name === 'feladatok')  { loadFeladatkeszitok(); loadFeladatStats(); loadFeladatJavaslatok(); loadPracticeVotesFK(); }
             if (name === 'tudasproba') loadTudasprobaResults();
             if (name === 'interaktiv') loadInteraktivResults();
             if (name === 'kovetelmenyek' && kovData.length === 0) loadKovetelmenyek();
@@ -3596,6 +3608,35 @@ Adj választ CSAK JSON formátumban, SEMMI MÁS szöveget ne írj:
                 lista.innerHTML = '<span style="color:#e94560;font-size:0.82rem;">Hálózati hiba</span>';
             }
         }
+        // ── Practice szavazatok (Feladatkészítők tab) ───────────────────────
+        async function loadPracticeVotesFK() {
+            const wrap = document.getElementById('fk-practice-votes-wrap');
+            if (!wrap) return;
+            wrap.innerHTML = '<span style="color:#555;font-size:0.83rem;font-style:italic;">Betöltés...</span>';
+            try {
+                const res = await authFetch(`${RAILWAY_URL}/api/feedback/stats`);
+                if (!res.ok) { wrap.innerHTML = '<span style="color:#ef4444;font-size:0.83rem;">Hiba a betöltés során.</span>'; return; }
+                const data = await res.json();
+                const practiceVotes = data.filter(d => d.tipus === 'practice_vote');
+                if (practiceVotes.length === 0) { wrap.innerHTML = '<span style="color:#555;font-size:0.83rem;font-style:italic;">Még nincs szavazat.</span>'; return; }
+                const pvMap = {};
+                practiceVotes.forEach(d => { pvMap[d.feladatNev] = (pvMap[d.feladatNev]||0) + d.db; });
+                const rows = Object.entries(pvMap).sort((a,b) => b[1]-a[1]).map(([nev, db]) =>
+                    `<tr style="border-bottom:1px solid #1e2a3a;">
+                        <td style="padding:7px 10px;color:#e0e0e0;">${escHtml(nev)}</td>
+                        <td style="text-align:center;padding:7px 10px;color:#2dd4bf;font-weight:700;">${db} <i class="fas fa-thumbs-up" style="font-size:0.75rem;"></i></td>
+                    </tr>`
+                ).join('');
+                wrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:0.87rem;">
+                    <thead><tr style="border-bottom:1px solid #333;">
+                        <th style="text-align:left;padding:7px 10px;color:#94a3b8;font-weight:600;">Feladat neve</th>
+                        <th style="text-align:center;padding:7px 10px;color:#2dd4bf;font-weight:600;">Szavazatok</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>`;
+            } catch(e) { wrap.innerHTML = '<span style="color:#ef4444;font-size:0.83rem;">Kapcsolati hiba.</span>'; }
+        }
+
         // ── Feladatkészítők ─────────────────────────────────────────────────
 
         let _feladatJavaslatok = [];

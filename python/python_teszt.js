@@ -2829,38 +2829,29 @@ function updateFrissFeladatokBox() {
 // ── Feladatkészítő szavazás ──────────────────────────────────────────────────
 const _votedTasks = new Set(JSON.parse(localStorage.getItem('_practiceVotes') || '[]'));
 
-async function voteForPractice(taskNum, e) {
+function voteForPractice(taskNum, e) {
     e.preventDefault(); e.stopPropagation();
     const btn = e.currentTarget;
     if (_votedTasks.has(taskNum)) {
         btn.title = 'Már szavaztál erre!';
         return;
     }
+    // Azonnali visszajelzés – nem várunk a szerverre
+    _votedTasks.add(taskNum);
+    localStorage.setItem('_practiceVotes', JSON.stringify([..._votedTasks]));
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    btn.style.color = '#22c55e';
+    btn.title = 'Szavazat elküldve!';
+    // Küldés háttérben (silent fail)
     const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
     const task = tasks.find(t => t.number === taskNum);
     if (!task) return;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-    try {
-        const res = await fetch(`${RAILWAY_URL}/api/feedback`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: 1 })
-        });
-        if (res.ok) {
-            _votedTasks.add(taskNum);
-            localStorage.setItem('_practiceVotes', JSON.stringify([..._votedTasks]));
-            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-            btn.style.color = '#22c55e';
-            btn.title = 'Szavazat elküldve!';
-        } else {
-            btn.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
-            btn.disabled = false;
-        }
-    } catch(err) {
-        btn.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
-        btn.disabled = false;
-    }
+    fetch(`${RAILWAY_URL}/api/feedback`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: 1 })
+    }).catch(() => {});
 }
 
 function updateTaskBreakdown() {
