@@ -770,12 +770,13 @@
                 <table class="submissions-table">
                     <thead>
                         <tr>
-                            <th>#</th><th>Név</th><th>Osztály</th>
+                            <th>#</th><th>Név</th>
                             <th style="text-align:center;">Próbák</th>
                             <th style="text-align:center;">Legjobb pont</th>
                             <th style="text-align:center;">Legjobb %</th>
                             <th style="text-align:center;">Legjobb jegy</th>
                             <th style="text-align:center;">Eredmény</th>
+                            <th style="text-align:center;">Legjobb idő</th>
                         </tr>
                     </thead>
                     <tbody id="interaktiv-tbody">
@@ -1817,24 +1818,25 @@
                 html += `<tr class="quiz-student-row" onclick="toggleQuizDetails(this)">
                     <td><i class="fas fa-chevron-right quiz-expand-icon"></i>${i+1}</td>
                     <td>${escHtml(s.nev)}<br><small style="color:#666">${escHtml(s.email)}</small></td>
-                    <td>${escHtml(s.osztaly||'–')}</td>
                     <td style="text-align:center"><strong>${s.count}×</strong></td>
                     <td style="text-align:center">${s.best.pont} / ${s.best.maxPont}</td>
                     <td style="text-align:center">${s.best.szazalek}%</td>
                     <td style="text-align:center;font-weight:700;color:${gc}">${s.best.jegy ? s.best.jegy+' – '+GRADE_NAMES[s.best.jegy] : '–'}</td>
                     <td style="text-align:center;font-weight:600;color:${megfelelt?'#22c55e':'#ef4444'}">${megfelelt?'Megfelelt':'Nem felelt meg'}</td>
+                    <td style="text-align:center;color:#94a3b8">${formatIdo(s.best.idoMp)}</td>
                 </tr>`;
                 s.rows.forEach((r, ri) => {
                     const mf = r.szazalek >= 40;
                     const gc2 = GRADE_COLORS[r.jegy] || '#94a3b8';
                     html += `<tr class="quiz-detail-row" style="display:none">
                         <td style="padding-left:28px;color:#64748b">${ri+1}. próba</td>
-                        <td colspan="2" style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
+                        <td style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
                         <td style="text-align:center">–</td>
                         <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
                         <td style="text-align:center">${r.szazalek}%</td>
                         <td style="text-align:center;font-weight:700;color:${gc2}">${r.jegy ? r.jegy+' – '+GRADE_NAMES[r.jegy] : '–'}</td>
-                        <td style="text-align:center;font-size:0.8rem;color:${mf?'#22c55e':'#ef4444'}">${mf?'Megfelelt':'Nem felelt meg'} &nbsp;·&nbsp; ${formatIdo(r.idoMp)}</td>
+                        <td style="text-align:center;font-size:0.8rem;color:${mf?'#22c55e':'#ef4444'}">${mf?'Megfelelt':'Nem felelt meg'}</td>
+                        <td style="text-align:center;color:#94a3b8">${formatIdo(r.idoMp)}</td>
                     </tr>`;
                 });
             });
