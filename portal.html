@@ -844,6 +844,19 @@
                     <span class="label">INTERAKTÍV TESZT</span>
                     <span class="desc">Informatikai és távközlési alapok – 15 kérdés</span>
                 </a>
+                <div id="changelog-interaktiv" class="changelog-box interaktiv-col" style="display:none">
+                    <div class="changelog-title"><i class="fas fa-brain" style="color:#0d9488"></i> Érintett témakörök</div>
+                    <div class="changelog-item">1. Elektronikai alapfogalmak, fizikai törvények, mérések</div>
+                    <div class="changelog-item">2. Operációs rendszerek – telepítés, frissítés, beállítások</div>
+                    <div class="changelog-item">3. Számítógépes eszközök és mobileszközök alkatrészei</div>
+                    <div class="changelog-item">4. Eszközök karbantartása (informatikai és távközlési)</div>
+                    <div class="changelog-item">5. Informatikai hálózatok felépítése és típusai</div>
+                    <div class="changelog-item">6. Vállalati hálózati eszközök és infrastruktúra</div>
+                    <div class="changelog-item">7. Hálózatbiztonság, kibervédelem</div>
+                    <div class="changelog-item">8. Modern technológiák – MI, felhő, digitális trendek</div>
+                    <div class="changelog-item">9. Git és csoportmunkát támogató eszközök</div>
+                    <div class="changelog-item">10. Projektmenedzsment alapjai</div>
+                </div>
             </div>
         </div>
 
@@ -1380,6 +1393,7 @@
                 document.getElementById('student-layout-wrap').style.display = 'flex';
                 document.getElementById('changelog-python').style.display = 'block';
                 document.getElementById('changelog-web').style.display = 'block';
+                document.getElementById('changelog-interaktiv').style.display = 'block';
                 document.getElementById('portal-sub').textContent = 'Válassz ágazati alapvizsga feladatot!';
                 document.getElementById('otlet-btn').style.display = 'flex';
                 const cardPython = document.getElementById('card-python');
@@ -1462,15 +1476,17 @@
         const eredmBtn = document.getElementById('btn-eredmenyek-topbar');
         isTeacherView = !isTeacherView;
         isTeacherPreview = !isTeacherView;
-        const clPython = document.getElementById('changelog-python');
-        const clWeb    = document.getElementById('changelog-web');
+        const clPython     = document.getElementById('changelog-python');
+        const clWeb        = document.getElementById('changelog-web');
+        const clInteraktiv = document.getElementById('changelog-interaktiv');
         const otletBtn = document.getElementById('otlet-btn');
         const megvBox  = document.getElementById('megvalasult-box');
         if (isTeacherView) {
             teacher.style.display = 'block';
             studentWrap.style.display = 'none';
-            if (clPython) clPython.style.display = 'none';
-            if (clWeb)    clWeb.style.display    = 'none';
+            if (clPython)     clPython.style.display     = 'none';
+            if (clWeb)        clWeb.style.display        = 'none';
+            if (clInteraktiv) clInteraktiv.style.display = 'none';
             if (otletBtn) otletBtn.style.display = 'none';
             if (megvBox)  megvBox.style.display  = 'none';
             sub.textContent = 'Mit szeretnél csinálni?';
@@ -1479,8 +1495,9 @@
         } else {
             teacher.style.display = 'none';
             studentWrap.style.display = 'flex';
-            if (clPython) clPython.style.display = 'block';
-            if (clWeb)    clWeb.style.display    = 'block';
+            if (clPython)     clPython.style.display     = 'block';
+            if (clWeb)        clWeb.style.display        = 'block';
+            if (clInteraktiv) clInteraktiv.style.display = 'block';
             if (otletBtn) otletBtn.style.display = 'flex';
             loadMegvalasultOtletek();
             sub.textContent = 'Válassz ágazati alapvizsga feladatot!';
