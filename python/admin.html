@@ -472,6 +472,7 @@
             <button class="tab-btn" onclick="switchTab('otlet-lada', this)"><i class="fas fa-lightbulb"></i> Ötlet Láda</button>
             <button class="tab-btn" onclick="switchTab('kovetelmenyek', this)"><i class="fas fa-check-double"></i> Követelmények</button>
             <button class="tab-btn" id="feladatok-tab-btn" onclick="switchTab('feladatok', this)"><i class="fas fa-pencil"></i> Feladatkészítők</button>
+            <button class="tab-btn" onclick="switchTab('interaktiv', this)"><i class="fas fa-brain"></i> Interaktív Teszt</button>
         </div>
 
         <!-- Config Panel -->
@@ -711,6 +712,40 @@
                     </thead>
                     <tbody id="kov-tbody">
                         <tr><td colspan="10" class="loading">Nincs adat</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Interaktív Teszt eredmények panel -->
+        <div class="panel" data-tab="interaktiv" style="display:none;">
+            <h2><i class="fas fa-brain"></i> Interaktív Teszt – Eredmények</h2>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+                <button class="btn-refresh" onclick="loadInteraktivResults()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <button onclick="clearInteraktivResults()" style="padding:8px 16px;background:transparent;border:1.5px solid #e94560;border-radius:8px;color:#e94560;font-size:0.85rem;font-weight:600;cursor:pointer;" onmouseover="this.style.background='rgba(233,69,96,0.1)'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-trash"></i> Törlés
+                </button>
+                <span style="color:#94a3b8;font-size:0.82rem;">Az eredmények az eszközön (localStorage) tárolódnak.</span>
+            </div>
+            <!-- Összesítő -->
+            <div id="interaktiv-stats" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
+            <!-- Táblázat -->
+            <div style="overflow-x:auto;">
+                <table class="submissions-table" id="interaktiv-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Név</th>
+                            <th>Dátum</th>
+                            <th style="text-align:center;">Helyes</th>
+                            <th style="text-align:center;">Pont</th>
+                            <th style="text-align:center;">%</th>
+                            <th style="text-align:center;">Jegy</th>
+                            <th style="text-align:center;">Eredmény</th>
+                        </tr>
+                    </thead>
+                    <tbody id="interaktiv-tbody">
+                        <tr><td colspan="8" class="loading">Kattints a Frissítés gombra</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1617,6 +1652,7 @@
             if (name === 'visszajelzesek') loadFeedbackStats();
             if (name === 'otlet-lada') { loadOtletek(); loadTesztelők(); loadUzenetStatusz(); }
             if (name === 'feladatok')  { loadFeladatkeszitok(); loadFeladatStats(); loadFeladatJavaslatok(); }
+            if (name === 'interaktiv') loadInteraktivResults();
             if (name === 'kovetelmenyek' && kovData.length === 0) loadKovetelmenyek();
             if (name === 'felhasznalok') {
                 loadPwResetRequests();
@@ -1635,6 +1671,61 @@
         }
         function stopUsersAutoRefresh() {
             if (_usersAutoRefreshTimer) { clearInterval(_usersAutoRefreshTimer); _usersAutoRefreshTimer = null; }
+        }
+
+        // ── Interaktív Teszt eredmények (localStorage) ────────────────────────
+        function loadInteraktivResults() {
+            const data = JSON.parse(localStorage.getItem('interaktivResults') || '[]');
+            const tbody = document.getElementById('interaktiv-tbody');
+            const statsEl = document.getElementById('interaktiv-stats');
+            if (!tbody) return;
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs rögzített eredmény.</td></tr>';
+                if (statsEl) statsEl.innerHTML = '';
+                return;
+            }
+
+            // Összesítő statisztikák
+            const osszPont = data.reduce((s, r) => s + r.pont, 0);
+            const atlagPct = Math.round(data.reduce((s, r) => s + r.szazalek, 0) / data.length);
+            const megfeleltDb = data.filter(r => r.megfelelt).length;
+            const jegyek = [0,0,0,0,0,0];
+            data.forEach(r => jegyek[r.jegy]++);
+            const gradeColors = { 5:'#22c55e', 4:'#84cc16', 3:'#fbbf24', 2:'#f97316', 1:'#ef4444' };
+            if (statsEl) {
+                statsEl.innerHTML = [
+                    `<div class="stat-card"><div class="stat-label">Kitöltések</div><div class="stat-number">${data.length}</div></div>`,
+                    `<div class="stat-card"><div class="stat-label">Megfelelt</div><div class="stat-number" style="color:#22c55e">${megfeleltDb}</div></div>`,
+                    `<div class="stat-card"><div class="stat-label">Átlag %</div><div class="stat-number">${atlagPct}%</div></div>`,
+                    [5,4,3,2,1].map(j => `<div class="stat-card"><div class="stat-label">${j} – ${['','Elégtelen','Elégséges','Közepes','Jó','Jeles'][j]}</div><div class="stat-number" style="color:${gradeColors[j]}">${jegyek[j]}</div></div>`).join('')
+                ].join('');
+            }
+
+            // Táblázat sorok
+            const rows = data.map((r, i) => {
+                const d = new Date(r.datum);
+                const datumStr = d.toLocaleDateString('hu-HU') + ' ' + d.toLocaleTimeString('hu-HU', { hour:'2-digit', minute:'2-digit' });
+                const passColor = r.megfelelt ? '#22c55e' : '#ef4444';
+                const passText  = r.megfelelt ? 'Megfelelt' : 'Nem felelt meg';
+                return `<tr>
+                    <td>${i + 1}</td>
+                    <td>${escHtml(r.nev)}${r.email ? '<br><small style="color:#666">' + escHtml(r.email) + '</small>' : ''}</td>
+                    <td style="white-space:nowrap">${datumStr}</td>
+                    <td style="text-align:center">${r.helyes} / ${r.osszes}</td>
+                    <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
+                    <td style="text-align:center">${r.szazalek}%</td>
+                    <td style="text-align:center;font-weight:700;color:${gradeColors[r.jegy]}">${r.jegy} – ${r.jegySzoveg}</td>
+                    <td style="text-align:center;font-weight:600;color:${passColor}">${passText}</td>
+                </tr>`;
+            }).join('');
+            tbody.innerHTML = rows;
+        }
+
+        function clearInteraktivResults() {
+            if (!confirm('Biztosan törlöd az összes interaktív teszt eredményt?')) return;
+            localStorage.removeItem('interaktivResults');
+            loadInteraktivResults();
         }
 
         // Check auth on page load

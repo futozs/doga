@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaktív Teszt</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    :root {
+      --bg:#0f172a; --surface:#1e293b; --border:#334155;
+      --text:#e2e8f0; --muted:#94a3b8; --yellow:#fbbf24;
+      --blue:#3b82f6; --green:#22c55e; --red:#ef4444;
+      --teal:#0d9488; --radius:10px;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-serif; min-height:100vh; }
+    .hidden { display:none !important; }
+
+    /* ── TOPBAR ── */
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--border); }
+    .topbar-left { display:flex; align-items:center; gap:12px; }
+    .topbar img { height:32px; cursor:pointer; }
+    .topbar-title { font-size:1rem; font-weight:600; }
+    .topbar-sub { font-size:0.78rem; color:var(--muted); }
+    .progress-bar-wrap { flex:1; max-width:300px; margin:0 20px; }
+    .progress-bar-bg { background:var(--border); border-radius:99px; height:6px; }
+    .progress-bar-fill { background:var(--teal); border-radius:99px; height:6px; transition:width .3s; }
+    .progress-label { font-size:0.75rem; color:var(--muted); text-align:right; margin-top:3px; }
+
+    /* ── GOMBOK ── */
+    .btn { padding:9px 20px; border-radius:8px; border:none; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all .18s; }
+    .btn:disabled { opacity:.4; cursor:not-allowed; }
+    .btn-primary { background:var(--teal); color:#fff; }
+    .btn-primary:not(:disabled):hover { background:#0f766e; }
+    .btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--muted); }
+    .btn-outline:hover { border-color:var(--teal); color:var(--teal); }
+    .btn-green { background:var(--green); color:#fff; }
+    .btn-green:hover { background:#16a34a; }
+
+    /* ── FŐ TERÜLET ── */
+    .quiz-wrap { max-width:760px; margin:0 auto; padding:30px 20px; }
+
+    /* ── KÉRDÉS KÁRTYA ── */
+    .question-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; }
+    .q-meta { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+    .q-num { background:var(--teal); color:#fff; border-radius:6px; padding:2px 10px; font-size:0.78rem; font-weight:700; }
+    .q-topic { background:var(--border); color:var(--muted); border-radius:6px; padding:2px 10px; font-size:0.75rem; }
+    .q-image { text-align:center; margin-bottom:18px; }
+    .q-image img { max-width:280px; max-height:200px; border-radius:8px; border:1px solid var(--border); object-fit:contain; }
+    .q-text { font-size:1rem; font-weight:600; line-height:1.6; margin-bottom:20px; }
+
+    /* ── MC OPTIONS ── */
+    .mc-options { display:flex; flex-direction:column; gap:10px; }
+    .mc-option { display:flex; align-items:flex-start; gap:12px; background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:12px 16px; cursor:pointer; transition:border-color .18s, background .18s; }
+    .mc-option:hover { border-color:var(--teal); }
+    .mc-option.selected { border-color:var(--teal); background:#0d37341a; }
+    .mc-option.correct { border-color:var(--green) !important; background:#052e1640 !important; }
+    .mc-option.wrong { border-color:var(--red) !important; background:#450a0a40 !important; }
+    .mc-option input[type=radio] { margin-top:3px; accent-color:var(--teal); flex-shrink:0; }
+    .mc-option-text { font-size:0.92rem; line-height:1.5; }
+    .mc-option-icon { margin-left:auto; font-size:1rem; flex-shrink:0; }
+
+    /* ── NAVIGÁCIÓ ── */
+    .q-nav { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .btn-skip { background:transparent; border:1.5px solid var(--border); color:var(--muted); font-size:0.82rem; }
+    .btn-skip:hover { border-color:var(--yellow); color:var(--yellow); }
+    .skip-count { font-size:0.78rem; color:var(--muted); }
+
+    /* ── EREDMÉNY KÉPERNYŐ ── */
+    #result-screen { display:none; }
+    .result-header { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; text-align:center; }
+    .result-score { font-size:3rem; font-weight:800; color:var(--teal); margin-bottom:8px; }
+    .result-sub { color:var(--muted); font-size:0.95rem; margin-bottom:20px; }
+    .result-bar-wrap { max-width:400px; margin:0 auto 20px; }
+    .result-bar-bg { background:var(--border); border-radius:99px; height:10px; }
+    .result-bar-fill { background:var(--teal); border-radius:99px; height:10px; transition:width 1s ease; }
+    .result-stats { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-bottom:20px; }
+    .result-stat { text-align:center; }
+    .result-stat-val { font-size:1.5rem; font-weight:700; }
+    .result-stat-val.green { color:var(--green); }
+    .result-stat-val.red { color:var(--red); }
+    .result-stat-label { font-size:0.78rem; color:var(--muted); }
+
+    .result-list { display:flex; flex-direction:column; gap:12px; margin-bottom:20px; }
+    .result-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; }
+    .result-item.ok { border-left:4px solid var(--green); }
+    .result-item.fail { border-left:4px solid var(--red); }
+    .result-item-top { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+    .result-item-icon { font-size:1rem; flex-shrink:0; }
+    .result-item-q { font-size:0.9rem; font-weight:600; flex:1; }
+    .result-item-topic { font-size:0.72rem; color:var(--muted); background:var(--border); border-radius:4px; padding:1px 7px; }
+    .result-item-ans { font-size:0.85rem; color:var(--muted); }
+    .result-item-ans span { font-weight:600; }
+    .result-item-ans .correct-ans { color:var(--green); }
+    .result-item-ans .wrong-ans { color:var(--red); text-decoration:line-through; }
+
+    .result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+    /* ── TIMER ── */
+    .timer-wrap { display:flex; align-items:center; gap:8px; }
+    .timer-display { font-size:1.1rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text); }
+    .timer-display.warning { color:var(--yellow); }
+    .timer-display.danger  { color:var(--red); animation:pulse .8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+    /* ── KIHAGYVA BADGE ── */
+    .q-skipped-badge { background:rgba(251,191,36,.15); border:1px solid var(--yellow);
+      color:var(--yellow); border-radius:6px; padding:2px 10px; font-size:0.75rem; font-weight:600; }
+
+    /* ── IDŐ EREDMÉNYNÉL ── */
+    .result-time { font-size:0.88rem; color:var(--muted); margin-bottom:16px; }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <img src="../web/kandologo2.png" alt="logo" onclick="location.href='../portal.html'">
+    <div>
+      <div class="topbar-title">Interaktív Teszt</div>
+      <div class="topbar-sub">Informatikai és távközlési alapok</div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap" id="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progress-label">0 / 15</div>
+  </div>
+  <div class="timer-wrap">
+    <i class="fas fa-clock" style="color:var(--muted);font-size:.9rem"></i>
+    <div class="timer-display" id="timer-display">30:00</div>
+  </div>
+</div>
+
+<!-- KVÍZ TERÜLET -->
+<div class="quiz-wrap">
+
+  <!-- KÉRDÉS KÉPERNYŐ -->
+  <div id="quiz-screen">
+    <div class="question-card" id="question-card">
+      <div class="q-meta">
+        <span class="q-num" id="q-num">1 / 15</span>
+        <span class="q-topic" id="q-topic"></span>
+        <span class="q-skipped-badge hidden" id="q-skipped-badge"><i class="fas fa-rotate-right"></i> Visszatérő kérdés</span>
+      </div>
+      <div class="q-image hidden" id="q-image">
+        <img id="q-img-el" src="" alt="kérdéshez tartozó kép">
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div class="mc-options" id="mc-options"></div>
+    </div>
+    <div class="q-nav">
+      <button class="btn btn-skip" id="btn-skip" onclick="skipQuestion()">
+        <i class="fas fa-rotate-right"></i> Visszatérek rá
+      </button>
+      <div class="skip-count" id="skip-info"></div>
+      <button class="btn btn-primary" id="btn-next" disabled onclick="nextQuestion()">
+        Következő <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- EREDMÉNY KÉPERNYŐ -->
+  <div id="result-screen">
+    <div class="result-header">
+      <div class="result-score" id="result-score">0 / 30 pont</div>
+      <div style="font-size:1.6rem;font-weight:800;margin-bottom:4px" id="result-grade"></div>
+      <div style="font-size:1rem;font-weight:700;margin-bottom:12px" id="result-pass"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-time" id="result-time"></div>
+      <div class="result-bar-wrap">
+        <div class="result-bar-bg">
+          <div class="result-bar-fill" id="result-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-val green" id="stat-correct">0</div>
+          <div class="result-stat-label">Helyes</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-val red" id="stat-wrong">0</div>
+          <div class="result-stat-label">Helytelen</div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-green" onclick="location.reload()">
+          <i class="fas fa-redo"></i> Új teszt
+        </button>
+        <button class="btn btn-outline" onclick="location.href='../portal.html'">
+          <i class="fas fa-home"></i> Főmenü
+        </button>
+      </div>
+    </div>
+    <div class="result-list" id="result-list"></div>
+  </div>
+
+</div>
+
+<script src="quiz-interactive.js"></script>
+</body>
+</html>

@@ -212,10 +212,10 @@
             flex-direction: column;
             gap: 16px;
         }
-        /* Kártyák + changelog: kétoszlopos rács */
+        /* Kártyák + changelog: háromoszlopos rács */
         .student-two-col {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 16px;
             align-items: start;
         }
@@ -225,10 +225,15 @@
             gap: 12px;
         }
         /* Changelog egy oszlophoz igazítva */
-        .changelog-box.python-col { border-color: rgba(55,118,171,0.4); }
-        .changelog-box.web-col    { border-color: rgba(228,77,38,0.4); }
+        .changelog-box.python-col    { border-color: rgba(55,118,171,0.4); }
+        .changelog-box.web-col       { border-color: rgba(228,77,38,0.4); }
+        .changelog-box.interaktiv-col { border-color: rgba(13,148,136,0.4); }
 
-        @media (max-width: 600px) {
+        .option-card.interaktiv { border-color: #0d9488; }
+        .option-card.interaktiv:hover { border-color: #14b8a6; box-shadow: 0 8px 24px rgba(13,148,136,0.25); }
+        .option-card.interaktiv .icon { color: #0d9488; }
+
+        @media (max-width: 700px) {
             .student-two-col { grid-template-columns: 1fr; }
         }
 
@@ -831,6 +836,14 @@
                     <div class="changelog-item">Magyarázó tananyag a Segédlet gomb megnyomásával elérhető</div>
                     <div class="changelog-item">Élő előnézet, tipp rendszer és megoldásmegtekintő ha elakadnál</div>
                 </div>
+            </div>
+            <!-- Interaktív Teszt oszlop -->
+            <div class="student-col">
+                <a class="option-card interaktiv" href="interactive/index.html">
+                    <span class="icon"><i class="fas fa-brain"></i></span>
+                    <span class="label">INTERAKTÍV TESZT</span>
+                    <span class="desc">Informatikai és távközlési alapok – 15 kérdés</span>
+                </a>
             </div>
         </div>
 
