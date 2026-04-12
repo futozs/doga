@@ -959,6 +959,16 @@ function renderCustomTaskList() {
     document.querySelectorAll('.custom-cb').forEach(cb =>
         cb.addEventListener('change', updateCustomCount));
     updateCustomCount();
+
+    // Már szavazott gombok visszaállítása
+    document.querySelectorAll('.tanulo-vote-btn').forEach(btn => {
+        const match = btn.getAttribute('onclick')?.match(/voteForPractice\((\d+)/);
+        if (match && _votedTasks.has(Number(match[1]))) {
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            btn.style.color = '#22c55e';
+            btn.title = 'Szavazat visszavonásához kattints újra';
+        }
+    });
 }
 
 function updateCustomCount() {
@@ -2832,26 +2842,34 @@ const _votedTasks = new Set(JSON.parse(localStorage.getItem('_practiceVotes') ||
 function voteForPractice(taskNum, e) {
     e.preventDefault(); e.stopPropagation();
     const btn = e.currentTarget;
-    if (_votedTasks.has(taskNum)) {
-        btn.title = 'Már szavaztál erre!';
-        return;
-    }
-    // Azonnali visszajelzés – nem várunk a szerverre
-    _votedTasks.add(taskNum);
-    localStorage.setItem('_practiceVotes', JSON.stringify([..._votedTasks]));
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-    btn.style.color = '#22c55e';
-    btn.title = 'Szavazat elküldve!';
-    // Küldés háttérben (silent fail)
     const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
     const task = tasks.find(t => t.number === taskNum);
     if (!task) return;
-    fetch(`${RAILWAY_URL}/api/feedback`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: 1 })
-    }).catch(() => {});
+    if (_votedTasks.has(taskNum)) {
+        // Visszavonás
+        _votedTasks.delete(taskNum);
+        localStorage.setItem('_practiceVotes', JSON.stringify([..._votedTasks]));
+        btn.innerHTML = '<i class="fa-solid fa-thumbs-up"></i>';
+        btn.style.color = '';
+        btn.title = 'Szerintem kerüljön a practice feladatok közé!';
+        fetch(`${RAILWAY_URL}/api/feedback`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: -1 })
+        }).catch(() => {});
+    } else {
+        // Szavazás
+        _votedTasks.add(taskNum);
+        localStorage.setItem('_practiceVotes', JSON.stringify([..._votedTasks]));
+        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        btn.style.color = '#22c55e';
+        btn.title = 'Szavazat visszavonásához kattints újra';
+        fetch(`${RAILWAY_URL}/api/feedback`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: 1 })
+        }).catch(() => {});
+    }
 }
 
 function updateTaskBreakdown() {
