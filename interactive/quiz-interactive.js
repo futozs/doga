@@ -20,7 +20,7 @@ QB.t1 = [
   { id:'E5', q:'Melyik alkatrész korlátozza az áramerősséget az áramkörben?',
     opts:['Kondenzátor','Dióda','Ellenállás','Tekercs'], ans:'Ellenállás' },
   { id:'E6', q:'Melyik anyag vezeti az elektromos áramot?',
-    opts:['Műanyag','Fa','Réz','Üveg'], ans:'Réz', image:'images/vezeto_anyag.jpg' },
+    opts:['Műanyag','Fa','Réz','Üveg'], ans:'Réz' },
   { id:'E7', q:'Mi látható a képen?',
     opts:['Kondenzátor','Tranzisztor','Ellenállás','Tekercs'], ans:'Ellenállás', image:'images/ellenallas.jpg' },
   { id:'E8', q:'Mit jelent a LED rövidítés?',
