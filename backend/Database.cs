@@ -1697,7 +1697,9 @@ public class Database
         cmd.Parameters.AddWithValue("$jegy",     req.Jegy ?? (object)DBNull.Value);
         cmd.Parameters.AddWithValue("$idoMp",    req.IdoMp ?? (object)DBNull.Value);
         cmd.ExecuteNonQuery();
-        return (int)conn.LastInsertRowId;
+        using var idCmd = conn.CreateCommand();
+        idCmd.CommandText = "SELECT last_insert_rowid()";
+        return (int)(long)idCmd.ExecuteScalar()!;
     }
 
     public List<QuizResultItem> GetQuizResults(string? tipus = null)
