@@ -215,6 +215,15 @@
 
         .submissions-table tr:hover td { background: rgba(15,52,96,0.5); }
 
+        /* Quiz eredmény sorok */
+        .quiz-student-row { cursor:pointer; }
+        .quiz-student-row:hover td { background: rgba(13,148,136,0.12) !important; }
+        .quiz-student-row td:first-child { white-space:nowrap; }
+        .quiz-expand-icon { display:inline-block; transition:transform .2s; margin-right:6px; color:#0d9488; font-size:0.8rem; }
+        .quiz-student-row.open .quiz-expand-icon { transform:rotate(90deg); }
+        .quiz-detail-row td { background:#0a1628 !important; font-size:0.82rem; padding:6px 12px !important; }
+        .quiz-detail-row:last-of-type td { border-bottom:2px solid #0d9488; }
+
         /* Beadások tábla oszlopszélességek */
         #submissions-table th:nth-child(1), #submissions-table td:nth-child(1) { width: 45px; }
         #submissions-table th:nth-child(2), #submissions-table td:nth-child(2) { width: 130px; }
@@ -735,16 +744,16 @@
                 <table class="submissions-table">
                     <thead>
                         <tr>
-                            <th>#</th><th>Név</th><th>Osztály</th><th>Szint</th>
-                            <th style="text-align:center;">Dátum</th>
-                            <th style="text-align:center;">Pont</th>
-                            <th style="text-align:center;">%</th>
-                            <th style="text-align:center;">Jegy</th>
-                            <th style="text-align:center;">Idő</th>
+                            <th>#</th><th>Név</th><th>Osztály</th>
+                            <th style="text-align:center;">Próbák</th>
+                            <th style="text-align:center;">Legjobb pont</th>
+                            <th style="text-align:center;">Legjobb %</th>
+                            <th style="text-align:center;">Legjobb jegy</th>
+                            <th style="text-align:center;">Utolsó próba</th>
                         </tr>
                     </thead>
                     <tbody id="tudasproba-tbody">
-                        <tr><td colspan="9" class="loading">Kattints a Frissítés gombra</td></tr>
+                        <tr><td colspan="8" class="loading">Kattints a Frissítés gombra</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -762,16 +771,15 @@
                     <thead>
                         <tr>
                             <th>#</th><th>Név</th><th>Osztály</th>
-                            <th style="text-align:center;">Dátum</th>
-                            <th style="text-align:center;">Pont</th>
-                            <th style="text-align:center;">%</th>
-                            <th style="text-align:center;">Jegy</th>
+                            <th style="text-align:center;">Próbák</th>
+                            <th style="text-align:center;">Legjobb pont</th>
+                            <th style="text-align:center;">Legjobb %</th>
+                            <th style="text-align:center;">Legjobb jegy</th>
                             <th style="text-align:center;">Eredmény</th>
-                            <th style="text-align:center;">Idő</th>
                         </tr>
                     </thead>
                     <tbody id="interaktiv-tbody">
-                        <tr><td colspan="9" class="loading">Kattints a Frissítés gombra</td></tr>
+                        <tr><td colspan="8" class="loading">Kattints a Frissítés gombra</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1721,56 +1729,114 @@
             ].join('');
         }
 
+        // Adatokat tanulónként csoportosítja, legjobb és utolsó eredménnyel
+        function groupByStudent(data) {
+            const map = new Map();
+            data.forEach(r => {
+                const key = r.email || r.nev;
+                if (!map.has(key)) map.set(key, { nev:r.nev, email:r.email||'', osztaly:r.osztaly||'', rows:[] });
+                map.get(key).rows.push(r);
+            });
+            return [...map.values()].map(s => {
+                const best = s.rows.reduce((b,r) => r.szazalek > b.szazalek ? r : b, s.rows[0]);
+                const last = s.rows[0]; // backend DESC sorrendben adja
+                return { ...s, best, last, count: s.rows.length };
+            });
+        }
+
+        function toggleQuizDetails(btn) {
+            const row = btn.closest('tr');
+            row.classList.toggle('open');
+            let next = row.nextElementSibling;
+            while (next && next.classList.contains('quiz-detail-row')) {
+                next.style.display = next.style.display === 'none' ? '' : 'none';
+                next = next.nextElementSibling;
+            }
+        }
+
         async function loadTudasprobaResults() {
             const tbody  = document.getElementById('tudasproba-tbody');
             const statsEl= document.getElementById('tudasproba-stats');
             const tipus  = document.getElementById('tudasproba-filter')?.value || '';
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="9" class="loading">Betöltés...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="loading">Betöltés...</td></tr>';
             const url = `${RAILWAY_URL}/api/quiz-results${tipus ? '?tipus=' + tipus : ''}`;
             const res = await authFetch(url);
-            if (!res.ok) { tbody.innerHTML = '<tr><td colspan="9" class="loading">Hiba a betöltés során.</td></tr>'; return; }
+            if (!res.ok) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Hiba a betöltés során.</td></tr>'; return; }
             const data = await res.json();
             renderQuizStats(data, statsEl);
-            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="9" class="loading">Még nincs eredmény.</td></tr>'; return; }
+            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs eredmény.</td></tr>'; return; }
             const tipusNev = { html:'HTML', css:'CSS', bootstrap:'Bootstrap' };
-            tbody.innerHTML = data.map((r,i) => `<tr>
-                <td>${i+1}</td>
-                <td>${escHtml(r.nev)}<br><small style="color:#666">${escHtml(r.email||'')}</small></td>
-                <td>${escHtml(r.osztaly||'–')}</td>
-                <td style="text-align:center"><span style="background:#0f3460;border-radius:4px;padding:2px 8px;font-size:0.8rem">${tipusNev[r.tipus]||r.tipus}</span></td>
-                <td style="text-align:center;white-space:nowrap">${r.submittedAt?.substring(0,16)||'–'}</td>
-                <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
-                <td style="text-align:center">${r.szazalek}%</td>
-                <td style="text-align:center;font-weight:700;color:${GRADE_COLORS[r.jegy]||'#94a3b8'}">${r.jegy ? r.jegy+' – '+GRADE_NAMES[r.jegy] : '–'}</td>
-                <td style="text-align:center">${formatIdo(r.idoMp)}</td>
-            </tr>`).join('');
+            const students = groupByStudent(data);
+            let html = '';
+            students.forEach((s, i) => {
+                const gc = GRADE_COLORS[s.best.jegy] || '#94a3b8';
+                html += `<tr class="quiz-student-row" onclick="toggleQuizDetails(this)">
+                    <td><i class="fas fa-chevron-right quiz-expand-icon"></i>${i+1}</td>
+                    <td>${escHtml(s.nev)}<br><small style="color:#666">${escHtml(s.email)}</small></td>
+                    <td>${escHtml(s.osztaly||'–')}</td>
+                    <td style="text-align:center"><strong>${s.count}×</strong></td>
+                    <td style="text-align:center">${s.best.pont} / ${s.best.maxPont}</td>
+                    <td style="text-align:center">${s.best.szazalek}%</td>
+                    <td style="text-align:center;font-weight:700;color:${gc}">${s.best.jegy ? s.best.jegy+' – '+GRADE_NAMES[s.best.jegy] : '–'}</td>
+                    <td style="text-align:center;white-space:nowrap;color:#64748b">${s.last.submittedAt?.substring(0,16)||'–'}</td>
+                </tr>`;
+                s.rows.forEach((r, ri) => {
+                    const gc2 = GRADE_COLORS[r.jegy] || '#94a3b8';
+                    html += `<tr class="quiz-detail-row" style="display:none">
+                        <td style="padding-left:28px;color:#64748b">${ri+1}. próba</td>
+                        <td colspan="2" style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
+                        <td style="text-align:center"><span style="background:#0f3460;border-radius:4px;padding:2px 8px;font-size:0.75rem">${tipusNev[r.tipus]||r.tipus}</span></td>
+                        <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
+                        <td style="text-align:center">${r.szazalek}%</td>
+                        <td style="text-align:center;font-weight:700;color:${gc2}">${r.jegy ? r.jegy+' – '+GRADE_NAMES[r.jegy] : '–'}</td>
+                        <td style="text-align:center;color:#64748b">${formatIdo(r.idoMp)}</td>
+                    </tr>`;
+                });
+            });
+            tbody.innerHTML = html;
         }
 
         async function loadInteraktivResults() {
             const tbody  = document.getElementById('interaktiv-tbody');
             const statsEl= document.getElementById('interaktiv-stats');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="9" class="loading">Betöltés...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="loading">Betöltés...</td></tr>';
             const res = await authFetch(`${RAILWAY_URL}/api/quiz-results?tipus=interaktiv`);
-            if (!res.ok) { tbody.innerHTML = '<tr><td colspan="9" class="loading">Hiba a betöltés során.</td></tr>'; return; }
+            if (!res.ok) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Hiba a betöltés során.</td></tr>'; return; }
             const data = await res.json();
             renderQuizStats(data, statsEl);
-            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="9" class="loading">Még nincs eredmény.</td></tr>'; return; }
-            tbody.innerHTML = data.map((r,i) => {
-                const megfelelt = r.szazalek >= 40;
-                return `<tr>
-                    <td>${i+1}</td>
-                    <td>${escHtml(r.nev)}<br><small style="color:#666">${escHtml(r.email||'')}</small></td>
-                    <td>${escHtml(r.osztaly||'–')}</td>
-                    <td style="text-align:center;white-space:nowrap">${r.submittedAt?.substring(0,16)||'–'}</td>
-                    <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
-                    <td style="text-align:center">${r.szazalek}%</td>
-                    <td style="text-align:center;font-weight:700;color:${GRADE_COLORS[r.jegy]||'#94a3b8'}">${r.jegy ? r.jegy+' – '+GRADE_NAMES[r.jegy] : '–'}</td>
+            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs eredmény.</td></tr>'; return; }
+            const students = groupByStudent(data);
+            let html = '';
+            students.forEach((s, i) => {
+                const megfelelt = s.best.szazalek >= 40;
+                const gc = GRADE_COLORS[s.best.jegy] || '#94a3b8';
+                html += `<tr class="quiz-student-row" onclick="toggleQuizDetails(this)">
+                    <td><i class="fas fa-chevron-right quiz-expand-icon"></i>${i+1}</td>
+                    <td>${escHtml(s.nev)}<br><small style="color:#666">${escHtml(s.email)}</small></td>
+                    <td>${escHtml(s.osztaly||'–')}</td>
+                    <td style="text-align:center"><strong>${s.count}×</strong></td>
+                    <td style="text-align:center">${s.best.pont} / ${s.best.maxPont}</td>
+                    <td style="text-align:center">${s.best.szazalek}%</td>
+                    <td style="text-align:center;font-weight:700;color:${gc}">${s.best.jegy ? s.best.jegy+' – '+GRADE_NAMES[s.best.jegy] : '–'}</td>
                     <td style="text-align:center;font-weight:600;color:${megfelelt?'#22c55e':'#ef4444'}">${megfelelt?'Megfelelt':'Nem felelt meg'}</td>
-                    <td style="text-align:center">${formatIdo(r.idoMp)}</td>
                 </tr>`;
-            }).join('');
+                s.rows.forEach((r, ri) => {
+                    const mf = r.szazalek >= 40;
+                    const gc2 = GRADE_COLORS[r.jegy] || '#94a3b8';
+                    html += `<tr class="quiz-detail-row" style="display:none">
+                        <td style="padding-left:28px;color:#64748b">${ri+1}. próba</td>
+                        <td colspan="2" style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
+                        <td style="text-align:center">–</td>
+                        <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
+                        <td style="text-align:center">${r.szazalek}%</td>
+                        <td style="text-align:center;font-weight:700;color:${gc2}">${r.jegy ? r.jegy+' – '+GRADE_NAMES[r.jegy] : '–'}</td>
+                        <td style="text-align:center;font-size:0.8rem;color:${mf?'#22c55e':'#ef4444'}">${mf?'Megfelelt':'Nem felelt meg'} &nbsp;·&nbsp; ${formatIdo(r.idoMp)}</td>
+                    </tr>`;
+                });
+            });
+            tbody.innerHTML = html;
         }
 
         // Check auth on page load
