@@ -972,14 +972,24 @@ public class Database
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
-        cmd.CommandText = @"
-            INSERT INTO task_ratings (email, feladat_nev, tipus, ertek)
-            VALUES ($email, $feladat_nev, $tipus, $ertek)
-            ON CONFLICT(email, feladat_nev, tipus) DO UPDATE SET ertek = $ertek, created_at = datetime('now','localtime')";
+        if (ertek <= 0)
+        {
+            // Visszavonás: töröljük a sort
+            cmd.CommandText = @"
+                DELETE FROM task_ratings
+                WHERE email = $email AND feladat_nev = $feladat_nev AND tipus = $tipus";
+        }
+        else
+        {
+            cmd.CommandText = @"
+                INSERT INTO task_ratings (email, feladat_nev, tipus, ertek)
+                VALUES ($email, $feladat_nev, $tipus, $ertek)
+                ON CONFLICT(email, feladat_nev, tipus) DO UPDATE SET ertek = $ertek, created_at = datetime('now','localtime')";
+        }
         cmd.Parameters.AddWithValue("$email",       email);
         cmd.Parameters.AddWithValue("$feladat_nev", feladatNev);
         cmd.Parameters.AddWithValue("$tipus",       tipus);
-        cmd.Parameters.AddWithValue("$ertek",       ertek);
+        if (ertek > 0) cmd.Parameters.AddWithValue("$ertek", ertek);
         cmd.ExecuteNonQuery();
     }
 
@@ -990,6 +1000,7 @@ public class Database
         cmd.CommandText = @"
             SELECT feladat_nev, tipus, ertek, COUNT(*) as db
             FROM task_ratings
+            WHERE ertek > 0
             GROUP BY feladat_nev, tipus, ertek
             ORDER BY feladat_nev, tipus, ertek";
         var list = new List<TaskRatingStat>();
