@@ -2122,7 +2122,7 @@
                 body: JSON.stringify({
                     email: user.email || '',
                     nev: user.nev || user.email || '',
-                    osztaly: user.osztaly || null,
+                    osztaly: [user.evfolyam, user.osztaly].filter(Boolean).join('') || null,
                     szoveg,
                     kepBase64: null,
                     tipus: 'otlet'
@@ -2165,7 +2165,7 @@
                 body: JSON.stringify({
                     email: user.email || '',
                     nev: user.nev || user.email || '',
-                    osztaly: user.osztaly || null,
+                    osztaly: [user.evfolyam, user.osztaly].filter(Boolean).join('') || null,
                     szoveg,
                     kepBase64: hibaKepBase64,
                     tipus: 'hiba'
@@ -2249,7 +2249,7 @@
             const res = await fetch(`${API_BASE}/api/tesztelok/jelentes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}` },
-                body: JSON.stringify({ nev: user.nev || '', osztaly: user.osztaly || null })
+                body: JSON.stringify({ nev: user.nev || '', osztaly: [user.evfolyam, user.osztaly].filter(Boolean).join('') || null })
             });
             if (res.ok) {
                 msgEl.style.color = '#86efac';
@@ -2333,7 +2333,7 @@
             const res = await fetch(`${API_BASE}/api/feladat-javaslatok`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}` },
-                body: JSON.stringify({ email: user.email, nev: user.nev||'', osztaly: user.osztaly||null, cim, pont, tipus, szoveg, megoldas: megoldas||null })
+                body: JSON.stringify({ email: user.email, nev: user.nev||'', osztaly: [user.evfolyam, user.osztaly].filter(Boolean).join('')||null, cim, pont, tipus, szoveg, megoldas: megoldas||null })
             });
             if (res.ok) {
                 if (maradjon) {
