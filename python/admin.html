@@ -1044,6 +1044,11 @@
                             <option value="">–</option>
                             <option value="9">9.</option>
                             <option value="10">10.</option>
+                            <option value="11">11.</option>
+                            <option value="12">12.</option>
+                            <option value="13">13.</option>
+                            <option value="1/13">1/13.</option>
+                            <option value="2/14">2/14.</option>
                         </select>
                     </div>
                     <div style="flex:1;">
@@ -1600,7 +1605,7 @@
             editUserTargetEmail = u.email;
             document.getElementById('edit-user-email-display').textContent = u.email;
             document.getElementById('edit-user-nev').value = u.nev || '';
-            document.getElementById('edit-user-evfolyam').value = u.evfolyam ? String(parseInt(u.evfolyam)||'') : '';
+            document.getElementById('edit-user-evfolyam').value = u.evfolyam ? u.evfolyam.replace(/\.$/, '') : '';
             document.getElementById('edit-user-osztaly').value = u.osztaly || '';
             document.getElementById('edit-user-csoport').value = u.csoport || '';
             document.getElementById('edit-user-error').style.display = 'none';
