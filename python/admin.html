@@ -731,12 +731,18 @@
         <div class="panel" data-tab="tudasproba" style="display:none;">
             <h2><i class="fas fa-graduation-cap"></i> Tudáspróba – Eredmények</h2>
             <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-                <button class="btn-refresh" onclick="loadTudasprobaResults()"><i class="fas fa-rotate"></i> Frissítés</button>
-                <select id="tudasproba-filter" onchange="loadTudasprobaResults()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                <button class="btn-refresh" onclick="loadTudasprobaResults(true)"><i class="fas fa-rotate"></i> Frissítés</button>
+                <select id="tudasproba-filter" onchange="renderTudasprobaTable()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
                     <option value="">Minden szint</option>
                     <option value="html">HTML</option>
                     <option value="css">CSS</option>
                     <option value="bootstrap">Bootstrap</option>
+                </select>
+                <select id="tudasproba-osztaly-filter" onchange="renderTudasprobaTable()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="">Minden osztály</option>
+                </select>
+                <select id="tudasproba-csoport-filter" onchange="renderTudasprobaTable()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="">Minden csoport</option>
                 </select>
             </div>
             <div id="tudasproba-stats" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
@@ -744,7 +750,7 @@
                 <table class="submissions-table">
                     <thead>
                         <tr>
-                            <th>#</th><th>Név</th><th>Osztály</th>
+                            <th>#</th><th>Név</th><th>Osztály</th><th>Csoport</th>
                             <th style="text-align:center;">Próbák</th>
                             <th style="text-align:center;">Legjobb pont</th>
                             <th style="text-align:center;">Legjobb %</th>
@@ -753,7 +759,7 @@
                         </tr>
                     </thead>
                     <tbody id="tudasproba-tbody">
-                        <tr><td colspan="8" class="loading">Kattints a Frissítés gombra</td></tr>
+                        <tr><td colspan="9" class="loading">Kattints a Frissítés gombra</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -763,14 +769,20 @@
         <div class="panel" data-tab="interaktiv" style="display:none;">
             <h2><i class="fas fa-brain"></i> Interaktív Teszt – Eredmények</h2>
             <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-                <button class="btn-refresh" onclick="loadInteraktivResults()"><i class="fas fa-rotate"></i> Frissítés</button>
+                <button class="btn-refresh" onclick="loadInteraktivResults(true)"><i class="fas fa-rotate"></i> Frissítés</button>
+                <select id="interaktiv-osztaly-filter" onchange="renderInteraktivTable()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="">Minden osztály</option>
+                </select>
+                <select id="interaktiv-csoport-filter" onchange="renderInteraktivTable()" style="padding:6px 10px;background:#0f3460;border:1px solid #1a4a8a;border-radius:8px;color:#e0e0e0;font-size:0.85rem;">
+                    <option value="">Minden csoport</option>
+                </select>
             </div>
             <div id="interaktiv-stats" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
             <div style="overflow-x:auto;">
                 <table class="submissions-table">
                     <thead>
                         <tr>
-                            <th>#</th><th>Név</th>
+                            <th>#</th><th>Név</th><th>Osztály</th><th>Csoport</th>
                             <th style="text-align:center;">Próbák</th>
                             <th style="text-align:center;">Legjobb pont</th>
                             <th style="text-align:center;">Legjobb %</th>
@@ -780,7 +792,7 @@
                         </tr>
                     </thead>
                     <tbody id="interaktiv-tbody">
-                        <tr><td colspan="8" class="loading">Kattints a Frissítés gombra</td></tr>
+                        <tr><td colspan="10" class="loading">Kattints a Frissítés gombra</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1735,7 +1747,7 @@
             const map = new Map();
             data.forEach(r => {
                 const key = r.email || r.nev;
-                if (!map.has(key)) map.set(key, { nev:r.nev, email:r.email||'', osztaly:r.osztaly||'', rows:[] });
+                if (!map.has(key)) map.set(key, { nev:r.nev, email:r.email||'', osztaly:r.osztaly||'', csoport:r.csoport||'', rows:[] });
                 map.get(key).rows.push(r);
             });
             return [...map.values()].map(s => {
@@ -1743,6 +1755,24 @@
                 const last = s.rows[0]; // backend DESC sorrendben adja
                 return { ...s, best, last, count: s.rows.length };
             });
+        }
+
+        function populateQuizFilter(selectId, data, field) {
+            const sel = document.getElementById(selectId);
+            if (!sel) return;
+            const current = sel.value;
+            const vals = [...new Set(data.map(r => r[field]||'').filter(Boolean))].sort();
+            sel.innerHTML = `<option value="">Minden</option>` + vals.map(v => `<option value="${escHtml(v)}">${escHtml(v)}</option>`).join('');
+            if (vals.includes(current)) sel.value = current;
+        }
+
+        function applyQuizFilter(students, osztalyId, csoportId) {
+            const fo = document.getElementById(osztalyId)?.value || '';
+            const fc = document.getElementById(csoportId)?.value || '';
+            return students.filter(s =>
+                (!fo || s.osztaly === fo) &&
+                (!fc || s.csoport === fc)
+            );
         }
 
         function toggleQuizDetails(btn) {
@@ -1755,22 +1785,40 @@
             }
         }
 
-        async function loadTudasprobaResults() {
+        let _rawTudasprobaData = null;
+        let _rawInteraktivData = null;
+
+        async function loadTudasprobaResults(force = false) {
             const tbody  = document.getElementById('tudasproba-tbody');
             const statsEl= document.getElementById('tudasproba-stats');
-            const tipus  = document.getElementById('tudasproba-filter')?.value || '';
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="8" class="loading">Betöltés...</td></tr>';
-            const url = `${RAILWAY_URL}/api/quiz-results${tipus ? '?tipus=' + tipus : ''}`;
-            const res = await authFetch(url);
-            if (!res.ok) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Hiba a betöltés során.</td></tr>'; return; }
-            const raw = await res.json();
-            const TUDASPROBA_TIPUSOK = ['html','css','bootstrap'];
-            const data = tipus ? raw : raw.filter(r => TUDASPROBA_TIPUSOK.includes(r.tipus));
+            if (force || !_rawTudasprobaData) {
+                tbody.innerHTML = '<tr><td colspan="9" class="loading">Betöltés...</td></tr>';
+                const res = await authFetch(`${RAILWAY_URL}/api/quiz-results`);
+                if (!res.ok) { tbody.innerHTML = '<tr><td colspan="9" class="loading">Hiba a betöltés során.</td></tr>'; return; }
+                const raw = await res.json();
+                const TUDASPROBA_TIPUSOK = ['html','css','bootstrap'];
+                _rawTudasprobaData = raw.filter(r => TUDASPROBA_TIPUSOK.includes(r.tipus));
+                populateQuizFilter('tudasproba-osztaly-filter', _rawTudasprobaData, 'osztaly');
+                populateQuizFilter('tudasproba-csoport-filter', _rawTudasprobaData, 'csoport');
+            }
+            renderTudasprobaTable();
+        }
+
+        function renderTudasprobaTable() {
+            const tbody  = document.getElementById('tudasproba-tbody');
+            const statsEl= document.getElementById('tudasproba-stats');
+            if (!tbody || !_rawTudasprobaData) return;
+            const tipus = document.getElementById('tudasproba-filter')?.value || '';
+            let data = tipus ? _rawTudasprobaData.filter(r => r.tipus === tipus) : _rawTudasprobaData;
+            const fo = document.getElementById('tudasproba-osztaly-filter')?.value || '';
+            const fc = document.getElementById('tudasproba-csoport-filter')?.value || '';
             renderQuizStats(data, statsEl);
-            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs eredmény.</td></tr>'; return; }
             const tipusNev = { html:'HTML', css:'CSS', bootstrap:'Bootstrap' };
-            const students = groupByStudent(data);
+            let students = groupByStudent(data);
+            if (fo) students = students.filter(s => s.osztaly === fo);
+            if (fc) students = students.filter(s => s.csoport === fc);
+            if (students.length === 0) { tbody.innerHTML = '<tr><td colspan="9" class="loading">Nincs találat.</td></tr>'; return; }
             let html = '';
             students.forEach((s, i) => {
                 const gc = GRADE_COLORS[s.best.jegy] || '#94a3b8';
@@ -1778,6 +1826,7 @@
                     <td><i class="fas fa-chevron-right quiz-expand-icon"></i>${i+1}</td>
                     <td>${escHtml(s.nev)}<br><small style="color:#666">${escHtml(s.email)}</small></td>
                     <td>${escHtml(s.osztaly||'–')}</td>
+                    <td>${escHtml(s.csoport||'–')}</td>
                     <td style="text-align:center"><strong>${s.count}×</strong></td>
                     <td style="text-align:center">${s.best.pont} / ${s.best.maxPont}</td>
                     <td style="text-align:center">${s.best.szazalek}%</td>
@@ -1788,7 +1837,7 @@
                     const gc2 = GRADE_COLORS[r.jegy] || '#94a3b8';
                     html += `<tr class="quiz-detail-row" style="display:none">
                         <td style="padding-left:28px;color:#64748b">${ri+1}. próba</td>
-                        <td colspan="2" style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
+                        <td colspan="3" style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
                         <td style="text-align:center"><span style="background:#0f3460;border-radius:4px;padding:2px 8px;font-size:0.75rem">${tipusNev[r.tipus]||r.tipus}</span></td>
                         <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
                         <td style="text-align:center">${r.szazalek}%</td>
@@ -1800,17 +1849,32 @@
             tbody.innerHTML = html;
         }
 
-        async function loadInteraktivResults() {
+        async function loadInteraktivResults(force = false) {
             const tbody  = document.getElementById('interaktiv-tbody');
             const statsEl= document.getElementById('interaktiv-stats');
             if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="8" class="loading">Betöltés...</td></tr>';
-            const res = await authFetch(`${RAILWAY_URL}/api/quiz-results?tipus=interaktiv`);
-            if (!res.ok) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Hiba a betöltés során.</td></tr>'; return; }
-            const data = await res.json();
-            renderQuizStats(data, statsEl);
-            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="loading">Még nincs eredmény.</td></tr>'; return; }
-            const students = groupByStudent(data);
+            if (force || !_rawInteraktivData) {
+                tbody.innerHTML = '<tr><td colspan="10" class="loading">Betöltés...</td></tr>';
+                const res = await authFetch(`${RAILWAY_URL}/api/quiz-results?tipus=interaktiv`);
+                if (!res.ok) { tbody.innerHTML = '<tr><td colspan="10" class="loading">Hiba a betöltés során.</td></tr>'; return; }
+                _rawInteraktivData = await res.json();
+                populateQuizFilter('interaktiv-osztaly-filter', _rawInteraktivData, 'osztaly');
+                populateQuizFilter('interaktiv-csoport-filter', _rawInteraktivData, 'csoport');
+            }
+            renderInteraktivTable();
+        }
+
+        function renderInteraktivTable() {
+            const tbody  = document.getElementById('interaktiv-tbody');
+            const statsEl= document.getElementById('interaktiv-stats');
+            if (!tbody || !_rawInteraktivData) return;
+            const fo = document.getElementById('interaktiv-osztaly-filter')?.value || '';
+            const fc = document.getElementById('interaktiv-csoport-filter')?.value || '';
+            renderQuizStats(_rawInteraktivData, statsEl);
+            let students = groupByStudent(_rawInteraktivData);
+            if (fo) students = students.filter(s => s.osztaly === fo);
+            if (fc) students = students.filter(s => s.csoport === fc);
+            if (students.length === 0) { tbody.innerHTML = '<tr><td colspan="10" class="loading">Nincs találat.</td></tr>'; return; }
             let html = '';
             students.forEach((s, i) => {
                 const megfelelt = s.best.szazalek >= 40;
@@ -1818,6 +1882,8 @@
                 html += `<tr class="quiz-student-row" onclick="toggleQuizDetails(this)">
                     <td><i class="fas fa-chevron-right quiz-expand-icon"></i>${i+1}</td>
                     <td>${escHtml(s.nev)}<br><small style="color:#666">${escHtml(s.email)}</small></td>
+                    <td>${escHtml(s.osztaly||'–')}</td>
+                    <td>${escHtml(s.csoport||'–')}</td>
                     <td style="text-align:center"><strong>${s.count}×</strong></td>
                     <td style="text-align:center">${s.best.pont} / ${s.best.maxPont}</td>
                     <td style="text-align:center">${s.best.szazalek}%</td>
@@ -1830,7 +1896,7 @@
                     const gc2 = GRADE_COLORS[r.jegy] || '#94a3b8';
                     html += `<tr class="quiz-detail-row" style="display:none">
                         <td style="padding-left:28px;color:#64748b">${ri+1}. próba</td>
-                        <td style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
+                        <td colspan="3" style="color:#94a3b8">${r.submittedAt?.substring(0,16)||'–'}</td>
                         <td style="text-align:center">–</td>
                         <td style="text-align:center">${r.pont} / ${r.maxPont}</td>
                         <td style="text-align:center">${r.szazalek}%</td>
