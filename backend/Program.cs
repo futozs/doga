@@ -913,6 +913,24 @@ app.MapDelete("/api/password-reset-request/{id}", (HttpContext ctx, int id, Data
     return Results.Ok(new { success = true });
 });
 
+// ── Quiz eredmények ────────────────────────────────────────────────────────
+
+// Kvíz eredmény mentése (diák küldi, auth nélkül)
+app.MapPost("/api/quiz-result", (QuizResultRequest req, Database db) =>
+{
+    var id = db.SaveQuizResult(req);
+    return Results.Ok(new { success = true, id });
+});
+
+// Kvíz eredmények lekérése (csak oktató)
+app.MapGet("/api/quiz-results", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var tipus = ctx.Request.Query["tipus"].FirstOrDefault();
+    var list = db.GetQuizResults(string.IsNullOrEmpty(tipus) ? null : tipus);
+    return Results.Ok(list);
+});
+
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");

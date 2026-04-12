@@ -167,6 +167,22 @@ public class Database
         try { Exec(conn, "ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0"); } catch { }
         try { Exec(conn, "ALTER TABLE otlet_lada ADD COLUMN tipus TEXT NOT NULL DEFAULT 'otlet'"); } catch { }
         try { Exec(conn, "ALTER TABLE teszteloi_uzenetek ADD COLUMN recipient_email TEXT"); } catch { }
+        Exec(conn, @"
+            CREATE TABLE IF NOT EXISTS quiz_results (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                nev          TEXT NOT NULL,
+                email        TEXT,
+                osztaly      TEXT,
+                csoport      TEXT,
+                tipus        TEXT NOT NULL,
+                pont         INTEGER NOT NULL,
+                max_pont     INTEGER NOT NULL,
+                szazalek     INTEGER NOT NULL,
+                jegy         INTEGER,
+                ido_mp       INTEGER,
+                submitted_at TEXT DEFAULT (datetime('now', 'localtime'))
+            );
+        ");
     }
 
     // ── Config ────────────────────────────────────────────────────────────────
@@ -1659,6 +1675,58 @@ public class Database
         cmd.CommandText = "DELETE FROM password_reset_requests WHERE id = $id";
         cmd.Parameters.AddWithValue("$id", id);
         cmd.ExecuteNonQuery();
+    }
+
+    // ── Quiz eredmények ───────────────────────────────────────────────────────
+
+    public int SaveQuizResult(QuizResultRequest req)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            INSERT INTO quiz_results (nev, email, osztaly, csoport, tipus, pont, max_pont, szazalek, jegy, ido_mp)
+            VALUES ($nev, $email, $osztaly, $csoport, $tipus, $pont, $maxPont, $szazalek, $jegy, $idoMp)";
+        cmd.Parameters.AddWithValue("$nev",      req.Nev);
+        cmd.Parameters.AddWithValue("$email",    req.Email ?? "");
+        cmd.Parameters.AddWithValue("$osztaly",  req.Osztaly ?? "");
+        cmd.Parameters.AddWithValue("$csoport",  req.Csoport ?? "");
+        cmd.Parameters.AddWithValue("$tipus",    req.Tipus);
+        cmd.Parameters.AddWithValue("$pont",     req.Pont);
+        cmd.Parameters.AddWithValue("$maxPont",  req.MaxPont);
+        cmd.Parameters.AddWithValue("$szazalek", req.Szazalek);
+        cmd.Parameters.AddWithValue("$jegy",     req.Jegy ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$idoMp",    req.IdoMp ?? (object)DBNull.Value);
+        cmd.ExecuteNonQuery();
+        return (int)conn.LastInsertRowId;
+    }
+
+    public List<QuizResultItem> GetQuizResults(string? tipus = null)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = tipus == null
+            ? "SELECT id, nev, email, osztaly, csoport, tipus, pont, max_pont, szazalek, jegy, ido_mp, submitted_at FROM quiz_results ORDER BY submitted_at DESC LIMIT 500"
+            : "SELECT id, nev, email, osztaly, csoport, tipus, pont, max_pont, szazalek, jegy, ido_mp, submitted_at FROM quiz_results WHERE tipus = $tipus ORDER BY submitted_at DESC LIMIT 500";
+        if (tipus != null) cmd.Parameters.AddWithValue("$tipus", tipus);
+        var list = new List<QuizResultItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new QuizResultItem
+            {
+                Id          = r.GetInt32(0),
+                Nev         = r.GetString(1),
+                Email       = r.IsDBNull(2) ? "" : r.GetString(2),
+                Osztaly     = r.IsDBNull(3) ? "" : r.GetString(3),
+                Csoport     = r.IsDBNull(4) ? "" : r.GetString(4),
+                Tipus       = r.GetString(5),
+                Pont        = r.GetInt32(6),
+                MaxPont     = r.GetInt32(7),
+                Szazalek    = r.GetInt32(8),
+                Jegy        = r.IsDBNull(9) ? null : r.GetInt32(9),
+                IdoMp       = r.IsDBNull(10) ? null : r.GetInt32(10),
+                SubmittedAt = r.GetString(11)
+            });
+        return list;
     }
 }
 

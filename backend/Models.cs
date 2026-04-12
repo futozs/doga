@@ -321,3 +321,34 @@ public class FeladatKeszitőStat {
 public record TeszteloiKervenyek(string Email, string Nev, string? Osztaly, string CreatedAt);
 
 public record TeszteloJelentkezesRequest(string Email, string? Nev, string? Osztaly);
+
+// ── Quiz eredmények ────────────────────────────────────────────────────────
+
+public record QuizResultRequest(
+    string Nev,
+    string? Email,
+    string? Osztaly,
+    string? Csoport,
+    string Tipus,
+    int Pont,
+    int MaxPont,
+    int Szazalek,
+    int? Jegy,
+    int? IdoMp
+);
+
+public class QuizResultItem
+{
+    public int     Id          { get; set; }
+    public string  Nev         { get; set; } = "";
+    public string  Email       { get; set; } = "";
+    public string  Osztaly     { get; set; } = "";
+    public string  Csoport     { get; set; } = "";
+    public string  Tipus       { get; set; } = "";
+    public int     Pont        { get; set; }
+    public int     MaxPont     { get; set; }
+    public int     Szazalek    { get; set; }
+    public int?    Jegy        { get; set; }
+    public int?    IdoMp       { get; set; }
+    public string  SubmittedAt { get; set; } = "";
+}

@@ -861,6 +861,21 @@ function showResults() {
   if (prev.length > 200) prev.length = 200;
   localStorage.setItem(RESULTS_KEY, JSON.stringify(prev));
 
+  // Backend mentés
+  try {
+    fetch('https://agazati.up.railway.app/api/quiz-result', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nev: entry.nev, email: entry.email,
+        osztaly: user.osztaly || '', csoport: user.csoport || '',
+        tipus: 'interaktiv',
+        pont: points, maxPont: MAX_POINTS, szazalek: pct,
+        jegy: grade.jegy, idoMp: elapsedSec
+      })
+    });
+  } catch(e) { /* silent fail */ }
+
   // Kérdések listája
   const list = document.getElementById('result-list');
   list.innerHTML = '';

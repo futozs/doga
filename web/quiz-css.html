@@ -197,6 +197,23 @@ const LEARN_SKEY = 'lcss_v4_done';
 const MC_COUNT  = 10;
 const FI_COUNT  = 5;
 const FI_BIG_MIN = 2; // minimum nagy pontos (3+) fill-in
+let _quizStart = Date.now();
+
+async function sendQuizResult(pont, maxPont, szazalek, jegy) {
+  try {
+    const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+    await fetch(`${RAILWAY}/api/quiz-result`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nev: user.nev || 'Ismeretlen', email: user.email || '',
+        osztaly: user.osztaly || '', csoport: user.csoport || '',
+        tipus: 'css', pont, maxPont, szazalek, jegy,
+        idoMp: Math.round((Date.now() - _quizStart) / 1000)
+      })
+    });
+  } catch(e) { /* silent fail */ }
+}
 
 // ── ÁLLAPOT ──────────────────────────────────────────────────────────
 let queue = [];       // [{q, skipped}]
@@ -431,6 +448,8 @@ function showResults() {
   const totalMax    = answers.reduce((s,a)=>s+a.max, 0);
   const pct = Math.round(totalEarned / totalMax * 100);
   const grade = pct>=90?5:pct>=80?4:pct>=70?3:pct>=60?2:1;
+
+  sendQuizResult(totalEarned, totalMax, pct, grade);
 
   document.getElementById('res-grade').textContent = grade;
   document.getElementById('res-score').textContent = `${totalEarned} / ${totalMax} pont`;
