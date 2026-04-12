@@ -544,8 +544,8 @@ app.MapPost("/api/feedback", (FeedbackRequest req, Database db) =>
 {
     if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.FeladatNev))
         return Results.BadRequest(new { error = "Hiányzó adat" });
-    if (req.Tipus != "vote" && req.Tipus != "reaction")
-        return Results.BadRequest(new { error = "Érvénytelen tipus (vote vagy reaction)" });
+    if (req.Tipus != "vote" && req.Tipus != "reaction" && req.Tipus != "practice_vote")
+        return Results.BadRequest(new { error = "Érvénytelen tipus (vote, reaction vagy practice_vote)" });
     db.SaveRating(req.Email, req.FeladatNev, req.Tipus, req.Ertek);
     return Results.Ok(new { success = true });
 });
