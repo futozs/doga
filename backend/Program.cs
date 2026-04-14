@@ -97,7 +97,7 @@ string CreateToken(string payloadData)
         var parts = payload.Split(':');
         if (parts.Length < 2) return (false, "");
         var ts = long.Parse(parts[^1]);
-        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts >= 86400) return (false, ""); // 24 óra
+        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts >= 604800) return (false, ""); // 7 nap
         return (true, payload);
     }
     catch { return (false, ""); }

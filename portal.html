@@ -1826,11 +1826,9 @@
             ]);
             if (!res) throw new Error('Időtúllépés – a szerver nem válaszolt 7 másodpercen belül.');
             if (res.status === 401) {
-                if (!u.token) {
-                    document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-info-circle"></i> Eredmények csak valódi bejelentkezéssel érhetők el.</div>';
-                    return;
-                }
-                handleSessionExpired(); return;
+                document.getElementById('ered-content').innerHTML =
+                    '<div class="ered-loading"><i class="fas fa-lock"></i> A munkamenet lejárt.<br><a href="login.html" style="color:#3b82f6;margin-top:8px;display:inline-block;">Bejelentkezés megújítása</a></div>';
+                return;
             }
             const p = await res.json();
             const rankData = rankRes?.ok ? await rankRes.json() : null;
