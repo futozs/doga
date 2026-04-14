@@ -1805,11 +1805,9 @@
         document.getElementById('ered-overlay').classList.add('open');
         const previewRow = document.getElementById('ered-preview-row');
         const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
-        // Oktató (tanári nézetben is) a tanulókeresőt látja, nem saját statisztikáját
+        // Oktató: tanuló-kereső + saját eredmény is betöltődik
         if (isTeacherPreview || u.szerep === 'oktato') {
             previewRow.style.display = 'block';
-            document.getElementById('ered-content').innerHTML = '<div class="ered-loading" style="color:#aaa;"><i class="fas fa-search"></i> Add meg egy tanuló email-jét a fenti mezőben az eredmények megtekintéséhez.</div>';
-            return;
         } else {
             previewRow.style.display = 'none';
         }
