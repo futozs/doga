@@ -1815,7 +1815,13 @@
         try {
             const email = (u.email || '').replace('@kkszki.hu','');
             if (!email) { document.getElementById('ered-content').innerHTML = '<div class="ered-loading">Nem találhatók adatok.</div>'; return; }
-            const authHeader = u.token ? { 'Authorization': 'Bearer ' + u.token } : {};
+            // Ha teszt módban van (Diák mód), a tanári backup token-t használjuk
+            let effectiveToken = u.token;
+            if (!effectiveToken && u._tesztMod) {
+                const teacherBackup = JSON.parse(localStorage.getItem('kandoTeacherBackup') || '{}');
+                effectiveToken = teacherBackup.token || '';
+            }
+            const authHeader = effectiveToken ? { 'Authorization': 'Bearer ' + effectiveToken } : {};
             const TO = 30000;
             const [res, rankRes, sessRes] = await Promise.all([
                 fetch(`${API}/api/progress/${encodeURIComponent(email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null),
@@ -1828,7 +1834,7 @@
                 return;
             }
             if (res.status === 401) {
-                if (!u.token) {
+                if (!effectiveToken) {
                     document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-info-circle"></i> Eredmények csak valódi bejelentkezéssel érhetők el.</div>';
                     return;
                 }
