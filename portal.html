@@ -1818,14 +1818,22 @@
             const email = (u.email || '').replace('@kkszki.hu','');
             if (!email) { document.getElementById('ered-content').innerHTML = '<div class="ered-loading">Nem találhatók adatok.</div>'; return; }
             const authHeader = u.token ? { 'Authorization': 'Bearer ' + u.token } : {};
-            const TO = 7000;
+            const TO = 30000;
             const [res, rankRes, sessRes] = await Promise.all([
                 fetch(`${API}/api/progress/${encodeURIComponent(email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null),
                 fetch(`${API}/api/leaderboard/rank/${encodeURIComponent(email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null),
                 fetch(`${API}/api/session/stats/${encodeURIComponent(u.email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null)
             ]);
-            if (!res) throw new Error('Időtúllépés – a szerver nem válaszolt 7 másodpercen belül.');
+            if (!res || res.status === 503 || res.status === 502) {
+                document.getElementById('ered-content').innerHTML =
+                    '<div class="ered-loading"><i class="fas fa-server"></i> A szerver most ébred fel, kérlek próbáld újra.<br><button onclick="openEredmenyek()" style="margin-top:10px;padding:6px 18px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:8px;color:#93c5fd;cursor:pointer;">Újrapróbálás</button></div>';
+                return;
+            }
             if (res.status === 401) {
+                if (!u.token) {
+                    document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-info-circle"></i> Eredmények csak valódi bejelentkezéssel érhetők el.</div>';
+                    return;
+                }
                 document.getElementById('ered-content').innerHTML =
                     '<div class="ered-loading"><i class="fas fa-lock"></i> A munkamenet lejárt.<br><a href="login.html" style="color:#3b82f6;margin-top:8px;display:inline-block;">Bejelentkezés megújítása</a></div>';
                 return;
@@ -1847,7 +1855,7 @@
                 renderAchievements(progress);
         } catch(err) {
             console.error('Eredmények betöltési hiba:', err);
-            document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.<br><small style="color:#64748b">' + (err?.message || 'Ismeretlen hiba') + '</small></div>';
+            document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-triangle-exclamation"></i> Nem sikerült betölteni az adatokat.<br><small style="color:#64748b">' + (err?.message || 'Ismeretlen hiba') + '</small><br><button onclick="openEredmenyek()" style="margin-top:10px;padding:6px 18px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:8px;color:#93c5fd;cursor:pointer;">Újrapróbálás</button></div>';
         }
     }
 
