@@ -798,11 +798,13 @@ public class Database
         var (wevf, pevf) = evfolyam != null
             ? GetRankInScope(email, "LOWER(COALESCE(u.evfolyam,''))=LOWER($ef)",
                 new() { {"$ef", evfolyam} }, $"{evfolyam}. évfolyam")
-            : GetRankInScope(email, null, new(), "Kandó");
+            : (null, null);
+
+        var (wkando, pkando) = GetRankInScope(email, null, new(), "Kandó");
 
         return new StudentRankResult(
-            new ThreeScopeRanks(wcso, wosz, wevf),
-            new ThreeScopeRanks(pcso, posz, pevf),
+            new ThreeScopeRanks(wcso, wosz, wevf, wkando),
+            new ThreeScopeRanks(pcso, posz, pevf, pkando),
             GetStreak(email)
         );
     }

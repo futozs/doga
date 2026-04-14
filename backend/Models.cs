@@ -184,7 +184,8 @@ public record RankInfo(
 public record ThreeScopeRanks(
     RankInfo? Csoport,
     RankInfo? Osztaly,
-    RankInfo? Evfolyam
+    RankInfo? Evfolyam,
+    RankInfo? Kando
 );
 
 public record StudentRankResult(

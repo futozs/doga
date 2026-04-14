@@ -1727,15 +1727,17 @@
         const lv = calcLevel(avg, targy);
         const barPct = Math.min(100, s > 0 ? Math.round(avg) : 0);
         const lastDate = data.lastSession ? ` · Utoljára: ${data.lastSession}` : '';
-        const rankHtml = [rankInfo?.csoport, rankInfo?.osztaly, rankInfo?.evfolyam]
-            .filter(r => r && r.rank > 0)
-            .map((r, i) => {
-                const icons = ['👥','🏫','🎓'];
-                return `<div class="ered-rank-row">
-                    <span style="margin-right:5px;">${icons[i]}</span>
+        const rankHtml = [
+                { r: rankInfo?.csoport,  icon: 'fa-users' },
+                { r: rankInfo?.osztaly,  icon: 'fa-chalkboard-user' },
+                { r: rankInfo?.evfolyam, icon: 'fa-graduation-cap' },
+                { r: rankInfo?.kando,    icon: 'fa-school' }
+            ]
+            .filter(({ r }) => r && r.rank > 0)
+            .map(({ r, icon }) => `<div class="ered-rank-row">
+                    <i class="fas ${icon}" style="margin-right:5px;"></i>
                     A <strong>${r.groupLabel}</strong>ban <strong>${r.rank}. helyen</strong> állsz (${r.groupSize} főből)
-                </div>`;
-            }).join('');
+                </div>`).join('');
         const titleColor = targy === 'python' ? '#3b82f6' : '#fb923c';
         const titleIcon  = targy === 'python' ? 'fab fa-python' : 'fas fa-globe';
         const titleText  = targy === 'python' ? 'Python feladat' : 'WEB feladat';
