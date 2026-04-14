@@ -798,7 +798,7 @@ public class Database
         var (wevf, pevf) = evfolyam != null
             ? GetRankInScope(email, "LOWER(COALESCE(u.evfolyam,''))=LOWER($ef)",
                 new() { {"$ef", evfolyam} }, $"{evfolyam}. évfolyam")
-            : GetRankInScope(email, null, new(), "Iskola");
+            : GetRankInScope(email, null, new(), "Kandó");
 
         return new StudentRankResult(
             new ThreeScopeRanks(wcso, wosz, wevf),
