@@ -1825,7 +1825,13 @@
                 fetch(`${API}/api/session/stats/${encodeURIComponent(u.email)}`, { headers: authHeader, signal: AbortSignal.timeout(TO) }).catch(()=>null)
             ]);
             if (!res) throw new Error('Időtúllépés – a szerver nem válaszolt 7 másodpercen belül.');
-            if (res.status === 401) { handleSessionExpired(); return; }
+            if (res.status === 401) {
+                if (!u.token) {
+                    document.getElementById('ered-content').innerHTML = '<div class="ered-loading"><i class="fas fa-info-circle"></i> Eredmények csak valódi bejelentkezéssel érhetők el.</div>';
+                    return;
+                }
+                handleSessionExpired(); return;
+            }
             const p = await res.json();
             const rankData = rankRes?.ok ? await rankRes.json() : null;
             const sessData = sessRes?.ok ? await sessRes.json() : [];
