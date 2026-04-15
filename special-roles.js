@@ -356,9 +356,10 @@
         if (user.szerep !== 'tanulo') return;
 
         try {
+            const authHeaders = user.token ? { 'Authorization': `Bearer ${user.token}` } : {};
             const [tRes, fRes] = await Promise.all([
-                fetch(`${API}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`),
-                fetch(`${API}/api/feladatkeszito/check?email=${encodeURIComponent(user.email)}`)
+                fetch(`${API}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`, { headers: authHeaders }),
+                fetch(`${API}/api/feladatkeszito/check?email=${encodeURIComponent(user.email)}`, { headers: authHeaders })
             ]);
             const isTesztelő      = tRes.ok && (await tRes.json()).isTesztelő;
             const isFeladatkeszito= fRes.ok && (await fRes.json()).isFeladatkeszito;

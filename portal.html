@@ -2234,7 +2234,8 @@
     async function loadFeladatkeszitoInfo(user) {
         if (!user.token) return;
         try {
-            const res = await fetch(`${API_BASE}/api/feladatkeszito/check?email=${encodeURIComponent(user.email)}`);
+            const authHeaders = { 'Authorization': `Bearer ${user.token}` };
+            const res = await fetch(`${API_BASE}/api/feladatkeszito/check?email=${encodeURIComponent(user.email)}`, { headers: authHeaders });
             if (!res.ok) return;
             const data = await res.json();
             if (data.isFeladatkeszito) {
@@ -2252,9 +2253,10 @@
     async function updateCsatlakozasBtn(user) {
         if (!user || !user.token) return;
         try {
+            const authHeaders = { 'Authorization': `Bearer ${user.token}` };
             const [tRes, fRes] = await Promise.all([
-                fetch(`${API_BASE}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`),
-                fetch(`${API_BASE}/api/feladatkeszito/check?email=${encodeURIComponent(user.email)}`)
+                fetch(`${API_BASE}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`, { headers: authHeaders }),
+                fetch(`${API_BASE}/api/feladatkeszito/check?email=${encodeURIComponent(user.email)}`, { headers: authHeaders })
             ]);
             const isTesztelő      = tRes.ok  && (await tRes.json()).isTesztelő;
             const isFeladatkeszito= fRes.ok  && (await fRes.json()).isFeladatkeszito;
@@ -2458,7 +2460,8 @@
     async function loadTeszteloInfo(user) {
         if (!user.token) return;
         try {
-            const res = await fetch(`${API_BASE}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`);
+            const authHeaders = { 'Authorization': `Bearer ${user.token}` };
+            const res = await fetch(`${API_BASE}/api/tesztelok/check?email=${encodeURIComponent(user.email)}`, { headers: authHeaders });
             if (!res.ok) return;
             const data = await res.json();
             if (!data.isTesztelő) return;
