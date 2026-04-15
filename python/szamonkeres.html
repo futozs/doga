@@ -34,7 +34,7 @@
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .section-title{font-size:0.8rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;margin-top:18px}
     /* Feladat lista */
-    .feladat-list{max-height:320px;overflow-y:auto;border:1px solid #374151;border-radius:8px;background:#0b1120}
+    .feladat-list{max-height:480px;overflow-y:auto;border:1px solid #374151;border-radius:8px;background:#0b1120}
     .feladat-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid #1f2937;cursor:pointer;transition:background .15s}
     .feladat-item:last-child{border-bottom:none}
     .feladat-item:hover{background:#16213e}
@@ -342,10 +342,16 @@ async function loadFeladatok() {
       div.dataset.num = t.num;
       const nh = t.nehezseg === 'nehez' ? 'badge-nehez' : t.nehezseg === 'kozepes' ? 'badge-kozepes' : 'badge-konnyu';
       const nhLabel = t.nehezseg === 'nehez' ? 'Nehéz' : t.nehezseg === 'kozepes' ? 'Közepes' : 'Könnyű';
+      const tipusBadges = (t.tipus||'').split(',').map(s=>s.trim()).filter(Boolean).map(s => {
+        const icons = { if:'<i class="fas fa-code-branch"></i>', for:'<i class="fas fa-rotate"></i>', while:'<i class="fas fa-rotate"></i>', függvény:'<i class="fas fa-f"></i>', class:'<i class="fas fa-cube"></i>', import:'<i class="fas fa-box-open"></i>', fájlkezelés:'<i class="fas fa-file-code"></i>' };
+        return `<span style="display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:10px;font-size:0.7rem;font-weight:700;background:#0f172a;border:1px solid #374151;color:#94a3b8">${icons[s]||''} ${escH(s)}</span>`;
+      }).join(' ');
+      const leirasPreview = t.leiras ? escH(t.leiras.replace(/\n/g,' ').substring(0,130)) + (t.leiras.length>130?'…':'') : '';
       div.innerHTML = `<input type="checkbox" id="f${t.num}" onchange="toggleFeladat(${t.num},'${escH(t.cim)}',${t.pont},this.checked)">
         <div class="feladat-info">
           <div class="feladat-cim">${t.num}. ${escH(t.cim)} <span class="badge ${nh}">${nhLabel}</span><span class="badge" style="background:#0f172a;color:#64748b">${t.pont} pt</span></div>
-          <div class="feladat-meta">${escH(t.leiras?.substring(0,100) || '')}</div>
+          ${tipusBadges ? `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${tipusBadges}</div>` : ''}
+          ${leirasPreview ? `<div class="feladat-meta" style="margin-top:4px">${leirasPreview}</div>` : ''}
         </div>`;
       el.appendChild(div);
     });
@@ -362,23 +368,24 @@ function parseTasks(txt) {
     const numMatch = lines[0].trim().match(/^(\d+)\. feladat$/);
     if (!numMatch) continue;
     const id = parseInt(numMatch[1]);
-    let pont=8, cim='', nehezseg='kozepes'; let i=1;
+    let pont=8, cim='', nehezseg='kozepes', tipus=''; let i=1;
     while (i < lines.length) {
       const l = lines[i].trim();
-      if (l.startsWith('Pont: '))       { pont     = parseInt(l.slice(6));  i++; }
-      else if (l.startsWith('Cim: '))   { cim      = l.slice(5).trim();     i++; }
-      else if (l.startsWith('Nehezseg: ')){ nehezseg = l.slice(10).trim(); i++; }
-      else if (l === '')                 { i++; break; }
-      else                               { i++; }
+      if (l.startsWith('Pont: '))         { pont     = parseInt(l.slice(6));  i++; }
+      else if (l.startsWith('Cim: '))     { cim      = l.slice(5).trim();     i++; }
+      else if (l.startsWith('Nehezseg: ')){ nehezseg = l.slice(10).trim();    i++; }
+      else if (l.startsWith('Tipus: '))   { tipus    = l.slice(7).trim();     i++; }
+      else if (l === '')                  { i++; break; }
+      else                                { i++; }
     }
     // szöveg az üres sor és Pontozas: között
     const szovegLines = [];
     for (; i < lines.length; i++) {
       const lt = lines[i].trim();
-      if (lt === 'Pontozas:' || lt === 'Tippek:' || lt === 'Megoldas:') break;
+      if (lt === 'Pontozas:' || lt === 'Tippek:' || lt === 'Megoldas:' || lt.startsWith('```')) break;
       szovegLines.push(lines[i]);
     }
-    tasks.push({ num: id, cim: cim || `${id}. feladat`, pont, nehezseg, leiras: szovegLines.join('\n').trim() });
+    tasks.push({ num: id, cim: cim || `${id}. feladat`, pont, nehezseg, tipus, leiras: szovegLines.join('\n').trim() });
   }
   return tasks;
 }
