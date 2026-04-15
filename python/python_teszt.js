@@ -2843,6 +2843,8 @@ function voteForPractice(taskNum, e) {
     e.preventDefault(); e.stopPropagation();
     const btn = e.currentTarget;
     const user = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+    const feedbackHeaders = {'Content-Type': 'application/json'};
+    if (user.token) feedbackHeaders['Authorization'] = 'Bearer ' + user.token;
     const task = tasks.find(t => t.number === taskNum);
     if (!task) return;
     if (_votedTasks.has(taskNum)) {
@@ -2854,7 +2856,7 @@ function voteForPractice(taskNum, e) {
         btn.title = 'Szerintem kerüljön a practice feladatok közé!';
         fetch(`${RAILWAY_URL}/api/feedback`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: feedbackHeaders,
             body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: -1 })
         }).catch(() => {});
     } else {
@@ -2866,7 +2868,7 @@ function voteForPractice(taskNum, e) {
         btn.title = 'Szavazat visszavonásához kattints újra';
         fetch(`${RAILWAY_URL}/api/feedback`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: feedbackHeaders,
             body: JSON.stringify({ email: user.email || 'vendeg', feladatNev: task.cim, tipus: 'practice_vote', ertek: 1 })
         }).catch(() => {});
     }

@@ -1733,12 +1733,15 @@
         (async function retrySavedFeedback() {
             const pending = JSON.parse(localStorage.getItem('_pendingFeedback') || '[]');
             if (!pending.length) return;
+            const authUser = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
             const stillPending = [];
             for (const item of pending) {
                 try {
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (authUser.token) headers['Authorization'] = 'Bearer ' + authUser.token;
                     const res = await fetch(`${RAILWAY_URL_FB}/api/feedback`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers,
                         body: JSON.stringify(item)
                     });
                     if (!res.ok) stillPending.push(item);
@@ -1761,7 +1764,12 @@
             const saved = sessionStorage.getItem('kandoUser');
             if (!saved) return;
             let userEmail = '';
-            try { const u = JSON.parse(saved); userEmail = u.email||''; } catch(e) { return; }
+            let userToken = '';
+            try {
+                const u = JSON.parse(saved);
+                userEmail = u.email || '';
+                userToken = u.token || '';
+            } catch(e) { return; }
 
             const popup   = document.getElementById('reaction-popup');
             const rows    = document.getElementById('reaction-rows');
@@ -1806,13 +1814,15 @@
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Küldés...';
                 const pending = JSON.parse(localStorage.getItem('_pendingFeedback') || '[]');
+                const headers = { 'Content-Type': 'application/json' };
+                if (userToken) headers['Authorization'] = 'Bearer ' + userToken;
                 for (const [feladatNev, ertek] of entries) {
                     if (!userEmail) continue;
                     const payload = { email: userEmail, feladatNev, tipus: 'reaction', ertek };
                     try {
                         const res = await fetch(`${RAILWAY_URL_FB}/api/feedback`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers,
                             body: JSON.stringify(payload)
                         });
                         if (!res.ok) pending.push(payload);

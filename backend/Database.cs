@@ -1814,6 +1814,19 @@ public class Database
         return cmd.ExecuteNonQuery() > 0;
     }
 
+    public void UpdateHeartbeat(int sessionId)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            UPDATE sessions
+            SET last_heartbeat = datetime('now','localtime'),
+                duration_sec   = CAST((julianday('now') - julianday(login_at)) * 86400 AS INTEGER)
+            WHERE id = $id AND logout_at IS NULL";
+        cmd.Parameters.AddWithValue("$id", sessionId);
+        cmd.ExecuteNonQuery();
+    }
+
     public bool EndSession(int sessionId, string email)
     {
         using var conn = Open();
@@ -1826,6 +1839,19 @@ public class Database
         cmd.Parameters.AddWithValue("$id", sessionId);
         cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
         return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public void EndSession(int sessionId)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            UPDATE sessions
+            SET logout_at    = datetime('now','localtime'),
+                duration_sec = CAST((julianday('now') - julianday(login_at)) * 86400 AS INTEGER)
+            WHERE id = $id AND logout_at IS NULL";
+        cmd.Parameters.AddWithValue("$id", sessionId);
+        cmd.ExecuteNonQuery();
     }
 
     public List<SessionPageStat> GetSessionStats(string email)
