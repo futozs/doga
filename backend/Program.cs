@@ -1,5 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.RateLimiting;
 using KandoTest;
 
@@ -92,8 +94,9 @@ string CreateToken(string payloadData)
         var payload = decoded[..dot];
         var sig = decoded[(dot + 1)..];
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey));
-        var expected = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(payload)));
-        if (sig != expected) return (false, "");
+        var expected = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload));
+        var provided = Convert.FromBase64String(sig);
+        if (!CryptographicOperations.FixedTimeEquals(provided, expected)) return (false, "");
         var parts = payload.Split(':');
         if (parts.Length < 2) return (false, "");
         var ts = long.Parse(parts[^1]);
@@ -105,11 +108,80 @@ string CreateToken(string payloadData)
 
 bool ValidateToken(HttpContext ctx) => InspectToken(ctx).Valid;
 
-bool ValidateOktato(HttpContext ctx)
+static string NormalizeSchoolEmail(string? raw)
+{
+    if (string.IsNullOrWhiteSpace(raw)) return "";
+    var email = raw.Trim().ToLowerInvariant();
+    if (!email.Contains('@')) email += "@kkszki.hu";
+    email = email.Replace("@kkszki.hu@kkszki.hu", "@kkszki.hu");
+    return email.EndsWith("@kkszki.hu") ? email : "";
+}
+
+static bool IsPrivilegedRole(string role) => role is "oktato" or "admin";
+
+(bool Valid, string Identity, string Role) InspectAuthContext(HttpContext ctx)
 {
     var (valid, payload) = InspectToken(ctx);
-    if (!valid) return false;
-    return !payload.Contains('|') || payload.Contains("|oktato") || payload.Contains("|admin");
+    if (!valid) return (false, "", "");
+
+    var marker = payload.LastIndexOf(':');
+    if (marker <= 0) return (false, "", "");
+
+    var principal = payload[..marker];
+    var parts = principal.Split('|', 2, StringSplitOptions.TrimEntries);
+    var identity = parts[0].Trim().ToLowerInvariant();
+    var role = parts.Length > 1 ? parts[1].Trim().ToLowerInvariant() : "";
+    if (string.IsNullOrWhiteSpace(identity)) return (false, "", "");
+    return (true, identity, role);
+}
+
+bool IsSelfOrPrivileged(string tokenIdentity, string tokenRole, string targetEmail) =>
+    IsPrivilegedRole(tokenRole) || tokenIdentity.Equals(targetEmail, StringComparison.OrdinalIgnoreCase);
+
+static bool IsSafeImageDataUrl(string? value)
+{
+    if (string.IsNullOrWhiteSpace(value)) return false;
+    if (value.Length > 2_000_000) return false;
+    var v = value.Trim();
+    return v.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase)
+        || v.StartsWith("data:image/jpeg;base64,", StringComparison.OrdinalIgnoreCase)
+        || v.StartsWith("data:image/jpg;base64,", StringComparison.OrdinalIgnoreCase)
+        || v.StartsWith("data:image/webp;base64,", StringComparison.OrdinalIgnoreCase)
+        || v.StartsWith("data:image/gif;base64,", StringComparison.OrdinalIgnoreCase);
+}
+
+static string? SanitizeCodeSnapshot(string? raw)
+{
+    if (string.IsNullOrWhiteSpace(raw)) return null;
+    if (raw.Length > 500_000) return null;
+
+    try
+    {
+        var node = JsonNode.Parse(raw);
+        if (node is not JsonObject root) return null;
+
+        if (root["validationImages"] is JsonObject images)
+        {
+            foreach (var key in new[] { "html", "css" })
+            {
+                var value = images[key]?.GetValue<string>();
+                if (!IsSafeImageDataUrl(value))
+                    images[key] = null;
+            }
+        }
+
+        return root.ToJsonString(new JsonSerializerOptions { WriteIndented = false });
+    }
+    catch
+    {
+        return null;
+    }
+}
+
+bool ValidateOktato(HttpContext ctx)
+{
+    var (valid, _, role) = InspectAuthContext(ctx);
+    return valid && IsPrivilegedRole(role);
 }
 
 // Oktatói regisztrációs kód (env változóból)
@@ -132,9 +204,9 @@ app.MapGet("/", () => Results.Ok(new { status = "Kandó Teszt Backend fut", vers
 app.MapPost("/api/teachers/token-login", (HttpContext ctx) =>
 {
     if (!ValidateOktato(ctx)) return Results.Unauthorized();
-    var (_, payload) = InspectToken(ctx);
-    var username = payload.Split(':')[0].Split('|')[0];
-    var adminToken = CreateToken(username);
+    var (valid, username, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+    var adminToken = CreateToken($"{username}|admin");
     return Results.Ok(new { token = adminToken, username });
 });
 
@@ -144,7 +216,7 @@ app.MapPost("/api/auth/login", (LoginRequest req, Database db) =>
     var hash = db.GetPasswordHash(req.Username);
     if (hash == null || !BCrypt.Net.BCrypt.Verify(req.Password, hash))
         return Results.Unauthorized();
-    var token = CreateToken(req.Username);
+    var token = CreateToken($"{req.Username}|admin");
     return Results.Ok(new { success = true, token });
 })
 .RequireRateLimiting("auth");
@@ -161,7 +233,7 @@ app.MapGet("/api/config", (Database db) =>
 // Konfiguráció módosítása (csak admin)
 app.MapPost("/api/config", (HttpContext ctx, ConfigRequest req, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
     db.SetConfig("test_mode", req.TestMode);
     if (req.VizsgaKezdes != null)
         db.SetConfig("vizsga_kezdes", req.VizsgaKezdes);
@@ -171,11 +243,38 @@ app.MapPost("/api/config", (HttpContext ctx, ConfigRequest req, Database db) =>
 });
 
 // Beadás mentése (diák)
-app.MapPost("/api/submit", (SubmissionRequest req, Database db) =>
+app.MapPost("/api/submit", (HttpContext ctx, SubmissionRequest req, Database db) =>
 {
-    var id = db.SaveSubmission(req);
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var reqEmail = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrEmpty(reqEmail))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, reqEmail))
+        return Results.Forbid();
+
+    if (req.MaxTotal <= 0 || req.TotalScore < 0 || req.TotalScore > req.MaxTotal)
+        return Results.BadRequest(new { error = "Érvénytelen pontszám adatok" });
+
+    var mode = (req.Mode ?? "").Trim().ToLowerInvariant();
+    if (mode is not ("live" or "practice")) mode = "practice";
+
+    var subject = (req.Subject ?? "").Trim().ToLowerInvariant();
+    if (subject is not ("python" or "web")) subject = "";
+
+    var normalizedReq = req with
+    {
+        Email = reqEmail,
+        Mode = mode,
+        Subject = subject,
+        CodeSnapshot = SanitizeCodeSnapshot(req.CodeSnapshot)
+    };
+
+    var id = db.SaveSubmission(normalizedReq);
     return Results.Ok(new { success = true, id });
-});
+})
+.RequireRateLimiting("auth");
 
 // Beadások listája (admin) – szűrhető ?osztaly=9A&csoport=1&subject=python&mode=live
 app.MapGet("/api/submissions", (HttpContext ctx, Database db) =>
@@ -235,14 +334,19 @@ app.MapGet("/api/stats", (HttpContext ctx, Database db) =>
 app.MapPost("/api/auth/register", async (RegisterRequest req, Database db) =>
 {
     // Email normalizálás és validálás
-    var email = req.Email.ToLower().Trim();
-    // Ha csak a username részt adták meg, kiegészítjük
-    if (!email.Contains('@'))
-        email = email + "@kkszki.hu";
-    // Ha duplán írták be (@kkszki.hu@kkszki.hu)
-    email = email.Replace("@kkszki.hu@kkszki.hu", "@kkszki.hu");
-    if (!email.EndsWith("@kkszki.hu"))
+    var email = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrEmpty(email))
         return Results.BadRequest(new { error = "Csak @kkszki.hu email cím fogadható el!" });
+
+    var requestedRole = (req.Szerep ?? "tanulo").Trim().ToLowerInvariant();
+    if (requestedRole is not ("tanulo" or "oktato"))
+        return Results.BadRequest(new { error = "Érvénytelen szerepkör!" });
+
+    if (requestedRole == "oktato")
+    {
+        if (string.IsNullOrWhiteSpace(req.OktatoiKod) || !string.Equals(req.OktatoiKod.Trim(), teacherCode, StringComparison.Ordinal))
+            return Results.BadRequest(new { error = "Érvénytelen oktatói kód!" });
+    }
 
     if (string.IsNullOrWhiteSpace(req.Vezeteknev) || string.IsNullOrWhiteSpace(req.Keresztnev))
         return Results.BadRequest(new { error = "Kérlek add meg a nevedet!" });
@@ -280,7 +384,7 @@ app.MapPost("/api/auth/register", async (RegisterRequest req, Database db) =>
     }
 
     var hash = BCrypt.Net.BCrypt.HashPassword(req.Jelszo);
-    var normalizedReq = req with { Email = email };
+    var normalizedReq = req with { Email = email, Szerep = requestedRole };
     var success = db.RegisterUser(normalizedReq, hash);
 
     if (!success)
@@ -293,8 +397,9 @@ app.MapPost("/api/auth/register", async (RegisterRequest req, Database db) =>
 // Felhasználói bejelentkezés (tanulók + oktatók)
 app.MapPost("/api/auth/user-login", (UserLoginRequest req, Database db) =>
 {
-    var email = req.Email.ToLower().Trim();
-    if (!email.Contains('@')) email += "@kkszki.hu";
+    var email = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrEmpty(email))
+        return Results.Unauthorized();
 
     var user = db.GetUserByEmail(email);
     if (user == null || !BCrypt.Net.BCrypt.Verify(req.Jelszo, user.PasswordHash))
@@ -353,10 +458,16 @@ app.MapPost("/api/users/reset-password", (HttpContext ctx, ResetPasswordRequest 
 });
 
 // Fiók törlése (saját magát törli, jelszó megerősítéssel)
-app.MapPost("/api/auth/delete-account", (DeleteAccountRequest req, Database db) =>
+app.MapPost("/api/auth/delete-account", (HttpContext ctx, DeleteAccountRequest req, Database db) =>
 {
-    var email = req.Email.ToLower().Trim();
-    if (!email.Contains('@')) email += "@kkszki.hu";
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var email = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrEmpty(email))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+    if (!tokenIdentity.Equals(email, StringComparison.OrdinalIgnoreCase))
+        return Results.Forbid();
 
     var user = db.GetUserByEmail(email);
     if (user == null || !BCrypt.Net.BCrypt.Verify(req.Jelszo, user.PasswordHash))
@@ -371,7 +482,16 @@ app.MapPost("/api/auth/delete-account", (DeleteAccountRequest req, Database db) 
 app.MapPost("/api/auth/change-password", (HttpContext ctx,
     ChangePasswordRequest req, Database db) =>
 {
-    if (!ValidateToken(ctx)) return Results.Unauthorized();
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+    if (!tokenIdentity.Equals(req.Username, StringComparison.OrdinalIgnoreCase))
+        return Results.Forbid();
+
+    if (string.IsNullOrWhiteSpace(req.NewPassword) || req.NewPassword.Length < 8)
+        return Results.BadRequest(new { error = "Az új jelszó legalább 8 karakter legyen" });
+
     var hash = db.GetPasswordHash(req.Username);
     if (hash == null || !BCrypt.Net.BCrypt.Verify(req.OldPassword, hash))
         return Results.BadRequest(new { error = "Hibás jelszó" });
@@ -434,26 +554,50 @@ app.MapDelete("/api/tasksets/{id:int}", (HttpContext ctx, int id, Database db) =
 
 // ── Progress / Gamification ────────────────────────────────────────────────
 
-// Gyakorlás eredményének mentése (mindenki, email alapú)
-app.MapPost("/api/progress", (ProgressRequest req, Database db) =>
+// Gyakorlás eredményének mentése (saját tokennel)
+app.MapPost("/api/progress", (HttpContext ctx, ProgressRequest req, Database db) =>
 {
-    if (string.IsNullOrWhiteSpace(req.Email) || req.MaxPont <= 0)
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var reqEmail = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrEmpty(reqEmail))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, reqEmail))
+        return Results.Forbid();
+
+    if (req.MaxPont <= 0 || req.Pont < 0 || req.Pont > req.MaxPont)
         return Results.BadRequest(new { error = "Érvénytelen adat" });
-    db.SaveProgress(req);
+
+    var targy = (req.Targy ?? "").Trim().ToLowerInvariant();
+    if (targy is not ("web" or "python"))
+        return Results.BadRequest(new { error = "Érvénytelen tantárgy" });
+
+    var normalizedReq = req with
+    {
+        Email = reqEmail,
+        Targy = targy,
+        Mode = string.IsNullOrWhiteSpace(req.Mode) ? "gyakorlo" : req.Mode.Trim().ToLowerInvariant()
+    };
+
+    db.SaveProgress(normalizedReq);
     return Results.Ok(new { success = true });
-});
+})
+.RequireRateLimiting("auth");
 
 // Saját haladás lekérése (saját token szükséges, vagy oktató)
 app.MapGet("/api/progress/{email}", (string email, HttpContext ctx, Database db) =>
 {
-    var decoded = Uri.UnescapeDataString(email);
-    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    var decoded = NormalizeSchoolEmail(Uri.UnescapeDataString(email));
+    if (string.IsNullOrEmpty(decoded))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
     // Oktató mindent láthat, diák csak a sajátját
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    bool isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
-    if (!isOktato && !payload.StartsWith(decoded + "|") && !payload.StartsWith(decoded + ":"))
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, decoded))
         return Results.Forbid();
+
     var progress = db.GetStudentProgress(decoded);
     return Results.Ok(progress);
 });
@@ -482,55 +626,73 @@ app.MapGet("/api/completion-stats", (HttpContext ctx, Database db) =>
     return Results.Ok(db.GetCompletionStats());
 });
 
-// Saját rang lekérése (tanuló, nyilvános)
-app.MapGet("/api/leaderboard/rank/{email}", (string email, Database db) =>
+// Saját rang lekérése (saját tokennel vagy oktatóként)
+app.MapGet("/api/leaderboard/rank/{email}", (string email, HttpContext ctx, Database db) =>
 {
-    var decoded = Uri.UnescapeDataString(email);
-    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
+    var decoded = NormalizeSchoolEmail(Uri.UnescapeDataString(email));
+    if (string.IsNullOrEmpty(decoded))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, decoded))
+        return Results.Forbid();
+
     return Results.Ok(db.GetStudentRank(decoded));
 });
 
 // Tanuló állapot lekérése / mentése (saját token vagy oktató szükséges)
 app.MapGet("/api/user-state/{email}/{key}", (string email, string key, HttpContext ctx, Database db) =>
 {
-    var decoded = Uri.UnescapeDataString(email);
-    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
-    var (valid, payload) = InspectToken(ctx);
+    var decoded = NormalizeSchoolEmail(Uri.UnescapeDataString(email));
+    if (string.IsNullOrEmpty(decoded))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    bool isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
-    if (!isOktato && !payload.StartsWith(decoded + "|") && !payload.StartsWith(decoded + ":"))
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, decoded))
         return Results.Forbid();
+
     var value = db.GetUserState(decoded, key);
     return Results.Ok(new { value });
 });
 
 app.MapPut("/api/user-state/{email}/{key}", async (string email, string key, HttpContext ctx, Database db) =>
 {
-    var decoded = Uri.UnescapeDataString(email);
-    if (!decoded.Contains('@')) decoded += "@kkszki.hu";
-    var (valid, payload) = InspectToken(ctx);
+    var decoded = NormalizeSchoolEmail(Uri.UnescapeDataString(email));
+    if (string.IsNullOrEmpty(decoded))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    bool isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
-    if (!isOktato && !payload.StartsWith(decoded + "|") && !payload.StartsWith(decoded + ":"))
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, decoded))
         return Results.Forbid();
+
     using var reader = new StreamReader(ctx.Request.Body);
     var body = await reader.ReadToEndAsync();
-    var doc = System.Text.Json.JsonDocument.Parse(body);
+    var doc = JsonDocument.Parse(body);
     var value = doc.RootElement.GetProperty("value").GetString() ?? "";
     db.SetUserState(decoded, key, value);
     return Results.Ok(new { success = true });
 });
 
 // Saját jelszó módosítása (tanuló – ideiglenes jelszó után kötelező)
-app.MapPost("/api/auth/change-own-password", (ChangeOwnPasswordRequest req, Database db) =>
+app.MapPost("/api/auth/change-own-password", (HttpContext ctx, ChangeOwnPasswordRequest req, Database db) =>
 {
-    var email = req.Email.ToLower().Trim();
-    if (!email.Contains('@')) email += "@kkszki.hu";
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var email = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrEmpty(email))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+    if (!tokenIdentity.Equals(email, StringComparison.OrdinalIgnoreCase))
+        return Results.Forbid();
+
     var user = db.GetUserByEmail(email);
     if (user == null || !BCrypt.Net.BCrypt.Verify(req.OldPassword, user.PasswordHash))
         return Results.Unauthorized();
-    if (req.NewPassword.Length < 6)
-        return Results.BadRequest(new { error = "A jelszó legalább 6 karakter legyen!" });
+    if (req.NewPassword.Length < 8)
+        return Results.BadRequest(new { error = "A jelszó legalább 8 karakter legyen!" });
     var hash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
     db.UpdatePassword(email, hash);
     return Results.Ok(new { success = true });
@@ -539,16 +701,28 @@ app.MapPost("/api/auth/change-own-password", (ChangeOwnPasswordRequest req, Data
 
 // ── Feedback / Task Ratings ────────────────────────────────────────────────
 
-// Visszajelzés mentése (nem kell auth – értékelési adat, nem érzékeny)
-app.MapPost("/api/feedback", (FeedbackRequest req, Database db) =>
+// Visszajelzés mentése (saját tokennel)
+app.MapPost("/api/feedback", (HttpContext ctx, FeedbackRequest req, Database db) =>
 {
-    if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.FeladatNev))
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var reqEmail = NormalizeSchoolEmail(req.Email);
+    if (string.IsNullOrWhiteSpace(reqEmail) || string.IsNullOrWhiteSpace(req.FeladatNev))
         return Results.BadRequest(new { error = "Hiányzó adat" });
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, reqEmail))
+        return Results.Forbid();
+
     if (req.Tipus != "vote" && req.Tipus != "reaction" && req.Tipus != "practice_vote")
         return Results.BadRequest(new { error = "Érvénytelen tipus (vote, reaction vagy practice_vote)" });
-    db.SaveRating(req.Email, req.FeladatNev, req.Tipus, req.Ertek);
+
+    if (req.Ertek < 0 || req.Ertek > 5)
+        return Results.BadRequest(new { error = "Érvénytelen érték" });
+
+    db.SaveRating(reqEmail, req.FeladatNev.Trim(), req.Tipus, req.Ertek);
     return Results.Ok(new { success = true });
-});
+})
+.RequireRateLimiting("auth");
 
 // Visszajelzés statisztikák (csak oktató)
 app.MapGet("/api/feedback/stats", (HttpContext ctx, Database db) =>
@@ -560,13 +734,11 @@ app.MapGet("/api/feedback/stats", (HttpContext ctx, Database db) =>
 // Saját visszajelzések lekérése (email a tokenből jön, nem query paramból)
 app.MapGet("/api/feedback/my", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, emailPart, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    // Email kinyerése a tokenből (nem a query paraméterből – injection védelem)
-    var parts = payload.Split(':');
-    var emailPart = parts[0]; // format: "email|szerep:timestamp" or "username:timestamp"
-    if (emailPart.Contains('|')) emailPart = emailPart.Split('|')[0];
-    var list = db.GetMyRatings(emailPart);
+    var email = NormalizeSchoolEmail(emailPart);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
+    var list = db.GetMyRatings(email);
     return Results.Ok(list.Select(x => new { feladatNev = x.FeladatNev, tipus = x.Tipus, ertek = x.Ertek }));
 });
 
@@ -626,10 +798,10 @@ app.MapGet("/api/otlet/public", (Database db) =>
 // Saját ötletek lekérése (bejelentkezett felhasználó)
 app.MapGet("/api/otlet/my", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var email = payload.Split(':')[0];
-    if (email.Contains('|')) email = email.Split('|')[0];
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     return Results.Ok(db.GetMyIdeas(email));
 });
 
@@ -664,20 +836,30 @@ app.MapDelete("/api/tesztelok/{email}", (string email, HttpContext ctx, Database
     return Results.Ok(new { success = true });
 });
 
-// Tesztelő ellenőrzése (bárki, portal-on badge-hez)
-app.MapGet("/api/tesztelok/check", (string email, Database db) =>
-    Results.Ok(new { isTesztelő = db.IsTesztelő(email) })
-);
+// Tesztelő ellenőrzése (saját tokennel, vagy oktatóként email alapján)
+app.MapGet("/api/tesztelok/check", (HttpContext ctx, string? email, Database db) =>
+{
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var target = IsPrivilegedRole(tokenRole) && !string.IsNullOrWhiteSpace(email)
+        ? NormalizeSchoolEmail(email)
+        : NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(target)) return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
+    return Results.Ok(new { isTesztelő = db.IsTesztelő(target) });
+});
 
 // Tesztelő jelentkezés (tanuló, token kell)
 app.MapPost("/api/tesztelok/jelentes", async (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
-    if (!valid || payload == null) return Results.Unauthorized();
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
     using var reader = new System.IO.StreamReader(ctx.Request.Body);
     var body = await reader.ReadToEndAsync();
     var json = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(body);
-    var email = payload.Split(':')[0];
+    var email = NormalizeSchoolEmail(tokenIdentity);
     if (string.IsNullOrWhiteSpace(email)) return Results.BadRequest(new { error = "email hiányzik" });
     if (db.IsTesztelő(email)) return Results.BadRequest(new { error = "Már tesztelő vagy." });
     string? nev = json.TryGetProperty("nev", out var np) ? np.GetString() : null;
@@ -721,10 +903,10 @@ app.MapPost("/api/teszteloi-uzenetek", (HttpContext ctx, Database db) =>
 // Tesztelői üzenetek lekérése (csak tesztelő, token alapján)
 app.MapGet("/api/teszteloi-uzenetek/my", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var email = payload.Split(':')[0];
-    if (email.Contains('|')) email = email.Split('|')[0];
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     if (!db.IsTesztelő(email)) return Results.Unauthorized();
     return Results.Ok(db.GetTeszteloiUzenetek(email));
 });
@@ -739,10 +921,10 @@ app.MapGet("/api/teszteloi-uzenetek/admin", (HttpContext ctx, Database db) =>
 // Üzenet olvasottnak jelölése
 app.MapPost("/api/teszteloi-uzenetek/{id}/olvas", (int id, HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var email = payload.Split(':')[0];
-    if (email.Contains('|')) email = email.Split('|')[0];
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     db.MarkTeszteloiUzenetOlvasott(id, email);
     return Results.Ok(new { success = true });
 });
@@ -752,18 +934,27 @@ app.MapPost("/api/teszteloi-uzenetek/{id}/olvas", (int id, HttpContext ctx, Data
 // Automatikus csatlakozás (bármely bejelentkezett tanuló)
 app.MapPost("/api/feladatkeszito/join", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var email = payload.Split(':')[0];
-    if (email.Contains('|')) email = email.Split('|')[0];
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     db.AddFeladatkeszito(email);
     return Results.Ok(new { success = true });
 });
 
-// Státusz ellenőrzés
-app.MapGet("/api/feladatkeszito/check", (string email, Database db) =>
-    Results.Ok(new { isFeladatkeszito = db.IsFeladatkeszito(email) })
-);
+// Státusz ellenőrzés (saját tokennel, vagy oktatóként email alapján)
+app.MapGet("/api/feladatkeszito/check", (HttpContext ctx, string? email, Database db) =>
+{
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var target = IsPrivilegedRole(tokenRole) && !string.IsNullOrWhiteSpace(email)
+        ? NormalizeSchoolEmail(email)
+        : NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(target)) return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
+    return Results.Ok(new { isFeladatkeszito = db.IsFeladatkeszito(target) });
+});
 
 // Lista (csak oktató)
 app.MapGet("/api/feladatkeszitok", (HttpContext ctx, Database db) =>
@@ -783,10 +974,10 @@ app.MapDelete("/api/feladatkeszitok/{email}", (string email, HttpContext ctx, Da
 // Feladat javaslat beküldése (csak feladatkészítő)
 app.MapPost("/api/feladat-javaslatok", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var email = payload.Split(':')[0];
-    if (email.Contains('|')) email = email.Split('|')[0];
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     if (!db.IsFeladatkeszito(email)) return Results.Forbid();
     using var reader = new System.IO.StreamReader(ctx.Request.Body);
     var body = reader.ReadToEndAsync().Result;
@@ -794,7 +985,9 @@ app.MapPost("/api/feladat-javaslatok", (HttpContext ctx, Database db) =>
         new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     if (req == null || string.IsNullOrWhiteSpace(req.Cim) || string.IsNullOrWhiteSpace(req.Szoveg))
         return Results.BadRequest(new { error = "Cím és szöveg kötelező" });
-    var id = db.SaveFeladatJavaslat(req);
+
+    var normalizedReq = req with { Email = email };
+    var id = db.SaveFeladatJavaslat(normalizedReq);
     return Results.Ok(new { success = true, id });
 });
 
@@ -843,42 +1036,77 @@ app.MapPost("/api/megvalasult", (HttpContext ctx, Database db) =>
 // ── Session tracking ──────────────────────────────────────────────────────
 
 // Session indítása (oldal betöltésekor)
-app.MapPost("/api/session/start", (SessionStartRequest req, Database db) =>
+app.MapPost("/api/session/start", (HttpContext ctx, SessionStartRequest req, Database db) =>
 {
-    if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Page))
-        return Results.BadRequest(new { error = "email és page kötelező" });
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    if (string.IsNullOrWhiteSpace(req.Page))
+        return Results.BadRequest(new { error = "page kötelező" });
+
+    var requestedEmail = NormalizeSchoolEmail(req.Email);
+    var tokenEmail = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(tokenEmail) && !IsPrivilegedRole(tokenRole))
+        return Results.Unauthorized();
+
+    if (!IsPrivilegedRole(tokenRole) && !tokenEmail.Equals(requestedEmail, StringComparison.OrdinalIgnoreCase))
+        return Results.Forbid();
+
+    var sessionEmail = IsPrivilegedRole(tokenRole)
+        ? (string.IsNullOrEmpty(requestedEmail) ? tokenEmail : requestedEmail)
+        : tokenEmail;
+    if (string.IsNullOrEmpty(sessionEmail))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
     var validPages = new[] { "portal", "practice", "web", "python", "py-basics", "py-practice", "py-pro" };
     var page = validPages.Contains(req.Page) ? req.Page : "portal";
-    var id = db.StartSession(req.Email, page);
+    var id = db.StartSession(sessionEmail, page);
     return Results.Ok(new { sessionId = id });
-});
+})
+.RequireRateLimiting("auth");
 
 // Heartbeat (30 másodpercenként)
-app.MapPost("/api/session/heartbeat", (HeartbeatRequest req, Database db) =>
+app.MapPost("/api/session/heartbeat", (HttpContext ctx, HeartbeatRequest req, Database db) =>
 {
-    db.UpdateHeartbeat(req.SessionId);
-    return Results.Ok(new { ok = true });
-});
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
+
+    var ok = db.UpdateHeartbeat(req.SessionId, email);
+    return ok ? Results.Ok(new { ok = true }) : Results.NotFound(new { error = "Session nem található" });
+})
+.RequireRateLimiting("auth");
 
 // Session lezárása (tab bezárásakor)
-app.MapPost("/api/session/end", (SessionEndRequest req, Database db) =>
+app.MapPost("/api/session/end", (HttpContext ctx, SessionEndRequest req, Database db) =>
 {
-    db.EndSession(req.SessionId);
-    return Results.Ok(new { ok = true });
-});
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
+
+    var ok = db.EndSession(req.SessionId, email);
+    return ok ? Results.Ok(new { ok = true }) : Results.NotFound(new { error = "Session nem található" });
+})
+.RequireRateLimiting("auth");
 
 // Tanuló session statisztikái (bejelentkezett felhasználó)
 app.MapGet("/api/session/stats/{email}", (string email, HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var requested = NormalizeSchoolEmail(email);
+    if (string.IsNullOrEmpty(requested))
+        return Results.BadRequest(new { error = "Érvénytelen email cím" });
+
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var tokenEmail = payload.Split(':')[0];
-    if (tokenEmail.Contains('|')) tokenEmail = tokenEmail.Split('|')[0];
     // Tanuló csak saját adatait láthatja, oktató bárkit
-    var isOktato = payload.Contains("|oktato") || payload.Contains("|admin");
-    if (!isOktato && !tokenEmail.Equals(email, StringComparison.OrdinalIgnoreCase))
+    if (!IsSelfOrPrivileged(tokenIdentity, tokenRole, requested))
         return Results.Forbid();
-    var stats = db.GetSessionStats(email);
+
+    var stats = db.GetSessionStats(requested);
     return Results.Ok(stats);
 });
 
@@ -915,12 +1143,34 @@ app.MapDelete("/api/password-reset-request/{id}", (HttpContext ctx, int id, Data
 
 // ── Quiz eredmények ────────────────────────────────────────────────────────
 
-// Kvíz eredmény mentése (diák küldi, auth nélkül)
-app.MapPost("/api/quiz-result", (QuizResultRequest req, Database db) =>
+// Kvíz eredmény mentése (saját tokennel)
+app.MapPost("/api/quiz-result", (HttpContext ctx, QuizResultRequest req, Database db) =>
 {
-    var id = db.SaveQuizResult(req);
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
+    if (!valid) return Results.Unauthorized();
+
+    var tokenEmail = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(tokenEmail) && !IsPrivilegedRole(tokenRole))
+        return Results.Unauthorized();
+
+    if (req.MaxPont <= 0 || req.Pont < 0 || req.Pont > req.MaxPont)
+        return Results.BadRequest(new { error = "Érvénytelen pont adatok" });
+
+    if (string.IsNullOrWhiteSpace(req.Tipus))
+        return Results.BadRequest(new { error = "A típus kötelező" });
+
+    var normalized = req with
+    {
+        Email = IsPrivilegedRole(tokenRole)
+            ? NormalizeSchoolEmail(req.Email) switch { "" => null, var e => e }
+            : tokenEmail,
+        Szazalek = (int)Math.Round(req.Pont * 100.0 / req.MaxPont)
+    };
+
+    var id = db.SaveQuizResult(normalized);
     return Results.Ok(new { success = true, id });
-});
+})
+.RequireRateLimiting("auth");
 
 // Kvíz eredmények lekérése (csak oktató)
 app.MapGet("/api/quiz-results", (HttpContext ctx, Database db) =>
@@ -936,9 +1186,8 @@ app.MapGet("/api/quiz-results", (HttpContext ctx, Database db) =>
 
 string GetOktatoEmail(HttpContext ctx)
 {
-    var (_, payload) = InspectToken(ctx);
-    var ep = payload.Split(':')[0];
-    return ep.Contains('|') ? ep.Split('|')[0] : ep;
+    var (valid, identity, role) = InspectAuthContext(ctx);
+    return valid && IsPrivilegedRole(role) ? identity : "";
 }
 
 // Számonkérés létrehozása (oktató)
@@ -974,35 +1223,82 @@ app.MapGet("/api/szamonkeres/{id:int}", (int id, HttpContext ctx, Database db) =
 // Aktív számonkérések tanulónak
 app.MapGet("/api/szamonkeres/aktiv", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var ep = payload.Split(':')[0];
-    var email = ep.Contains('|') ? ep.Split('|')[0] : ep;
-    var osztaly = ctx.Request.Query["osztaly"].FirstOrDefault();
-    var csoport = ctx.Request.Query["csoport"].FirstOrDefault();
+
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email) && !IsPrivilegedRole(tokenRole))
+        return Results.Unauthorized();
+
+    string? osztaly;
+    string? csoport;
+
+    if (IsPrivilegedRole(tokenRole))
+    {
+        osztaly = ctx.Request.Query["osztaly"].FirstOrDefault();
+        csoport = ctx.Request.Query["csoport"].FirstOrDefault();
+    }
+    else
+    {
+        var user = db.GetUserByEmail(email);
+        if (user == null) return Results.Forbid();
+        osztaly = user.Osztaly;
+        csoport = user.Csoport;
+    }
+
     return Results.Ok(db.GetAktivSzamonkeresForStudent(email, osztaly, csoport));
 });
 
 // Tanuló beadása
 app.MapPost("/api/szamonkeres/{id:int}/beadas", (int id, HttpContext ctx, BeadasCreateRequest req, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, tokenRole) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
+
+    if (IsPrivilegedRole(tokenRole))
+        return Results.Forbid();
+
+    var tokenEmail = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(tokenEmail))
+        return Results.Unauthorized();
+
+    var user = db.GetUserByEmail(tokenEmail);
+    if (user == null || !string.Equals(user.Szerep, "tanulo", StringComparison.OrdinalIgnoreCase))
+        return Results.Forbid();
+
+    var reqEmail = NormalizeSchoolEmail(req.TanuloEmail);
+    if (string.IsNullOrEmpty(reqEmail) || !reqEmail.Equals(tokenEmail, StringComparison.OrdinalIgnoreCase))
+        return Results.Forbid();
+
     var sz = db.GetSzamonkeres(id);
     if (sz == null || sz.Statusz != "aktiv") return Results.BadRequest(new { error = "Nem aktív számonkérés" });
-    if (db.BeadasExists(id, req.TanuloEmail, req.FeladatId))
+
+    var assigned = db.GetAktivSzamonkeresForStudent(tokenEmail, user.Osztaly, user.Csoport)
+        .Any(x => x.Id == id);
+    if (!assigned) return Results.Forbid();
+
+    if (db.BeadasExists(id, tokenEmail, req.FeladatId))
         return Results.Conflict(new { error = "Már beadtad ezt a feladatot" });
-    var beadasId = db.SaveBeadas(id, req);
+
+    var normalizedReq = req with
+    {
+        TanuloEmail = tokenEmail,
+        TanuloNev = $"{user.Vezeteknev} {user.Keresztnev}",
+        Osztaly = user.Osztaly,
+        Csoport = user.Csoport
+    };
+
+    var beadasId = db.SaveBeadas(id, normalizedReq);
     return Results.Ok(new { success = true, id = beadasId });
 });
 
 // Tanuló saját beadásai egy számonkérésen
 app.MapGet("/api/szamonkeres/{id:int}/sajat", (int id, HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var ep = payload.Split(':')[0];
-    var email = ep.Contains('|') ? ep.Split('|')[0] : ep;
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     var sz = db.GetSzamonkeres(id);
     if (sz == null) return Results.NotFound();
     return Results.Ok(db.GetTanuloBeadasok(id, email));
@@ -1037,10 +1333,10 @@ app.MapPatch("/api/szamonkeres/{id:int}/kuldj", (int id, HttpContext ctx, Databa
 // Tanuló lekéri a kiadott eredményeit
 app.MapGet("/api/szamonkeres/eredmeny", (HttpContext ctx, Database db) =>
 {
-    var (valid, payload) = InspectToken(ctx);
+    var (valid, tokenIdentity, _) = InspectAuthContext(ctx);
     if (!valid) return Results.Unauthorized();
-    var ep = payload.Split(':')[0];
-    var email = ep.Contains('|') ? ep.Split('|')[0] : ep;
+    var email = NormalizeSchoolEmail(tokenIdentity);
+    if (string.IsNullOrEmpty(email)) return Results.Unauthorized();
     // Kiadott számonkérések ahol van beadása
     var kiadottak = db.GetKiadottEredmenyek(email);
     return Results.Ok(kiadottak);
