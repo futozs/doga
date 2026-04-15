@@ -648,6 +648,10 @@ public class Database
 
     public bool RegisterUser(RegisterRequest r, string passwordHash)
     {
+        var szerep = (r.Szerep ?? "tanulo").Trim().ToLowerInvariant();
+        if (szerep != "tanulo" && szerep != "oktato")
+            szerep = "tanulo";
+
         using var conn = Open();
         using var cmd = conn.CreateCommand();
         cmd.CommandText = @"
@@ -659,7 +663,7 @@ public class Database
         cmd.Parameters.AddWithValue("$k",  r.Keresztnev);
         cmd.Parameters.AddWithValue("$e",  r.Email.ToLower().Trim());
         cmd.Parameters.AddWithValue("$ph", passwordHash);
-        cmd.Parameters.AddWithValue("$s",  r.Szerep);
+        cmd.Parameters.AddWithValue("$s",  szerep);
         cmd.Parameters.AddWithValue("$ev", (object?)r.Evfolyam ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$o",  (object?)r.Osztaly  ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$cs", (object?)r.Csoport  ?? DBNull.Value);
@@ -1796,7 +1800,7 @@ public class Database
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
-    public void UpdateHeartbeat(int sessionId)
+    public bool UpdateHeartbeat(int sessionId, string email)
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
@@ -1804,12 +1808,13 @@ public class Database
             UPDATE sessions
             SET last_heartbeat = datetime('now','localtime'),
                 duration_sec   = CAST((julianday('now') - julianday(login_at)) * 86400 AS INTEGER)
-            WHERE id = $id AND logout_at IS NULL";
+            WHERE id = $id AND LOWER(user_email) = LOWER($email) AND logout_at IS NULL";
         cmd.Parameters.AddWithValue("$id", sessionId);
-        cmd.ExecuteNonQuery();
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        return cmd.ExecuteNonQuery() > 0;
     }
 
-    public void EndSession(int sessionId)
+    public bool EndSession(int sessionId, string email)
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
@@ -1817,9 +1822,10 @@ public class Database
             UPDATE sessions
             SET logout_at    = datetime('now','localtime'),
                 duration_sec = CAST((julianday('now') - julianday(login_at)) * 86400 AS INTEGER)
-            WHERE id = $id AND logout_at IS NULL";
+            WHERE id = $id AND LOWER(user_email) = LOWER($email) AND logout_at IS NULL";
         cmd.Parameters.AddWithValue("$id", sessionId);
-        cmd.ExecuteNonQuery();
+        cmd.Parameters.AddWithValue("$email", email.ToLower().Trim());
+        return cmd.ExecuteNonQuery() > 0;
     }
 
     public List<SessionPageStat> GetSessionStats(string email)
