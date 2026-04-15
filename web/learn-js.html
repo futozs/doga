@@ -140,8 +140,8 @@
   <a href="../portal.html"><img src="kandologo2.png" alt="Kandó" class="topbar-logo"></a>
   <a href="../portal.html#web-tanulas" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
   <div class="topbar-info">
-    <div class="topbar-title">🟨 WEB Tananyag</div>
-    <div class="topbar-sub">3. szint · JavaScript</div>
+    <div class="topbar-title"><i class="fab fa-js" style="color:#f59e0b"></i> WEB Tananyag</div>
+    <div class="topbar-sub">5. szint · JavaScript</div>
   </div>
   <div class="topbar-spacer"></div>
   <div id="streak-counter" style="display:none;align-items:center;gap:5px;padding:4px 12px;background:#1e293b;border:1px solid #374151;border-radius:20px;font-size:0.82rem;font-weight:700;color:#fb923c;" title="Bejelentkezési sorozat"></div>
@@ -150,18 +150,18 @@
 
 <div class="modal-ov" id="modal-done">
   <div class="modal-box">
-    <div style="font-size:2.8rem">🏆</div>
+    <i class="fas fa-trophy" style="color:#f59e0b;font-size:2.8rem"></i>
     <h2>JavaScript – kész!</h2>
-    <p>Gratulálok! Elvégezted a 3. szintet. Következő lépés: <strong>Bootstrap</strong> (4. szint).</p>
+    <p>Gratulálok! Elvégezted az 5. szintet. Minden WEB tananyagot teljesítettél!</p>
     <div class="modal-btns">
-      <a class="btn-m btn-m-p" href="learn-bootstrap.html"><i class="fas fa-arrow-right"></i> Tovább: Bootstrap</a>
-      <a class="btn-m btn-m-s" href="../portal.html"><i class="fas fa-home"></i> Főmenü</a>
+      <a class="btn-m btn-m-p" href="../python/agazati-gyakorlo.html"><i class="fas fa-laptop-code"></i> Ágazati feladatok</a>
+      <a class="btn-m btn-m-s" href="../portal.html#web-tanulas"><i class="fas fa-book-open"></i> Tananyagválasztó</a>
     </div>
     <button onclick="document.getElementById('modal-done').classList.remove('show')" style="margin-top:12px;background:transparent;border:none;color:#475569;font-size:0.82rem;cursor:pointer;text-decoration:underline;">Mégse – maradok itt</button>
   </div>
 </div>
 
-<div class="confetti-flash" id="confetti">🎉</div>
+<div class="confetti-flash" id="confetti"><i class="fas fa-star"></i></div>
 
 <div class="layout">
   <aside class="left-panel" id="left-panel"></aside>
@@ -205,7 +205,7 @@ const tasks = [
 
   // ── BLOKK 1: JavaScript bevezetés ────────────────────────────────────
   {
-    id:1, block:1, blockName:'JavaScript bevezetés', emoji:'🟨',
+    id:1, block:1, blockName:'JavaScript bevezetés', emoji:'<i class="fab fa-js"></i>',
     type:'quiz',
     title:'Mi a JavaScript?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -234,7 +234,7 @@ const tasks = [
   },
 
   {
-    id:2, block:1, blockName:'JavaScript bevezetés', emoji:'🟨',
+    id:2, block:1, blockName:'JavaScript bevezetés', emoji:'<i class="fab fa-js"></i>',
     type:'fillin',
     title:'JS beágyazása – script tag',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -275,7 +275,7 @@ const tasks = [
   },
 
   {
-    id:3, block:1, blockName:'JavaScript bevezetés', emoji:'🟨',
+    id:3, block:1, blockName:'JavaScript bevezetés', emoji:'<i class="fab fa-js"></i>',
     type:'quiz',
     title:'Az alert() függvény',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -303,7 +303,7 @@ const tasks = [
   },
 
   {
-    id:4, block:1, blockName:'JavaScript bevezetés', emoji:'🟨',
+    id:4, block:1, blockName:'JavaScript bevezetés', emoji:'<i class="fab fa-js"></i>',
     type:'monaco',
     title:'Hello World! – alert()',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -336,7 +336,7 @@ const tasks = [
 
   // ── BLOKK 2: Változók és függvények ──────────────────────────────────
   {
-    id:5, block:2, blockName:'Változók és függvények', emoji:'⚙️',
+    id:5, block:2, blockName:'Változók és függvények', emoji:'<i class="fas fa-gear"></i>',
     type:'quiz',
     title:'let és const',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -364,7 +364,7 @@ PI = 3;             // HIBA! const nem módosítható</pre>
   },
 
   {
-    id:6, block:2, blockName:'Változók és függvények', emoji:'⚙️',
+    id:6, block:2, blockName:'Változók és függvények', emoji:'<i class="fas fa-gear"></i>',
     type:'fillin',
     title:'Függvény deklarálása',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -403,7 +403,7 @@ function osszead(a, b) {
   },
 
   {
-    id:7, block:2, blockName:'Változók és függvények', emoji:'⚙️',
+    id:7, block:2, blockName:'Változók és függvények', emoji:'<i class="fas fa-gear"></i>',
     type:'monaco',
     title:'Saját függvény írása',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -440,7 +440,7 @@ function osszead(a, b) {
 
   // ── BLOKK 3: DOM kezelés ─────────────────────────────────────────────
   {
-    id:8, block:3, blockName:'DOM kezelés', emoji:'🌳',
+    id:8, block:3, blockName:'DOM kezelés', emoji:'<i class="fas fa-sitemap"></i>',
     type:'quiz',
     title:'Mi a DOM?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -470,7 +470,7 @@ function osszead(a, b) {
   },
 
   {
-    id:9, block:3, blockName:'DOM kezelés', emoji:'🌳',
+    id:9, block:3, blockName:'DOM kezelés', emoji:'<i class="fas fa-sitemap"></i>',
     type:'fillin',
     title:'getElementById és innerHTML',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -501,7 +501,7 @@ elem._______ = "Megváltozott!";`,
   },
 
   {
-    id:10, block:3, blockName:'DOM kezelés', emoji:'🌳',
+    id:10, block:3, blockName:'DOM kezelés', emoji:'<i class="fas fa-sitemap"></i>',
     type:'fillin',
     title:'querySelector',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -536,7 +536,7 @@ cim.___________ = "Új cím";`,
   },
 
   {
-    id:11, block:3, blockName:'DOM kezelés', emoji:'🌳',
+    id:11, block:3, blockName:'DOM kezelés', emoji:'<i class="fas fa-sitemap"></i>',
     type:'monaco',
     title:'Szöveg módosítása JavaScripttel',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -576,7 +576,7 @@ cim.___________ = "Új cím";`,
 
   // ── BLOKK 4: Események ───────────────────────────────────────────────
   {
-    id:12, block:4, blockName:'Eseménykezelés', emoji:'🖱️',
+    id:12, block:4, blockName:'Eseménykezelés', emoji:'<i class="fas fa-computer-mouse"></i>',
     type:'quiz',
     title:'Mi az eseménykezelő?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -609,7 +609,7 @@ cim.___________ = "Új cím";`,
   },
 
   {
-    id:13, block:4, blockName:'Eseménykezelés', emoji:'🖱️',
+    id:13, block:4, blockName:'Eseménykezelés', emoji:'<i class="fas fa-computer-mouse"></i>',
     type:'fillin',
     title:'addEventListener szintaxis',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -647,7 +647,7 @@ gomb.addEventListener("_____", reagal);`,
   },
 
   {
-    id:14, block:4, blockName:'Eseménykezelés', emoji:'🖱️',
+    id:14, block:4, blockName:'Eseménykezelés', emoji:'<i class="fas fa-computer-mouse"></i>',
     type:'monaco',
     title:'Gomb – szöveg módosítása kattintásra',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -684,7 +684,7 @@ gomb.addEventListener("_____", reagal);`,
   },
 
   {
-    id:15, block:4, blockName:'Eseménykezelés', emoji:'🖱️',
+    id:15, block:4, blockName:'Eseménykezelés', emoji:'<i class="fas fa-computer-mouse"></i>',
     type:'monaco',
     title:'Stílus módosítása JavaScripttel',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -731,7 +731,7 @@ gomb.addEventListener("_____", reagal);`,
 
   // ── BLOKK 5: Kommentek ────────────────────────────── (kiegészítő)
   {
-    id:16, block:5, blockName:'Kommentek', emoji:'💬',
+    id:16, block:5, blockName:'Kommentek', emoji:'<i class="fas fa-comment"></i>',
     type:'fillin',
     title:'JavaScript komment szintaxisa',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -776,7 +776,7 @@ function koszont(nev) { ... }</pre>
   },
 
   {
-    id:17, block:5, blockName:'Kommentek', emoji:'💬',
+    id:17, block:5, blockName:'Kommentek', emoji:'<i class="fas fa-comment"></i>',
     type:'monaco',
     title:'Írj kommenteket a JavaScript kódba!',
     explanation:`<div class="exp-label">✏️ Feladat</div>
@@ -880,7 +880,7 @@ function buildLeft() {
       const locked = i>0 && !state.done[i-1];
       const p = document.createElement('div');
       p.id='pill-'+i;
-      const typeIcon = t.type==='quiz'?'❓':t.type==='fillin'?'✏️':'💻';
+      const typeIcon = t.type==='quiz'?'<i class="fas fa-circle-question"></i>':t.type==='fillin'?'<i class="fas fa-pen"></i>':'<i class="fas fa-code"></i>';
       const typeLabel= t.type==='quiz'?'Kvíz':t.type==='fillin'?'Kódkiegészítés':'Szerkesztő';
       p.innerHTML=`<span class="pill-icon">${state.done[i]?'<i class="fa-solid fa-circle-check" style="color:#58D58D;"></i>':locked?'<i class="fa-solid fa-lock" style="color:#E82B41;"></i>':'<i class="fa-solid fa-lock-open" style="color:#53C3F4;"></i>'}</span>
         <div><div class="pill-label">${i+1}. ${t.title}</div>
@@ -925,10 +925,10 @@ function loadTask(idx){
   refreshLeft();
 
   const typeBadge = task.type==='quiz'
-    ? '<span class="type-badge badge-quiz">❓ Kvíz</span>'
+    ? '<span class="type-badge badge-quiz"><i class="fas fa-circle-question"></i> Kvíz</span>'
     : task.type==='fillin'
-    ? '<span class="type-badge badge-fillin">✏️ Kódkiegészítés</span>'
-    : '<span class="type-badge badge-monaco">💻 Szerkesztő</span>';
+    ? '<span class="type-badge badge-fillin"><i class="fas fa-pen"></i> Kódkiegészítés</span>'
+    : '<span class="type-badge badge-monaco"><i class="fas fa-code"></i> Szerkesztő</span>';
 
   const layoutCls = task.type==='monaco' ? 'one-col' : 'two-col';
   let expHtml = `<div class="exp-box${task.type==='monaco'?' compact':''}">${task.explanation}</div>`;
@@ -956,7 +956,7 @@ function loadTask(idx){
       ${monacoContent}
     </div>
     ${checkListHtml}
-    <div class="success-banner${isDone?' show':''}" id="suc-banner">🎉 Sikeresen teljesítetted ezt a feladatot!</div>
+    <div class="success-banner${isDone?' show':''}" id="suc-banner"><i class="fas fa-circle-check"></i> Sikeresen teljesítetted ezt a feladatot!</div>
   `;
 
   if(task.type==='monaco') initMonaco(task,idx);
@@ -1191,7 +1191,7 @@ function saveCompletion(key){
 function goNext(){
   const n=state.cur+1;
   if(n<tasks.length) loadTask(n);
-  else location.href='learn-bootstrap.html';
+  else location.href='../portal.html#web-tanulas';
 }
 
 function triggerConfetti(){

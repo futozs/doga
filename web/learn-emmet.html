@@ -177,7 +177,7 @@
   <a href="../portal.html"><img src="kandologo2.png" alt="Kandó" class="topbar-logo"></a>
   <a href="../portal.html#web-tanulas" class="btn-back"><i class="fas fa-arrow-left"></i> Vissza</a>
   <div class="topbar-info">
-    <div class="topbar-title">⚡ WEB Tananyag</div>
+    <div class="topbar-title"><i class="fas fa-bolt" style="color:#22c55e"></i> WEB Tananyag</div>
     <div class="topbar-sub">4. szint · Emmet gyorsírás</div>
   </div>
   <div class="topbar-spacer"></div>
@@ -187,19 +187,19 @@
 
 <div class="modal-ov" id="modal-done">
   <div class="modal-box">
-    <div style="font-size:2.8rem">🏆</div>
+    <i class="fas fa-trophy" style="color:#22c55e;font-size:2.8rem"></i>
     <h2>Emmet gyorsírás – kész!</h2>
-    <p>Gratulálok! Elsajátítottad az Emmet gyorsírást. Mi legyen a következő lépés?</p>
+    <p>Gratulálok! Elsajátítottad az Emmet gyorsírást. Következő lépés: <strong>JavaScript</strong> (5. szint).</p>
     <div class="modal-btns">
-      <a class="btn-m btn-m-p" href="../portal.html#web-tanulas"><i class="fas fa-book-open"></i> Tananyagválasztó</a>
-      <a class="btn-m btn-m-s" href="../python/agazati-gyakorlo.html"><i class="fas fa-laptop-code"></i> Ágazati feladatok</a>
+      <a class="btn-m btn-m-p" href="learn-js.html"><i class="fas fa-arrow-right"></i> Tovább: JavaScript</a>
+      <a class="btn-m btn-m-s" href="../portal.html#web-tanulas"><i class="fas fa-book-open"></i> Tananyagválasztó</a>
     </div>
     <a href="../portal.html" style="display:block;margin-top:10px;color:#64748b;font-size:0.8rem;text-decoration:underline;"><i class="fas fa-home"></i> Főmenü</a>
     <button onclick="document.getElementById('modal-done').classList.remove('show')" style="display:block;margin-top:6px;background:transparent;border:none;color:#475569;font-size:0.82rem;cursor:pointer;text-decoration:underline;">Mégse – maradok itt</button>
   </div>
 </div>
 
-<div class="confetti-flash" id="confetti">⚡</div>
+<div class="confetti-flash" id="confetti"><i class="fas fa-bolt"></i></div>
 
 <div class="layout">
   <aside class="left-panel" id="left-panel"></aside>
@@ -244,7 +244,7 @@ const tasks = [
 
   // ── BLOKK 1: Mi az Emmet? ────────────────────────────────────────────
   {
-    id:1, block:1, blockName:'Mi az Emmet?', emoji:'⚡',
+    id:1, block:1, blockName:'Mi az Emmet?', emoji:'<i class="fas fa-bolt"></i>',
     type:'quiz',
     title:'Mi az Emmet gyorsírás?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -277,7 +277,7 @@ const tasks = [
   },
 
   {
-    id:2, block:1, blockName:'Mi az Emmet?', emoji:'⚡',
+    id:2, block:1, blockName:'Mi az Emmet?', emoji:'<i class="fas fa-bolt"></i>',
     type:'fillin',
     title:'Emmet alapoperátorok',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -309,7 +309,7 @@ li___4`,
   },
 
   {
-    id:3, block:1, blockName:'Mi az Emmet?', emoji:'⚡',
+    id:3, block:1, blockName:'Mi az Emmet?', emoji:'<i class="fas fa-bolt"></i>',
     type:'emmet',
     title:'Első Emmet kibontás',
     explanation:`<div class="exp-label">⚡ Emmet feladat</div>
@@ -332,7 +332,7 @@ li___4`,
 
   // ── BLOKK 2: Gyermek > és testvér + ─────────────────────────────────
   {
-    id:4, block:2, blockName:'Gyermek > és testvér +', emoji:'🔗',
+    id:4, block:2, blockName:'Gyermek > és testvér +', emoji:'<i class="fas fa-link"></i>',
     type:'quiz',
     title:'> és + operátor különbsége',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -354,7 +354,7 @@ li___4`,
   },
 
   {
-    id:5, block:2, blockName:'Gyermek > és testvér +', emoji:'🔗',
+    id:5, block:2, blockName:'Gyermek > és testvér +', emoji:'<i class="fas fa-link"></i>',
     type:'fillin',
     title:'Mélyen beágyazott struktúrák',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -386,7 +386,7 @@ tr___td___3`,
   },
 
   {
-    id:6, block:2, blockName:'Gyermek > és testvér +', emoji:'🔗',
+    id:6, block:2, blockName:'Gyermek > és testvér +', emoji:'<i class="fas fa-link"></i>',
     type:'emmet',
     title:'Navigáció Emmettel',
     explanation:`<div class="exp-label">⚡ Emmet feladat</div>
@@ -409,7 +409,7 @@ tr___td___3`,
 
   // ── BLOKK 3: Osztályok, ID-k, attribútumok ──────────────────────────
   {
-    id:7, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'🏷️',
+    id:7, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'<i class="fas fa-tag"></i>',
     type:'quiz',
     title:'Osztály (.), ID (#) és attribútum ([])',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -436,7 +436,7 @@ tr___td___3`,
   },
 
   {
-    id:8, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'🏷️',
+    id:8, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'<i class="fas fa-tag"></i>',
     type:'fillin',
     title:'Osztály, ID és attribútum kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -475,7 +475,7 @@ div___kartya___c1`,
   },
 
   {
-    id:9, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'🏷️',
+    id:9, block:3, blockName:'Osztályok, ID-k, attribútumok', emoji:'<i class="fas fa-tag"></i>',
     type:'emmet',
     title:'Kártya rács Emmettel',
     explanation:`<div class="exp-label">⚡ Emmet feladat</div>
@@ -497,7 +497,7 @@ div___kartya___c1`,
 
   // ── BLOKK 4: Tartalom {} és számozás $ ──────────────────────────────
   {
-    id:10, block:4, blockName:'Tartalom {} és számozás $', emoji:'✖️',
+    id:10, block:4, blockName:'Tartalom {} és számozás $', emoji:'<i class="fas fa-xmark"></i>',
     type:'quiz',
     title:'Kapcsos zárójel {} és dollárjel $',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -521,7 +521,7 @@ div.elem-$*3  →  class="elem-1", "elem-2", "elem-3"</pre>`,
   },
 
   {
-    id:11, block:4, blockName:'Tartalom {} és számozás $', emoji:'✖️',
+    id:11, block:4, blockName:'Tartalom {} és számozás $', emoji:'<i class="fas fa-xmark"></i>',
     type:'fillin',
     title:'Tartalom és számozás kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -557,7 +557,7 @@ ul>li___item-$___4`,
   },
 
   {
-    id:12, block:4, blockName:'Tartalom {} és számozás $', emoji:'✖️',
+    id:12, block:4, blockName:'Tartalom {} és számozás $', emoji:'<i class="fas fa-xmark"></i>',
     type:'emmet',
     title:'Számozott lista Emmettel',
     explanation:`<div class="exp-label">⚡ Emmet feladat</div>
@@ -578,7 +578,7 @@ ul>li___item-$___4`,
 
   // ── BLOKK 5: Csoportosítás () ────────────────────────────────────────
   {
-    id:13, block:5, blockName:'Csoportosítás ()', emoji:'📦',
+    id:13, block:5, blockName:'Csoportosítás ()', emoji:'<i class="fas fa-cube"></i>',
     type:'quiz',
     title:'Csoportosítás kerek zárójelekkel',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -605,7 +605,7 @@ header&gt;h1+(nav&gt;ul&gt;li*3)</pre>`,
   },
 
   {
-    id:14, block:5, blockName:'Csoportosítás ()', emoji:'📦',
+    id:14, block:5, blockName:'Csoportosítás ()', emoji:'<i class="fas fa-cube"></i>',
     type:'fillin',
     title:'Csoportosítás kiegészítés',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -642,7 +642,7 @@ ___div.col-bal+div.col-jobb___*1`,
   },
 
   {
-    id:15, block:5, blockName:'Csoportosítás ()', emoji:'📦',
+    id:15, block:5, blockName:'Csoportosítás ()', emoji:'<i class="fas fa-cube"></i>',
     type:'emmet',
     title:'Fejléc csoportosítással',
     explanation:`<div class="exp-label">⚡ Emmet feladat</div>
@@ -666,7 +666,7 @@ ___div.col-bal+div.col-jobb___*1`,
 
   // ── BLOKK 6: Szintlépés ^ ────────────────────────────────────────────
   {
-    id:16, block:6, blockName:'Szintlépés ^', emoji:'⬆️',
+    id:16, block:6, blockName:'Szintlépés ^', emoji:'<i class="fas fa-arrow-up"></i>',
     type:'quiz',
     title:'A ^ (szintlépés) operátor',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -699,7 +699,7 @@ ___div.col-bal+div.col-jobb___*1`,
   },
 
   {
-    id:17, block:6, blockName:'Szintlépés ^', emoji:'⬆️',
+    id:17, block:6, blockName:'Szintlépés ^', emoji:'<i class="fas fa-arrow-up"></i>',
     type:'fillin',
     title:'Hány ^ kell?',
     explanation:`<div class="exp-label">📖 Tananyag</div>
@@ -730,7 +730,7 @@ div.layout>section>article___aside`,
   },
 
   {
-    id:18, block:6, blockName:'Szintlépés ^', emoji:'⬆️',
+    id:18, block:6, blockName:'Szintlépés ^', emoji:'<i class="fas fa-arrow-up"></i>',
     type:'emmet',
     title:'Teljes táblázat ^ operátorral',
     explanation:`<div class="exp-label">⚡ Emmet feladat</div>
@@ -821,7 +821,7 @@ function buildLeft() {
       const locked = !u._tesztMod && i>0 && !state.done[i-1];
       const p = document.createElement('div');
       p.id='pill-'+i;
-      const typeIcon  = t.type==='quiz'?'❓':t.type==='fillin'?'✏️':t.type==='emmet'?'⚡':'💻';
+      const typeIcon  = t.type==='quiz'?'<i class="fas fa-circle-question"></i>':t.type==='fillin'?'<i class="fas fa-pen"></i>':t.type==='emmet'?'<i class="fas fa-bolt"></i>':'<i class="fas fa-code"></i>';
       const typeLabel = t.type==='quiz'?'Kvíz':t.type==='fillin'?'Kódkiegészítés':t.type==='emmet'?'Emmet':'Szerkesztő';
       p.innerHTML=`<span class="pill-icon">${state.done[i]?'<i class="fa-solid fa-circle-check" style="color:#58D58D;"></i>':locked?'<i class="fa-solid fa-lock" style="color:#E82B41;"></i>':'<i class="fa-solid fa-lock-open" style="color:#53C3F4;"></i>'}</span>
         <div><div class="pill-label">${i+1}. ${t.title}</div>
@@ -866,12 +866,12 @@ function loadTask(idx){
   refreshLeft();
 
   const typeBadge = task.type==='quiz'
-    ? '<span class="type-badge badge-quiz">❓ Kvíz</span>'
+    ? '<span class="type-badge badge-quiz"><i class="fas fa-circle-question"></i> Kvíz</span>'
     : task.type==='fillin'
-    ? '<span class="type-badge badge-fillin">✏️ Kódkiegészítés</span>'
+    ? '<span class="type-badge badge-fillin"><i class="fas fa-pen"></i> Kódkiegészítés</span>'
     : task.type==='emmet'
-    ? '<span class="type-badge badge-emmet">⚡ Emmet feladat</span>'
-    : '<span class="type-badge badge-monaco">💻 Szerkesztő</span>';
+    ? '<span class="type-badge badge-emmet"><i class="fas fa-bolt"></i> Emmet feladat</span>'
+    : '<span class="type-badge badge-monaco"><i class="fas fa-code"></i> Szerkesztő</span>';
 
   let mainContent = '';
   let checkListHtml = '';
@@ -894,7 +894,7 @@ function loadTask(idx){
         <div class="emmet-exp-col">
           <div class="exp-box">${task.explanation}</div>
           <div class="abbr-card">
-            <div class="abbr-label">⚡ Írd be ezt a rövidítést:</div>
+            <div class="abbr-label"><i class="fas fa-bolt"></i> Írd be ezt a rövidítést:</div>
             <div class="abbr-text">${escH(task.abbreviation)}</div>
             <div class="abbr-hint">Gépeld be a fenti sort a szerkesztőbe, majd nyomj <kbd>Tab</kbd>-ot a kibontáshoz!</div>
           </div>
@@ -902,7 +902,7 @@ function loadTask(idx){
         <div class="emmet-right-col">
           <div class="emmet-editor-wrap">
             <div class="editor-hd">
-              <span style="text-transform:uppercase;letter-spacing:.06em;">⚡ Emmet szerkesztő</span>
+              <span style="text-transform:uppercase;letter-spacing:.06em;"><i class="fas fa-bolt"></i> Emmet szerkesztő</span>
               <span style="margin-left:auto;font-size:0.67rem;color:#475569;">Tab = kibontás</span>
             </div>
             <div id="med" style="width:100%;height:calc(100% - 29px)"></div>
@@ -914,7 +914,7 @@ function loadTask(idx){
         </div>
       </div>`;
     if(task.checks){
-      checkListHtml = `<div class="check-list">${task.checks.map((_,i)=>`<div class="chk-row" id="chk-${i}"><span class="ci">⬜</span> ${task.checks[i].label}</div>`).join('')}</div>`;
+      checkListHtml = `<div class="check-list">${task.checks.map((_,i)=>`<div class="chk-row" id="chk-${i}"><i class="fas fa-square" style="color:#374151"></i> ${task.checks[i].label}</div>`).join('')}</div>`;
     }
   }
 
@@ -926,7 +926,7 @@ function loadTask(idx){
     <div class="task-title-row">${task.emoji} ${task.title}</div>
     ${mainContent}
     ${checkListHtml}
-    <div class="success-banner${isDone?' show':''}" id="suc-banner">🎉 Sikeresen teljesítetted ezt a feladatot!</div>
+    <div class="success-banner${isDone?' show':''}" id="suc-banner"><i class="fas fa-circle-check"></i> Sikeresen teljesítetted ezt a feladatot!</div>
   `;
 
   if(task.type==='emmet') initEmmetMonaco(task,idx);
@@ -1167,6 +1167,7 @@ function saveCompletion(key){
 function goNext(){
   const n=state.cur+1;
   if(n<tasks.length) loadTask(n);
+  else location.href='learn-js.html';
 }
 
 function triggerConfetti(){
