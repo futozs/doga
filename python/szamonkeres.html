@@ -105,14 +105,43 @@
     .kod-btn{padding:3px 8px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:6px;color:#93c5fd;cursor:pointer;font-size:0.78rem}
     .kod-view{background:#0b1120;border-radius:8px;padding:10px;font-family:monospace;font-size:0.82rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:8px;display:none;border:1px solid #374151}
     .empty-state{text-align:center;color:#64748b;padding:40px 20px;font-size:0.9rem}
-    .sajat-feladat-form{background:#0b1120;border:1px solid #374151;border-radius:8px;padding:14px;margin-top:8px}
     .msg{padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:0.88rem;display:none}
     .msg-ok{background:#14532d;border:1px solid #16a34a;color:#86efac}
     .msg-err{background:#7f1d1d;border:1px solid #dc2626;color:#fca5a5}
-    .selected-feladatok{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
-    .sel-tag{padding:4px 10px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:12px;font-size:0.78rem;color:#93c5fd;display:flex;align-items:center;gap:6px}
-    .sel-tag button{background:transparent;border:none;color:#93c5fd;cursor:pointer;font-size:0.9rem;line-height:1}
+    .selected-feladatok{display:flex;flex-wrap:wrap;gap:6px;min-height:30px;align-items:flex-start}
+    .sel-tag{padding:5px 12px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:12px;font-size:0.8rem;color:#93c5fd;display:flex;align-items:center;gap:6px}
+    .sel-tag button{background:transparent;border:none;color:#93c5fd;cursor:pointer;font-size:0.9rem;line-height:1;padding:0}
     .loading{text-align:center;padding:20px;color:#64748b}
+    /* ── Wizard ── */
+    .wizard-steps{display:flex;align-items:flex-start;margin-bottom:28px}
+    .wizard-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto}
+    .wizard-dot{width:38px;height:38px;border-radius:50%;border:2px solid #374151;background:#0b1120;color:#64748b;font-size:0.88rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .3s}
+    .wizard-step.active .wizard-dot{border-color:#3b82f6;background:#1e3a5f;color:#93c5fd}
+    .wizard-step.done .wizard-dot{border-color:#16a34a;background:#14532d;color:#86efac}
+    .wizard-label{font-size:0.75rem;color:#64748b;font-weight:600;white-space:nowrap;text-align:center}
+    .wizard-step.active .wizard-label,.wizard-step.done .wizard-label{color:#94a3b8}
+    .wizard-line{flex:1;height:2px;background:#374151;margin-top:19px;transition:background .3s;min-width:20px}
+    .wizard-line.done{background:#16a34a}
+    .wizard-panel{display:none}.wizard-panel.active{display:block}
+    .wizard-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid #1f2937}
+    .wizard-nav-center{font-size:0.8rem;color:#64748b}
+    /* ── Feladat mód ── */
+    .feladat-mode-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    .feladat-mode-btn{padding:18px 14px;border-radius:12px;border:2px solid #374151;background:#0b1120;cursor:pointer;text-align:center;transition:all .2s;color:#64748b;font-family:inherit}
+    .feladat-mode-btn:hover{border-color:#4b5563;background:#0d1a2e}
+    .feladat-mode-btn.active{border-color:#3b82f6;background:#1e3a5f;color:#e0e0e0}
+    .feladat-mode-btn .mi{font-size:1.6rem;display:block;margin-bottom:8px}
+    .feladat-mode-btn .mt{font-size:0.92rem;font-weight:700;display:block;margin-bottom:3px}
+    .feladat-mode-btn .md{font-size:0.76rem;display:block;line-height:1.4}
+    /* ── Összefoglalás ── */
+    .summary-box{background:#0b1120;border:1px solid #1f2937;border-radius:10px;overflow:hidden}
+    .summary-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid #1f2937;font-size:0.85rem}
+    .summary-row:last-child{border-bottom:none}
+    .summary-label{color:#64748b;flex-shrink:0}
+    .summary-value{color:#e0e0e0;font-weight:600;text-align:right}
+    /* ── Step 1 counter ── */
+    .step1-counter{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;font-size:0.85rem;margin-top:14px;background:#0b1120;border:1px solid #374151}
+    .step1-counter.has-sel{border-color:#16a34a;color:#86efac;background:#14532d20}
   </style>
 </head>
 <body>
@@ -137,66 +166,145 @@
       <div class="tab" onclick="switchTab('szamonkeresek')"><i class="fas fa-list"></i> Számonkérések</div>
     </div>
 
-    <!-- ── Tab: Létrehozás ─────────────────────────────────── -->
+    <!-- ── Tab: Létrehozás – Wizard ──────────────────────── -->
     <div class="tab-content active" id="tab-letrehozas">
-      <div id="create-msg-ok" class="msg msg-ok"></div>
-      <div id="create-msg-err" class="msg msg-err"></div>
 
-      <div class="card">
-        <div class="form-row">
-          <label>Számonkérés neve / témája</label>
-          <input type="text" id="cr-cim" placeholder="pl. Python alapok – zárthelyi 2026. ápr.">
+      <!-- Lépésjelző -->
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="ws-1">
+          <div class="wizard-dot" id="wd-1">1</div>
+          <div class="wizard-label">Tanulók</div>
+        </div>
+        <div class="wizard-line" id="wl-1"></div>
+        <div class="wizard-step" id="ws-2">
+          <div class="wizard-dot" id="wd-2">2</div>
+          <div class="wizard-label">Feladatok</div>
+        </div>
+        <div class="wizard-line" id="wl-2"></div>
+        <div class="wizard-step" id="ws-3">
+          <div class="wizard-dot" id="wd-3">3</div>
+          <div class="wizard-label">Részletek</div>
+        </div>
+      </div>
+
+      <!-- ── 1. lépés: Tanulók ── -->
+      <div class="wizard-panel active" id="step-1">
+        <div class="card">
+          <div style="margin-bottom:16px">
+            <div style="font-size:1rem;font-weight:700;color:#e0e0e0;margin-bottom:4px">
+              <i class="fas fa-users" style="color:#3b82f6;margin-right:6px"></i>Kiknek szóljon a számonkérés?
+            </div>
+            <div style="font-size:0.82rem;color:#64748b">Válassz egy vagy több csoportot – vagy nyisd le a listát és jelölj ki egyéni tanulókat</div>
+          </div>
+          <div id="csoport-lista" class="csoport-grid">
+            <div class="loading">Csoportok betöltése...</div>
+          </div>
+          <div id="step1-counter" class="step1-counter" style="display:none"></div>
+        </div>
+        <div class="wizard-nav">
+          <span class="wizard-nav-center">1 / 3 lépés</span>
+          <button class="btn btn-primary" onclick="goStep(2)">Tovább: Feladatok &nbsp;<i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- ── 2. lépés: Feladatok ── -->
+      <div class="wizard-panel" id="step-2">
+        <!-- Kiválasztott feladatok (mindig látható) -->
+        <div class="card" style="margin-bottom:14px">
+          <div style="font-size:0.78rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">
+            <i class="fas fa-basket-shopping"></i> Kiválasztott feladatok
+          </div>
+          <div id="selected-tags" class="selected-feladatok">
+            <span style="color:#64748b;font-size:0.85rem;padding:4px 0">Még nincs feladat hozzáadva</span>
+          </div>
         </div>
 
-        <!-- Csoportok -->
-        <div class="section-title"><i class="fas fa-users"></i> Csoportok</div>
-        <div id="csoport-lista" class="csoport-grid loading">Csoportok betöltése...</div>
-
-        <!-- Feladatok -->
-        <div class="section-title"><i class="fas fa-list-check"></i> Rendszer feladatok</div>
-        <div id="feladat-lista" class="feladat-list loading" style="min-height:80px">
-          <div style="padding:16px;color:#64748b">Feladatok betöltése...</div>
+        <!-- Módválasztó gombok -->
+        <div class="feladat-mode-btns">
+          <button class="feladat-mode-btn active" id="mode-btn-rendszer" onclick="setFeladatMode('rendszer')">
+            <span class="mi"><i class="fas fa-list-check"></i></span>
+            <span class="mt">Meglévő feladat</span>
+            <span class="md">A rendszer feladatai közül választasz – automatikusan pontozható</span>
+          </button>
+          <button class="feladat-mode-btn" id="mode-btn-sajat" onclick="setFeladatMode('sajat')">
+            <span class="mi"><i class="fas fa-pen-to-square"></i></span>
+            <span class="mt">Saját feladat</span>
+            <span class="md">Te írod a feladatszöveget – a tanár értékeli kézzel</span>
+          </button>
         </div>
-        <div class="selected-feladatok" id="selected-tags"></div>
 
-        <!-- Saját feladat -->
-        <div class="section-title"><i class="fas fa-pen"></i> Saját feladat hozzáadása</div>
-        <div class="sajat-feladat-form">
-          <div class="form-grid" style="margin-bottom:10px">
+        <!-- Rendszer feladatok panel -->
+        <div id="panel-rendszer" class="card" style="padding:0;overflow:hidden">
+          <div id="feladat-lista" class="feladat-list">
+            <div style="padding:16px;color:#64748b">Feladatok betöltése...</div>
+          </div>
+        </div>
+
+        <!-- Saját feladat panel -->
+        <div id="panel-sajat" class="card" style="display:none">
+          <div style="font-size:0.88rem;color:#94a3b8;margin-bottom:14px">
+            <i class="fas fa-circle-info" style="color:#3b82f6"></i>
+            A saját feladatot a tanár értékeli kézzel – automatikus pontozás nem történik.
+          </div>
+          <div class="form-grid" style="margin-bottom:12px">
             <div>
               <label>Feladat neve</label>
               <input type="text" id="sf-cim" placeholder="pl. Lista rendezés">
             </div>
             <div>
               <label>Elérhető pont</label>
-              <input type="text" id="sf-pont" placeholder="pl. 10" style="width:100%">
+              <input type="text" id="sf-pont" placeholder="pl. 10">
             </div>
           </div>
           <div class="form-row">
             <label>Feladatleírás (mit kell megírnia a tanulónak?)</label>
-            <textarea id="sf-szoveg" rows="4" placeholder="Írj programot, amely..."></textarea>
+            <textarea id="sf-szoveg" rows="5" placeholder="Írj programot, amely..."></textarea>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="addSajatFeladat()"><i class="fas fa-plus"></i> Hozzáadás</button>
+          <button class="btn btn-success" onclick="addSajatFeladat()"><i class="fas fa-plus"></i> Feladat hozzáadása a listához</button>
         </div>
 
-        <!-- Ponthatárok -->
-        <div class="section-title"><i class="fas fa-graduation-cap"></i> Ponthatárok</div>
-        <div class="ponthatarak-presets" id="preset-gombok">
-          <button class="preset-btn" onclick="applyPreset(40,55,70,85,this)">Iskola alap (40/55/70/85%)</button>
-          <button class="preset-btn" onclick="applyPreset(33,50,67,83,this)">Strict (33/50/67/83%)</button>
-          <button class="preset-btn" onclick="applyPreset(50,60,75,90,this)">Engedékeny (50/60/75/90%)</button>
-        </div>
-        <div class="ponthatarak-inputs">
-          <div class="jegy-box"><div class="jegy-szam jegy-2">2</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-2" placeholder="40"></div>
-          <div class="jegy-box"><div class="jegy-szam jegy-3">3</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-3" placeholder="55"></div>
-          <div class="jegy-box"><div class="jegy-szam jegy-4">4</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-4" placeholder="70"></div>
-          <div class="jegy-box"><div class="jegy-szam jegy-5">5</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-5" placeholder="85"></div>
-        </div>
-
-        <div style="margin-top:20px;display:flex;justify-content:flex-end">
-          <button class="btn btn-primary" onclick="createSzamonkeres()"><i class="fas fa-paper-plane"></i> Számonkérés létrehozása</button>
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> &nbsp;Vissza</button>
+          <span class="wizard-nav-center">2 / 3 lépés</span>
+          <button class="btn btn-primary" onclick="goStep(3)">Tovább: Részletek &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
       </div>
+
+      <!-- ── 3. lépés: Részletek & Megerősítés ── -->
+      <div class="wizard-panel" id="step-3">
+        <div class="card">
+          <div class="form-row">
+            <label>Számonkérés neve / témája</label>
+            <input type="text" id="cr-cim" placeholder="pl. Python alapok – zárthelyi 2026. ápr.">
+          </div>
+
+          <div class="section-title" style="margin-top:18px"><i class="fas fa-graduation-cap"></i> Ponthatárok</div>
+          <div class="ponthatarak-presets" id="preset-gombok">
+            <button class="preset-btn" onclick="applyPreset(40,55,70,85,this)">Iskola alap (40/55/70/85%)</button>
+            <button class="preset-btn" onclick="applyPreset(33,50,67,83,this)">Strict (33/50/67/83%)</button>
+            <button class="preset-btn" onclick="applyPreset(50,60,75,90,this)">Engedékeny (50/60/75/90%)</button>
+          </div>
+          <div class="ponthatarak-inputs">
+            <div class="jegy-box"><div class="jegy-szam jegy-2">2</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-2" placeholder="40"></div>
+            <div class="jegy-box"><div class="jegy-szam jegy-3">3</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-3" placeholder="55"></div>
+            <div class="jegy-box"><div class="jegy-szam jegy-4">4</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-4" placeholder="70"></div>
+            <div class="jegy-box"><div class="jegy-szam jegy-5">5</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-5" placeholder="85"></div>
+          </div>
+
+          <div class="section-title" style="margin-top:20px"><i class="fas fa-clipboard-list"></i> Összefoglalás</div>
+          <div class="summary-box" id="step3-summary"></div>
+        </div>
+
+        <div id="create-msg-ok" class="msg msg-ok"></div>
+        <div id="create-msg-err" class="msg msg-err"></div>
+
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> &nbsp;Vissza</button>
+          <span class="wizard-nav-center">3 / 3 lépés</span>
+          <button class="btn btn-success" onclick="createSzamonkeres()"><i class="fas fa-paper-plane"></i> Számonkérés létrehozása</button>
+        </div>
+      </div>
+
     </div>
 
     <!-- ── Tab: Számonkérések ──────────────────────────────── -->
@@ -275,6 +383,8 @@ let selectedFeladatok = []; // [{tipus, feladat_szam?, cim, szoveg?, pont}]
 let selectedCsoportok = new Set();
 let allTanulok = [];        // [{nev, email, osztaly, csoport, evfolyam}]
 let csoportGroups = new Map(); // groupKey → [user, ...]
+let currentStep = 1;
+let feladatMode = 'rendszer';
 let allBeadasok = [];
 let currentSzamonkeres = null;
 
@@ -311,6 +421,97 @@ function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   if (name === 'szamonkeresek') loadSzamonkeresek();
+}
+
+// ── Wizard navigáció ─────────────────────────────────────────────────────────
+function goStep(step) {
+  if (step > currentStep && !validateStep(currentStep)) return;
+  for (let i = 1; i <= 3; i++) {
+    const ws = document.getElementById('ws-' + i);
+    const wp = document.getElementById('step-' + i);
+    ws?.classList.remove('active', 'done');
+    wp?.classList.remove('active');
+    if (i < step) ws?.classList.add('done');
+    else if (i === step) ws?.classList.add('active');
+  }
+  for (let i = 1; i <= 2; i++) {
+    const wd = document.getElementById('wd-' + i);
+    const wl = document.getElementById('wl-' + i);
+    if (wd) wd.innerHTML = i < step ? '<i class="fas fa-check"></i>' : String(i);
+    wl?.classList.toggle('done', i < step);
+  }
+  document.getElementById('step-' + step)?.classList.add('active');
+  currentStep = step;
+  if (step === 3) updateStep3Summary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    if (selectedCsoportok.size === 0) {
+      alert('Válassz legalább egy csoportot vagy tanulót a folytatáshoz!');
+      return false;
+    }
+  }
+  if (step === 2) {
+    if (selectedFeladatok.length === 0) {
+      alert('Adj hozzá legalább egy feladatot a folytatáshoz!');
+      return false;
+    }
+  }
+  return true;
+}
+
+function setFeladatMode(mode) {
+  feladatMode = mode;
+  document.getElementById('mode-btn-rendszer')?.classList.toggle('active', mode === 'rendszer');
+  document.getElementById('mode-btn-sajat')?.classList.toggle('active', mode === 'sajat');
+  const pr = document.getElementById('panel-rendszer');
+  const ps = document.getElementById('panel-sajat');
+  if (pr) pr.style.display = mode === 'rendszer' ? 'block' : 'none';
+  if (ps) ps.style.display = mode === 'sajat' ? 'block' : 'none';
+}
+
+function updateStep1Counter() {
+  const el = document.getElementById('step1-counter');
+  if (!el) return;
+  if (selectedCsoportok.size === 0) { el.style.display = 'none'; return; }
+  const groups = [...selectedCsoportok].filter(k => !k.startsWith('email:')).length;
+  const individuals = [...selectedCsoportok].filter(k => k.startsWith('email:')).length;
+  const parts = [];
+  if (groups) parts.push(`${groups} csoport`);
+  if (individuals) parts.push(`${individuals} egyéni tanuló`);
+  el.className = 'step1-counter has-sel';
+  el.innerHTML = `<i class="fas fa-circle-check"></i> Kiválasztva: <strong>${parts.join(' + ')}</strong>`;
+  el.style.display = 'inline-flex';
+}
+
+function updateStep3Summary() {
+  const csoportNames = [...selectedCsoportok].map(c => {
+    if (c.startsWith('email:')) {
+      const email = c.slice(6);
+      const u = allTanulok.find(t => t.email.toLowerCase() === email.toLowerCase());
+      return u ? (u.nev || email) : email;
+    }
+    return formatCsoportKey(c);
+  });
+  const maxOssz = selectedFeladatok.reduce((s, f) => s + (parseInt(f.pont) || 0), 0);
+  const ph2 = document.getElementById('ph-2').value || '40';
+  const ph3 = document.getElementById('ph-3').value || '55';
+  const ph4 = document.getElementById('ph-4').value || '70';
+  const ph5 = document.getElementById('ph-5').value || '85';
+  const feladatReszletek = selectedFeladatok.map(f =>
+    `${f.tipus === 'sajat' ? '<i class="fas fa-pen" style="color:#a5b4fc"></i>' : '<i class="fas fa-robot" style="color:#64748b"></i>'} ${escH(f.cim)} (${f.pont} pt)`
+  ).join('<br>');
+  const rows = [
+    ['Tanulók / csoportok', escH(csoportNames.join(', ')) || '–'],
+    ['Feladatok', feladatReszletek || '–'],
+    ['Max összpont', `<strong>${maxOssz} pont</strong>`],
+    ['Jegyhatárok', `2≥${ph2}% &nbsp;·&nbsp; 3≥${ph3}% &nbsp;·&nbsp; 4≥${ph4}% &nbsp;·&nbsp; 5≥${ph5}%`],
+  ];
+  document.getElementById('step3-summary').innerHTML = rows.map(([l,v]) =>
+    `<div class="summary-row"><span class="summary-label">${l}</span><span class="summary-value">${v}</span></div>`
+  ).join('');
 }
 
 // ── Csoportok betöltése ───────────────────────────────────────────────────────
@@ -428,11 +629,11 @@ function toggleCsoportGroup(key, evt, checked) {
     card?.classList.add('has-selection');
   } else {
     selectedCsoportok.delete(key);
-    // Ha nincs egyéni tanuló sem ebből a csoportból, vegyük le a kiemelést
     const members = csoportGroups.get(key) || [];
     const hasIndividual = members.some(u => selectedCsoportok.has('email:' + u.email));
     if (!hasIndividual) card?.classList.remove('has-selection');
   }
+  updateStep1Counter();
 }
 
 function toggleCsoportStudent(email, evt, checked) {
@@ -469,6 +670,7 @@ function toggleCsoportStudent(email, evt, checked) {
       }
     }
   }
+  updateStep1Counter();
 }
 
 // ── Feladatok betöltése ───────────────────────────────────────────────────────
