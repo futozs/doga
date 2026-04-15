@@ -932,6 +932,120 @@ app.MapGet("/api/quiz-results", (HttpContext ctx, Database db) =>
 });
 
 
+// ── Számonkérés ──────────────────────────────────────────────────────────────
+
+string GetOktatoEmail(HttpContext ctx)
+{
+    var (_, payload) = InspectToken(ctx);
+    var ep = payload.Split(':')[0];
+    return ep.Contains('|') ? ep.Split('|')[0] : ep;
+}
+
+// Számonkérés létrehozása (oktató)
+app.MapPost("/api/szamonkeres", (HttpContext ctx, SzamonkeresCreateRequest req, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    if (string.IsNullOrWhiteSpace(req.Cim)) return Results.BadRequest(new { error = "Cím kötelező" });
+    var email = GetOktatoEmail(ctx);
+    var id = db.SaveSzamonkeres(req, email);
+    return Results.Ok(new { success = true, id });
+});
+
+// Oktató saját számonkérései
+app.MapGet("/api/szamonkeres", (HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var email = GetOktatoEmail(ctx);
+    return Results.Ok(db.GetSzamonkeresekByOktato(email));
+});
+
+// Számonkérés részletei + beadások (oktató)
+app.MapGet("/api/szamonkeres/{id:int}", (int id, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var sz = db.GetSzamonkeres(id);
+    if (sz == null) return Results.NotFound();
+    var email = GetOktatoEmail(ctx);
+    if (!sz.OktatoEmail.Equals(email, StringComparison.OrdinalIgnoreCase)) return Results.Forbid();
+    var beadasok = db.GetBeadasok(id);
+    return Results.Ok(new { szamonkeres = sz, beadasok });
+});
+
+// Aktív számonkérések tanulónak
+app.MapGet("/api/szamonkeres/aktiv", (HttpContext ctx, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var ep = payload.Split(':')[0];
+    var email = ep.Contains('|') ? ep.Split('|')[0] : ep;
+    var osztaly = ctx.Request.Query["osztaly"].FirstOrDefault();
+    var csoport = ctx.Request.Query["csoport"].FirstOrDefault();
+    return Results.Ok(db.GetAktivSzamonkeresForStudent(email, osztaly, csoport));
+});
+
+// Tanuló beadása
+app.MapPost("/api/szamonkeres/{id:int}/beadas", (int id, HttpContext ctx, BeadasCreateRequest req, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var sz = db.GetSzamonkeres(id);
+    if (sz == null || sz.Statusz != "aktiv") return Results.BadRequest(new { error = "Nem aktív számonkérés" });
+    if (db.BeadasExists(id, req.TanuloEmail, req.FeladatId))
+        return Results.Conflict(new { error = "Már beadtad ezt a feladatot" });
+    var beadasId = db.SaveBeadas(id, req);
+    return Results.Ok(new { success = true, id = beadasId });
+});
+
+// Tanuló saját beadásai egy számonkérésen
+app.MapGet("/api/szamonkeres/{id:int}/sajat", (int id, HttpContext ctx, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var ep = payload.Split(':')[0];
+    var email = ep.Contains('|') ? ep.Split('|')[0] : ep;
+    var sz = db.GetSzamonkeres(id);
+    if (sz == null) return Results.NotFound();
+    return Results.Ok(db.GetTanuloBeadasok(id, email));
+});
+
+// Beadás manuális pontjának beállítása (oktató)
+app.MapPatch("/api/szamonkeres/beadas/{beadasId:int}/pont", (int beadasId, HttpContext ctx, SetBeadasPontRequest req, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var ok = db.SetBeadasPont(beadasId, req.Pont, req.Megjegyzes);
+    return ok ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
+// Számonkérés lezárása (aktiv → lezart)
+app.MapPatch("/api/szamonkeres/{id:int}/lezar", (int id, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var email = GetOktatoEmail(ctx);
+    var ok = db.SetSzamonkeresStatusz(id, "lezart", email);
+    return ok ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
+// Eredmények kiadása (lezart → kiadva)
+app.MapPatch("/api/szamonkeres/{id:int}/kuldj", (int id, HttpContext ctx, Database db) =>
+{
+    if (!ValidateOktato(ctx)) return Results.Unauthorized();
+    var email = GetOktatoEmail(ctx);
+    var ok = db.SetSzamonkeresStatusz(id, "kiadva", email);
+    return ok ? Results.Ok(new { success = true }) : Results.NotFound();
+});
+
+// Tanuló lekéri a kiadott eredményeit
+app.MapGet("/api/szamonkeres/eredmeny", (HttpContext ctx, Database db) =>
+{
+    var (valid, payload) = InspectToken(ctx);
+    if (!valid) return Results.Unauthorized();
+    var ep = payload.Split(':')[0];
+    var email = ep.Contains('|') ? ep.Split('|')[0] : ep;
+    // Kiadott számonkérések ahol van beadása
+    var kiadottak = db.GetKiadottEredmenyek(email);
+    return Results.Ok(kiadottak);
+});
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
 

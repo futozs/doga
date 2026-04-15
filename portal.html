@@ -870,6 +870,21 @@
             <div id="teszteloi-uzenetek-lista"></div>
         </div>
 
+        <!-- Számonkérés értesítő (tanulóknak, ha van aktív) -->
+        <div id="szamonkeres-banner" style="display:none;margin-top:16px;width:100%;max-width:960px"></div>
+
+        <!-- Számonkérés-kezelő gomb (oktatóknak, nem-sandornef) -->
+        <a id="szamonkeres-oktato-btn" href="python/szamonkeres.html"
+           style="display:none;margin-top:16px;width:100%;max-width:960px;padding:14px 20px;background:#16213e;border:1px solid #6366f1;border-radius:12px;text-decoration:none;align-items:center;gap:14px;cursor:pointer;transition:border-color .2s"
+           onmouseover="this.style.borderColor='#818cf8'" onmouseout="this.style.borderColor='#6366f1'">
+            <i class="fas fa-file-pen" style="color:#818cf8;font-size:1.4rem"></i>
+            <div>
+                <div style="font-weight:700;color:#e0e0e0;font-size:0.95rem">Számonkérés-kezelő</div>
+                <div style="font-size:0.8rem;color:#64748b">Számonkérés létrehozása, beadások és eredmények kezelése</div>
+            </div>
+            <i class="fas fa-chevron-right" style="color:#64748b;margin-left:auto"></i>
+        </a>
+
     </div>
 
 
@@ -895,6 +910,11 @@
                 <span class="icon"><i class="fas fa-user-graduate"></i></span>
                 <span class="label">Diák mód</span>
                 <span class="desc">Teljes diáknézet – logóra kattintva visszatérhetsz</span>
+            </a>
+            <a class="option-card" href="python/szamonkeres.html" style="border-color:#6366f1">
+                <span class="icon"><i class="fas fa-file-pen" style="color:#818cf8"></i></span>
+                <span class="label">Számonkérés</span>
+                <span class="desc">Számonkérés létrehozása, beadások kezelése</span>
             </a>
         </div>
     </div>
@@ -1392,6 +1412,8 @@
                 document.getElementById('otlet-btn').style.display = 'flex';
                 const cardWeb = document.getElementById('card-web');
                 if (cardWeb) cardWeb.onclick = function(e) { e.preventDefault(); document.getElementById('web-valaszto-modal').style.display = 'flex'; };
+                // Számonkérés-kezelő gomb oktatóknak
+                document.getElementById('szamonkeres-oktato-btn').style.display = 'flex';
             }
         } else if (user.szerep === 'vendeg') {
             document.getElementById('student-layout-wrap').style.display = 'flex';
@@ -1419,6 +1441,8 @@
             loadMegvalasultOtletek();
             loadTeszteloInfo(user);
             loadFeladatkeszitoInfo(user);
+            // Aktív számonkérés ellenőrzése
+            checkAktivSzamonkeres(user);
             // Session tracking csak valódi tanulónál
             if (!user._tesztMod) startSessionTracking(user.email, 'portal');
         }
@@ -2475,6 +2499,45 @@
 
     function escHtml(s) {
         return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    async function checkAktivSzamonkeres(user) {
+        if (!user.token && !user._tesztMod) return;
+        try {
+            const tok = user.token || (() => {
+                const b = JSON.parse(localStorage.getItem('kandoTeacherBackup') || '{}');
+                return b.token || '';
+            })();
+            const params = new URLSearchParams({ email: user.email || '' });
+            if (user.osztaly) params.append('osztaly', user.osztaly);
+            if (user.csoport) params.append('csoport', user.csoport);
+            const res = await fetch(`${API_BASE}/api/szamonkeres/aktiv?${params}`, {
+                headers: tok ? { 'Authorization': 'Bearer ' + tok } : {}
+            });
+            if (!res.ok) return;
+            const list = await res.json();
+            if (!list || !list.length) return;
+
+            const banner = document.getElementById('szamonkeres-banner');
+            if (!banner) return;
+
+            banner.innerHTML = list.map(sz => {
+                const feladatok = JSON.parse(sz.feladatok || '[]');
+                const csoportok = JSON.parse(sz.csoportok || '[]').join(', ');
+                return `<a href="python/szamonkeres-diak.html"
+                    style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:#16213e;border:1px solid #d97706;border-radius:12px;text-decoration:none;margin-bottom:10px;transition:border-color .2s"
+                    onmouseover="this.style.borderColor='#fbbf24'" onmouseout="this.style.borderColor='#d97706'">
+                    <i class="fas fa-file-pen" style="color:#fbbf24;font-size:1.5rem;flex-shrink:0"></i>
+                    <div style="flex:1">
+                        <div style="font-weight:700;color:#fcd34d;font-size:0.95rem"><i class="fas fa-circle-exclamation" style="font-size:0.8rem"></i> Aktív számonkérés</div>
+                        <div style="color:#e0e0e0;font-size:0.9rem;margin-top:2px">${escHtml(sz.cim)}</div>
+                        <div style="color:#64748b;font-size:0.78rem;margin-top:2px">${escHtml(csoportok)} &nbsp;·&nbsp; ${feladatok.length} feladat</div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color:#64748b"></i>
+                </a>`;
+            }).join('');
+            banner.style.display = 'block';
+        } catch {}
     }
 </script>
 <script src="special-roles.js"></script>

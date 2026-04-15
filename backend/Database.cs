@@ -182,7 +182,255 @@ public class Database
                 ido_mp       INTEGER,
                 submitted_at TEXT DEFAULT (datetime('now', 'localtime'))
             );
+            CREATE TABLE IF NOT EXISTS szamonkeres (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                oktato_email TEXT NOT NULL,
+                cim          TEXT NOT NULL,
+                csoportok    TEXT NOT NULL DEFAULT '[]',
+                feladatok    TEXT NOT NULL DEFAULT '[]',
+                ponthatarak  TEXT NOT NULL DEFAULT '{}',
+                statusz      TEXT NOT NULL DEFAULT 'aktiv',
+                created_at   TEXT DEFAULT (datetime('now','localtime'))
+            );
+            CREATE TABLE IF NOT EXISTS szamonkeres_beadas (
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                szamonkeres_id   INTEGER NOT NULL,
+                tanulo_email     TEXT NOT NULL,
+                tanulo_nev       TEXT NOT NULL,
+                osztaly          TEXT,
+                csoport          TEXT,
+                feladat_id       TEXT NOT NULL,
+                kod              TEXT,
+                auto_pont        INTEGER NOT NULL DEFAULT 0,
+                manualis_pont    INTEGER,
+                max_pont         INTEGER NOT NULL DEFAULT 0,
+                megjegyzes       TEXT,
+                submitted_at     TEXT DEFAULT (datetime('now','localtime'))
+            );
         ");
+    }
+
+    // ── Számonkérés ───────────────────────────────────────────────────────────
+
+    public int SaveSzamonkeres(SzamonkeresCreateRequest req, string oktatoEmail)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"INSERT INTO szamonkeres
+            (oktato_email,cim,csoportok,feladatok,ponthatarak)
+            VALUES ($email,$cim,$cs,$fj,$ph)";
+        cmd.Parameters.AddWithValue("$email", oktatoEmail);
+        cmd.Parameters.AddWithValue("$cim",   req.Cim);
+        cmd.Parameters.AddWithValue("$cs",    req.Csoportok);
+        cmd.Parameters.AddWithValue("$fj",    req.Feladatok);
+        cmd.Parameters.AddWithValue("$ph",    req.Ponthatarak);
+        cmd.ExecuteNonQuery();
+        using var id = conn.CreateCommand();
+        id.CommandText = "SELECT last_insert_rowid()";
+        return (int)(long)id.ExecuteScalar()!;
+    }
+
+    public List<SzamonkeresItem> GetSzamonkeresekByOktato(string oktatoEmail)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT s.id,s.cim,s.oktato_email,s.csoportok,s.feladatok,s.ponthatarak,s.statusz,s.created_at,
+                   COUNT(b.id) as beadasok
+            FROM szamonkeres s
+            LEFT JOIN szamonkeres_beadas b ON b.szamonkeres_id = s.id
+            WHERE s.oktato_email = $email
+            GROUP BY s.id ORDER BY s.created_at DESC";
+        cmd.Parameters.AddWithValue("$email", oktatoEmail);
+        return ReadSzamonkeresItems(cmd);
+    }
+
+    public SzamonkeresItem? GetSzamonkeres(int id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT s.id,s.cim,s.oktato_email,s.csoportok,s.feladatok,s.ponthatarak,s.statusz,s.created_at,
+                   COUNT(b.id) as beadasok
+            FROM szamonkeres s
+            LEFT JOIN szamonkeres_beadas b ON b.szamonkeres_id = s.id
+            WHERE s.id = $id GROUP BY s.id";
+        cmd.Parameters.AddWithValue("$id", id);
+        return ReadSzamonkeresItems(cmd).FirstOrDefault();
+    }
+
+    public List<SzamonkeresItem> GetAktivSzamonkeresForStudent(string email, string? osztaly, string? csoport)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT id,cim,oktato_email,csoportok,feladatok,ponthatarak,statusz,created_at,0 as beadasok
+            FROM szamonkeres WHERE statusz='aktiv'";
+        var all = ReadSzamonkeresItems(cmd);
+        // Filter in C# — csoportok is JSON array, match osztaly+csoport or osztaly
+        return all.Where(s => {
+            var cs = System.Text.Json.JsonSerializer.Deserialize<List<string>>(s.Csoportok) ?? new();
+            var tanuloCsoport = string.IsNullOrEmpty(osztaly) ? null
+                : string.IsNullOrEmpty(csoport) ? osztaly
+                : $"{osztaly}/{csoport}";
+            return cs.Any(c =>
+                tanuloCsoport != null &&
+                (c.Equals(tanuloCsoport, StringComparison.OrdinalIgnoreCase) ||
+                 c.Equals(osztaly, StringComparison.OrdinalIgnoreCase)));
+        }).ToList();
+    }
+
+    private static List<SzamonkeresItem> ReadSzamonkeresItems(SqliteCommand cmd)
+    {
+        var list = new List<SzamonkeresItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new SzamonkeresItem {
+                Id            = r.GetInt32(0),
+                Cim           = r.GetString(1),
+                OktatoEmail   = r.GetString(2),
+                Csoportok     = r.GetString(3),
+                Feladatok     = r.GetString(4),
+                Ponthatarak   = r.GetString(5),
+                Statusz       = r.GetString(6),
+                CreatedAt     = r.GetString(7),
+                BeadasokSzama = r.GetInt32(8)
+            });
+        return list;
+    }
+
+    public List<BeadasItem> GetBeadasok(int szamonkeresId)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"SELECT id,szamonkeres_id,tanulo_email,tanulo_nev,osztaly,csoport,
+            feladat_id,kod,auto_pont,manualis_pont,max_pont,megjegyzes,submitted_at
+            FROM szamonkeres_beadas WHERE szamonkeres_id=$id ORDER BY submitted_at DESC";
+        cmd.Parameters.AddWithValue("$id", szamonkeresId);
+        return ReadBeadasok(cmd);
+    }
+
+    public List<BeadasItem> GetTanuloBeadasok(int szamonkeresId, string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"SELECT id,szamonkeres_id,tanulo_email,tanulo_nev,osztaly,csoport,
+            feladat_id,kod,auto_pont,manualis_pont,max_pont,megjegyzes,submitted_at
+            FROM szamonkeres_beadas WHERE szamonkeres_id=$id AND LOWER(tanulo_email)=LOWER($email)";
+        cmd.Parameters.AddWithValue("$id",    szamonkeresId);
+        cmd.Parameters.AddWithValue("$email", email);
+        return ReadBeadasok(cmd);
+    }
+
+    public bool BeadasExists(int szamonkeresId, string email, string feladatId)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM szamonkeres_beadas WHERE szamonkeres_id=$id AND LOWER(tanulo_email)=LOWER($email) AND feladat_id=$fid";
+        cmd.Parameters.AddWithValue("$id",    szamonkeresId);
+        cmd.Parameters.AddWithValue("$email", email);
+        cmd.Parameters.AddWithValue("$fid",   feladatId);
+        return (long)cmd.ExecuteScalar()! > 0;
+    }
+
+    public int SaveBeadas(int szamonkeresId, BeadasCreateRequest req)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"INSERT INTO szamonkeres_beadas
+            (szamonkeres_id,tanulo_email,tanulo_nev,osztaly,csoport,feladat_id,kod,auto_pont,max_pont)
+            VALUES ($sid,$email,$nev,$osz,$cso,$fid,$kod,$ap,$mp)";
+        cmd.Parameters.AddWithValue("$sid",   szamonkeresId);
+        cmd.Parameters.AddWithValue("$email", req.TanuloEmail);
+        cmd.Parameters.AddWithValue("$nev",   req.TanuloNev);
+        cmd.Parameters.AddWithValue("$osz",   (object?)req.Osztaly  ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$cso",   (object?)req.Csoport  ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$fid",   req.FeladatId);
+        cmd.Parameters.AddWithValue("$kod",   (object?)req.Kod      ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$ap",    req.AutoPont);
+        cmd.Parameters.AddWithValue("$mp",    req.MaxPont);
+        cmd.ExecuteNonQuery();
+        using var id = conn.CreateCommand();
+        id.CommandText = "SELECT last_insert_rowid()";
+        return (int)(long)id.ExecuteScalar()!;
+    }
+
+    public bool SetBeadasPont(int beadasId, int pont, string? megjegyzes)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE szamonkeres_beadas SET manualis_pont=$p,megjegyzes=$m WHERE id=$id";
+        cmd.Parameters.AddWithValue("$p",   pont);
+        cmd.Parameters.AddWithValue("$m",   (object?)megjegyzes ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$id",  beadasId);
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public bool SetSzamonkeresStatusz(int id, string statusz, string oktatoEmail)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE szamonkeres SET statusz=$s WHERE id=$id AND oktato_email=$email";
+        cmd.Parameters.AddWithValue("$s",     statusz);
+        cmd.Parameters.AddWithValue("$id",    id);
+        cmd.Parameters.AddWithValue("$email", oktatoEmail);
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public List<object> GetKiadottEredmenyek(string email)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT s.id,s.cim,s.ponthatarak,s.created_at,
+                   COALESCE(SUM(COALESCE(b.manualis_pont,b.auto_pont)),0) as ossz,
+                   COALESCE(SUM(b.max_pont),0) as maxp
+            FROM szamonkeres s
+            JOIN szamonkeres_beadas b ON b.szamonkeres_id=s.id
+            WHERE s.statusz='kiadva' AND LOWER(b.tanulo_email)=LOWER($email)
+            GROUP BY s.id ORDER BY s.created_at DESC";
+        cmd.Parameters.AddWithValue("$email", email);
+        var list = new List<object>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+        {
+            var ossz = r.GetInt32(4);
+            var maxp = r.GetInt32(5);
+            var szaz = maxp > 0 ? (int)Math.Round(ossz * 100.0 / maxp) : 0;
+            list.Add(new {
+                szamonkeresId = r.GetInt32(0),
+                cim           = r.GetString(1),
+                ponthatarak   = r.GetString(2),
+                createdAt     = r.GetString(3),
+                osszPont      = ossz,
+                maxPont       = maxp,
+                szazalek      = szaz
+            });
+        }
+        return list;
+    }
+
+    private static List<BeadasItem> ReadBeadasok(SqliteCommand cmd)
+    {
+        var list = new List<BeadasItem>();
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            list.Add(new BeadasItem {
+                Id            = r.GetInt32(0),
+                SzamonkeresId = r.GetInt32(1),
+                TanuloEmail   = r.GetString(2),
+                TanuloNev     = r.GetString(3),
+                Osztaly       = r.IsDBNull(4)  ? null : r.GetString(4),
+                Csoport       = r.IsDBNull(5)  ? null : r.GetString(5),
+                FeladatId     = r.GetString(6),
+                Kod           = r.IsDBNull(7)  ? null : r.GetString(7),
+                AutoPont      = r.GetInt32(8),
+                ManualisPont  = r.IsDBNull(9)  ? null : r.GetInt32(9),
+                MaxPont       = r.GetInt32(10),
+                Megjegyzes    = r.IsDBNull(11) ? null : r.GetString(11),
+                SubmittedAt   = r.GetString(12)
+            });
+        return list;
     }
 
     // ── Config ────────────────────────────────────────────────────────────────

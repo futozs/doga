@@ -353,3 +353,55 @@ public class QuizResultItem
     public int?    IdoMp       { get; set; }
     public string  SubmittedAt { get; set; } = "";
 }
+
+// ── Számonkérés ───────────────────────────────────────────────────────────────
+
+public record SzamonkeresCreateRequest(
+    string Cim,
+    string Csoportok,   // JSON: ["13C/1","13B"]
+    string Feladatok,   // JSON array of task objects
+    string Ponthatarak  // JSON: {"ket":40,"harom":55,"negy":70,"ot":85}
+);
+
+public class SzamonkeresItem
+{
+    public int    Id           { get; set; }
+    public string Cim          { get; set; } = "";
+    public string OktatoEmail  { get; set; } = "";
+    public string Csoportok    { get; set; } = "[]";
+    public string Feladatok    { get; set; } = "[]";
+    public string Ponthatarak  { get; set; } = "{}";
+    public string Statusz      { get; set; } = "aktiv"; // aktiv / lezart / kiadva
+    public string CreatedAt    { get; set; } = "";
+    public int    BeadasokSzama { get; set; }
+}
+
+public record BeadasCreateRequest(
+    string  TanuloEmail,
+    string  TanuloNev,
+    string? Osztaly,
+    string? Csoport,
+    string  FeladatId,
+    string? Kod,
+    int     AutoPont,
+    int     MaxPont
+);
+
+public class BeadasItem
+{
+    public int     Id             { get; set; }
+    public int     SzamonkeresId  { get; set; }
+    public string  TanuloEmail    { get; set; } = "";
+    public string  TanuloNev      { get; set; } = "";
+    public string? Osztaly        { get; set; }
+    public string? Csoport        { get; set; }
+    public string  FeladatId      { get; set; } = "";
+    public string? Kod            { get; set; }
+    public int     AutoPont       { get; set; }
+    public int?    ManualisPont   { get; set; }
+    public int     MaxPont        { get; set; }
+    public string? Megjegyzes     { get; set; }
+    public string  SubmittedAt    { get; set; } = "";
+}
+
+public record SetBeadasPontRequest(int Pont, string? Megjegyzes);

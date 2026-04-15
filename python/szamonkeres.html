@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Számonkérés-kezelő – Kandó</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0b1120;color:#e0e0e0;font-family:'Segoe UI',sans-serif;min-height:100vh}
+    .topbar{background:#16213e;border-bottom:1px solid #1f2937;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .topbar-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;color:#e0e0e0;text-decoration:none}
+    .topbar-logo img{height:32px}
+    .topbar-right{display:flex;align-items:center;gap:10px}
+    .btn{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-size:0.88rem;font-weight:600;transition:all .2s}
+    .btn-primary{background:#1d4ed8;color:#fff}.btn-primary:hover{background:#2563eb}
+    .btn-success{background:#15803d;color:#fff}.btn-success:hover{background:#16a34a}
+    .btn-danger{background:#b91c1c;color:#fff}.btn-danger:hover{background:#dc2626}
+    .btn-ghost{background:transparent;border:1px solid #374151;color:#9ca3af}.btn-ghost:hover{border-color:#6b7280;color:#e0e0e0}
+    .btn-sm{padding:4px 10px;font-size:0.8rem}
+    .container{max-width:1100px;margin:0 auto;padding:24px 16px}
+    .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid #1f2937;padding-bottom:0}
+    .tab{padding:9px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-size:0.9rem;font-weight:600;color:#64748b;border:1px solid transparent;border-bottom:none;margin-bottom:-1px;transition:all .2s}
+    .tab.active{background:#16213e;color:#e0e0e0;border-color:#1f2937}
+    .tab:hover:not(.active){color:#94a3b8}
+    .tab-content{display:none}.tab-content.active{display:block}
+    .card{background:#16213e;border:1px solid #1f2937;border-radius:12px;padding:20px;margin-bottom:16px}
+    .card h3{font-size:1rem;margin-bottom:14px;color:#e0e0e0}
+    label{display:block;font-size:0.85rem;color:#94a3b8;margin-bottom:4px}
+    input[type=text],textarea,select{width:100%;padding:9px 12px;background:#0b1120;border:1px solid #374151;border-radius:8px;color:#e0e0e0;font-size:0.9rem;outline:none;transition:border .2s}
+    input[type=text]:focus,textarea:focus,select:focus{border-color:#3b82f6}
+    textarea{resize:vertical;min-height:80px;font-family:monospace}
+    .form-row{margin-bottom:14px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .section-title{font-size:0.8rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;margin-top:18px}
+    /* Feladat lista */
+    .feladat-list{max-height:320px;overflow-y:auto;border:1px solid #374151;border-radius:8px;background:#0b1120}
+    .feladat-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid #1f2937;cursor:pointer;transition:background .15s}
+    .feladat-item:last-child{border-bottom:none}
+    .feladat-item:hover{background:#16213e}
+    .feladat-item.selected{background:#1e3a5f}
+    .feladat-item input[type=checkbox]{margin-top:2px;flex-shrink:0;accent-color:#3b82f6}
+    .feladat-info{flex:1}
+    .feladat-cim{font-size:0.88rem;font-weight:600;color:#e0e0e0}
+    .feladat-meta{font-size:0.75rem;color:#64748b;margin-top:2px}
+    .badge{display:inline-block;padding:2px 7px;border-radius:12px;font-size:0.72rem;font-weight:700;margin-left:6px}
+    .badge-konnyu{background:#14532d;color:#86efac}
+    .badge-kozepes{background:#78350f;color:#fcd34d}
+    .badge-nehez{background:#7f1d1d;color:#fca5a5}
+    .badge-sajat{background:#1e1b4b;color:#a5b4fc}
+    /* Csoport checkboxok */
+    .csoport-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .csoport-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #374151;border-radius:20px;cursor:pointer;font-size:0.82rem;transition:all .2s}
+    .csoport-chip input{accent-color:#3b82f6}
+    .csoport-chip.selected{border-color:#3b82f6;background:#1e3a5f;color:#93c5fd}
+    /* Ponthatárok */
+    .ponthatarak-presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+    .preset-btn{padding:6px 14px;border-radius:8px;border:1px solid #374151;background:transparent;color:#94a3b8;cursor:pointer;font-size:0.82rem;transition:all .2s}
+    .preset-btn:hover{border-color:#3b82f6;color:#93c5fd}
+    .preset-btn.active{border-color:#3b82f6;background:#1e3a5f;color:#93c5fd}
+    .ponthatarak-inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .jegy-box{text-align:center}
+    .jegy-box .jegy-szam{font-size:1.4rem;font-weight:900}
+    .jegy-2{color:#ef4444}.jegy-3{color:#f97316}.jegy-4{color:#eab308}.jegy-5{color:#22c55e}
+    .jegy-input{width:100%;padding:7px;background:#0b1120;border:1px solid #374151;border-radius:8px;color:#e0e0e0;text-align:center;font-size:0.9rem}
+    /* Számonkérés lista */
+    .szam-card{background:#16213e;border:1px solid #1f2937;border-radius:10px;padding:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:border-color .2s}
+    .szam-card:hover{border-color:#3b82f6}
+    .szam-cim{font-weight:700;font-size:0.95rem;color:#e0e0e0}
+    .szam-meta{font-size:0.78rem;color:#64748b;margin-top:3px}
+    .status-badge{padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:700}
+    .status-aktiv{background:#14532d;color:#86efac}
+    .status-lezart{background:#1e3a5f;color:#93c5fd}
+    .status-kiadva{background:#78350f;color:#fcd34d}
+    /* Modal */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+    .modal.open{display:flex}
+    .modal-box{background:#16213e;border:1px solid #1f2937;border-radius:14px;padding:24px;max-width:900px;width:100%;margin:auto}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .modal-title{font-size:1.1rem;font-weight:700}
+    .close-btn{background:transparent;border:none;color:#64748b;cursor:pointer;font-size:1.1rem;padding:4px}
+    .close-btn:hover{color:#e0e0e0}
+    /* Beadás tábla */
+    .table-wrap{overflow-x:auto;margin-top:12px}
+    table{width:100%;border-collapse:collapse;font-size:0.85rem}
+    th{padding:8px 10px;text-align:left;color:#64748b;border-bottom:1px solid #1f2937;font-weight:600;white-space:nowrap}
+    td{padding:8px 10px;border-bottom:1px solid #0b1120;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    .pont-input{width:60px;padding:4px 6px;background:#0b1120;border:1px solid #374151;border-radius:6px;color:#e0e0e0;text-align:center;font-size:0.85rem}
+    .kod-btn{padding:3px 8px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:6px;color:#93c5fd;cursor:pointer;font-size:0.78rem}
+    .kod-view{background:#0b1120;border-radius:8px;padding:10px;font-family:monospace;font-size:0.82rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:8px;display:none;border:1px solid #374151}
+    .empty-state{text-align:center;color:#64748b;padding:40px 20px;font-size:0.9rem}
+    .sajat-feladat-form{background:#0b1120;border:1px solid #374151;border-radius:8px;padding:14px;margin-top:8px}
+    .msg{padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:0.88rem;display:none}
+    .msg-ok{background:#14532d;border:1px solid #16a34a;color:#86efac}
+    .msg-err{background:#7f1d1d;border:1px solid #dc2626;color:#fca5a5}
+    .selected-feladatok{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+    .sel-tag{padding:4px 10px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:12px;font-size:0.78rem;color:#93c5fd;display:flex;align-items:center;gap:6px}
+    .sel-tag button{background:transparent;border:none;color:#93c5fd;cursor:pointer;font-size:0.9rem;line-height:1}
+    .loading{text-align:center;padding:20px;color:#64748b}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-logo" href="../portal.html">
+    <img src="../kandologo2.png" alt="Kandó">
+    Számonkérés-kezelő
+  </a>
+  <div class="topbar-right">
+    <span id="oktato-nev" style="font-size:0.85rem;color:#94a3b8"></span>
+    <a href="../portal.html" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Portál</a>
+  </div>
+</div>
+
+<div class="container">
+  <div id="auth-error" class="msg msg-err" style="display:none"><i class="fas fa-lock"></i> Oktatói bejelentkezés szükséges. <a href="../portal.html" style="color:#fca5a5">Vissza a portálra</a></div>
+
+  <div id="main-ui" style="display:none">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('letrehozas')"><i class="fas fa-plus-circle"></i> Létrehozás</div>
+      <div class="tab" onclick="switchTab('szamonkeresek')"><i class="fas fa-list"></i> Számonkérések</div>
+    </div>
+
+    <!-- ── Tab: Létrehozás ─────────────────────────────────── -->
+    <div class="tab-content active" id="tab-letrehozas">
+      <div id="create-msg-ok" class="msg msg-ok"></div>
+      <div id="create-msg-err" class="msg msg-err"></div>
+
+      <div class="card">
+        <div class="form-row">
+          <label>Számonkérés neve / témája</label>
+          <input type="text" id="cr-cim" placeholder="pl. Python alapok – zárthelyi 2026. ápr.">
+        </div>
+
+        <!-- Csoportok -->
+        <div class="section-title"><i class="fas fa-users"></i> Csoportok</div>
+        <div id="csoport-lista" class="csoport-grid loading">Csoportok betöltése...</div>
+
+        <!-- Feladatok -->
+        <div class="section-title"><i class="fas fa-list-check"></i> Rendszer feladatok</div>
+        <div id="feladat-lista" class="feladat-list loading" style="min-height:80px">
+          <div style="padding:16px;color:#64748b">Feladatok betöltése...</div>
+        </div>
+        <div class="selected-feladatok" id="selected-tags"></div>
+
+        <!-- Saját feladat -->
+        <div class="section-title"><i class="fas fa-pen"></i> Saját feladat hozzáadása</div>
+        <div class="sajat-feladat-form">
+          <div class="form-grid" style="margin-bottom:10px">
+            <div>
+              <label>Feladat neve</label>
+              <input type="text" id="sf-cim" placeholder="pl. Lista rendezés">
+            </div>
+            <div>
+              <label>Elérhető pont</label>
+              <input type="text" id="sf-pont" placeholder="pl. 10" style="width:100%">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Feladatleírás (mit kell megírnia a tanulónak?)</label>
+            <textarea id="sf-szoveg" rows="4" placeholder="Írj programot, amely..."></textarea>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="addSajatFeladat()"><i class="fas fa-plus"></i> Hozzáadás</button>
+        </div>
+
+        <!-- Ponthatárok -->
+        <div class="section-title"><i class="fas fa-graduation-cap"></i> Ponthatárok</div>
+        <div class="ponthatarak-presets" id="preset-gombok">
+          <button class="preset-btn" onclick="applyPreset(40,55,70,85,this)">Iskola alap (40/55/70/85%)</button>
+          <button class="preset-btn" onclick="applyPreset(33,50,67,83,this)">Strict (33/50/67/83%)</button>
+          <button class="preset-btn" onclick="applyPreset(50,60,75,90,this)">Engedékeny (50/60/75/90%)</button>
+        </div>
+        <div class="ponthatarak-inputs">
+          <div class="jegy-box"><div class="jegy-szam jegy-2">2</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-2" placeholder="40"></div>
+          <div class="jegy-box"><div class="jegy-szam jegy-3">3</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-3" placeholder="55"></div>
+          <div class="jegy-box"><div class="jegy-szam jegy-4">4</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-4" placeholder="70"></div>
+          <div class="jegy-box"><div class="jegy-szam jegy-5">5</div><label style="margin-top:4px">%-tól</label><input class="jegy-input" type="text" id="ph-5" placeholder="85"></div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;justify-content:flex-end">
+          <button class="btn btn-primary" onclick="createSzamonkeres()"><i class="fas fa-paper-plane"></i> Számonkérés létrehozása</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Tab: Számonkérések ──────────────────────────────── -->
+    <div class="tab-content" id="tab-szamonkeresek">
+      <button class="btn btn-ghost btn-sm" onclick="loadSzamonkeresek()" style="margin-bottom:14px"><i class="fas fa-rotate-right"></i> Frissítés</button>
+      <div id="szam-lista"><div class="loading">Betöltés...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Részletes modal ─────────────────────────────────────────────── -->
+<div class="modal" id="detail-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="detail-cim">–</div>
+      <button class="close-btn" onclick="closeDetail()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="detail-meta" style="font-size:0.82rem;color:#64748b;margin-bottom:12px"></div>
+    <div id="detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div id="detail-msg" class="msg"></div>
+
+    <!-- Feladatok összefoglaló -->
+    <div id="detail-feladatok" style="margin-bottom:16px"></div>
+
+    <!-- Beadások táblázata -->
+    <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px">Beadások</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tanuló</th>
+            <th>Csoport</th>
+            <th>Feladat</th>
+            <th>Auto pont</th>
+            <th>Végleges pont</th>
+            <th>Max pont</th>
+            <th>Megjegyzés</th>
+            <th>Kód</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="detail-tbody"></tbody>
+      </table>
+    </div>
+    <div id="detail-empty" class="empty-state" style="display:none"><i class="fas fa-inbox"></i><br>Még nincs beadás</div>
+
+    <!-- Összesített eredmények -->
+    <div id="osszes-section" style="margin-top:20px;display:none">
+      <div style="font-weight:700;font-size:0.9rem;margin-bottom:8px">Összesített eredmények</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tanuló</th><th>Csoport</th><th>Összpont</th><th>Max</th><th>%</th><th>Jegy</th></tr></thead>
+          <tbody id="osszes-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Kód megtekintő modal ───────────────────────────────────────── -->
+<div class="modal" id="kod-modal">
+  <div class="modal-box" style="max-width:700px">
+    <div class="modal-header">
+      <div class="modal-title" id="kod-modal-cim">Beadott kód</div>
+      <button class="close-btn" onclick="document.getElementById('kod-modal').classList.remove('open')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <pre id="kod-modal-content" style="background:#0b1120;border-radius:8px;padding:14px;font-size:0.85rem;overflow-x:auto;white-space:pre-wrap;color:#e0e0e0;max-height:70vh;overflow-y:auto"></pre>
+  </div>
+</div>
+
+<script>
+const API = 'https://agazati.up.railway.app';
+let userToken = '';
+let currentSzamonkeresId = null;
+let selectedFeladatok = []; // [{tipus, feladat_szam?, cim, szoveg?, pont}]
+let selectedCsoportok = new Set();
+let allBeadasok = [];
+let currentSzamonkeres = null;
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+(function(){
+  const u = JSON.parse(sessionStorage.getItem('kandoUser') || '{}');
+  if (!u.token || u.szerep !== 'oktato') {
+    document.getElementById('auth-error').style.display = 'block';
+    return;
+  }
+  userToken = u.token;
+  document.getElementById('oktato-nev').textContent = u.nev || u.email;
+  document.getElementById('main-ui').style.display = 'block';
+  init();
+})();
+
+function authFetch(url, opts = {}) {
+  return fetch(url, { ...opts, headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+userToken, ...(opts.headers||{}) } });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  loadCsoportok();
+  loadFeladatok();
+  applyPreset(40,55,70,85, document.querySelector('.preset-btn'));
+}
+
+// ── Tab váltás ────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const names = ['letrehozas','szamonkeresek'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'szamonkeresek') loadSzamonkeresek();
+}
+
+// ── Csoportok betöltése ───────────────────────────────────────────────────────
+async function loadCsoportok() {
+  try {
+    const res = await authFetch(`${API}/api/users`);
+    const users = await res.json();
+    const csoportSet = new Map();
+    users.forEach(u => {
+      if (u.szerep !== 'tanulo') return;
+      const key = u.osztaly && u.csoport ? `${u.osztaly}/${u.csoport}` : u.osztaly || u.evfolyam;
+      if (key) csoportSet.set(key, (csoportSet.get(key) || 0) + 1);
+    });
+    const el = document.getElementById('csoport-lista');
+    if (csoportSet.size === 0) { el.innerHTML = '<span style="color:#64748b;font-size:0.85rem">Nincsenek tanuló csoportok</span>'; return; }
+    el.innerHTML = '';
+    [...csoportSet.entries()].sort().forEach(([key, db]) => {
+      const chip = document.createElement('label');
+      chip.className = 'csoport-chip';
+      chip.innerHTML = `<input type="checkbox" value="${key}" onchange="toggleCsoport('${key}',this.checked)"> ${key} <span style="color:#64748b;font-size:0.75rem">(${db} fő)</span>`;
+      el.appendChild(chip);
+    });
+  } catch(e) {
+    document.getElementById('csoport-lista').innerHTML = '<span style="color:#ef4444;font-size:0.85rem">Hiba a betöltés során</span>';
+  }
+}
+
+function toggleCsoport(key, checked) {
+  const chip = [...document.querySelectorAll('.csoport-chip')].find(c => c.querySelector('input')?.value === key);
+  if (checked) { selectedCsoportok.add(key); chip?.classList.add('selected'); }
+  else { selectedCsoportok.delete(key); chip?.classList.remove('selected'); }
+}
+
+// ── Feladatok betöltése ───────────────────────────────────────────────────────
+async function loadFeladatok() {
+  try {
+    const res = await fetch('../python/feladatok.txt');
+    const txt = await res.text();
+    const tasks = parseTasks(txt);
+    const el = document.getElementById('feladat-lista');
+    el.innerHTML = '';
+    tasks.forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'feladat-item';
+      div.dataset.num = t.num;
+      const nh = t.nehezseg === 'nehez' ? 'badge-nehez' : t.nehezseg === 'kozepes' ? 'badge-kozepes' : 'badge-konnyu';
+      const nhLabel = t.nehezseg === 'nehez' ? 'Nehéz' : t.nehezseg === 'kozepes' ? 'Közepes' : 'Könnyű';
+      div.innerHTML = `<input type="checkbox" id="f${t.num}" onchange="toggleFeladat(${t.num},'${escH(t.cim)}',${t.pont},this.checked)">
+        <div class="feladat-info">
+          <div class="feladat-cim">${t.num}. ${escH(t.cim)} <span class="badge ${nh}">${nhLabel}</span><span class="badge" style="background:#0f172a;color:#64748b">${t.pont} pt</span></div>
+          <div class="feladat-meta">${escH(t.leiras?.substring(0,100) || '')}</div>
+        </div>`;
+      el.appendChild(div);
+    });
+  } catch(e) {
+    document.getElementById('feladat-lista').innerHTML = '<div style="padding:14px;color:#ef4444">Feladatok betöltési hiba</div>';
+  }
+}
+
+function parseTasks(txt) {
+  const tasks = [];
+  const blocks = txt.replace(/\r\n/g,'\n').split(/(?=^\d+\. feladat$)/m).filter(b => b.trim());
+  for (const block of blocks) {
+    const lines = block.split('\n');
+    const numMatch = lines[0].trim().match(/^(\d+)\. feladat$/);
+    if (!numMatch) continue;
+    const id = parseInt(numMatch[1]);
+    let pont=8, cim='', nehezseg='kozepes'; let i=1;
+    while (i < lines.length) {
+      const l = lines[i].trim();
+      if (l.startsWith('Pont: '))       { pont     = parseInt(l.slice(6));  i++; }
+      else if (l.startsWith('Cim: '))   { cim      = l.slice(5).trim();     i++; }
+      else if (l.startsWith('Nehezseg: ')){ nehezseg = l.slice(10).trim(); i++; }
+      else if (l === '')                 { i++; break; }
+      else                               { i++; }
+    }
+    // szöveg az üres sor és Pontozas: között
+    const szovegLines = [];
+    for (; i < lines.length; i++) {
+      const lt = lines[i].trim();
+      if (lt === 'Pontozas:' || lt === 'Tippek:' || lt === 'Megoldas:') break;
+      szovegLines.push(lines[i]);
+    }
+    tasks.push({ num: id, cim: cim || `${id}. feladat`, pont, nehezseg, leiras: szovegLines.join('\n').trim() });
+  }
+  return tasks;
+}
+
+function toggleFeladat(num, cim, pont, checked) {
+  if (checked) {
+    if (!selectedFeladatok.find(f => f.tipus==='rendszer' && f.feladat_szam===num))
+      selectedFeladatok.push({tipus:'rendszer', feladat_szam:num, cim, pont});
+  } else {
+    selectedFeladatok = selectedFeladatok.filter(f => !(f.tipus==='rendszer' && f.feladat_szam===num));
+  }
+  renderSelectedTags();
+}
+
+function addSajatFeladat() {
+  const cim = document.getElementById('sf-cim').value.trim();
+  const szoveg = document.getElementById('sf-szoveg').value.trim();
+  const pont = parseInt(document.getElementById('sf-pont').value) || 0;
+  if (!cim || !szoveg || !pont) { alert('Töltsd ki a saját feladat összes mezőjét!'); return; }
+  selectedFeladatok.push({tipus:'sajat', cim, szoveg, pont});
+  document.getElementById('sf-cim').value = '';
+  document.getElementById('sf-szoveg').value = '';
+  document.getElementById('sf-pont').value = '';
+  renderSelectedTags();
+}
+
+function removeFeladat(i) {
+  const f = selectedFeladatok[i];
+  if (f.tipus === 'rendszer') {
+    const cb = document.getElementById('f'+f.feladat_szam);
+    if (cb) { cb.checked = false; cb.closest('.feladat-item')?.classList.remove('selected'); }
+  }
+  selectedFeladatok.splice(i, 1);
+  renderSelectedTags();
+}
+
+function renderSelectedTags() {
+  const el = document.getElementById('selected-tags');
+  el.innerHTML = selectedFeladatok.map((f,i) =>
+    `<div class="sel-tag"><span class="badge ${f.tipus==='sajat'?'badge-sajat':''}" style="${f.tipus!=='sajat'?'':''}">
+      ${f.tipus==='sajat'?'Saját':'#'+f.feladat_szam}</span> ${escH(f.cim)} (${f.pont} pt)
+      <button onclick="removeFeladat(${i})" title="Eltávolítás"><i class="fas fa-xmark"></i></button></div>`
+  ).join('');
+}
+
+// ── Ponthatárok ───────────────────────────────────────────────────────────────
+function applyPreset(k2,k3,k4,k5, btn) {
+  document.getElementById('ph-2').value = k2;
+  document.getElementById('ph-3').value = k3;
+  document.getElementById('ph-4').value = k4;
+  document.getElementById('ph-5').value = k5;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+// ── Létrehozás ────────────────────────────────────────────────────────────────
+async function createSzamonkeres() {
+  const cim = document.getElementById('cr-cim').value.trim();
+  const ok = document.getElementById('create-msg-ok');
+  const err = document.getElementById('create-msg-err');
+  ok.style.display='none'; err.style.display='none';
+
+  if (!cim) { showMsg(err,'Adj meg egy nevet a számonkérésnek!'); return; }
+  if (selectedCsoportok.size === 0) { showMsg(err,'Válassz legalább egy csoportot!'); return; }
+  if (selectedFeladatok.length === 0) { showMsg(err,'Adj hozzá legalább egy feladatot!'); return; }
+
+  const ph2=parseInt(document.getElementById('ph-2').value)||40;
+  const ph3=parseInt(document.getElementById('ph-3').value)||55;
+  const ph4=parseInt(document.getElementById('ph-4').value)||70;
+  const ph5=parseInt(document.getElementById('ph-5').value)||85;
+
+  try {
+    const res = await authFetch(`${API}/api/szamonkeres`, {
+      method:'POST',
+      body: JSON.stringify({
+        cim,
+        csoportok: JSON.stringify([...selectedCsoportok]),
+        feladatok: JSON.stringify(selectedFeladatok),
+        ponthatarak: JSON.stringify({ket:ph2,harom:ph3,negy:ph4,ot:ph5})
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Hiba');
+    showMsg(ok, `<i class="fas fa-check"></i> Számonkérés létrehozva! (azonosító: ${data.id})`);
+    // Reset
+    document.getElementById('cr-cim').value='';
+    selectedFeladatok=[]; selectedCsoportok=new Set();
+    document.querySelectorAll('.csoport-chip').forEach(c=>{c.classList.remove('selected');c.querySelector('input').checked=false;});
+    document.querySelectorAll('.feladat-item input').forEach(cb=>cb.checked=false);
+    renderSelectedTags();
+  } catch(e) {
+    showMsg(err, e.message);
+  }
+}
+
+// ── Számonkérések lista ───────────────────────────────────────────────────────
+async function loadSzamonkeresek() {
+  const el = document.getElementById('szam-lista');
+  el.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Betöltés...</div>';
+  try {
+    const res = await authFetch(`${API}/api/szamonkeres`);
+    const list = await res.json();
+    if (!list.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><br>Még nincs számonkérés</div>'; return; }
+    el.innerHTML = list.map(s => {
+      const cs = JSON.parse(s.csoportok||'[]').join(', ');
+      const fdb = JSON.parse(s.feladatok||'[]').length;
+      const stBadge = s.statusz==='aktiv'?'status-aktiv':s.statusz==='lezart'?'status-lezart':'status-kiadva';
+      const stLabel = s.statusz==='aktiv'?'Aktív':s.statusz==='lezart'?'Lezárt':'Kiadva';
+      return `<div class="szam-card" onclick="openDetail(${s.id})">
+        <div>
+          <div class="szam-cim">${escH(s.cim)}</div>
+          <div class="szam-meta">${cs} &nbsp;·&nbsp; ${fdb} feladat &nbsp;·&nbsp; ${s.beadasokSzama} beadás &nbsp;·&nbsp; ${s.createdAt?.substring(0,16)||''}</div>
+        </div>
+        <span class="status-badge ${stBadge}">${stLabel}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="color:#ef4444;padding:14px">Hiba a betöltés során</div>';
+  }
+}
+
+// ── Részletes nézet ───────────────────────────────────────────────────────────
+async function openDetail(id) {
+  currentSzamonkeresId = id;
+  document.getElementById('detail-modal').classList.add('open');
+  document.getElementById('detail-tbody').innerHTML = '<tr><td colspan="9" style="text-align:center;color:#64748b;padding:20px"><i class="fas fa-spinner fa-spin"></i> Betöltés...</td></tr>';
+  document.getElementById('detail-msg').style.display='none';
+  try {
+    const res = await authFetch(`${API}/api/szamonkeres/${id}`);
+    const data = await res.json();
+    currentSzamonkeres = data.szamonkeres;
+    allBeadasok = data.beadasok || [];
+    renderDetail(data.szamonkeres, allBeadasok);
+  } catch(e) {
+    document.getElementById('detail-tbody').innerHTML = '<tr><td colspan="9" style="color:#ef4444">Hiba a betöltés során</td></tr>';
+  }
+}
+
+function renderDetail(sz, beadasok) {
+  document.getElementById('detail-cim').textContent = sz.cim;
+  const cs = JSON.parse(sz.csoportok||'[]').join(', ');
+  const stLabel = sz.statusz==='aktiv'?'Aktív':sz.statusz==='lezart'?'Lezárt':'Kiadva';
+  document.getElementById('detail-meta').innerHTML =
+    `Csoportok: <strong>${cs}</strong> &nbsp;·&nbsp; Állapot: <strong>${stLabel}</strong> &nbsp;·&nbsp; Létrehozva: ${sz.createdAt?.substring(0,16)||''}`;
+
+  // Feladatok lista
+  const feladatok = JSON.parse(sz.feladatok||'[]');
+  const ph = JSON.parse(sz.ponthatarak||'{}');
+  const maxOssz = feladatok.reduce((s,f)=>s+f.pont,0);
+  document.getElementById('detail-feladatok').innerHTML =
+    `<div style="margin-bottom:8px;font-size:0.85rem;color:#94a3b8">
+      <strong>Feladatok:</strong> ${feladatok.map(f=>`${escH(f.cim)} (${f.pont} pt)`).join(' &nbsp;·&nbsp; ')}
+      &nbsp;·&nbsp; <strong>Max összpont:</strong> ${maxOssz} &nbsp;·&nbsp;
+      <strong>Határok:</strong> 2≥${ph.ket}% &nbsp; 3≥${ph.harom}% &nbsp; 4≥${ph.negy}% &nbsp; 5≥${ph.ot}%
+    </div>`;
+
+  // Gombok
+  const actions = document.getElementById('detail-actions');
+  actions.innerHTML = '';
+  if (sz.statusz === 'aktiv') {
+    actions.innerHTML += `<button class="btn btn-ghost btn-sm" onclick="openDetail(${sz.id})"><i class="fas fa-rotate-right"></i> Frissítés</button>
+      <button class="btn btn-danger btn-sm" onclick="lezarSzamonkeres(${sz.id})"><i class="fas fa-lock"></i> Lezárás</button>`;
+  } else if (sz.statusz === 'lezart') {
+    actions.innerHTML += `<button class="btn btn-success btn-sm" onclick="kuldjEredmenyek(${sz.id})"><i class="fas fa-paper-plane"></i> Eredmények kiadása tanulóknak</button>
+      <button class="btn btn-ghost btn-sm" onclick="openDetail(${sz.id})"><i class="fas fa-rotate-right"></i> Frissítés</button>`;
+  } else {
+    actions.innerHTML += `<span style="color:#fcd34d;font-size:0.85rem"><i class="fas fa-check-circle"></i> Eredmények kiadva</span>`;
+  }
+
+  // Beadások tábla
+  const tbody = document.getElementById('detail-tbody');
+  const empty = document.getElementById('detail-empty');
+  if (!beadasok.length) {
+    tbody.innerHTML=''; empty.style.display='block';
+    document.getElementById('osszes-section').style.display='none';
+    return;
+  }
+  empty.style.display='none';
+  tbody.innerHTML = beadasok.map(b => {
+    const vegPont = b.manualisPont ?? b.autoPont;
+    return `<tr>
+      <td><div style="font-weight:600">${escH(b.tanuloNev)}</div><div style="font-size:0.75rem;color:#64748b">${escH(b.tanuloEmail)}</div></td>
+      <td>${escH(b.osztaly||'')}${b.csoport?'/'+escH(b.csoport):''}</td>
+      <td style="font-size:0.82rem">${escH(b.feladatId)}</td>
+      <td style="text-align:center">${b.autoPont}</td>
+      <td style="text-align:center">
+        <input class="pont-input" type="number" min="0" max="${b.maxPont}" value="${vegPont}"
+          onchange="setBeadasPont(${b.id},this.value,'')" ${sz.statusz==='kiadva'?'disabled':''}>
+      </td>
+      <td style="text-align:center">${b.maxPont}</td>
+      <td style="font-size:0.78rem;color:#94a3b8">${escH(b.megjegyzes||'')}</td>
+      <td>${b.kod ? `<button class="kod-btn" onclick="showKod(${b.id},'${escH(b.tanuloNev)} – ${escH(b.feladatId)}')"><i class="fas fa-code"></i> Kód</button>` : '<span style="color:#374151">–</span>'}</td>
+      <td></td>
+    </tr>`;
+  }).join('');
+
+  // Összesített eredmények
+  renderOsszes(beadasok, feladatok, ph, maxOssz);
+}
+
+function renderOsszes(beadasok, feladatok, ph, maxOssz) {
+  const byStudent = {};
+  beadasok.forEach(b => {
+    if (!byStudent[b.tanuloEmail]) byStudent[b.tanuloEmail] = {nev:b.tanuloNev, osztaly:b.osztaly, csoport:b.csoport, ossz:0, max:maxOssz};
+    byStudent[b.tanuloEmail].ossz += b.manualisPont ?? b.autoPont;
+  });
+  const rows = Object.entries(byStudent).map(([email,s]) => {
+    const szaz = maxOssz > 0 ? Math.round(s.ossz/maxOssz*100) : 0;
+    const jegy = szaz>=ph.ot?5:szaz>=ph.negy?4:szaz>=ph.harom?3:szaz>=ph.ket?2:1;
+    const jColors = ['','#ef4444','#f97316','#eab308','#22c55e'];
+    return `<tr>
+      <td><strong>${escH(s.nev)}</strong><br><span style="font-size:0.75rem;color:#64748b">${escH(email)}</span></td>
+      <td>${escH(s.osztaly||'')}${s.csoport?'/'+escH(s.csoport):''}</td>
+      <td style="text-align:center;font-weight:700">${s.ossz}</td>
+      <td style="text-align:center">${maxOssz}</td>
+      <td style="text-align:center">${szaz}%</td>
+      <td style="text-align:center;font-weight:900;font-size:1.2rem;color:${jColors[jegy]}">${jegy}</td>
+    </tr>`;
+  });
+  document.getElementById('osszes-tbody').innerHTML = rows.join('');
+  document.getElementById('osszes-section').style.display = rows.length ? 'block' : 'none';
+}
+
+async function setBeadasPont(beadasId, pont, megjegyzes) {
+  try {
+    await authFetch(`${API}/api/szamonkeres/beadas/${beadasId}/pont`, {
+      method:'PATCH',
+      body: JSON.stringify({pont: parseInt(pont)||0, megjegyzes: megjegyzes||null})
+    });
+    // Frissítjük az allBeadasok-ban
+    const b = allBeadasok.find(x => x.id === beadasId);
+    if (b) b.manualisPont = parseInt(pont)||0;
+    // Re-render összesítés
+    if (currentSzamonkeres) {
+      const feladatok = JSON.parse(currentSzamonkeres.feladatok||'[]');
+      const ph = JSON.parse(currentSzamonkeres.ponthatarak||'{}');
+      const maxOssz = feladatok.reduce((s,f)=>s+f.pont,0);
+      renderOsszes(allBeadasok, feladatok, ph, maxOssz);
+    }
+  } catch(e) { console.error('Pont mentési hiba', e); }
+}
+
+function showKod(beadasId, cim) {
+  const b = allBeadasok.find(x => x.id === beadasId);
+  if (!b || !b.kod) return;
+  document.getElementById('kod-modal-cim').textContent = cim;
+  document.getElementById('kod-modal-content').textContent = b.kod;
+  document.getElementById('kod-modal').classList.add('open');
+}
+
+async function lezarSzamonkeres(id) {
+  if (!confirm('Lezárod a számonkérést? Ezután a tanulók nem tudnak több beadást küldeni.')) return;
+  try {
+    const res = await authFetch(`${API}/api/szamonkeres/${id}/lezar`, {method:'PATCH'});
+    if (!res.ok) throw new Error('Hiba');
+    showDetailMsg('ok','<i class="fas fa-lock"></i> Számonkérés lezárva.');
+    openDetail(id);
+  } catch(e) { showDetailMsg('err', 'Hiba a lezárás során.'); }
+}
+
+async function kuldjEredmenyek(id) {
+  if (!confirm('Kiadod az eredményeket? A tanulók látni fogják a pontjaikat és a jegyüket.')) return;
+  try {
+    const res = await authFetch(`${API}/api/szamonkeres/${id}/kuldj`, {method:'PATCH'});
+    if (!res.ok) throw new Error('Hiba');
+    showDetailMsg('ok','<i class="fas fa-paper-plane"></i> Eredmények kiadva! A tanulók a portálon látják.');
+    openDetail(id);
+  } catch(e) { showDetailMsg('err', 'Hiba a kiadás során.'); }
+}
+
+function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
+
+// ── Segédfüggvények ───────────────────────────────────────────────────────────
+function showMsg(el, txt) { el.innerHTML = txt; el.style.display='block'; setTimeout(()=>el.style.display='none', 5000); }
+function showDetailMsg(type, txt) {
+  const el = document.getElementById('detail-msg');
+  el.className = 'msg msg-'+(type==='ok'?'ok':'err');
+  el.innerHTML = txt; el.style.display='block';
+}
+function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Kód modal bezárás kattintásra
+document.getElementById('kod-modal').addEventListener('click', e => { if(e.target.id==='kod-modal') e.target.classList.remove('open'); });
+document.getElementById('detail-modal').addEventListener('click', e => { if(e.target.id==='detail-modal') closeDetail(); });
+</script>
+</body>
+</html>
