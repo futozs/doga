@@ -521,8 +521,13 @@ async function loadCsoportok() {
     const users = await res.json();
     allTanulok = users.filter(u => u.szerep === 'tanulo');
 
+    // Csak 10. évfolyamos tanulók
     csoportGroups = new Map();
-    allTanulok.forEach(u => {
+    allTanulok.filter(u => {
+      const o = (u.osztaly || '').toString();
+      const ev = (u.evfolyam || '').toString();
+      return o.startsWith('10') || ev === '10';
+    }).forEach(u => {
       const key = u.osztaly && u.csoport ? `${u.osztaly}/${u.csoport}`
                 : u.osztaly ? u.osztaly
                 : u.evfolyam || 'ismeretlen';
@@ -535,7 +540,7 @@ async function loadCsoportok() {
       el.innerHTML = '<span style="color:#64748b;font-size:0.85rem">Nincsenek tanuló csoportok</span>';
       return;
     }
-    el.innerHTML = '';
+    el.innerHTML = '<div style="font-size:0.78rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px"><i class="fas fa-graduation-cap" style="color:#3b82f6;margin-right:5px"></i>10. évfolyam</div>';
     [...csoportGroups.entries()].sort(([a],[b]) => a.localeCompare(b)).forEach(([key, members]) => {
       el.appendChild(buildCsoportCard(key, members));
     });
