@@ -1415,7 +1415,7 @@ function buildLeft() {
       const typeIcon = t.type==='quiz'?'❓':t.type==='fillin'?'✏️':'💻';
       const typeLabel= t.type==='quiz'?'Kvíz':t.type==='fillin'?'Kódkiegészítés':'Szerkesztő';
       const starHtml = t.exam ? '<i class="fa fa-star pill-star"></i>' : '';
-      p.innerHTML=`<span class="pill-icon">${state.done[i]?'✅':locked?'🔒':'⬜'}</span>
+      p.innerHTML=`<span class="pill-icon">${state.done[i]?'<i class="fa-solid fa-circle-check" style="color:#58D58D;"></i>':locked?'<i class="fa-solid fa-lock" style="color:#E82B41;"></i>':'<i class="fa-solid fa-lock-open" style="color:#53C3F4;"></i>'}</span>
         <div><div class="pill-label">${i+1}. ${t.title}${starHtml}</div>
         <div class="pill-type">${typeIcon} ${typeLabel}</div></div>`;
       updatePillClass(p,i,locked);
@@ -1435,7 +1435,7 @@ function refreshLeft(){
     const p=document.getElementById('pill-'+i); if(!p) return;
     const locked=!u._tesztMod&&i>0&&!state.done[i-1];
     const t=tasks[i];
-    p.querySelector('.pill-icon').textContent=state.done[i]?'✅':locked?'🔒':'⬜';
+    p.querySelector('.pill-icon').innerHTML=state.done[i]?'<i class="fa-solid fa-circle-check" style="color:#58D58D;"></i>':locked?'<i class="fa-solid fa-lock" style="color:#E82B41;"></i>':'<i class="fa-solid fa-lock-open" style="color:#53C3F4;"></i>';
     updatePillClass(p,i,locked);
     if(!locked) p.onclick=()=>loadTask(i); else p.onclick=null;
   });
