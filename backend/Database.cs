@@ -267,16 +267,19 @@ public class Database
             SELECT id,cim,oktato_email,csoportok,feladatok,ponthatarak,statusz,created_at,0 as beadasok
             FROM szamonkeres WHERE statusz='aktiv'";
         var all = ReadSzamonkeresItems(cmd);
-        // Filter in C# — csoportok is JSON array, match osztaly+csoport or osztaly
+        // Filter in C# — csoportok is JSON array, match osztaly+csoport, osztaly, or individual email
         return all.Where(s => {
             var cs = System.Text.Json.JsonSerializer.Deserialize<List<string>>(s.Csoportok) ?? new();
             var tanuloCsoport = string.IsNullOrEmpty(osztaly) ? null
                 : string.IsNullOrEmpty(csoport) ? osztaly
                 : $"{osztaly}/{csoport}";
             return cs.Any(c =>
-                tanuloCsoport != null &&
-                (c.Equals(tanuloCsoport, StringComparison.OrdinalIgnoreCase) ||
-                 c.Equals(osztaly, StringComparison.OrdinalIgnoreCase)));
+                // Csoport alapú egyezés
+                (tanuloCsoport != null &&
+                 (c.Equals(tanuloCsoport, StringComparison.OrdinalIgnoreCase) ||
+                  c.Equals(osztaly, StringComparison.OrdinalIgnoreCase))) ||
+                // Egyéni tanuló email alapú egyezés (pl. "email:tanuloname@kkszki.hu")
+                c.Equals($"email:{email}", StringComparison.OrdinalIgnoreCase));
         }).ToList();
     }
 

@@ -48,11 +48,25 @@
     .badge-kozepes{background:#78350f;color:#fcd34d}
     .badge-nehez{background:#7f1d1d;color:#fca5a5}
     .badge-sajat{background:#1e1b4b;color:#a5b4fc}
-    /* Csoport checkboxok */
-    .csoport-grid{display:flex;flex-wrap:wrap;gap:8px}
-    .csoport-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #374151;border-radius:20px;cursor:pointer;font-size:0.82rem;transition:all .2s}
-    .csoport-chip input{accent-color:#3b82f6}
-    .csoport-chip.selected{border-color:#3b82f6;background:#1e3a5f;color:#93c5fd}
+    /* Csoport kártyák */
+    .csoport-grid{display:flex;flex-direction:column;gap:8px}
+    .csoport-card{border:1px solid #374151;border-radius:10px;overflow:hidden;background:#0b1120;transition:border-color .2s}
+    .csoport-card.has-selection{border-color:#3b82f6}
+    .csoport-card-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:10px}
+    .csoport-group-label{display:flex;align-items:center;gap:10px;cursor:pointer;flex:1}
+    .csoport-group-label input[type=checkbox]{accent-color:#3b82f6;width:16px;height:16px;flex-shrink:0}
+    .csoport-group-name{font-weight:700;font-size:0.9rem;color:#e0e0e0}
+    .csoport-group-meta{font-size:0.75rem;color:#64748b;margin-top:1px}
+    .csoport-expand-btn{background:transparent;border:1px solid #374151;border-radius:6px;color:#64748b;cursor:pointer;padding:4px 10px;font-size:0.78rem;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap}
+    .csoport-expand-btn:hover{border-color:#6b7280;color:#94a3b8}
+    .csoport-student-list{border-top:1px solid #1f2937;background:#060d1a;max-height:220px;overflow-y:auto}
+    .csoport-student-item{display:flex;align-items:center;gap:10px;padding:7px 14px;border-bottom:1px solid #1f2937;cursor:pointer;transition:background .15s}
+    .csoport-student-item:last-child{border-bottom:none}
+    .csoport-student-item:hover{background:#0d1a2e}
+    .csoport-student-item input[type=checkbox]{accent-color:#22c55e;flex-shrink:0}
+    .csoport-student-item.selected{background:#0a1f0a}
+    .csoport-student-name{font-size:0.85rem;color:#e0e0e0;flex:1}
+    .csoport-student-email{font-size:0.75rem;color:#64748b}
     /* Ponthatárok */
     .ponthatarak-presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
     .preset-btn{padding:6px 14px;border-radius:8px;border:1px solid #374151;background:transparent;color:#94a3b8;cursor:pointer;font-size:0.82rem;transition:all .2s}
@@ -259,6 +273,8 @@ let userToken = '';
 let currentSzamonkeresId = null;
 let selectedFeladatok = []; // [{tipus, feladat_szam?, cim, szoveg?, pont}]
 let selectedCsoportok = new Set();
+let allTanulok = [];        // [{nev, email, osztaly, csoport, evfolyam}]
+let csoportGroups = new Map(); // groupKey → [user, ...]
 let allBeadasok = [];
 let currentSzamonkeres = null;
 
@@ -302,30 +318,157 @@ async function loadCsoportok() {
   try {
     const res = await authFetch(`${API}/api/users`);
     const users = await res.json();
-    const csoportSet = new Map();
-    users.forEach(u => {
-      if (u.szerep !== 'tanulo') return;
-      const key = u.osztaly && u.csoport ? `${u.osztaly}/${u.csoport}` : u.osztaly || u.evfolyam;
-      if (key) csoportSet.set(key, (csoportSet.get(key) || 0) + 1);
+    allTanulok = users.filter(u => u.szerep === 'tanulo');
+
+    csoportGroups = new Map();
+    allTanulok.forEach(u => {
+      const key = u.osztaly && u.csoport ? `${u.osztaly}/${u.csoport}`
+                : u.osztaly ? u.osztaly
+                : u.evfolyam || 'ismeretlen';
+      if (!csoportGroups.has(key)) csoportGroups.set(key, []);
+      csoportGroups.get(key).push(u);
     });
+
     const el = document.getElementById('csoport-lista');
-    if (csoportSet.size === 0) { el.innerHTML = '<span style="color:#64748b;font-size:0.85rem">Nincsenek tanuló csoportok</span>'; return; }
+    if (csoportGroups.size === 0) {
+      el.innerHTML = '<span style="color:#64748b;font-size:0.85rem">Nincsenek tanuló csoportok</span>';
+      return;
+    }
     el.innerHTML = '';
-    [...csoportSet.entries()].sort().forEach(([key, db]) => {
-      const chip = document.createElement('label');
-      chip.className = 'csoport-chip';
-      chip.innerHTML = `<input type="checkbox" value="${key}" onchange="toggleCsoport('${key}',this.checked)"> ${key} <span style="color:#64748b;font-size:0.75rem">(${db} fő)</span>`;
-      el.appendChild(chip);
+    [...csoportGroups.entries()].sort(([a],[b]) => a.localeCompare(b)).forEach(([key, members]) => {
+      el.appendChild(buildCsoportCard(key, members));
     });
   } catch(e) {
     document.getElementById('csoport-lista').innerHTML = '<span style="color:#ef4444;font-size:0.85rem">Hiba a betöltés során</span>';
   }
 }
 
-function toggleCsoport(key, checked) {
-  const chip = [...document.querySelectorAll('.csoport-chip')].find(c => c.querySelector('input')?.value === key);
-  if (checked) { selectedCsoportok.add(key); chip?.classList.add('selected'); }
-  else { selectedCsoportok.delete(key); chip?.classList.remove('selected'); }
+// Osztály formázás: "13C" / "13.C" → "13.C", csoport: "1" → "1. csoport"
+function formatOsztaly(o) {
+  if (!o) return '';
+  const m = o.match(/^(\d+)\.?([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+)$/);
+  return m ? `${m[1]}.${m[2].toUpperCase()}` : o;
+}
+function formatCsoportKey(key) {
+  if (!key || key.startsWith('email:')) return key;
+  const [osztaly, csoport] = key.split('/');
+  let label = formatOsztaly(osztaly || key);
+  if (csoport) label += ` / ${csoport}. csoport`;
+  return label;
+}
+function formatCsoportList(csJson) {
+  // csoportok JSON → olvasható szöveg (pl. "13.C / 1. csoport, Kovács Anna")
+  const cs = JSON.parse(csJson || '[]');
+  return cs.map(c => {
+    if (c.startsWith('email:')) {
+      const email = c.slice(6);
+      const u = allTanulok.find(t => t.email.toLowerCase() === email.toLowerCase());
+      return u ? u.nev || email : email;
+    }
+    return formatCsoportKey(c);
+  }).join(', ');
+}
+
+function buildCsoportCard(key, members) {
+  const card = document.createElement('div');
+  card.className = 'csoport-card';
+  card.id = 'ccard-' + key.replace(/[^a-zA-Z0-9]/g,'_');
+
+  const label = formatCsoportKey(key);
+  const sortedMembers = [...members].sort((a,b) => (a.nev||'').localeCompare(b.nev||''));
+
+  const studentRows = sortedMembers.map(u => {
+    const safeEmail = escH(u.email);
+    const safeNev = escH(u.nev || u.email);
+    return `<div class="csoport-student-item" id="cs-${safeEmail}" onclick="toggleCsoportStudent('${safeEmail}',event)">
+      <input type="checkbox" id="csCheck-${safeEmail}" onclick="event.stopPropagation()" onchange="toggleCsoportStudent('${safeEmail}',null,this.checked)">
+      <span class="csoport-student-name">${safeNev}</span>
+      <span class="csoport-student-email">${safeEmail}</span>
+    </div>`;
+  }).join('');
+
+  const safeKey = escH(key);
+  const cardId = card.id;
+  card.innerHTML = `
+    <div class="csoport-card-header">
+      <label class="csoport-group-label" onclick="toggleCsoportGroup('${safeKey}',event)">
+        <input type="checkbox" id="cgCheck-${cardId}" onclick="event.stopPropagation()" onchange="toggleCsoportGroup('${safeKey}',null,this.checked)">
+        <div>
+          <div class="csoport-group-name">${escH(label)}</div>
+          <div class="csoport-group-meta">${members.length} tanuló</div>
+        </div>
+      </label>
+      <button class="csoport-expand-btn" onclick="toggleStudentList('${cardId}',this)">
+        <i class="fas fa-users"></i> Tanulók <i class="fas fa-chevron-down" style="font-size:0.7rem"></i>
+      </button>
+    </div>
+    <div class="csoport-student-list" id="csl-${cardId}" style="display:none">${studentRows}</div>`;
+  return card;
+}
+
+function toggleStudentList(cardId, btn) {
+  const list = document.getElementById('csl-' + cardId);
+  if (!list) return;
+  const open = list.style.display !== 'none';
+  list.style.display = open ? 'none' : 'block';
+  btn.querySelector('.fa-chevron-down,.fa-chevron-up')?.classList.toggle('fa-chevron-down', open);
+  btn.querySelector('.fa-chevron-down,.fa-chevron-up')?.classList.toggle('fa-chevron-up', !open);
+}
+
+function toggleCsoportGroup(key, evt, checked) {
+  if (evt) { evt.preventDefault(); evt.stopPropagation(); }
+  const cardId = 'ccard-' + key.replace(/[^a-zA-Z0-9]/g,'_');
+  const cb = document.getElementById('cgCheck-' + cardId);
+  if (checked === undefined && cb) checked = cb.checked;
+  if (cb) cb.checked = checked;
+
+  const card = document.getElementById(cardId);
+  if (checked) {
+    selectedCsoportok.add(key);
+    card?.classList.add('has-selection');
+  } else {
+    selectedCsoportok.delete(key);
+    // Ha nincs egyéni tanuló sem ebből a csoportból, vegyük le a kiemelést
+    const members = csoportGroups.get(key) || [];
+    const hasIndividual = members.some(u => selectedCsoportok.has('email:' + u.email));
+    if (!hasIndividual) card?.classList.remove('has-selection');
+  }
+}
+
+function toggleCsoportStudent(email, evt, checked) {
+  if (evt) { evt.preventDefault(); evt.stopPropagation(); }
+  const itemId = 'cs-' + email;
+  const cbId = 'csCheck-' + email;
+  const cb = document.getElementById(cbId);
+  if (checked === undefined && cb) checked = cb.checked;
+  if (cb) cb.checked = checked;
+
+  const item = document.getElementById(itemId);
+  const emailKey = 'email:' + email;
+  if (checked) {
+    selectedCsoportok.add(emailKey);
+    item?.classList.add('selected');
+    // Jelöljük a kártyát is
+    const user = allTanulok.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (user) {
+      const gkey = user.osztaly && user.csoport ? `${user.osztaly}/${user.csoport}` : user.osztaly || user.evfolyam || 'ismeretlen';
+      document.getElementById('ccard-' + gkey.replace(/[^a-zA-Z0-9]/g,'_'))?.classList.add('has-selection');
+    }
+  } else {
+    selectedCsoportok.delete(emailKey);
+    item?.classList.remove('selected');
+    // Ha sem a csoport, sem más tanuló nincs kiválasztva, vegyük le a kiemelést
+    const user = allTanulok.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (user) {
+      const gkey = user.osztaly && user.csoport ? `${user.osztaly}/${user.csoport}` : user.osztaly || user.evfolyam || 'ismeretlen';
+      const members = csoportGroups.get(gkey) || [];
+      const groupSelected = selectedCsoportok.has(gkey);
+      const anyIndividual = members.some(u => selectedCsoportok.has('email:' + u.email));
+      if (!groupSelected && !anyIndividual) {
+        document.getElementById('ccard-' + gkey.replace(/[^a-zA-Z0-9]/g,'_'))?.classList.remove('has-selection');
+      }
+    }
+  }
 }
 
 // ── Feladatok betöltése ───────────────────────────────────────────────────────
@@ -473,7 +616,7 @@ async function createSzamonkeres() {
     // Reset
     document.getElementById('cr-cim').value='';
     selectedFeladatok=[]; selectedCsoportok=new Set();
-    document.querySelectorAll('.csoport-chip').forEach(c=>{c.classList.remove('selected');c.querySelector('input').checked=false;});
+    document.querySelectorAll('.csoport-card').forEach(c=>{c.classList.remove('has-selection');c.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);c.querySelectorAll('.csoport-student-item').forEach(i=>i.classList.remove('selected'));});
     document.querySelectorAll('.feladat-item input').forEach(cb=>cb.checked=false);
     renderSelectedTags();
   } catch(e) {
@@ -529,7 +672,7 @@ function renderDetail(sz, beadasok) {
   const cs = JSON.parse(sz.csoportok||'[]').join(', ');
   const stLabel = sz.statusz==='aktiv'?'Aktív':sz.statusz==='lezart'?'Lezárt':'Kiadva';
   document.getElementById('detail-meta').innerHTML =
-    `Csoportok: <strong>${cs}</strong> &nbsp;·&nbsp; Állapot: <strong>${stLabel}</strong> &nbsp;·&nbsp; Létrehozva: ${sz.createdAt?.substring(0,16)||''}`;
+    `Csoportok: <strong>${escH(formatCsoportList(sz.csoportok))}</strong> &nbsp;·&nbsp; Állapot: <strong>${stLabel}</strong> &nbsp;·&nbsp; Létrehozva: ${sz.createdAt?.substring(0,16)||''}`;
 
   // Feladatok lista
   const feladatok = JSON.parse(sz.feladatok||'[]');
