@@ -1605,8 +1605,8 @@
                     if (b) { b.style.display = 'flex'; const _bh = b.offsetHeight || 28; const _tb = document.querySelector('.page-topbar'); if (_tb) _tb.style.top = _bh + 'px'; document.body.style.paddingTop = (56 + _bh) + 'px'; }
                 }
 
-                // Módválasztó modal – tanulóknak (nem bemutató, oktató kivéve)
-                if (u.szerep !== 'oktato' && !isBemutato) {
+                // Módválasztó modal – mindenkinél, kivéve bemutató mód
+                if (!isBemutato) {
                     document.getElementById('py-mode-selector').style.display = 'flex';
                 }
 
